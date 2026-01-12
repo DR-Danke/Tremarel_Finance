@@ -40,7 +40,7 @@ class Settings(BaseSettings):
                 return origins
             return [self.CORS_ORIGINS]
         except json.JSONDecodeError:
-            print(f"WARN [Settings]: Invalid CORS_ORIGINS format, using default")
+            print("WARN [Settings]: Invalid CORS_ORIGINS format, using default")
             return ["http://localhost:5173"]
 
 
