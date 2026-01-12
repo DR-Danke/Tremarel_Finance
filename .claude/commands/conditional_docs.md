@@ -392,3 +392,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting 422 errors on article view navigation
     - When modifying FKServicedeskTicketForm suggestion panel links
     - When working with knowledge article URL patterns (slug vs article_id)
+
+- app_docs/feature-0f0d4c36-fastapi-backend-setup.md
+  - Conditions:
+    - When setting up or modifying the FastAPI backend project structure
+    - When working with Server/main.py or application entry point
+    - When configuring CORS, environment variables, or settings
+    - When adding new routers or API endpoints to the backend
+    - When troubleshooting backend startup or configuration issues
