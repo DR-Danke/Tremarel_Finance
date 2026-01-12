@@ -695,7 +695,7 @@ def create_and_implement_patch(
         )
 
     # Extract the patch plan file path from the response
-    patch_file_path = response.output.strip()
+    patch_file_path = response.output.strip().strip('`')
 
     # Validate that it looks like a file path
     if "specs/patch/" not in patch_file_path or not patch_file_path.endswith(".md"):

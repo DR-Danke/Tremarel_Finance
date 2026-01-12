@@ -146,7 +146,7 @@ def generate_documentation(
         return None
 
     # Parse the agent response - it should return the path to the documentation file created
-    doc_file_path = response.output.strip()
+    doc_file_path = response.output.strip().strip('`')
 
     # Check if the agent actually created documentation
     if doc_file_path and doc_file_path != "No documentation needed":

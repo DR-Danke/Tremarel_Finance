@@ -250,7 +250,7 @@ def main():
 
     # Get the plan file path directly from response
     logger.info("Getting plan file path")
-    plan_file_path = plan_response.output.strip()
+    plan_file_path = plan_response.output.strip().strip('`')
     
     # Validate the path exists (within worktree)
     if not plan_file_path:

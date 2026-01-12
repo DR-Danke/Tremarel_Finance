@@ -237,7 +237,7 @@ def resolve_blocker_issues(
             continue
         
         # Extract plan file path
-        plan_file = plan_response.output.strip()
+        plan_file = plan_response.output.strip().strip('`')
         
         # Implement the patch
         logger.info(f"Implementing patch from plan: {plan_file}")
