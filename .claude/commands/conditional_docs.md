@@ -392,3 +392,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting 422 errors on article view navigation
     - When modifying FKServicedeskTicketForm suggestion panel links
     - When working with knowledge article URL patterns (slug vs article_id)
+
+- app_docs/feature-db5f36c7-database-schema-tables.md
+  - Conditions:
+    - When working with Finance Tracker database tables or schema
+    - When implementing user authentication or JWT-based auth
+    - When working with entities, categories, transactions, or budgets tables
+    - When modifying Server/database/schema.sql
+    - When troubleshooting foreign key constraints or database relationships
+    - When implementing multi-entity support (family/startup separation)
