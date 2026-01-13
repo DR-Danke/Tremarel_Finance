@@ -606,10 +606,10 @@ def start_test_server(logger: logging.Logger) -> Optional[subprocess.Popen]:
         env = os.environ.copy()
         env["TESTING"] = "true"
 
-        # Start uvicorn in background
+        # Start uvicorn in background using the venv
         proc = subprocess.Popen(
-            ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
-            cwd="Server",
+            [".venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
+            cwd="apps/Server",
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
