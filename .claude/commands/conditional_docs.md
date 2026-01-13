@@ -55,3 +55,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying apps/Server/database/schema.sql
     - When troubleshooting foreign key constraints or database relationships
     - When implementing multi-entity support (family/startup separation)
+
+- app_docs/feature-ed4cef49-backend-jwt-auth-rbac.md
+  - Conditions:
+    - When working with backend authentication (login, registration, JWT)
+    - When implementing or modifying protected routes
+    - When working with role-based access control (RBAC)
+    - When troubleshooting authentication or authorization errors
+    - When adding new auth endpoints or modifying auth_routes.py
+    - When working with the User model or user_repository
