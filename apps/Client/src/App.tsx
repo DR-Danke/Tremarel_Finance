@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Link } from 'react-router-dom'
 import { Box, Typography, Container, Button } from '@mui/material'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { EntitiesPage } from '@/pages/EntitiesPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -177,6 +178,14 @@ function App() {
             <TRMainLayout>
               <SettingsPage />
             </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/entities"
+        element={
+          <ProtectedRoute>
+            <EntitiesPage />
           </ProtectedRoute>
         }
       />

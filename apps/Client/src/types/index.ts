@@ -46,13 +46,47 @@ export interface AuthState {
   isLoading: boolean
 }
 
-// Entity interface placeholder
+// Entity interface matching backend EntityResponseDTO
 export interface Entity {
   id: string
   name: string
   type: 'family' | 'startup'
-  createdAt: string
-  updatedAt: string
+  description?: string
+  created_at: string
+  updated_at?: string
+}
+
+// Data for creating a new entity
+export interface CreateEntityData {
+  name: string
+  type: 'family' | 'startup'
+  description?: string
+}
+
+// Data for updating an entity
+export interface UpdateEntityData {
+  name?: string
+  description?: string
+}
+
+// User-Entity membership interface
+export interface UserEntity {
+  id: string
+  user_id: string
+  entity_id: string
+  role: 'admin' | 'manager' | 'user' | 'viewer'
+  created_at: string
+}
+
+// Entity member with user details
+export interface EntityMember {
+  id: string
+  user_id: string
+  email: string
+  first_name?: string
+  last_name?: string
+  role: 'admin' | 'manager' | 'user' | 'viewer'
+  created_at: string
 }
 
 // Transaction types placeholder

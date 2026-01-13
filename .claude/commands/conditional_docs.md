@@ -83,3 +83,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with entity switching functionality
     - When troubleshooting sidebar collapse/expand behavior
     - When adding new protected pages that need the main layout
+
+- app_docs/feature-d6d0f56d-entity-management-crud.md
+  - Conditions:
+    - When working with entity management (create, update, delete entities)
+    - When implementing or modifying EntityContext or useEntity hook
+    - When adding entity switching functionality
+    - When working with multi-entity support (family/startup separation)
+    - When implementing features that need to filter by current entity
+    - When troubleshooting entity-related access control or permissions
+    - When working with TREntitySelector or EntitiesPage components
