@@ -1,6 +1,5 @@
 """Tests for dashboard endpoints."""
 
-from datetime import date
 from decimal import Decimal
 from typing import Generator
 from unittest.mock import MagicMock, patch
@@ -12,8 +11,6 @@ from sqlalchemy.orm import Session
 
 from main import app
 from src.adapter.rest.dependencies import get_db
-from src.models.category import Category
-from src.models.transaction import Transaction
 from src.models.user import User
 
 

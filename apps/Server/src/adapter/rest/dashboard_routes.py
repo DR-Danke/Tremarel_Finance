@@ -37,5 +37,5 @@ async def get_dashboard_stats(
 
     stats = dashboard_service.get_dashboard_stats(db, entity_id)
 
-    print(f"INFO [DashboardRoutes]: Dashboard stats returned successfully")
+    print("INFO [DashboardRoutes]: Dashboard stats returned successfully")
     return stats

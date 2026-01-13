@@ -232,7 +232,7 @@ class DashboardService:
         monthly_trends = self.get_monthly_trends(db, entity_id)
         expense_breakdown = self.get_expense_breakdown(db, entity_id)
 
-        print(f"INFO [DashboardService]: Dashboard stats assembled successfully")
+        print("INFO [DashboardService]: Dashboard stats assembled successfully")
 
         return DashboardStatsResponseDTO(
             current_month_summary=current_month_summary,
