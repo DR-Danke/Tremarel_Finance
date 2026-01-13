@@ -251,3 +251,41 @@ export interface BudgetListResponse {
   budgets: BudgetWithSpending[]
   total: number
 }
+
+// Report types
+export interface ReportFilter {
+  startDate: string
+  endDate: string
+  type?: TransactionType
+  categoryIds?: string[]
+}
+
+export interface IncomeExpenseComparison {
+  period: string
+  month: number
+  year: number
+  income: number
+  expenses: number
+}
+
+export interface CategorySummary {
+  category_id: string
+  category_name: string
+  amount: number
+  percentage: number
+  type: TransactionType
+  color: string | null
+}
+
+export interface ReportSummary {
+  total_income: number
+  total_expenses: number
+  net_balance: number
+  transaction_count: number
+}
+
+export interface ReportData {
+  summary: ReportSummary
+  income_expense_comparison: IncomeExpenseComparison[]
+  category_breakdown: CategorySummary[]
+}
