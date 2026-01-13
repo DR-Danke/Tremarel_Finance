@@ -55,7 +55,7 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(auth_router)
 
-print(f"INFO [Main]: Auth router registered")
+print("INFO [Main]: Auth router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 
