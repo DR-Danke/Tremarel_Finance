@@ -400,3 +400,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When configuring CORS, environment variables, or settings
     - When adding new routers or API endpoints to the backend
     - When troubleshooting backend startup or configuration issues
+
+- app_docs/feature-2a0579e1-frontend-react-vite-setup.md
+  - Conditions:
+    - When setting up or modifying the Client folder structure
+    - When working with Vite configuration or path aliases
+    - When configuring Material-UI theming for the application
+    - When troubleshooting axios interceptor or JWT token handling
+    - When deploying the frontend to Vercel
+    - When adding new React dependencies or updating package.json
