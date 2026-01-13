@@ -244,13 +244,13 @@ class BudgetRepository:
         Returns:
             True if duplicate exists, False otherwise
         """
-        print(f"INFO [BudgetRepository]: Checking for duplicate budget")
+        print("INFO [BudgetRepository]: Checking for duplicate budget")
         query = db.query(Budget).filter(
             Budget.entity_id == entity_id,
             Budget.category_id == category_id,
             Budget.period_type == period_type,
             Budget.start_date == start_date,
-            Budget.is_active == True,
+            Budget.is_active is True,
         )
 
         if exclude_budget_id:

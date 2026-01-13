@@ -12,7 +12,6 @@ from src.interface.budget_dto import (
     BudgetWithSpendingDTO,
 )
 from src.models.budget import Budget
-from src.models.category import Category
 from src.repository.budget_repository import budget_repository
 from src.repository.category_repository import category_repository
 
