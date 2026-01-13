@@ -111,3 +111,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When using the useTransactions hook or transactionService
     - When adding filters for date range, category, or transaction type
     - When troubleshooting transaction API endpoints
+
+- app_docs/feature-7fcd6a6a-dashboard-summary-stats-charts.md
+  - Conditions:
+    - When working with DashboardPage or dashboard statistics
+    - When implementing or modifying financial summary visualizations
+    - When working with TRStatCard, TRMonthlyTrendChart, or TRExpenseBreakdownChart components
+    - When using the useDashboard hook or dashboardService
+    - When working with Recharts for financial data visualization
+    - When troubleshooting dashboard API endpoint or aggregations
