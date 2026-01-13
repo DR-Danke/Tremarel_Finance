@@ -149,3 +149,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with the recurring_templates table or recurring_template_routes
     - When linking transactions to recurring templates via recurring_template_id
     - When troubleshooting recurring transaction template CRUD operations
+
+- app_docs/chore-dcb3fc76-deployment-config.md
+  - Conditions:
+    - When deploying the application to production (Vercel, Render, Supabase)
+    - When configuring environment variables for production
+    - When setting up or modifying render.yaml or Vercel configuration
+    - When troubleshooting CORS configuration or deployment issues
+    - When updating .env.sample files

@@ -1,0 +1,40 @@
+# Render Blueprint Configuration
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: finance-tracker-api
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      # Python Version (CRITICAL for compatibility)
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+
+      # Database Connection (Supabase PostgreSQL)
+      - key: DATABASE_URL
+        sync: false
+
+      # JWT Authentication
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: "HS256"
+      - key: JWT_EXPIRE_MINUTES
+        value: "1440"
+
+      # CORS Configuration (JSON array format)
+      # Update with your Vercel frontend URL
+      - key: CORS_ORIGINS
+        value: '["https://your-app.vercel.app"]'
+
+      # Application Settings
+      - key: APP_NAME
+        value: "Finance Tracker API"
+      - key: APP_VERSION
+        value: "1.0.0"
+      - key: DEBUG
+        value: "false"
