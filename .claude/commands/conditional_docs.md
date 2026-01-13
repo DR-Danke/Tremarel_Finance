@@ -73,3 +73,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting frontend authentication or session issues
     - When adding new pages that require authentication
     - When working with the LoginPage or authentication flow
+
+- app_docs/feature-bda418fa-transaction-crud-management.md
+  - Conditions:
+    - When working with transactions (income/expense records)
+    - When implementing or modifying transaction CRUD operations
+    - When working with TransactionsPage, TRTransactionForm, or TRTransactionTable
+    - When using the useTransactions hook or transactionService
+    - When adding filters for date range, category, or transaction type
+    - When troubleshooting transaction API endpoints
