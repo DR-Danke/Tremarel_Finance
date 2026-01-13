@@ -209,3 +209,45 @@ export interface DashboardStats {
   monthly_trends: MonthlyTotal[]
   expense_breakdown: CategoryBreakdown[]
 }
+
+// Budget types
+export type BudgetPeriodType = 'monthly' | 'quarterly' | 'yearly'
+
+export interface Budget {
+  id: string
+  entity_id: string
+  category_id: string
+  amount: number
+  period_type: BudgetPeriodType
+  start_date: string
+  end_date?: string | null
+  is_active: boolean
+  created_at: string
+  updated_at?: string | null
+}
+
+export interface BudgetWithSpending extends Budget {
+  category_name?: string | null
+  spent_amount: number
+  spent_percentage: number
+}
+
+export interface BudgetCreate {
+  entity_id: string
+  category_id: string
+  amount: number
+  period_type: BudgetPeriodType
+  start_date: string
+}
+
+export interface BudgetUpdate {
+  amount?: number
+  period_type?: BudgetPeriodType
+  start_date?: string
+  is_active?: boolean
+}
+
+export interface BudgetListResponse {
+  budgets: BudgetWithSpending[]
+  total: number
+}

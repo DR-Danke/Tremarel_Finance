@@ -6,22 +6,9 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { EntitiesPage } from '@/pages/EntitiesPage'
 import { CategoriesPage } from '@/pages/CategoriesPage'
 import { TransactionsPage } from '@/pages/TransactionsPage'
+import { BudgetsPage } from '@/pages/BudgetsPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
-
-// Placeholder pages for future implementation
-function BudgetsPage() {
-  return (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Budgets
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Budget tracking coming soon.
-      </Typography>
-    </Box>
-  )
-}
 
 function ReportsPage() {
   return (
