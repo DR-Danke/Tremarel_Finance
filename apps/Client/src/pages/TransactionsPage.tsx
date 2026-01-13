@@ -28,11 +28,11 @@ import { apiClient } from '@/api/clients'
 
 // Mock categories for testing - will be replaced with actual category service
 const MOCK_CATEGORIES: Category[] = [
-  { id: '1', name: 'Salary', type: 'income', createdAt: '', updatedAt: '' },
-  { id: '2', name: 'Freelance', type: 'income', createdAt: '', updatedAt: '' },
-  { id: '3', name: 'Food & Dining', type: 'expense', createdAt: '', updatedAt: '' },
-  { id: '4', name: 'Transportation', type: 'expense', createdAt: '', updatedAt: '' },
-  { id: '5', name: 'Utilities', type: 'expense', createdAt: '', updatedAt: '' },
+  { id: '1', entity_id: '', name: 'Salary', type: 'income', is_active: true, created_at: '' },
+  { id: '2', entity_id: '', name: 'Freelance', type: 'income', is_active: true, created_at: '' },
+  { id: '3', entity_id: '', name: 'Food & Dining', type: 'expense', is_active: true, created_at: '' },
+  { id: '4', entity_id: '', name: 'Transportation', type: 'expense', is_active: true, created_at: '' },
+  { id: '5', entity_id: '', name: 'Utilities', type: 'expense', is_active: true, created_at: '' },
 ]
 
 // Placeholder entity ID - will be replaced with EntityContext

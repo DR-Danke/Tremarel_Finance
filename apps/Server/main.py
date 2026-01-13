@@ -15,6 +15,7 @@ from src.adapter.rest.auth_routes import router as auth_router
 from src.adapter.rest.entity_routes import router as entity_router
 from src.adapter.rest.category_routes import router as category_router
 from src.adapter.rest.transaction_routes import router as transaction_router
+from src.adapter.rest.dashboard_routes import router as dashboard_router
 from src.adapter.rest.health_routes import router as health_router
 from src.config.settings import get_settings
 
@@ -60,11 +61,13 @@ app.include_router(auth_router)
 app.include_router(entity_router)
 app.include_router(category_router)
 app.include_router(transaction_router)
+app.include_router(dashboard_router)
 
 print("INFO [Main]: Auth router registered")
 print("INFO [Main]: Entity router registered")
 print("INFO [Main]: Category router registered")
 print("INFO [Main]: Transaction router registered")
+print("INFO [Main]: Dashboard router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 
