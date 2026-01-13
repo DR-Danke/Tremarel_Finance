@@ -19,6 +19,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import CategoryIcon from '@mui/icons-material/Category'
+import RepeatIcon from '@mui/icons-material/Repeat'
 import SavingsIcon from '@mui/icons-material/Savings'
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -36,6 +37,7 @@ interface NavItem {
 const navigationItems: NavItem[] = [
   { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
   { label: 'Transactions', path: '/transactions', icon: <AccountBalanceWalletIcon /> },
+  { label: 'Recurring', path: '/recurring', icon: <RepeatIcon /> },
   { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
   { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
   { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },

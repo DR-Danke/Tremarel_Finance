@@ -97,6 +97,7 @@ export interface Transaction {
   entity_id: string
   category_id: string
   user_id?: string
+  recurring_template_id?: string
   type: TransactionType
   amount: number
   description?: string
@@ -288,4 +289,55 @@ export interface ReportData {
   summary: ReportSummary
   income_expense_comparison: IncomeExpenseComparison[]
   category_breakdown: CategorySummary[]
+}
+
+// Recurring template types
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly'
+
+export interface RecurringTemplate {
+  id: string
+  entity_id: string
+  category_id: string
+  name: string
+  amount: number
+  type: TransactionType
+  description?: string
+  notes?: string
+  frequency: RecurrenceFrequency
+  start_date: string
+  end_date?: string
+  is_active: boolean
+  created_at: string
+  updated_at?: string
+}
+
+export interface RecurringTemplateCreate {
+  entity_id: string
+  category_id: string
+  name: string
+  amount: number
+  type: TransactionType
+  description?: string
+  notes?: string
+  frequency: RecurrenceFrequency
+  start_date: string
+  end_date?: string
+}
+
+export interface RecurringTemplateUpdate {
+  category_id?: string
+  name?: string
+  amount?: number
+  type?: TransactionType
+  description?: string
+  notes?: string
+  frequency?: RecurrenceFrequency
+  start_date?: string
+  end_date?: string
+  is_active?: boolean
+}
+
+export interface RecurringTemplateListResponse {
+  templates: RecurringTemplate[]
+  total: number
 }

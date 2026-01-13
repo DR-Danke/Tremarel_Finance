@@ -1,0 +1,403 @@
+import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Alert,
+  FormControlLabel,
+  Switch,
+  DialogActions,
+} from '@mui/material'
+import { Add } from '@mui/icons-material'
+import { useAuth } from '@/hooks/useAuth'
+import { useRecurringTemplates } from '@/hooks/useRecurringTemplates'
+import { TRRecurringTemplateForm } from '@/components/forms/TRRecurringTemplateForm'
+import { TRRecurringTemplateTable } from '@/components/ui/TRRecurringTemplateTable'
+import type { RecurringTemplate, RecurringTemplateCreate, RecurringTemplateUpdate, Category } from '@/types'
+import { apiClient } from '@/api/clients'
+
+// Mock categories for testing - will be replaced with actual category service
+const MOCK_CATEGORIES: Category[] = [
+  { id: '1', entity_id: '', name: 'Salary', type: 'income', is_active: true, created_at: '' },
+  { id: '2', entity_id: '', name: 'Freelance', type: 'income', is_active: true, created_at: '' },
+  { id: '3', entity_id: '', name: 'Food & Dining', type: 'expense', is_active: true, created_at: '' },
+  { id: '4', entity_id: '', name: 'Subscriptions', type: 'expense', is_active: true, created_at: '' },
+  { id: '5', entity_id: '', name: 'Utilities', type: 'expense', is_active: true, created_at: '' },
+  { id: '6', entity_id: '', name: 'Rent', type: 'expense', is_active: true, created_at: '' },
+]
+
+// Placeholder entity ID - will be replaced with EntityContext
+const PLACEHOLDER_ENTITY_ID = 'b4e8f9a0-1234-5678-9abc-def012345678'
+
+export const RecurringTemplatesPage: React.FC = () => {
+  const { user } = useAuth()
+  const [searchParams] = useSearchParams()
+
+  // Use entity_id from URL params if available, otherwise use placeholder
+  const entityId = searchParams.get('entity_id') || PLACEHOLDER_ENTITY_ID
+
+  const {
+    templates,
+    total,
+    isLoading,
+    error,
+    includeInactive,
+    createTemplate,
+    updateTemplate,
+    deactivateTemplate,
+    deleteTemplate,
+    setIncludeInactive,
+  } = useRecurringTemplates(entityId)
+
+  // Dialog state
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState<RecurringTemplate | null>(null)
+  const [operationError, setOperationError] = useState<string | null>(null)
+
+  // Categories state
+  const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES)
+
+  // Check if user can delete (admin or manager)
+  const canDelete = user?.role === 'admin' || user?.role === 'manager'
+
+  // Create category lookup map
+  const categoryMap = useMemo(() => {
+    const map: Record<string, Category> = {}
+    categories.forEach((cat) => {
+      map[cat.id] = cat
+    })
+    return map
+  }, [categories])
+
+  // Attempt to load real categories
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await apiClient.get<{ categories: Category[] }>(
+          `/categories?entity_id=${entityId}`
+        )
+        if (response.data.categories && response.data.categories.length > 0) {
+          setCategories(response.data.categories)
+          console.log('INFO [RecurringTemplatesPage]: Loaded', response.data.categories.length, 'categories')
+        }
+      } catch (err) {
+        console.log('INFO [RecurringTemplatesPage]: Using mock categories (category API not available)')
+      }
+    }
+    loadCategories()
+  }, [entityId])
+
+  const handleOpenAddDialog = () => {
+    console.log('INFO [RecurringTemplatesPage]: Opening add template dialog')
+    setOperationError(null)
+    setIsAddDialogOpen(true)
+  }
+
+  const handleCloseAddDialog = () => {
+    console.log('INFO [RecurringTemplatesPage]: Closing add template dialog')
+    setIsAddDialogOpen(false)
+  }
+
+  const handleOpenEditDialog = (template: RecurringTemplate) => {
+    console.log('INFO [RecurringTemplatesPage]: Opening edit dialog for template:', template.id)
+    setOperationError(null)
+    setSelectedTemplate(template)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleCloseEditDialog = () => {
+    console.log('INFO [RecurringTemplatesPage]: Closing edit template dialog')
+    setIsEditDialogOpen(false)
+    setSelectedTemplate(null)
+  }
+
+  const handleOpenDeactivateDialog = (templateId: string) => {
+    console.log('INFO [RecurringTemplatesPage]: Opening deactivate dialog for template:', templateId)
+    setOperationError(null)
+    const template = templates.find((t) => t.id === templateId)
+    if (template) {
+      setSelectedTemplate(template)
+      setIsDeactivateDialogOpen(true)
+    }
+  }
+
+  const handleCloseDeactivateDialog = () => {
+    console.log('INFO [RecurringTemplatesPage]: Closing deactivate dialog')
+    setIsDeactivateDialogOpen(false)
+    setSelectedTemplate(null)
+  }
+
+  const handleOpenDeleteDialog = (templateId: string) => {
+    console.log('INFO [RecurringTemplatesPage]: Opening delete dialog for template:', templateId)
+    setOperationError(null)
+    const template = templates.find((t) => t.id === templateId)
+    if (template) {
+      setSelectedTemplate(template)
+      setIsDeleteDialogOpen(true)
+    }
+  }
+
+  const handleCloseDeleteDialog = () => {
+    console.log('INFO [RecurringTemplatesPage]: Closing delete dialog')
+    setIsDeleteDialogOpen(false)
+    setSelectedTemplate(null)
+  }
+
+  const handleCreateTemplate = async (data: RecurringTemplateCreate) => {
+    console.log('INFO [RecurringTemplatesPage]: Creating template')
+    try {
+      await createTemplate(data)
+      handleCloseAddDialog()
+    } catch (err) {
+      console.error('ERROR [RecurringTemplatesPage]: Failed to create template:', err)
+      setOperationError('Failed to create template. Please try again.')
+    }
+  }
+
+  const handleUpdateTemplate = async (data: RecurringTemplateCreate) => {
+    if (!selectedTemplate) return
+
+    console.log('INFO [RecurringTemplatesPage]: Updating template:', selectedTemplate.id)
+    try {
+      const updateData: RecurringTemplateUpdate = {
+        category_id: data.category_id,
+        name: data.name,
+        amount: data.amount,
+        type: data.type,
+        frequency: data.frequency,
+        start_date: data.start_date,
+        end_date: data.end_date,
+        description: data.description,
+        notes: data.notes,
+      }
+      await updateTemplate(selectedTemplate.id, updateData)
+      handleCloseEditDialog()
+    } catch (err) {
+      console.error('ERROR [RecurringTemplatesPage]: Failed to update template:', err)
+      setOperationError('Failed to update template. Please try again.')
+    }
+  }
+
+  const handleDeactivateTemplate = async () => {
+    if (!selectedTemplate) return
+
+    console.log('INFO [RecurringTemplatesPage]: Deactivating template:', selectedTemplate.id)
+    try {
+      await deactivateTemplate(selectedTemplate.id)
+      handleCloseDeactivateDialog()
+    } catch (err) {
+      console.error('ERROR [RecurringTemplatesPage]: Failed to deactivate template:', err)
+      setOperationError('Failed to deactivate template. Please try again.')
+    }
+  }
+
+  const handleDeleteTemplate = async () => {
+    if (!selectedTemplate) return
+
+    console.log('INFO [RecurringTemplatesPage]: Deleting template:', selectedTemplate.id)
+    try {
+      await deleteTemplate(selectedTemplate.id)
+      handleCloseDeleteDialog()
+    } catch (err) {
+      console.error('ERROR [RecurringTemplatesPage]: Failed to delete template:', err)
+      setOperationError('Failed to delete template. Please try again.')
+    }
+  }
+
+  return (
+    <Container maxWidth="lg">
+      <Box sx={{ py: 4 }}>
+        {/* Header */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 3,
+          }}
+        >
+          <Typography variant="h4" component="h1">
+            Recurring Transactions
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={handleOpenAddDialog}
+          >
+            Add Recurring Template
+          </Button>
+        </Box>
+
+        {/* Global error display */}
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+
+        {/* Filters */}
+        <Paper sx={{ p: 2, mb: 3 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={includeInactive}
+                onChange={(e) => setIncludeInactive(e.target.checked)}
+              />
+            }
+            label="Show inactive templates"
+          />
+        </Paper>
+
+        {/* Template count */}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Showing {templates.length} of {total} recurring templates
+        </Typography>
+
+        {/* Templates table */}
+        <TRRecurringTemplateTable
+          templates={templates}
+          categories={categoryMap}
+          onEdit={handleOpenEditDialog}
+          onDeactivate={handleOpenDeactivateDialog}
+          onDelete={handleOpenDeleteDialog}
+          isLoading={isLoading}
+          canDelete={canDelete}
+        />
+
+        {/* Add Template Dialog */}
+        <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} maxWidth="sm" fullWidth>
+          <DialogTitle>Add Recurring Template</DialogTitle>
+          <DialogContent>
+            {operationError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {operationError}
+              </Alert>
+            )}
+            <Box sx={{ pt: 1 }}>
+              <TRRecurringTemplateForm
+                onSubmit={handleCreateTemplate}
+                categories={categories}
+                entityId={entityId}
+                onCancel={handleCloseAddDialog}
+              />
+            </Box>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Template Dialog */}
+        <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
+          <DialogTitle>Edit Recurring Template</DialogTitle>
+          <DialogContent>
+            {operationError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {operationError}
+              </Alert>
+            )}
+            <Box sx={{ pt: 1 }}>
+              {selectedTemplate && (
+                <TRRecurringTemplateForm
+                  onSubmit={handleUpdateTemplate}
+                  initialData={selectedTemplate}
+                  categories={categories}
+                  entityId={entityId}
+                  onCancel={handleCloseEditDialog}
+                />
+              )}
+            </Box>
+          </DialogContent>
+        </Dialog>
+
+        {/* Deactivate Confirmation Dialog */}
+        <Dialog open={isDeactivateDialogOpen} onClose={handleCloseDeactivateDialog}>
+          <DialogTitle>Deactivate Recurring Template</DialogTitle>
+          <DialogContent>
+            {operationError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {operationError}
+              </Alert>
+            )}
+            <Typography>
+              Are you sure you want to deactivate this recurring template?
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              The template will remain in your records but will be marked as inactive.
+            </Typography>
+            {selectedTemplate && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                <Typography variant="body2">
+                  <strong>Name:</strong> {selectedTemplate.name}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Type:</strong> {selectedTemplate.type}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Amount:</strong> ${selectedTemplate.amount}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Frequency:</strong> {selectedTemplate.frequency}
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeactivateDialog}>Cancel</Button>
+            <Button onClick={handleDeactivateTemplate} color="warning" variant="contained">
+              Deactivate
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+          <DialogTitle>Delete Recurring Template</DialogTitle>
+          <DialogContent>
+            {operationError && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {operationError}
+              </Alert>
+            )}
+            <Typography color="error">
+              Are you sure you want to permanently delete this recurring template?
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              This action cannot be undone. Consider deactivating instead to preserve history.
+            </Typography>
+            {selectedTemplate && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                <Typography variant="body2">
+                  <strong>Name:</strong> {selectedTemplate.name}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Type:</strong> {selectedTemplate.type}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Amount:</strong> ${selectedTemplate.amount}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Frequency:</strong> {selectedTemplate.frequency}
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
+            <Button onClick={handleDeleteTemplate} color="error" variant="contained">
+              Delete Permanently
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
+    </Container>
+  )
+}
+
+export default RecurringTemplatesPage
