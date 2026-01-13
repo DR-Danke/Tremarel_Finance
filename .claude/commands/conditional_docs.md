@@ -68,7 +68,7 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing or modifying department auto-detection features
     - When troubleshooting department suggestion or confidence scoring
     - When working with the department_detector service or keyword mappings
-    - When modifying the FKInterviewUploader component's department selection logic
+    - When modifying the TRInterviewUploader component's department selection logic
     - When extending diarization service for additional metadata inference
 
 - app_docs/feature-1915ca63-fix-entidades-loading-loop.md
@@ -199,7 +199,7 @@ This prompt helps you determine what documentation you should read based on the 
 - app_docs/feature-f32ec0ab-servicedesk-ticket-form.md
   - Conditions:
     - When implementing or modifying the ServiceDesk ticket creation form
-    - When working with FKServicedeskTicketForm component
+    - When working with TRServicedeskTicketForm component
     - When implementing knowledge base suggestions during ticket creation
     - When adding file upload functionality to forms
     - When working with debounced API calls for real-time suggestions
@@ -218,7 +218,7 @@ This prompt helps you determine what documentation you should read based on the 
   - Conditions:
     - When working with ServiceDesk ticket list or DataGrid display
     - When implementing or modifying ticket filtering functionality
-    - When working with FKServicedeskTicketList or FKServicedeskFilterPanel components
+    - When working with TRServicedeskTicketList or TRServicedeskFilterPanel components
     - When implementing ticket status or priority badge components
     - When working with SLA countdown display or time-based color coding
     - When adding pagination or sorting to ServiceDesk ticket views
@@ -257,7 +257,7 @@ This prompt helps you determine what documentation you should read based on the 
   - Conditions:
     - When working with ServiceDesk technician management UI
     - When implementing or modifying ServicedeskTechnicians page
-    - When working with FKServicedeskTechnicianForm component
+    - When working with TRServicedeskTechnicianForm component
     - When implementing technician CRUD operations in frontend
     - When adding bulk actions for technicians
     - When working with credential display or copy-to-clipboard functionality
@@ -373,7 +373,7 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing or modifying self-resolution (ticket deflection) tracking
     - When working with sd_self_resolutions table or SelfResolutionRepository
     - When implementing deflection rate analytics or knowledge base effectiveness metrics
-    - When modifying FKServicedeskTicketForm "Esto resolvió mi problema" functionality
+    - When modifying TRServicedeskTicketForm "Esto resolvió mi problema" functionality
     - When working with POST /api/servicedesk/knowledge/self-resolved endpoint
     - When implementing GET /api/servicedesk/analytics/deflection endpoint
     - When troubleshooting article suggestion tracking or deflection stats
@@ -390,7 +390,7 @@ This prompt helps you determine what documentation you should read based on the 
   - Conditions:
     - When working with "Ver Articulo" links on ticket creation suggestions
     - When troubleshooting 422 errors on article view navigation
-    - When modifying FKServicedeskTicketForm suggestion panel links
+    - When modifying TRServicedeskTicketForm suggestion panel links
     - When working with knowledge article URL patterns (slug vs article_id)
 
 - app_docs/feature-0f0d4c36-fastapi-backend-setup.md

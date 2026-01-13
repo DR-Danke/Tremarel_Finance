@@ -288,4 +288,4 @@ Execute every command to validate the feature works correctly with zero regressi
 - The axios client includes placeholder interceptors that will be fully implemented when authentication is added in Wave 2 (FT-005).
 - Context providers (AuthContext, EntityContext) are not created in this issue - they will be added in subsequent issues.
 - Console logging is included per CLAUDE.md guidelines for agentic debugging.
-- All component names will follow the FK prefix convention once actual components are created.
+- All component names will follow the TR prefix convention once actual components are created.

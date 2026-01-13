@@ -285,7 +285,7 @@ except Exception as e:
 - **Authentication**: JWT with role-based access control
 
 ## Code Standards
-- **Component Naming**: All form/business components must start with FK prefix (e.g., `FKUserForm.tsx`)
+- **Component Naming**: All form/business components must start with TR prefix (e.g., `TRUserForm.tsx`)
 - **Information-Dense Keywords (IDK)**: Use meaningful, searchable names for all types, classes, functions, and variables (avoid generic terms like "data", "handler", "utils" without context)
 - **File Size Limits**: Soft limit of 1000 lines per file for optimal maintainability and agent processing
 - **Type Traceability**: Types, classes, and interfaces should trace clear information flows through the application
@@ -302,8 +302,8 @@ src/
 ├── main.tsx                  # ENTRY POINT - Application bootstrap
 ├── App.tsx                   # Root component
 ├── api/clients/              # HTTP clients with interceptors
-├── components/forms/         # FK-prefixed form components
-├── components/ui/            # FK-prefixed reusable components
+├── components/forms/         # TR-prefixed form components
+├── components/ui/            # TR-prefixed reusable components
 ├── hooks/                    # Custom hooks (useAuth, useAPI, etc.)
 ├── store/reducers/           # useReducer implementations
 ├── services/                 # Business logic services

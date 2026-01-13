@@ -93,5 +93,5 @@ cd Client && npm run lint
 
 - Authentication context (AuthContext) and entity context (EntityContext) are not implemented - they will be added in subsequent features
 - The login page is a placeholder - full authentication will be implemented later
-- All FK-prefixed components will be added in future features
+- All TR-prefixed components will be added in future features
 - The axios client includes 401 handling that clears tokens and logs the user out
