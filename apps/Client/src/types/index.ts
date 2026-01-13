@@ -180,3 +180,32 @@ export interface CategoryUpdateInput {
   icon?: string | null
   is_active?: boolean
 }
+
+// Dashboard types
+export interface CurrentMonthSummary {
+  total_income: number
+  total_expenses: number
+  net_balance: number
+}
+
+export interface MonthlyTotal {
+  month: string
+  year: number
+  month_number: number
+  income: number
+  expenses: number
+}
+
+export interface CategoryBreakdown {
+  category_id: string
+  category_name: string
+  amount: number
+  percentage: number
+  color: string | null
+}
+
+export interface DashboardStats {
+  current_month_summary: CurrentMonthSummary
+  monthly_trends: MonthlyTotal[]
+  expense_breakdown: CategoryBreakdown[]
+}
