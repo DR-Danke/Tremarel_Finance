@@ -31,7 +31,7 @@ Design for AI agent navigation and autonomous operation:
 
 1. **Clear Entry Points**: `main.py` (backend), `main.tsx` (frontend)
 2. **Information-Dense Keywords (IDKs)**: Use meaningful, searchable names
-   - Good: `TransactionService`, `CategoryRepository`, `FKBudgetForm`
+   - Good: `TransactionService`, `CategoryRepository`, `TRBudgetForm`
    - Bad: `DataHandler`, `Utils`, `Manager`
 3. **File Size Limits**: Soft limit of 1000 lines per file
 4. **Consistent Patterns**: Same folder structure, naming, and code style throughout
@@ -55,7 +55,7 @@ console.error(`ERROR [TransactionService]: API call failed:`, error);
 
 ## Technology Stack
 
-### Frontend (Client/)
+### Frontend (apps/Client/)
 - **React**: 19.2.3 + **TypeScript**: 5.x
 - **Build Tool**: Vite 5.x
 - **UI Library**: Material-UI 5.x
@@ -64,7 +64,7 @@ console.error(`ERROR [TransactionService]: API call failed:`, error);
 - **HTTP**: Axios with JWT interceptor
 - **Charts**: Recharts
 
-### Backend (Server/)
+### Backend (apps/Server/)
 - **Python**: 3.11.9 (CRITICAL for Render)
 - **FastAPI**: 0.104+
 - **Server**: Uvicorn
@@ -128,17 +128,17 @@ pytest tests/
 
 ## Project Structure
 
-### Frontend (Client/)
+### Frontend (apps/Client/)
 
 ```
-Client/src/
+apps/Client/src/
 ├── main.tsx                 # ENTRY POINT
 ├── App.tsx                  # Root with routing
 ├── api/clients/             # HTTP clients with JWT
 ├── components/
-│   ├── layout/              # FKMainLayout, FKCollapsibleSidebar, FKTopNavbar
-│   ├── forms/               # FK-prefixed form components
-│   ├── ui/                  # FK-prefixed reusable UI
+│   ├── layout/              # TRMainLayout, TRCollapsibleSidebar, TRTopNavbar
+│   ├── forms/               # TR-prefixed form components
+│   ├── ui/                  # TR-prefixed reusable UI
 │   └── auth/                # ProtectedRoute, RoleProtectedRoute
 ├── contexts/                # AuthContext, EntityContext
 ├── hooks/                   # useAuth, useTransactions, etc.
@@ -149,10 +149,10 @@ Client/src/
 └── utils/                   # Formatters, validators
 ```
 
-### Backend (Server/)
+### Backend (apps/Server/)
 
 ```
-Server/
+apps/Server/
 ├── main.py                  # ENTRY POINT
 ├── src/
 │   ├── adapter/rest/        # FastAPI routes
@@ -169,8 +169,8 @@ Server/
 ## Code Standards
 
 ### Component Naming
-- **FK Prefix**: All business/form components MUST use FK prefix
-  - `FKTransactionForm.tsx`, `FKBudgetCard.tsx`, `FKCollapsibleSidebar.tsx`
+- **TR Prefix**: All business/form components MUST use TR prefix
+  - `TRTransactionForm.tsx`, `TRBudgetCard.tsx`, `TRCollapsibleSidebar.tsx`
 - **Standard Components**: Layout and utility components use descriptive names
   - `ProtectedRoute.tsx`, `TransactionList.tsx`
 
@@ -320,11 +320,11 @@ const transactions = await transactionService.getAll(currentEntity.id);
 
 ### Creating a Transaction Form
 ```typescript
-// Client/src/components/forms/FKTransactionForm.tsx
+// apps/Client/src/components/forms/TRTransactionForm.tsx
 import { useForm } from 'react-hook-form';
 import { TextField, Button, MenuItem } from '@mui/material';
 
-export const FKTransactionForm: React.FC<Props> = ({ onSubmit }) => {
+export const TRTransactionForm: React.FC<Props> = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   return (
@@ -343,7 +343,7 @@ export const FKTransactionForm: React.FC<Props> = ({ onSubmit }) => {
 
 ### Adding a Backend Endpoint
 ```python
-# Server/src/adapter/rest/transaction_routes.py
+# apps/Server/src/adapter/rest/transaction_routes.py
 from fastapi import APIRouter, Depends
 from ..dependencies import get_current_user
 

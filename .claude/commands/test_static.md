@@ -28,11 +28,11 @@ TEST_COMMAND_TIMEOUT: 2 minutes
 
 ## Test Execution Sequence
 
-### Backend Static Analysis
+### Server Static Analysis
 
 1. **Enum Reference Validation**
    - Preparation Command: None
-   - Command: `cd backend && python -c "
+   - Command: `cd Server && python -c "
 from pathlib import Path
 import re
 import sys
@@ -78,7 +78,7 @@ print('Enum references: OK')
 
 2. **Route Module Import Validation**
    - Preparation Command: None
-   - Command: `cd backend && python -c "
+   - Command: `cd Server && python -c "
 import sys
 sys.path.insert(0, '.')
 
@@ -117,7 +117,7 @@ print('Route imports: OK')
 
 3. **DTO Import Validation**
    - Preparation Command: None
-   - Command: `cd backend && python -c "
+   - Command: `cd Server && python -c "
 import sys
 sys.path.insert(0, '.')
 
@@ -146,11 +146,11 @@ print('DTO imports: OK')
    - test_name: "dto_import_validation"
    - test_purpose: "Validates all DTO modules can be imported without errors"
 
-### Frontend Static Analysis
+### Client Static Analysis
 
 4. **Role vs UserType Field Check**
    - Preparation Command: None
-   - Command: `cd frontend && python3 -c "
+   - Command: `cd Client && python3 -c "
 import os
 import re
 import sys
@@ -188,7 +188,7 @@ print('Role field usage: OK')
 
 5. **TypeScript Strict Compilation**
    - Preparation Command: None
-   - Command: `cd frontend && npx tsc --noEmit 2>&1 | head -50`
+   - Command: `cd Client && npx tsc --noEmit 2>&1 | head -50`
    - test_name: "typescript_strict_check"
    - test_purpose: "Validates TypeScript compilation catches type errors"
 
@@ -221,14 +221,14 @@ print('Role field usage: OK')
   {
     "test_name": "enum_reference_validation",
     "passed": false,
-    "execution_command": "cd backend && python -c \"...\"",
+    "execution_command": "cd Server && python -c \"...\"",
     "test_purpose": "Validates all enum references use correct UPPERCASE member names",
     "error": "src/adapter/rest/risk_routes.py:2601: EmailChainValidationStatus.pending - valid members: ['PENDING', 'VALIDATED', 'SUSPICIOUS', 'CRITICAL']"
   },
   {
     "test_name": "route_import_validation",
     "passed": true,
-    "execution_command": "cd backend && python -c \"...\"",
+    "execution_command": "cd Server && python -c \"...\"",
     "test_purpose": "Validates all route modules can be imported without AttributeError"
   }
 ]

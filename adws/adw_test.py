@@ -592,7 +592,7 @@ def check_route_files_changed(logger: logging.Logger) -> List[str]:
         changed_files = result.stdout.strip().split("\n")
         route_files = [
             f for f in changed_files
-            if f.startswith("Server/src/adapter/rest/") and f.endswith("_routes.py")
+            if f.startswith("apps/Server/src/adapter/rest/") and f.endswith("_routes.py")
         ]
         return route_files
     except Exception as e:
@@ -606,10 +606,10 @@ def start_test_server(logger: logging.Logger) -> Optional[subprocess.Popen]:
         env = os.environ.copy()
         env["TESTING"] = "true"
 
-        # Start uvicorn in background
+        # Start uvicorn in background using the venv
         proc = subprocess.Popen(
-            ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
-            cwd="Server",
+            [".venv/bin/uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"],
+            cwd="apps/Server",
             env=env,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

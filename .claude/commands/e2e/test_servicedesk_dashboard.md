@@ -68,7 +68,7 @@ So that I can monitor workload, prioritize urgent issues, and access key Service
 - All 4 stats cards display with correct titles and icons
 - Refresh button triggers stats reload
 - Tab navigation works correctly between all tabs
-- Create Ticket tab shows the FKServicedeskTicketForm component
+- Create Ticket tab shows the TRServicedeskTicketForm component
 - Analytics tab only visible to admin users
 - Responsive layout works on mobile
 - Error handling shows appropriate messages

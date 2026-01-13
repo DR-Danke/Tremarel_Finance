@@ -27,9 +27,9 @@ issue_json: $3
 
 Focus on the following files:
 - `README.md` - Contains the project overview and instructions.
-- `backend/**` - Contains the backend codebase.
-- `frontend/**` - Contains the frontend codebase.
-- `scripts/**` - Contains the scripts to start and stop the backend + frontend.
+- `apps/Server/**` - Contains the Server codebase.
+- `apps/Client/**` - Contains the Client codebase.
+- `scripts/**` - Contains the scripts to start and stop the Server + Client.
 - `adws/**` - Contains the AI Developer Workflow (ADW) scripts.
 
 - Read `.claude/commands/conditional_docs.md` to check if your task requires additional documentation
@@ -64,7 +64,7 @@ IMPORTANT: Execute every step in order, top to bottom.
 Execute every command to validate the chore is complete with zero regressions.
 
 <list commands you'll use to validate with 100% confidence the chore is complete with zero regressions. every command must execute without errors so be specific about what you want to run to validate the chore is complete with zero regressions. Don't validate with curl commands.>
-- `cd backend && uv run pytest` - Run backend tests to validate the chore is complete with zero regressions
+- `cd Server && uv run pytest` - Run Server tests to validate the chore is complete with zero regressions
 
 ## Notes
 <optionally list any additional notes or context that are relevant to the chore that will be helpful to the developer>

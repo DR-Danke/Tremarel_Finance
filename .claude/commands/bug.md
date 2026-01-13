@@ -34,9 +34,9 @@ issue_json: $3
 
 Focus on the following files:
 - `README.md` - Contains the project overview and instructions.
-- `backend/**` - Contains the backend codebase.
-- `frontend/**` - Contains the frontend codebase.
-- `scripts/**` - Contains the scripts to start and stop the backend + frontend.
+- `apps/Server/**` - Contains the Server codebase.
+- `apps/Client/**` - Contains the Client codebase.
+- `scripts/**` - Contains the scripts to start and stop the Server + Client.
 - `adws/**` - Contains the AI Developer Workflow (ADW) scripts.
 
 - Read `.claude/commands/conditional_docs.md` to check if your task requires additional documentation
@@ -90,9 +90,9 @@ Execute every command to validate the bug is fixed with zero regressions.
 
 <If you created an E2E test, include the following validation step: "Read .claude/commands/test_e2e.md`, then read and execute your new E2E `.claude/commands/e2e/test_<descriptive_name>.md` test file to validate this functionality works.">
 
-- `cd backend && uv run pytest` - Run backend tests to validate the bug is fixed with zero regressions
-- `cd frontend && npm run tsc --noEmit` - Run frontend type check to validate the bug is fixed with zero regressions
-- `cd frontend && npm run build` - Run frontend build to validate the bug is fixed with zero regressions
+- `cd Server && uv run pytest` - Run Server tests to validate the bug is fixed with zero regressions
+- `cd Client && npm run tsc --noEmit` - Run Client type check to validate the bug is fixed with zero regressions
+- `cd Client && npm run build` - Run Client build to validate the bug is fixed with zero regressions
 
 ## Notes
 <optionally list any additional notes or context that are relevant to the bug that will be helpful to the developer>

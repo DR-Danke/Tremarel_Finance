@@ -138,14 +138,14 @@ pytest tests/
 frontend/src/
 ├── api/clients/              # Axios HTTP clients with auth interceptors
 ├── components/
-│   ├── forms/                # FK-prefixed form components
-│   │   ├── FKContractRequest.tsx
-│   │   ├── FKClientDataImport.tsx
-│   │   └── FKReviewQueue.tsx
-│   ├── ui/                   # FK-prefixed reusable UI
-│   │   ├── FKMainLayout.tsx
-│   │   ├── FKSidebar.tsx
-│   │   └── FKTopNavbar.tsx
+│   ├── forms/                # TR-prefixed form components
+│   │   ├── TRContractRequest.tsx
+│   │   ├── TRClientDataImport.tsx
+│   │   └── TRReviewQueue.tsx
+│   ├── ui/                   # TR-prefixed reusable UI
+│   │   ├── TRMainLayout.tsx
+│   │   ├── TRSidebar.tsx
+│   │   └── TRTopNavbar.tsx
 │   ├── declaraciones/        # Module-specific components
 │   ├── ProtectedRoute.tsx    # Authentication guard
 │   └── RoleProtectedRoute.tsx # Authorization guard
@@ -202,7 +202,7 @@ backend/src/
 ## Code Standards (Non-Negotiable)
 
 ### TypeScript Standards
-- **Component Naming**: Business/form components MUST use `FK` prefix (e.g., `FKContractForm.tsx`)
+- **Component Naming**: Business/form components MUST use `TR` prefix (e.g., `TRContractForm.tsx`)
 - **Type Coverage**: 100% TypeScript, NO `any` types in production
 - **Imports**: Use `@/` alias for absolute imports
 - **File Naming**: PascalCase for components, camelCase for utilities
@@ -663,11 +663,11 @@ cd frontend && npm run build  # Creates dist/
 
 **Creating a New Form Component:**
 ```typescript
-// frontend/src/components/forms/FKMyForm.tsx
+// frontend/src/components/forms/TRMyForm.tsx
 import { useForm } from 'react-hook-form';
 import { TextField, Button } from '@mui/material';
 
-export const FKMyForm: React.FC = () => {
+export const TRMyForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
@@ -720,7 +720,7 @@ async def get_data(
 When working with this codebase:
 
 1. **Architecture**: Follow Clean Architecture strictly (adapter → core → repositorio)
-2. **Component Naming**: MUST use FK prefix for business/form components
+2. **Component Naming**: MUST use TR prefix for business/form components
 3. **Type Safety**: NO `any` types - 100% TypeScript coverage required
 4. **Environment Variables**:
    - Frontend: All prefixed with `VITE_`
