@@ -73,3 +73,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting frontend authentication or session issues
     - When adding new pages that require authentication
     - When working with the LoginPage or authentication flow
+
+- app_docs/feature-a201d4c8-main-layout-collapsible-sidebar.md
+  - Conditions:
+    - When working with the main application layout or navigation
+    - When modifying or creating components in apps/Client/src/components/layout/
+    - When implementing EntityContext or useEntity hook
+    - When adding new navigation items to the sidebar
+    - When working with entity switching functionality
+    - When troubleshooting sidebar collapse/expand behavior
+    - When adding new protected pages that need the main layout
