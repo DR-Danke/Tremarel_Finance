@@ -113,7 +113,7 @@ class RecurringTemplateRepository:
 
         if not include_inactive:
             print("INFO [RecurringTemplateRepository]: Filtering to active templates only")
-            query = query.filter(RecurringTemplate.is_active == True)
+            query = query.filter(RecurringTemplate.is_active.is_(True))
 
         query = query.order_by(RecurringTemplate.created_at.desc())
         templates = query.offset(skip).limit(limit).all()
@@ -141,7 +141,7 @@ class RecurringTemplateRepository:
         query = db.query(RecurringTemplate).filter(RecurringTemplate.entity_id == entity_id)
 
         if not include_inactive:
-            query = query.filter(RecurringTemplate.is_active == True)
+            query = query.filter(RecurringTemplate.is_active.is_(True))
 
         count = query.count()
         print(f"INFO [RecurringTemplateRepository]: Count result: {count}")
