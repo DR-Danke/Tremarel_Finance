@@ -409,3 +409,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting axios interceptor or JWT token handling
     - When deploying the frontend to Vercel
     - When adding new React dependencies or updating package.json
+
+- app_docs/feature-db5f36c7-database-schema-tables.md
+  - Conditions:
+    - When working with Finance Tracker database tables or schema
+    - When implementing user authentication or JWT-based auth
+    - When working with entities, categories, transactions, or budgets tables
+    - When modifying Server/database/schema.sql
+    - When troubleshooting foreign key constraints or database relationships
+    - When implementing multi-entity support (family/startup separation)
