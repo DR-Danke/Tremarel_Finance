@@ -200,7 +200,7 @@ class CategoryService:
         if data.parent_id is not None:
             # Prevent setting self as parent
             if data.parent_id == category_id:
-                print(f"ERROR [CategoryService]: Cannot set category as its own parent")
+                print("ERROR [CategoryService]: Cannot set category as its own parent")
                 raise ValueError("Category cannot be its own parent")
 
             # Check parent exists and belongs to same entity
@@ -210,12 +210,12 @@ class CategoryService:
                 raise ValueError("Parent category not found")
 
             if parent.entity_id != entity_id:
-                print(f"ERROR [CategoryService]: Parent belongs to different entity")
+                print("ERROR [CategoryService]: Parent belongs to different entity")
                 raise ValueError("Parent category belongs to a different entity")
 
             # Check parent has same type
             if parent.type != category.type:
-                print(f"ERROR [CategoryService]: Parent type mismatch")
+                print("ERROR [CategoryService]: Parent type mismatch")
                 raise ValueError(
                     f"Parent category type '{parent.type}' does not match "
                     f"category type '{category.type}'"
@@ -223,7 +223,7 @@ class CategoryService:
 
             # Check for circular reference
             if self._would_create_cycle(db, category_id, data.parent_id):
-                print(f"ERROR [CategoryService]: Circular reference detected")
+                print("ERROR [CategoryService]: Circular reference detected")
                 raise ValueError("This change would create a circular reference")
 
             category.parent_id = data.parent_id

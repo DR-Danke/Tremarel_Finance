@@ -90,7 +90,7 @@ class CategoryRepository:
         print(f"INFO [CategoryRepository]: Getting categories for entity {entity_id}")
         query = db.query(Category).filter(Category.entity_id == entity_id)
         if not include_inactive:
-            query = query.filter(Category.is_active == True)
+            query = query.filter(Category.is_active.is_(True))
         categories = query.order_by(Category.name).all()
         print(f"INFO [CategoryRepository]: Found {len(categories)} categories")
         return categories
@@ -112,7 +112,7 @@ class CategoryRepository:
         print(f"INFO [CategoryRepository]: Getting categories with parent {parent_id}")
         query = db.query(Category).filter(
             Category.entity_id == entity_id,
-            Category.is_active == True,
+            Category.is_active.is_(True),
         )
         if parent_id is None:
             query = query.filter(Category.parent_id.is_(None))
