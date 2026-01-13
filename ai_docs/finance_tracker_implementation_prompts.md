@@ -75,7 +75,7 @@ Create the Client folder with a React 19.2.3 + TypeScript + Vite application. In
 **What comes next:** After Wave 1 completes, Wave 2 begins with sequential authentication implementation (FT-004 Backend Auth, then FT-005 Frontend Auth).
 
 ## Request
-Create the database schema file in Server/database/schema.sql with all tables needed for the finance tracker: users (with password_hash for custom auth), entities (family/startup), user_entities (many-to-many with roles), categories (hierarchical with parent_id), transactions, and budgets. Include appropriate indexes for performance.
+Create the database schema file in apps/Server/database/schema.sql with all tables needed for the finance tracker: users (with password_hash for custom auth), entities (family/startup), user_entities (many-to-many with roles), categories (hierarchical with parent_id), transactions, and budgets. Include appropriate indexes for performance.
 ```
 
 ---

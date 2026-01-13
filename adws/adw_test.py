@@ -592,7 +592,7 @@ def check_route_files_changed(logger: logging.Logger) -> List[str]:
         changed_files = result.stdout.strip().split("\n")
         route_files = [
             f for f in changed_files
-            if f.startswith("Server/src/adapter/rest/") and f.endswith("_routes.py")
+            if f.startswith("apps/Server/src/adapter/rest/") and f.endswith("_routes.py")
         ]
         return route_files
     except Exception as e:

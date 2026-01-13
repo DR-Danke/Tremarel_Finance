@@ -22,15 +22,15 @@ Foundational React + TypeScript + Vite frontend application setup for the Financ
 
 ### Files Modified
 
-- `Client/package.json`: NPM configuration with React 19, MUI 5, React Router 6, axios, recharts dependencies
-- `Client/tsconfig.json`: TypeScript strict mode with `@/` path alias
-- `Client/vite.config.ts`: Vite with React plugin and path alias resolution
-- `Client/vercel.json`: SPA deployment configuration for Vercel
-- `Client/src/main.tsx`: Application entry point with providers (ThemeProvider, BrowserRouter, StrictMode)
-- `Client/src/App.tsx`: Root component with React Router setup and placeholder pages
-- `Client/src/theme/index.ts`: Material-UI theme (primary: blue #1976d2, secondary: teal #009688)
-- `Client/src/api/clients/index.ts`: Axios instance with JWT interceptor and error handling
-- `Client/src/types/index.ts`: Base TypeScript interfaces (ApiResponse, User, AuthState)
+- `apps/Client/package.json`: NPM configuration with React 19, MUI 5, React Router 6, axios, recharts dependencies
+- `apps/Client/tsconfig.json`: TypeScript strict mode with `@/` path alias
+- `apps/Client/vite.config.ts`: Vite with React plugin and path alias resolution
+- `apps/Client/vercel.json`: SPA deployment configuration for Vercel
+- `apps/Client/src/main.tsx`: Application entry point with providers (ThemeProvider, BrowserRouter, StrictMode)
+- `apps/Client/src/App.tsx`: Root component with React Router setup and placeholder pages
+- `apps/Client/src/theme/index.ts`: Material-UI theme (primary: blue #1976d2, secondary: teal #009688)
+- `apps/Client/src/api/clients/index.ts`: Axios instance with JWT interceptor and error handling
+- `apps/Client/src/types/index.ts`: Base TypeScript interfaces (ApiResponse, User, AuthState)
 - `.claude/commands/e2e/test_frontend_setup.md`: E2E test for validating the setup
 
 ### Key Changes
@@ -43,7 +43,7 @@ Foundational React + TypeScript + Vite frontend application setup for the Financ
 
 ## How to Use
 
-1. Navigate to the Client directory: `cd Client`
+1. Navigate to the Client directory: `cd apps/Client`
 2. Install dependencies: `npm install`
 3. Start development server: `npm run dev` (runs on http://localhost:5173)
 4. Build for production: `npm run build`
@@ -52,7 +52,7 @@ Foundational React + TypeScript + Vite frontend application setup for the Financ
 
 ## Configuration
 
-### Environment Variables (Client/.env)
+### Environment Variables (apps/Client/.env)
 
 ```bash
 VITE_API_URL=http://localhost:8000/api
@@ -61,7 +61,7 @@ VITE_APP_NAME=Finance Tracker
 
 ### Theme Customization
 
-The MUI theme is defined in `Client/src/theme/index.ts`:
+The MUI theme is defined in `apps/Client/src/theme/index.ts`:
 - Primary color: Blue (#1976d2)
 - Secondary color: Teal (#009688)
 - Light mode default
@@ -83,10 +83,10 @@ Run the E2E test to validate the frontend setup:
 
 Validation commands:
 ```bash
-cd Client && npm install
-cd Client && npm run typecheck
-cd Client && npm run build
-cd Client && npm run lint
+cd apps/Client && npm install
+cd apps/Client && npm run typecheck
+cd apps/Client && npm run build
+cd apps/Client && npm run lint
 ```
 
 ## Notes

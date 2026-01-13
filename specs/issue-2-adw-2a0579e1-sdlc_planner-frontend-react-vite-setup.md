@@ -32,38 +32,38 @@ Use these files to implement the feature:
 The following new files will be created:
 
 **Root Configuration:**
-- `Client/package.json` - NPM package configuration with all dependencies
-- `Client/tsconfig.json` - TypeScript configuration
-- `Client/tsconfig.node.json` - TypeScript config for Node.js (Vite config)
-- `Client/vite.config.ts` - Vite build configuration with path aliases
-- `Client/vercel.json` - Vercel deployment configuration
-- `Client/.env.sample` - Sample environment variables
-- `Client/index.html` - HTML entry point
+- `apps/Client/package.json` - NPM package configuration with all dependencies
+- `apps/Client/tsconfig.json` - TypeScript configuration
+- `apps/Client/tsconfig.node.json` - TypeScript config for Node.js (Vite config)
+- `apps/Client/vite.config.ts` - Vite build configuration with path aliases
+- `apps/Client/vercel.json` - Vercel deployment configuration
+- `apps/Client/.env.sample` - Sample environment variables
+- `apps/Client/index.html` - HTML entry point
 
 **Source Files:**
-- `Client/src/main.tsx` - Application entry point
-- `Client/src/App.tsx` - Root component with routing setup
-- `Client/src/vite-env.d.ts` - Vite environment type declarations
+- `apps/Client/src/main.tsx` - Application entry point
+- `apps/Client/src/App.tsx` - Root component with routing setup
+- `apps/Client/src/vite-env.d.ts` - Vite environment type declarations
 
 **Theme:**
-- `Client/src/theme/index.ts` - Material-UI theme configuration
+- `apps/Client/src/theme/index.ts` - Material-UI theme configuration
 
 **Types:**
-- `Client/src/types/index.ts` - Shared TypeScript interfaces
+- `apps/Client/src/types/index.ts` - Shared TypeScript interfaces
 
 **API:**
-- `Client/src/api/clients/index.ts` - Axios HTTP client with JWT interceptor
+- `apps/Client/src/api/clients/index.ts` - Axios HTTP client with JWT interceptor
 
 **Placeholder Directories (with .gitkeep):**
-- `Client/src/components/layout/.gitkeep`
-- `Client/src/components/forms/.gitkeep`
-- `Client/src/components/ui/.gitkeep`
-- `Client/src/components/auth/.gitkeep`
-- `Client/src/pages/.gitkeep`
-- `Client/src/services/.gitkeep`
-- `Client/src/hooks/.gitkeep`
-- `Client/src/contexts/.gitkeep`
-- `Client/src/utils/.gitkeep`
+- `apps/Client/src/components/layout/.gitkeep`
+- `apps/Client/src/components/forms/.gitkeep`
+- `apps/Client/src/components/ui/.gitkeep`
+- `apps/Client/src/components/auth/.gitkeep`
+- `apps/Client/src/pages/.gitkeep`
+- `apps/Client/src/services/.gitkeep`
+- `apps/Client/src/hooks/.gitkeep`
+- `apps/Client/src/contexts/.gitkeep`
+- `apps/Client/src/utils/.gitkeep`
 
 **E2E Test:**
 - `.claude/commands/e2e/test_frontend_setup.md` - E2E test to validate the frontend setup
@@ -94,22 +94,22 @@ IMPORTANT: Execute every step in order, top to bottom.
 ### Task 1: Create Client Directory Structure
 - Create the `Client` folder at the project root
 - Create the following subdirectories:
-  - `Client/src/components/layout`
-  - `Client/src/components/forms`
-  - `Client/src/components/ui`
-  - `Client/src/components/auth`
-  - `Client/src/pages`
-  - `Client/src/services`
-  - `Client/src/hooks`
-  - `Client/src/contexts`
-  - `Client/src/types`
-  - `Client/src/theme`
-  - `Client/src/api/clients`
-  - `Client/src/utils`
+  - `apps/Client/src/components/layout`
+  - `apps/Client/src/components/forms`
+  - `apps/Client/src/components/ui`
+  - `apps/Client/src/components/auth`
+  - `apps/Client/src/pages`
+  - `apps/Client/src/services`
+  - `apps/Client/src/hooks`
+  - `apps/Client/src/contexts`
+  - `apps/Client/src/types`
+  - `apps/Client/src/theme`
+  - `apps/Client/src/api/clients`
+  - `apps/Client/src/utils`
 - Add `.gitkeep` files to empty directories to ensure they're tracked in git
 
 ### Task 2: Create package.json with Dependencies
-- Create `Client/package.json` with:
+- Create `apps/Client/package.json` with:
   - Name: `finance-tracker-client`
   - Version: `0.1.0`
   - Type: `module`
@@ -138,23 +138,23 @@ IMPORTANT: Execute every step in order, top to bottom.
     - `eslint-plugin-react-refresh`: `^0.4.5`
 
 ### Task 3: Create TypeScript Configuration
-- Create `Client/tsconfig.json` with:
+- Create `apps/Client/tsconfig.json` with:
   - Compiler options for React with JSX transform
   - Strict mode enabled
   - Path alias `@/*` mapping to `src/*`
   - ES2020 target with ESNext modules
   - Include `src` directory
-- Create `Client/tsconfig.node.json` for Vite config file
+- Create `apps/Client/tsconfig.node.json` for Vite config file
 
 ### Task 4: Create Vite Configuration
-- Create `Client/vite.config.ts` with:
+- Create `apps/Client/vite.config.ts` with:
   - React plugin
   - Path alias resolution for `@/`
   - Server port configuration (5173)
   - Build output to `dist`
 
 ### Task 5: Create HTML Entry Point
-- Create `Client/index.html` with:
+- Create `apps/Client/index.html` with:
   - Standard HTML5 doctype
   - Root div with id `root`
   - Script module pointing to `/src/main.tsx`
@@ -162,7 +162,7 @@ IMPORTANT: Execute every step in order, top to bottom.
   - Meta viewport for responsive design
 
 ### Task 6: Create Application Entry Point (main.tsx)
-- Create `Client/src/main.tsx` with:
+- Create `apps/Client/src/main.tsx` with:
   - React 19 createRoot API
   - StrictMode wrapper
   - BrowserRouter wrapper (from react-router-dom)
@@ -172,7 +172,7 @@ IMPORTANT: Execute every step in order, top to bottom.
   - Console log for application initialization (per CLAUDE.md logging standards)
 
 ### Task 7: Create Material-UI Theme Configuration
-- Create `Client/src/theme/index.ts` with:
+- Create `apps/Client/src/theme/index.ts` with:
   - Primary color palette (e.g., blue #1976d2)
   - Secondary color palette (e.g., teal #009688)
   - Typography configuration
@@ -180,7 +180,7 @@ IMPORTANT: Execute every step in order, top to bottom.
   - Light theme as default
 
 ### Task 8: Create Root App Component with Routing
-- Create `Client/src/App.tsx` with:
+- Create `apps/Client/src/App.tsx` with:
   - React Router Routes and Route components
   - Placeholder route for home page (`/`)
   - Placeholder route for login page (`/login`)
@@ -188,7 +188,7 @@ IMPORTANT: Execute every step in order, top to bottom.
   - Console logging for route changes (per CLAUDE.md logging standards)
 
 ### Task 9: Create Axios HTTP Client
-- Create `Client/src/api/clients/index.ts` with:
+- Create `apps/Client/src/api/clients/index.ts` with:
   - Axios instance with base URL from environment variable
   - Request interceptor to add JWT Authorization header
   - Response interceptor for error handling
@@ -196,31 +196,31 @@ IMPORTANT: Execute every step in order, top to bottom.
   - Console logging for API requests/responses (per CLAUDE.md logging standards)
 
 ### Task 10: Create TypeScript Types
-- Create `Client/src/types/index.ts` with:
+- Create `apps/Client/src/types/index.ts` with:
   - Base `ApiResponse<T>` interface
   - `User` interface placeholder
   - `AuthState` interface placeholder
   - Export all types
 
 ### Task 11: Create Vite Environment Type Declarations
-- Create `Client/src/vite-env.d.ts` with:
+- Create `apps/Client/src/vite-env.d.ts` with:
   - Reference to vite/client types
   - ImportMetaEnv interface with VITE_API_URL and VITE_APP_NAME
 
 ### Task 12: Create Environment Sample File
-- Create `Client/.env.sample` with:
+- Create `apps/Client/.env.sample` with:
   - `VITE_API_URL=http://localhost:8000/api`
   - `VITE_APP_NAME=Finance Tracker`
 
 ### Task 13: Create Vercel Deployment Configuration
-- Create `Client/vercel.json` with:
+- Create `apps/Client/vercel.json` with:
   - Framework: vite
   - Build command: `npm run build`
   - Output directory: `dist`
   - SPA rewrites for client-side routing
 
 ### Task 14: Create ESLint Configuration
-- Create `Client/.eslintrc.cjs` with:
+- Create `apps/Client/.eslintrc.cjs` with:
   - TypeScript parser
   - React hooks plugin
   - React refresh plugin
@@ -275,10 +275,10 @@ Since this is a project setup task, unit tests are not applicable. The validatio
 ## Validation Commands
 Execute every command to validate the feature works correctly with zero regressions.
 
-- `cd Client && npm install` - Install dependencies
-- `cd Client && npm run typecheck` - Run TypeScript type check to validate types are correct
-- `cd Client && npm run build` - Run production build to validate the application compiles
-- `cd Client && npm run lint` - Run ESLint to check code quality
+- `cd apps/Client && npm install` - Install dependencies
+- `cd apps/Client && npm run typecheck` - Run TypeScript type check to validate types are correct
+- `cd apps/Client && npm run build` - Run production build to validate the application compiles
+- `cd apps/Client && npm run lint` - Run ESLint to check code quality
 - Read `.claude/commands/test_e2e.md`, then read and execute `.claude/commands/e2e/test_frontend_setup.md` to validate the application renders correctly
 
 ## Notes

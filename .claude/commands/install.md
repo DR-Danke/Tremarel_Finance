@@ -2,7 +2,7 @@
 
 ## Read
 .env.sample (never read .env)
-./Server/.env.sample (never read .env)
+./apps/Server/.env.sample (never read .env)
 
 ## Read and Execute
 .claude/commands/prime.md
@@ -19,7 +19,7 @@
 ## Report
 - Output the work you've just done in a concise bullet point list.
 - Instruct the user to fill out the root level ./.env based on .env.sample. 
-- If `./Server/.env` does not exist, instruct the user to fill out `./Server/.env` based on `./Server/.env.sample`
+- If `./apps/Server/.env` does not exist, instruct the user to fill out `./apps/Server/.env` based on `./apps/Server/.env.sample`
 - If `./env` does not exist, instruct the user to fill out `./env` based on `./env.sample`
 - Mention the url of the Client application we can visit based on `scripts/start.sh`
 - Mention: 'To setup your AFK Agent, be sure to update the remote repo url and push to a new repo so you have access to git issues and git prs:

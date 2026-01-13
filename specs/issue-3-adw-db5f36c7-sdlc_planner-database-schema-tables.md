@@ -17,7 +17,7 @@ So that the backend can store and query all application data including users, en
 The Finance Tracker application requires persistent storage for multiple data domains: user authentication, multi-entity support (family/startup separation), financial transactions, hierarchical category management, and budget tracking. Without a properly designed database schema, the application cannot store or retrieve any business data.
 
 ## Solution Statement
-Create a comprehensive PostgreSQL schema file (`Server/database/schema.sql`) that defines:
+Create a comprehensive PostgreSQL schema file (`apps/Server/database/schema.sql`) that defines:
 1. **users** table - Custom authentication with password_hash, email, and role
 2. **entities** table - Separate financial tracking contexts (family, startup)
 3. **user_entities** table - Many-to-many relationship with per-entity roles
@@ -34,11 +34,11 @@ Use these files to implement the feature:
 - `apps/` - Current application layer structure (minimal setup exists)
 
 ### New Files
-- `Server/database/schema.sql` - The complete PostgreSQL schema with all tables, indexes, and constraints
+- `apps/Server/database/schema.sql` - The complete PostgreSQL schema with all tables, indexes, and constraints
 
 ## Implementation Plan
 ### Phase 1: Foundation
-- Create the `Server/database/` directory structure
+- Create the `apps/Server/database/` directory structure
 - Design the users table with password_hash for custom JWT authentication
 - Design the entities table for multi-entity (family/startup) support
 
@@ -57,7 +57,7 @@ Use these files to implement the feature:
 IMPORTANT: Execute every step in order, top to bottom.
 
 ### 1. Create Directory Structure
-- Create the `Server/database/` directory to house the schema file
+- Create the `apps/Server/database/` directory to house the schema file
 - This follows the project structure defined in CLAUDE.md
 
 ### 2. Create Users Table
@@ -170,7 +170,7 @@ IMPORTANT: Execute every step in order, top to bottom.
 - Valid enum-like values for type and role columns
 
 ## Acceptance Criteria
-- [ ] `Server/database/schema.sql` file exists and contains valid PostgreSQL syntax
+- [ ] `apps/Server/database/schema.sql` file exists and contains valid PostgreSQL syntax
 - [ ] users table includes password_hash column for custom JWT auth
 - [ ] entities table supports family/startup type separation
 - [ ] user_entities table enables many-to-many relationships with per-entity roles
@@ -185,13 +185,13 @@ IMPORTANT: Execute every step in order, top to bottom.
 ## Validation Commands
 Execute every command to validate the feature works correctly with zero regressions.
 
-- `ls Server/database/schema.sql` - Verify the schema file was created in the correct location
-- `head -100 Server/database/schema.sql` - Review the beginning of the schema for proper structure
-- `grep -c "CREATE TABLE" Server/database/schema.sql` - Should return 6 (users, entities, user_entities, categories, transactions, budgets)
-- `grep -c "CREATE INDEX" Server/database/schema.sql` - Should return multiple indexes
-- `grep "password_hash" Server/database/schema.sql` - Verify users table has password_hash column
-- `grep "parent_id" Server/database/schema.sql` - Verify categories table has hierarchical support
-- `grep "FOREIGN KEY" Server/database/schema.sql` - Verify foreign key constraints exist
+- `ls apps/Server/database/schema.sql` - Verify the schema file was created in the correct location
+- `head -100 apps/Server/database/schema.sql` - Review the beginning of the schema for proper structure
+- `grep -c "CREATE TABLE" apps/Server/database/schema.sql` - Should return 6 (users, entities, user_entities, categories, transactions, budgets)
+- `grep -c "CREATE INDEX" apps/Server/database/schema.sql` - Should return multiple indexes
+- `grep "password_hash" apps/Server/database/schema.sql` - Verify users table has password_hash column
+- `grep "parent_id" apps/Server/database/schema.sql` - Verify categories table has hierarchical support
+- `grep "FOREIGN KEY" apps/Server/database/schema.sql` - Verify foreign key constraints exist
 
 ## Notes
 - This is Wave 1 (Foundation) and runs in parallel with FT-001 (Backend Setup) and FT-002 (Frontend Setup)

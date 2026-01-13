@@ -18,7 +18,7 @@ This prompt helps you determine what documentation you should read based on the 
     - When first understanding the project structure
     - When you want to learn the commands to start or stop the Server or Client
 
-- Client/src/style.css
+- apps/Client/src/style.css
   - Conditions:
     - When you need to make changes to the Client's style
 
@@ -33,7 +33,7 @@ This prompt helps you determine what documentation you should read based on the 
 - app_docs/feature-0f0d4c36-fastapi-backend-setup.md
   - Conditions:
     - When setting up or modifying the FastAPI Server project structure
-    - When working with Server/main.py or application entry point
+    - When working with apps/Server/main.py or application entry point
     - When configuring CORS, environment variables, or settings
     - When adding new routers or API endpoints to the Server
     - When troubleshooting Server startup or configuration issues
@@ -52,6 +52,6 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with Finance Tracker database tables or schema
     - When implementing user authentication or JWT-based auth
     - When working with entities, categories, transactions, or budgets tables
-    - When modifying Server/database/schema.sql
+    - When modifying apps/Server/database/schema.sql
     - When troubleshooting foreign key constraints or database relationships
     - When implementing multi-entity support (family/startup separation)

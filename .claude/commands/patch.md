@@ -31,8 +31,8 @@ issue_screenshots: $5 (optional) - comma-separated list of screenshot paths if p
 
 Focus on the following files:
 - `README.md` - Contains the project overview and instructions.
-- `Server/**` - Contains the Server codebase.
-- `Client/**` - Contains the Client codebase.
+- `apps/Server/**` - Contains the Server codebase.
+- `apps/Client/**` - Contains the Client codebase.
 - `scripts/**` - Contains the scripts to start and stop the Server + Client.
 - `adws/**` - Contains the AI Developer Workflow (ADW) scripts.
 

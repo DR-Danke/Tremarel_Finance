@@ -32,24 +32,24 @@ Use these files to implement the feature:
 - `ai_docs/finance_tracker_implementation_prompts.md` - Contains the overall implementation plan and context for the Finance Tracker project
 
 ### New Files
-- `Server/main.py` - FastAPI application entry point with CORS configuration and router includes
-- `Server/requirements.txt` - Python dependencies for the backend
-- `Server/.env.sample` - Sample environment variables documentation
-- `Server/src/__init__.py` - Package init file
-- `Server/src/adapter/__init__.py` - Adapter layer init
-- `Server/src/adapter/rest/__init__.py` - REST adapter init
-- `Server/src/adapter/rest/health_routes.py` - Health check endpoint routes
-- `Server/src/adapter/rest/dependencies.py` - FastAPI dependency injection (placeholder for auth)
-- `Server/src/core/__init__.py` - Core layer init
-- `Server/src/core/services/__init__.py` - Services layer init
-- `Server/src/repository/__init__.py` - Repository layer init
-- `Server/src/interface/__init__.py` - Interface (DTOs) layer init
-- `Server/src/models/__init__.py` - Models layer init
-- `Server/src/config/__init__.py` - Config layer init
-- `Server/src/config/settings.py` - Application settings using environment variables
-- `Server/src/config/database.py` - Database connection configuration (placeholder)
-- `Server/tests/__init__.py` - Tests package init
-- `Server/tests/test_health.py` - Health check endpoint tests
+- `apps/Server/main.py` - FastAPI application entry point with CORS configuration and router includes
+- `apps/Server/requirements.txt` - Python dependencies for the backend
+- `apps/Server/.env.sample` - Sample environment variables documentation
+- `apps/Server/src/__init__.py` - Package init file
+- `apps/Server/src/adapter/__init__.py` - Adapter layer init
+- `apps/Server/src/adapter/rest/__init__.py` - REST adapter init
+- `apps/Server/src/adapter/rest/health_routes.py` - Health check endpoint routes
+- `apps/Server/src/adapter/rest/dependencies.py` - FastAPI dependency injection (placeholder for auth)
+- `apps/Server/src/core/__init__.py` - Core layer init
+- `apps/Server/src/core/services/__init__.py` - Services layer init
+- `apps/Server/src/repository/__init__.py` - Repository layer init
+- `apps/Server/src/interface/__init__.py` - Interface (DTOs) layer init
+- `apps/Server/src/models/__init__.py` - Models layer init
+- `apps/Server/src/config/__init__.py` - Config layer init
+- `apps/Server/src/config/settings.py` - Application settings using environment variables
+- `apps/Server/src/config/database.py` - Database connection configuration (placeholder)
+- `apps/Server/tests/__init__.py` - Tests package init
+- `apps/Server/tests/test_health.py` - Health check endpoint tests
 
 ## Implementation Plan
 ### Phase 1: Foundation
@@ -67,18 +67,18 @@ IMPORTANT: Execute every step in order, top to bottom.
 ### 1. Create Server Directory Structure
 - Create the Server folder at the root level
 - Create all subdirectories following Clean Architecture:
-  - `Server/src/adapter/rest/`
-  - `Server/src/core/services/`
-  - `Server/src/repository/`
-  - `Server/src/interface/`
-  - `Server/src/models/`
-  - `Server/src/config/`
-  - `Server/tests/`
-  - `Server/database/`
+  - `apps/Server/src/adapter/rest/`
+  - `apps/Server/src/core/services/`
+  - `apps/Server/src/repository/`
+  - `apps/Server/src/interface/`
+  - `apps/Server/src/models/`
+  - `apps/Server/src/config/`
+  - `apps/Server/tests/`
+  - `apps/Server/database/`
 - Create all `__init__.py` files for Python package structure
 
 ### 2. Create Requirements File
-- Create `Server/requirements.txt` with dependencies:
+- Create `apps/Server/requirements.txt` with dependencies:
   - fastapi>=0.104.0
   - uvicorn[standard]>=0.24.0
   - pydantic>=2.0.0
@@ -94,18 +94,18 @@ IMPORTANT: Execute every step in order, top to bottom.
   - pytest-asyncio>=0.21.0
 
 ### 3. Create Configuration Module
-- Create `Server/src/config/settings.py` with Pydantic Settings class
+- Create `apps/Server/src/config/settings.py` with Pydantic Settings class
 - Include settings for:
   - DATABASE_URL
   - JWT_SECRET_KEY
   - JWT_ALGORITHM (default: HS256)
   - JWT_EXPIRE_MINUTES (default: 1440)
   - CORS_ORIGINS (as JSON string)
-- Create `Server/src/config/database.py` with SQLAlchemy engine and session setup (placeholder)
-- Create `Server/.env.sample` documenting all required environment variables
+- Create `apps/Server/src/config/database.py` with SQLAlchemy engine and session setup (placeholder)
+- Create `apps/Server/.env.sample` documenting all required environment variables
 
 ### 4. Create Health Check Endpoint
-- Create `Server/src/adapter/rest/health_routes.py` with APIRouter
+- Create `apps/Server/src/adapter/rest/health_routes.py` with APIRouter
 - Implement GET /api/health endpoint returning:
   - status: "healthy"
   - timestamp: current datetime
@@ -113,19 +113,19 @@ IMPORTANT: Execute every step in order, top to bottom.
 - Add appropriate logging following project standards
 
 ### 5. Create Dependencies Module
-- Create `Server/src/adapter/rest/dependencies.py`
+- Create `apps/Server/src/adapter/rest/dependencies.py`
 - Add placeholder function for `get_current_user` (to be implemented in auth wave)
 - Add database session dependency `get_db`
 
 ### 6. Create Main Entry Point
-- Create `Server/main.py` as the FastAPI application entry point
+- Create `apps/Server/main.py` as the FastAPI application entry point
 - Configure CORS middleware with settings from config
 - Register health routes with /api prefix
 - Add startup/shutdown events for logging
 - Include uvicorn runner for direct execution
 
 ### 7. Write Tests for Health Endpoint
-- Create `Server/tests/test_health.py`
+- Create `apps/Server/tests/test_health.py`
 - Test that /api/health returns 200 status
 - Test response contains status, timestamp, and version fields
 - Use pytest and httpx for async testing
@@ -159,13 +159,13 @@ IMPORTANT: Execute every step in order, top to bottom.
 ## Validation Commands
 Execute every command to validate the feature works correctly with zero regressions.
 
-- `ls -la Server/` - Verify Server folder exists with expected structure
-- `ls -la Server/src/adapter/rest/` - Verify REST adapter folder structure
-- `ls -la Server/src/core/services/` - Verify core services folder structure
-- `ls -la Server/src/config/` - Verify config folder structure
-- `cd Server && pip install -r requirements.txt` - Install dependencies (or use venv first)
-- `cd Server && python -c "from main import app; print('FastAPI app imports successfully')"` - Test import
-- `cd Server && python -m pytest tests/ -v` - Run tests to validate health endpoint
+- `ls -la apps/Server/` - Verify Server folder exists with expected structure
+- `ls -la apps/Server/src/adapter/rest/` - Verify REST adapter folder structure
+- `ls -la apps/Server/src/core/services/` - Verify core services folder structure
+- `ls -la apps/Server/src/config/` - Verify config folder structure
+- `cd apps/Server && pip install -r requirements.txt` - Install dependencies (or use venv first)
+- `cd apps/Server && python -c "from main import app; print('FastAPI app imports successfully')"` - Test import
+- `cd apps/Server && python -m pytest tests/ -v` - Run tests to validate health endpoint
 
 ## Notes
 - This is Wave 1 of 6, running in parallel with FT-002 (Frontend Setup) and FT-003 (Database Schema)

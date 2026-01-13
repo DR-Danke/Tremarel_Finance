@@ -55,7 +55,7 @@ console.error(`ERROR [TransactionService]: API call failed:`, error);
 
 ## Technology Stack
 
-### Frontend (Client/)
+### Frontend (apps/Client/)
 - **React**: 19.2.3 + **TypeScript**: 5.x
 - **Build Tool**: Vite 5.x
 - **UI Library**: Material-UI 5.x
@@ -64,7 +64,7 @@ console.error(`ERROR [TransactionService]: API call failed:`, error);
 - **HTTP**: Axios with JWT interceptor
 - **Charts**: Recharts
 
-### Backend (Server/)
+### Backend (apps/Server/)
 - **Python**: 3.11.9 (CRITICAL for Render)
 - **FastAPI**: 0.104+
 - **Server**: Uvicorn
@@ -128,10 +128,10 @@ pytest tests/
 
 ## Project Structure
 
-### Frontend (Client/)
+### Frontend (apps/Client/)
 
 ```
-Client/src/
+apps/Client/src/
 ├── main.tsx                 # ENTRY POINT
 ├── App.tsx                  # Root with routing
 ├── api/clients/             # HTTP clients with JWT
@@ -149,10 +149,10 @@ Client/src/
 └── utils/                   # Formatters, validators
 ```
 
-### Backend (Server/)
+### Backend (apps/Server/)
 
 ```
-Server/
+apps/Server/
 ├── main.py                  # ENTRY POINT
 ├── src/
 │   ├── adapter/rest/        # FastAPI routes
@@ -320,7 +320,7 @@ const transactions = await transactionService.getAll(currentEntity.id);
 
 ### Creating a Transaction Form
 ```typescript
-// Client/src/components/forms/TRTransactionForm.tsx
+// apps/Client/src/components/forms/TRTransactionForm.tsx
 import { useForm } from 'react-hook-form';
 import { TextField, Button, MenuItem } from '@mui/material';
 
@@ -343,7 +343,7 @@ export const TRTransactionForm: React.FC<Props> = ({ onSubmit }) => {
 
 ### Adding a Backend Endpoint
 ```python
-# Server/src/adapter/rest/transaction_routes.py
+# apps/Server/src/adapter/rest/transaction_routes.py
 from fastapi import APIRouter, Depends
 from ..dependencies import get_current_user
 

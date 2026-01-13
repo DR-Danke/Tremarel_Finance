@@ -29,7 +29,7 @@ If the server is not running (connection refused or non-200 status):
 Find modified route files in the current branch:
 
 ```bash
-git diff origin/main --name-only | grep -E "Server/src/adapter/rest/.*_routes\.py$"
+git diff origin/main --name-only | grep -E "apps/Server/src/adapter/rest/.*_routes\.py$"
 ```
 
 If no route files changed:
@@ -152,7 +152,7 @@ Flag these patterns in response body as errors:
 
 ```bash
 # Server running at localhost:8000
-# Changed file: Server/src/adapter/rest/financial_ingestion_routes.py
+# Changed file: apps/Server/src/adapter/rest/financial_ingestion_routes.py
 # Contains: @router.post("/upload/pdf")
 
 # Generated curl:

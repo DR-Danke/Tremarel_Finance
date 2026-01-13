@@ -23,14 +23,14 @@ This feature establishes the foundational FastAPI backend structure for the Fina
 
 ### Files Modified
 
-- `Server/main.py`: FastAPI application entry point with lifespan events, CORS middleware, and router registration
-- `Server/requirements.txt`: Python dependencies (FastAPI, uvicorn, SQLAlchemy, pydantic, JWT, bcrypt, etc.)
-- `Server/.env.sample`: Environment variables documentation
-- `Server/src/config/settings.py`: Pydantic Settings class for environment variable management
-- `Server/src/config/database.py`: SQLAlchemy engine and session configuration placeholder
-- `Server/src/adapter/rest/health_routes.py`: Health check endpoint returning status, timestamp, version
-- `Server/src/adapter/rest/dependencies.py`: Placeholder for `get_current_user` and `get_db` dependencies
-- `Server/tests/test_health.py`: Pytest tests for health endpoint validation
+- `apps/Server/main.py`: FastAPI application entry point with lifespan events, CORS middleware, and router registration
+- `apps/Server/requirements.txt`: Python dependencies (FastAPI, uvicorn, SQLAlchemy, pydantic, JWT, bcrypt, etc.)
+- `apps/Server/.env.sample`: Environment variables documentation
+- `apps/Server/src/config/settings.py`: Pydantic Settings class for environment variable management
+- `apps/Server/src/config/database.py`: SQLAlchemy engine and session configuration placeholder
+- `apps/Server/src/adapter/rest/health_routes.py`: Health check endpoint returning status, timestamp, version
+- `apps/Server/src/adapter/rest/dependencies.py`: Placeholder for `get_current_user` and `get_db` dependencies
+- `apps/Server/tests/test_health.py`: Pytest tests for health endpoint validation
 
 ### Key Changes
 
@@ -44,7 +44,7 @@ This feature establishes the foundational FastAPI backend structure for the Fina
 
 1. Navigate to the Server directory:
    ```bash
-   cd Server
+   cd apps/Server
    ```
 
 2. Create and activate a virtual environment:
@@ -89,7 +89,7 @@ This feature establishes the foundational FastAPI backend structure for the Fina
 
 Run the test suite:
 ```bash
-cd Server
+cd apps/Server
 python -m pytest tests/ -v
 ```
 

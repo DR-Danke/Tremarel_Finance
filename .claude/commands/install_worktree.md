@@ -9,8 +9,8 @@ This command sets up an isolated worktree environment with custom port configura
 
 ## Read
 - .env.sample (from parent repo)
-- ./Server/.env.sample (from parent repo)
-- ./Client/.env.example (from parent repo)
+- ./apps/apps/Server/.env.sample (from parent repo)
+- ./apps/apps/Client/.env.example (from parent repo)
 - .mcp.json (from parent repo)
 - playwright-mcp-config.json (from parent repo)
 
@@ -32,10 +32,10 @@ This command sets up an isolated worktree environment with custom port configura
 3. **Copy and update .env files**
    - Copy `.env` from parent repo if it exists
    - Append `.ports.env` contents to `.env`
-   - Copy `Server/.env` from parent repo if it exists
-   - Append `.ports.env` contents to `Server/.env`
-   - Copy `Client/.env` from parent repo if it exists
-   - Update `VITE_API_URL` in `Client/.env` to use the Server port: `http://localhost:{1}/api`
+   - Copy `apps/Server/.env` from parent repo if it exists
+   - Append `.ports.env` contents to `apps/Server/.env`
+   - Copy `apps/Client/.env` from parent repo if it exists
+   - Update `VITE_API_URL` in `apps/Client/.env` to use the Server port: `http://localhost:{1}/api`
 
 4. **Copy and configure MCP files**
    - Copy `.mcp.json` from parent repo if it exists
@@ -56,12 +56,12 @@ This command sets up an isolated worktree environment with custom port configura
 
 5. **Install Server dependencies**
    ```bash
-   cd Server && uv sync --all-extras
+   cd apps/Server && uv sync --all-extras
    ```
 
 6. **Install Client dependencies**
    ```bash
-   cd ../Client && npm install
+   cd ../apps/Client && npm install
    ```
 
 7. **Setup database**
@@ -71,7 +71,7 @@ This command sets up an isolated worktree environment with custom port configura
 
 ## Error Handling
 - If parent .env files don't exist, create minimal versions from .env.sample/.env.example files
-- For Client/.env, ensure VITE_API_URL points to the correct Server port
+- For apps/Client/.env, ensure VITE_API_URL points to the correct Server port
 - Ensure all paths are absolute to avoid confusion
 
 ## Report
@@ -80,7 +80,7 @@ This command sets up an isolated worktree environment with custom port configura
 - Confirm dependencies installed
 - Note any missing parent .env files (root, Server, Client) that need user attention
 - Note any missing MCP configuration files
-- Confirm Client/.env has correct VITE_API_URL pointing to worktree Server port
+- Confirm apps/Client/.env has correct VITE_API_URL pointing to worktree Server port
 - Show the updated absolute paths in:
   - `.mcp.json` (should show full path to playwright-mcp-config.json)
   - `playwright-mcp-config.json` (should show full path to videos directory)

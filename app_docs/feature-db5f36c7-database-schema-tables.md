@@ -22,11 +22,11 @@ Complete PostgreSQL database schema implementation for the Finance Tracker appli
 
 ### Files Modified
 
-- `Server/database/schema.sql`: Complete PostgreSQL schema (230 lines) with 6 tables, indexes, triggers, and constraints
-- `Server/main.py`: FastAPI entry point with CORS configuration and health check endpoint
-- `Server/pyproject.toml`: Python project configuration with dependencies (FastAPI, SQLAlchemy, psycopg2, python-jose, passlib)
-- `Server/tests/test_health.py`: Health endpoint test
-- `Server/src/` directory structure: Clean Architecture layer scaffolding (adapter, core, repository, interface, models, config)
+- `apps/Server/database/schema.sql`: Complete PostgreSQL schema (230 lines) with 6 tables, indexes, triggers, and constraints
+- `apps/Server/main.py`: FastAPI entry point with CORS configuration and health check endpoint
+- `apps/Server/pyproject.toml`: Python project configuration with dependencies (FastAPI, SQLAlchemy, psycopg2, python-jose, passlib)
+- `apps/Server/tests/test_health.py`: Health endpoint test
+- `apps/Server/src/` directory structure: Clean Architecture layer scaffolding (adapter, core, repository, interface, models, config)
 
 ### Key Changes
 
@@ -49,9 +49,9 @@ Complete PostgreSQL database schema implementation for the Finance Tracker appli
 
 ## How to Use
 
-1. **Deploy Schema**: Execute `Server/database/schema.sql` against a PostgreSQL database (Supabase)
+1. **Deploy Schema**: Execute `apps/Server/database/schema.sql` against a PostgreSQL database (Supabase)
 2. **Configure Connection**: Set `DATABASE_URL` environment variable in backend
-3. **Start Backend**: Run `python -m uvicorn main:app --reload --port 8000` from `Server/` directory
+3. **Start Backend**: Run `python -m uvicorn main:app --reload --port 8000` from `apps/Server/` directory
 4. **Verify Health**: Check `GET /api/health` returns `{"status": "healthy"}`
 
 ## Configuration
