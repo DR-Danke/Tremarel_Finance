@@ -4,13 +4,13 @@ This command sets up an isolated worktree environment with custom port configura
 
 ## Parameters
 - Worktree path: {0}
-- Backend port: {1}
-- Frontend port: {2}
+- Server port: {1}
+- Client port: {2}
 
 ## Read
 - .env.sample (from parent repo)
-- ./backend/.env.sample (from parent repo)
-- ./frontend/.env.example (from parent repo)
+- ./Server/.env.sample (from parent repo)
+- ./Client/.env.example (from parent repo)
 - .mcp.json (from parent repo)
 - playwright-mcp-config.json (from parent repo)
 
@@ -24,18 +24,18 @@ This command sets up an isolated worktree environment with custom port configura
 2. **Create port configuration file**
    Create `.ports.env` with:
    ```
-   BACKEND_PORT={1}
-   FRONTEND_PORT={2}
-   VITE_BACKEND_URL=http://localhost:{1}
+   SERVER_PORT={1}
+   CLIENT_PORT={2}
+   VITE_SERVER_URL=http://localhost:{1}
    ```
 
 3. **Copy and update .env files**
    - Copy `.env` from parent repo if it exists
    - Append `.ports.env` contents to `.env`
-   - Copy `backend/.env` from parent repo if it exists
-   - Append `.ports.env` contents to `backend/.env`
-   - Copy `frontend/.env` from parent repo if it exists
-   - Update `VITE_API_URL` in `frontend/.env` to use the backend port: `http://localhost:{1}/api`
+   - Copy `Server/.env` from parent repo if it exists
+   - Append `.ports.env` contents to `Server/.env`
+   - Copy `Client/.env` from parent repo if it exists
+   - Update `VITE_API_URL` in `Client/.env` to use the Server port: `http://localhost:{1}/api`
 
 4. **Copy and configure MCP files**
    - Copy `.mcp.json` from parent repo if it exists
@@ -54,14 +54,14 @@ This command sets up an isolated worktree environment with custom port configura
      - Create the videos directory: `mkdir -p ${WORKTREE_PATH}/videos`
    - This ensures MCP configuration works correctly regardless of execution context
 
-5. **Install backend dependencies**
+5. **Install Server dependencies**
    ```bash
-   cd backend && uv sync --all-extras
+   cd Server && uv sync --all-extras
    ```
 
-6. **Install frontend dependencies**
+6. **Install Client dependencies**
    ```bash
-   cd ../frontend && npm install
+   cd ../Client && npm install
    ```
 
 7. **Setup database**
@@ -71,16 +71,16 @@ This command sets up an isolated worktree environment with custom port configura
 
 ## Error Handling
 - If parent .env files don't exist, create minimal versions from .env.sample/.env.example files
-- For frontend/.env, ensure VITE_API_URL points to the correct backend port
+- For Client/.env, ensure VITE_API_URL points to the correct Server port
 - Ensure all paths are absolute to avoid confusion
 
 ## Report
 - List all files created/modified (including MCP configuration files)
 - Show port assignments
 - Confirm dependencies installed
-- Note any missing parent .env files (root, backend, frontend) that need user attention
+- Note any missing parent .env files (root, Server, Client) that need user attention
 - Note any missing MCP configuration files
-- Confirm frontend/.env has correct VITE_API_URL pointing to worktree backend port
+- Confirm Client/.env has correct VITE_API_URL pointing to worktree Server port
 - Show the updated absolute paths in:
   - `.mcp.json` (should show full path to playwright-mcp-config.json)
   - `playwright-mcp-config.json` (should show full path to videos directory)

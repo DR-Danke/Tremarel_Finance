@@ -1,11 +1,11 @@
-# E2E Test: Frontend React Vite Setup
+# E2E Test: Client React Vite Setup
 
-Test that the Finance Tracker frontend application is properly configured and renders correctly.
+Test that the Finance Tracker Client application is properly configured and renders correctly.
 
 ## User Story
 
 As a developer
-I want to verify that the Finance Tracker frontend application loads correctly
+I want to verify that the Finance Tracker Client application loads correctly
 So that I can confirm the React + TypeScript + Vite setup is working
 
 ## Test Steps

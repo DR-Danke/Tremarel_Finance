@@ -31,9 +31,9 @@ issue_screenshots: $5 (optional) - comma-separated list of screenshot paths if p
 
 Focus on the following files:
 - `README.md` - Contains the project overview and instructions.
-- `backend/**` - Contains the backend codebase.
-- `frontend/**` - Contains the frontend codebase.
-- `scripts/**` - Contains the scripts to start and stop the backend + frontend.
+- `Server/**` - Contains the Server codebase.
+- `Client/**` - Contains the Client codebase.
+- `scripts/**` - Contains the scripts to start and stop the Server + Client.
 - `adws/**` - Contains the AI Developer Workflow (ADW) scripts.
 
 - Read `.claude/commands/conditional_docs.md` to check if your task requires additional documentation
