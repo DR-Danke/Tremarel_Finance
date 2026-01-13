@@ -104,12 +104,46 @@ export interface Transaction {
   updatedAt: string
 }
 
-// Category interface placeholder
+// Category type alias
+export type CategoryType = 'income' | 'expense'
+
+// Category interface matching backend CategoryResponseDTO
 export interface Category {
   id: string
+  entity_id: string
   name: string
-  type: TransactionType
-  parentId?: string
-  createdAt: string
-  updatedAt: string
+  type: CategoryType
+  parent_id?: string | null
+  description?: string | null
+  color?: string | null
+  icon?: string | null
+  is_active: boolean
+  created_at: string
+  updated_at?: string | null
+}
+
+// Category with nested children for tree display
+export interface CategoryTree extends Category {
+  children: CategoryTree[]
+}
+
+// Input for creating a category
+export interface CategoryCreateInput {
+  entity_id: string
+  name: string
+  type: CategoryType
+  parent_id?: string | null
+  description?: string | null
+  color?: string | null
+  icon?: string | null
+}
+
+// Input for updating a category
+export interface CategoryUpdateInput {
+  name?: string
+  parent_id?: string | null
+  description?: string | null
+  color?: string | null
+  icon?: string | null
+  is_active?: boolean
 }

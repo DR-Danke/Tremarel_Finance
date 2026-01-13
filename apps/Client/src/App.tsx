@@ -4,6 +4,7 @@ import { Box, Typography, Container, Button } from '@mui/material'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { EntitiesPage } from '@/pages/EntitiesPage'
+import { CategoriesPage } from '@/pages/CategoriesPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -16,19 +17,6 @@ function TransactionsPage() {
       </Typography>
       <Typography variant="body1" color="text.secondary">
         Transaction management coming soon.
-      </Typography>
-    </Box>
-  )
-}
-
-function CategoriesPage() {
-  return (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Categories
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Category management coming soon.
       </Typography>
     </Box>
   )
@@ -152,6 +140,16 @@ function App() {
         }
       />
       <Route
+        path="/categories/:entityId"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <CategoriesPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/budgets"
         element={
           <ProtectedRoute>
@@ -185,7 +183,9 @@ function App() {
         path="/entities"
         element={
           <ProtectedRoute>
-            <EntitiesPage />
+            <TRMainLayout>
+              <EntitiesPage />
+            </TRMainLayout>
           </ProtectedRoute>
         }
       />

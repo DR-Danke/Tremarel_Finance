@@ -93,3 +93,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing features that need to filter by current entity
     - When troubleshooting entity-related access control or permissions
     - When working with TREntitySelector or EntitiesPage components
+
+- app_docs/feature-a2d71086-category-management-crud.md
+  - Conditions:
+    - When working with categories (income/expense categories)
+    - When implementing hierarchical/tree data structures
+    - When working with CategoriesPage or category_routes
+    - When modifying TRCategoryForm or TRCategoryTree components
+    - When troubleshooting category creation, hierarchy, or deletion issues
+    - When working with the categories table or CategoryService
