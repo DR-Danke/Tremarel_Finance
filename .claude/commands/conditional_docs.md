@@ -120,3 +120,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When using the useDashboard hook or dashboardService
     - When working with Recharts for financial data visualization
     - When troubleshooting dashboard API endpoint or aggregations
+
+- app_docs/feature-901a8a52-budget-management-crud.md
+  - Conditions:
+    - When working with budgets (spending limits per category)
+    - When implementing or modifying budget CRUD operations
+    - When working with BudgetsPage, TRBudgetForm, or TRBudgetCard
+    - When using the useBudgets hook or budgetService
+    - When implementing progress bars or spending tracking visualizations
+    - When troubleshooting budget API endpoints or spending calculations
+    - When working with period types (monthly, quarterly, yearly)
