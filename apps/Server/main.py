@@ -11,6 +11,7 @@ from typing import AsyncGenerator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.adapter.rest.auth_routes import router as auth_router
 from src.adapter.rest.health_routes import router as health_router
 from src.config.settings import get_settings
 
@@ -28,6 +29,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     print(f"INFO [Main]: Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     print(f"INFO [Main]: Debug mode: {settings.DEBUG}")
     print(f"INFO [Main]: CORS origins: {settings.get_cors_origins()}")
+    print("INFO [Main]: Authentication system initialized (JWT + RBAC)")
     yield
     # Shutdown
     print(f"INFO [Main]: Shutting down {settings.APP_NAME}")
@@ -52,6 +54,7 @@ app.add_middleware(
 
 # Register routers
 app.include_router(health_router)
+app.include_router(auth_router)
 
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 

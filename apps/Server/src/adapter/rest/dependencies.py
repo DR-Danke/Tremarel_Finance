@@ -7,6 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from src.config.database import SessionLocal
+from src.core.services.auth_service import auth_service
 
 # HTTP Bearer token security scheme
 security = HTTPBearer()
@@ -34,23 +35,30 @@ async def get_current_user(
     """
     Dependency to get the current authenticated user from JWT token.
 
-    This is a placeholder implementation. Full JWT validation will be
-    implemented in Wave 2 (Authentication).
+    Extracts and validates the Bearer token from the Authorization header,
+    decodes the JWT, and returns the user information.
 
     Args:
         credentials: HTTP Bearer token credentials
 
     Returns:
-        Dict containing user information from token
+        Dict containing user information from token (id, email, role)
 
     Raises:
-        HTTPException: If token is invalid or missing
+        HTTPException: 401 if token is invalid, expired, or missing
     """
     print("INFO [Dependencies]: Validating user token")
 
-    # Placeholder: In Wave 2, this will decode and validate the JWT token
-    # For now, raise an error indicating auth is not yet implemented
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Authentication not yet implemented. Coming in Wave 2.",
-    )
+    token = credentials.credentials
+    user_data = auth_service.decode_token(token)
+
+    if user_data is None:
+        print("ERROR [Dependencies]: Invalid or expired token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    print(f"INFO [Dependencies]: Token validated for user {user_data['email']}")
+    return user_data
