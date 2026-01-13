@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.adapter.rest.auth_routes import router as auth_router
+from src.adapter.rest.entity_routes import router as entity_router
 from src.adapter.rest.health_routes import router as health_router
 from src.config.settings import get_settings
 
@@ -54,8 +55,10 @@ app.add_middleware(
 # Register routers
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(entity_router)
 
 print("INFO [Main]: Auth router registered")
+print("INFO [Main]: Entity router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 

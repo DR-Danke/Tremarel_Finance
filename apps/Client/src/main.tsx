@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline'
 import App from './App'
 import theme from './theme'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { EntityProvider } from '@/contexts/EntityContext'
 
 console.log('INFO [Main]: Initializing Finance Tracker application')
 
@@ -13,10 +14,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
+        <EntityProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
+        </EntityProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
