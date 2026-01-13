@@ -3,6 +3,7 @@ import { Routes, Route, useLocation, Link } from 'react-router-dom'
 import { Box, Typography, Container, Button } from '@mui/material'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { TransactionsPage } from '@/pages/TransactionsPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 function HomePage() {
@@ -56,6 +57,14 @@ function App() {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/transactions"
+        element={
+          <ProtectedRoute>
+            <TransactionsPage />
           </ProtectedRoute>
         }
       />
