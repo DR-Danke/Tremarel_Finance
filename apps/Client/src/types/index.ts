@@ -5,14 +5,37 @@ export interface ApiResponse<T> {
   status: number
 }
 
-// User interface placeholder
+// User interface matching backend UserResponseDTO
 export interface User {
   id: string
   email: string
-  name: string
+  first_name?: string
+  last_name?: string
   role: 'admin' | 'manager' | 'user' | 'viewer'
-  createdAt: string
-  updatedAt: string
+  is_active: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+// Login credentials for authentication
+export interface LoginCredentials {
+  email: string
+  password: string
+}
+
+// Registration data for new users
+export interface RegisterData {
+  email: string
+  password: string
+  first_name?: string
+  last_name?: string
+}
+
+// Authentication response from backend
+export interface AuthResponse {
+  access_token: string
+  token_type: string
+  user: User
 }
 
 // Authentication state placeholder

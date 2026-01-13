@@ -64,3 +64,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting authentication or authorization errors
     - When adding new auth endpoints or modifying auth_routes.py
     - When working with the User model or user_repository
+
+- app_docs/feature-f6f89b86-frontend-jwt-auth-context.md
+  - Conditions:
+    - When working with frontend authentication (login, logout, JWT tokens)
+    - When implementing or modifying AuthContext or useAuth hook
+    - When adding or modifying ProtectedRoute or RoleProtectedRoute components
+    - When troubleshooting frontend authentication or session issues
+    - When adding new pages that require authentication
+    - When working with the LoginPage or authentication flow
