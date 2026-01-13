@@ -1,0 +1,14 @@
+{
+  "browser": {
+    "browserType": "chromium",
+    "headless": true,
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "recording": {
+    "dir": "/mnt/c/Users/guill/danke_apps/tac/tac-8/tac8_app1__agent_layer_primitives/trees/16559deb/videos",
+    "enabled": false
+  }
+}
