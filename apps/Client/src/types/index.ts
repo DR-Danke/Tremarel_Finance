@@ -97,6 +97,7 @@ export interface Transaction {
   entity_id: string
   category_id: string
   user_id?: string
+  recurring_template_id?: string
   type: TransactionType
   amount: number
   description?: string
@@ -208,4 +209,135 @@ export interface DashboardStats {
   current_month_summary: CurrentMonthSummary
   monthly_trends: MonthlyTotal[]
   expense_breakdown: CategoryBreakdown[]
+}
+
+// Budget types
+export type BudgetPeriodType = 'monthly' | 'quarterly' | 'yearly'
+
+export interface Budget {
+  id: string
+  entity_id: string
+  category_id: string
+  amount: number
+  period_type: BudgetPeriodType
+  start_date: string
+  end_date?: string | null
+  is_active: boolean
+  created_at: string
+  updated_at?: string | null
+}
+
+export interface BudgetWithSpending extends Budget {
+  category_name?: string | null
+  spent_amount: number
+  spent_percentage: number
+}
+
+export interface BudgetCreate {
+  entity_id: string
+  category_id: string
+  amount: number
+  period_type: BudgetPeriodType
+  start_date: string
+}
+
+export interface BudgetUpdate {
+  amount?: number
+  period_type?: BudgetPeriodType
+  start_date?: string
+  is_active?: boolean
+}
+
+export interface BudgetListResponse {
+  budgets: BudgetWithSpending[]
+  total: number
+}
+
+// Report types
+export interface ReportFilter {
+  startDate: string
+  endDate: string
+  type?: TransactionType
+  categoryIds?: string[]
+}
+
+export interface IncomeExpenseComparison {
+  period: string
+  month: number
+  year: number
+  income: number
+  expenses: number
+}
+
+export interface CategorySummary {
+  category_id: string
+  category_name: string
+  amount: number
+  percentage: number
+  type: TransactionType
+  color: string | null
+}
+
+export interface ReportSummary {
+  total_income: number
+  total_expenses: number
+  net_balance: number
+  transaction_count: number
+}
+
+export interface ReportData {
+  summary: ReportSummary
+  income_expense_comparison: IncomeExpenseComparison[]
+  category_breakdown: CategorySummary[]
+}
+
+// Recurring template types
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly'
+
+export interface RecurringTemplate {
+  id: string
+  entity_id: string
+  category_id: string
+  name: string
+  amount: number
+  type: TransactionType
+  description?: string
+  notes?: string
+  frequency: RecurrenceFrequency
+  start_date: string
+  end_date?: string
+  is_active: boolean
+  created_at: string
+  updated_at?: string
+}
+
+export interface RecurringTemplateCreate {
+  entity_id: string
+  category_id: string
+  name: string
+  amount: number
+  type: TransactionType
+  description?: string
+  notes?: string
+  frequency: RecurrenceFrequency
+  start_date: string
+  end_date?: string
+}
+
+export interface RecurringTemplateUpdate {
+  category_id?: string
+  name?: string
+  amount?: number
+  type?: TransactionType
+  description?: string
+  notes?: string
+  frequency?: RecurrenceFrequency
+  start_date?: string
+  end_date?: string
+  is_active?: boolean
+}
+
+export interface RecurringTemplateListResponse {
+  templates: RecurringTemplate[]
+  total: number
 }

@@ -19,6 +19,9 @@ class TransactionCreateDTO(BaseModel):
     description: Optional[str] = Field(None, max_length=500, description="Transaction description")
     date: date_type = Field(..., description="Transaction date")
     notes: Optional[str] = Field(None, description="Additional notes")
+    recurring_template_id: Optional[UUID] = Field(
+        None, description="Recurring template ID if generated from template"
+    )
 
 
 class TransactionUpdateDTO(BaseModel):
@@ -39,6 +42,9 @@ class TransactionResponseDTO(BaseModel):
     entity_id: UUID = Field(..., description="Entity ID this transaction belongs to")
     category_id: UUID = Field(..., description="Category ID for the transaction")
     user_id: Optional[UUID] = Field(None, description="User ID who created the transaction")
+    recurring_template_id: Optional[UUID] = Field(
+        None, description="Recurring template ID if generated from template"
+    )
     amount: Decimal = Field(..., description="Transaction amount")
     type: str = Field(..., description="Transaction type (income or expense)")
     description: Optional[str] = Field(None, description="Transaction description")

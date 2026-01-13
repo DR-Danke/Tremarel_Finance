@@ -120,3 +120,32 @@ This prompt helps you determine what documentation you should read based on the 
     - When using the useDashboard hook or dashboardService
     - When working with Recharts for financial data visualization
     - When troubleshooting dashboard API endpoint or aggregations
+
+- app_docs/feature-901a8a52-budget-management-crud.md
+  - Conditions:
+    - When working with budgets (spending limits per category)
+    - When implementing or modifying budget CRUD operations
+    - When working with BudgetsPage, TRBudgetForm, or TRBudgetCard
+    - When using the useBudgets hook or budgetService
+    - When implementing progress bars or spending tracking visualizations
+    - When troubleshooting budget API endpoints or spending calculations
+    - When working with period types (monthly, quarterly, yearly)
+
+- app_docs/feature-d110d3f0-reports-export-csv.md
+  - Conditions:
+    - When working with ReportsPage or financial reports
+    - When implementing date range filtering for reports
+    - When working with TRReportDateRangePicker, TRIncomeExpenseChart, or TRCategoryBreakdownTable components
+    - When using the useReports hook or reportService
+    - When implementing CSV export functionality
+    - When troubleshooting reports API endpoints or data aggregations
+
+- app_docs/feature-e44986c8-recurring-transactions.md
+  - Conditions:
+    - When working with recurring transactions or recurring templates
+    - When implementing or modifying RecurringTemplatesPage
+    - When working with TRRecurringTemplateForm or TRRecurringTemplateTable components
+    - When using the useRecurringTemplates hook or recurringTemplateService
+    - When working with the recurring_templates table or recurring_template_routes
+    - When linking transactions to recurring templates via recurring_template_id
+    - When troubleshooting recurring transaction template CRUD operations

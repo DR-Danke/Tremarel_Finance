@@ -11,8 +11,9 @@ import {
   Typography,
   Box,
   Skeleton,
+  Tooltip,
 } from '@mui/material'
-import { Edit, Delete } from '@mui/icons-material'
+import { Edit, Delete, Repeat } from '@mui/icons-material'
 import type { Transaction, Category } from '@/types'
 
 interface TRTransactionTableProps {
@@ -128,7 +129,16 @@ export const TRTransactionTable: React.FC<TRTransactionTableProps> = ({
             const category = categories[transaction.category_id]
             return (
               <TableRow key={transaction.id} hover>
-                <TableCell>{formatDate(transaction.date)}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    {formatDate(transaction.date)}
+                    {transaction.recurring_template_id && (
+                      <Tooltip title="From recurring template">
+                        <Repeat fontSize="small" color="action" sx={{ ml: 0.5 }} />
+                      </Tooltip>
+                    )}
+                  </Box>
+                </TableCell>
                 <TableCell>
                   <Chip
                     label={transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
