@@ -5,23 +5,11 @@ import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { EntitiesPage } from '@/pages/EntitiesPage'
 import { CategoriesPage } from '@/pages/CategoriesPage'
+import { TransactionsPage } from '@/pages/TransactionsPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
 // Placeholder pages for future implementation
-function TransactionsPage() {
-  return (
-    <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Transactions
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        Transaction management coming soon.
-      </Typography>
-    </Box>
-  )
-}
-
 function BudgetsPage() {
   return (
     <Box>

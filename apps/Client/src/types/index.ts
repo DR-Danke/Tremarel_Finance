@@ -89,19 +89,52 @@ export interface EntityMember {
   created_at: string
 }
 
-// Transaction types placeholder
+// Transaction types
 export type TransactionType = 'income' | 'expense'
 
 export interface Transaction {
   id: string
-  entityId: string
-  categoryId: string
+  entity_id: string
+  category_id: string
+  user_id?: string
   type: TransactionType
   amount: number
-  description: string
+  description?: string
   date: string
-  createdAt: string
-  updatedAt: string
+  notes?: string
+  created_at: string
+  updated_at?: string
+}
+
+export interface TransactionCreate {
+  entity_id: string
+  category_id: string
+  amount: number
+  type: TransactionType
+  description?: string
+  date: string
+  notes?: string
+}
+
+export interface TransactionUpdate {
+  category_id?: string
+  amount?: number
+  type?: TransactionType
+  description?: string
+  date?: string
+  notes?: string
+}
+
+export interface TransactionFilters {
+  start_date?: string
+  end_date?: string
+  category_id?: string
+  type?: TransactionType
+}
+
+export interface TransactionListResponse {
+  transactions: Transaction[]
+  total: number
 }
 
 // Category type alias
