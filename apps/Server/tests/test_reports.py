@@ -1,6 +1,5 @@
 """Tests for reports endpoints."""
 
-from datetime import date
 from decimal import Decimal
 from typing import Generator
 from unittest.mock import MagicMock, patch
