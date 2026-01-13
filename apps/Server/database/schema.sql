@@ -228,3 +228,65 @@ CREATE TRIGGER budgets_updated_at
     BEFORE UPDATE ON budgets
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- TABLE: recurring_templates
+-- Recurring transaction templates with recurrence patterns
+-- ============================================================================
+CREATE TABLE recurring_templates (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    entity_id UUID NOT NULL,
+    category_id UUID NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    amount DECIMAL(15, 2) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    description TEXT,
+    notes TEXT,
+    frequency VARCHAR(50) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE,
+
+    CONSTRAINT recurring_templates_type_check CHECK (type IN ('income', 'expense')),
+    CONSTRAINT recurring_templates_amount_check CHECK (amount > 0),
+    CONSTRAINT recurring_templates_frequency_check CHECK (frequency IN ('daily', 'weekly', 'monthly', 'yearly')),
+    CONSTRAINT recurring_templates_dates_check CHECK (end_date IS NULL OR end_date >= start_date),
+
+    CONSTRAINT fk_recurring_templates_entity
+        FOREIGN KEY (entity_id)
+        REFERENCES entities(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_recurring_templates_category
+        FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+        ON DELETE RESTRICT
+);
+
+-- Indexes for efficient queries
+CREATE INDEX idx_recurring_templates_entity_id ON recurring_templates(entity_id);
+CREATE INDEX idx_recurring_templates_category_id ON recurring_templates(category_id);
+CREATE INDEX idx_recurring_templates_is_active ON recurring_templates(is_active);
+CREATE INDEX idx_recurring_templates_frequency ON recurring_templates(frequency);
+
+-- Trigger for updated_at
+CREATE TRIGGER recurring_templates_updated_at
+    BEFORE UPDATE ON recurring_templates
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- ALTER TABLE: transactions
+-- Add recurring_template_id foreign key to link transactions to templates
+-- ============================================================================
+ALTER TABLE transactions
+    ADD COLUMN recurring_template_id UUID,
+    ADD CONSTRAINT fk_transactions_recurring_template
+        FOREIGN KEY (recurring_template_id)
+        REFERENCES recurring_templates(id)
+        ON DELETE SET NULL;
+
+-- Index for recurring template lookups
+CREATE INDEX idx_transactions_recurring_template_id ON transactions(recurring_template_id);

@@ -1,4 +1,4 @@
-"""Tests for transaction endpoints."""
+"""Tests for recurring template endpoints."""
 
 from datetime import date
 from decimal import Decimal
@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from main import app
 from src.adapter.rest.dependencies import get_db
-from src.models.transaction import Transaction
+from src.models.recurring_template import RecurringTemplate
 from src.models.user import User
 
 
@@ -48,32 +48,36 @@ def create_mock_user(
     return user
 
 
-def create_mock_transaction(
+def create_mock_recurring_template(
     entity_id=None,
     category_id=None,
-    user_id=None,
-    recurring_template_id=None,
+    name="Test Template",
     amount=Decimal("100.00"),
-    transaction_type="expense",
-    description="Test transaction",
-    transaction_date=None,
+    template_type="expense",
+    frequency="monthly",
+    start_date=None,
+    end_date=None,
+    is_active=True,
+    description="Test template description",
     notes=None,
 ):
-    """Create a mock transaction for testing."""
-    mock_transaction = MagicMock(spec=Transaction)
-    mock_transaction.id = uuid4()
-    mock_transaction.entity_id = entity_id or uuid4()
-    mock_transaction.category_id = category_id or uuid4()
-    mock_transaction.user_id = user_id
-    mock_transaction.recurring_template_id = recurring_template_id
-    mock_transaction.amount = amount
-    mock_transaction.type = transaction_type
-    mock_transaction.description = description
-    mock_transaction.date = transaction_date or date.today()
-    mock_transaction.notes = notes
-    mock_transaction.created_at = "2024-01-01T00:00:00Z"
-    mock_transaction.updated_at = None
-    return mock_transaction
+    """Create a mock recurring template for testing."""
+    mock_template = MagicMock(spec=RecurringTemplate)
+    mock_template.id = uuid4()
+    mock_template.entity_id = entity_id or uuid4()
+    mock_template.category_id = category_id or uuid4()
+    mock_template.name = name
+    mock_template.amount = amount
+    mock_template.type = template_type
+    mock_template.frequency = frequency
+    mock_template.start_date = start_date or date.today()
+    mock_template.end_date = end_date
+    mock_template.is_active = is_active
+    mock_template.description = description
+    mock_template.notes = notes
+    mock_template.created_at = "2024-01-01T00:00:00Z"
+    mock_template.updated_at = None
+    return mock_template
 
 
 async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
@@ -94,27 +98,25 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
 
 
 # ============================================================================
-# Create Transaction Tests
+# Create Recurring Template Tests
 # ============================================================================
 
 
 @pytest.mark.asyncio
-async def test_create_transaction_success() -> None:
-    """Test successful transaction creation."""
+async def test_create_recurring_template_success() -> None:
+    """Test successful recurring template creation."""
     from datetime import datetime
 
     mock_user = create_mock_user()
     entity_id = uuid4()
     category_id = uuid4()
-    transaction_id = uuid4()
-    mock_transaction = create_mock_transaction(
+    template_id = uuid4()
+    mock_template = create_mock_recurring_template(
         entity_id=entity_id,
         category_id=category_id,
-        user_id=mock_user.id,
     )
-    # Ensure created_at is a proper datetime object
-    mock_transaction.id = transaction_id
-    mock_transaction.created_at = datetime.now()
+    mock_template.id = template_id
+    mock_template.created_at = datetime.now()
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -124,29 +126,31 @@ async def test_create_transaction_success() -> None:
         ) as mock_auth_repo, patch(
             "src.core.services.auth_service.pwd_context"
         ) as mock_pwd_context, patch(
-            "src.core.services.transaction_service.transaction_repository"
-        ) as mock_trans_repo:
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
             # Setup auth mocks
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
             mock_pwd_context.verify.return_value = True
 
-            # Setup transaction repository mock
-            mock_trans_repo.create_transaction.return_value = mock_transaction
+            # Setup template repository mock
+            mock_template_repo.create_template.return_value = mock_template
 
             # Login to get token
             token = await get_auth_token(client, mock_user)
 
-            # Create transaction
+            # Create template
             response = await client.post(
-                "/api/transactions/",
+                "/api/recurring-templates/",
                 json={
                     "entity_id": str(entity_id),
                     "category_id": str(category_id),
-                    "amount": "50.00",
+                    "name": "Netflix Subscription",
+                    "amount": "15.99",
                     "type": "expense",
-                    "description": "Test expense",
-                    "date": str(date.today()),
+                    "frequency": "monthly",
+                    "start_date": str(date.today()),
+                    "description": "Monthly streaming service",
                 },
                 headers={"Authorization": f"Bearer {token}"},
             )
@@ -155,12 +159,13 @@ async def test_create_transaction_success() -> None:
     data = response.json()
     assert "id" in data
     assert data["type"] == "expense"
-    print("INFO [TestTransactions]: test_create_transaction_success - PASSED")
+    assert data["frequency"] == "monthly"
+    print("INFO [TestRecurringTemplates]: test_create_recurring_template_success - PASSED")
 
 
 @pytest.mark.asyncio
-async def test_create_transaction_invalid_type() -> None:
-    """Test that invalid transaction type returns 422."""
+async def test_create_recurring_template_invalid_frequency() -> None:
+    """Test that invalid frequency returns 422."""
     mock_user = create_mock_user()
 
     async with AsyncClient(
@@ -178,24 +183,25 @@ async def test_create_transaction_invalid_type() -> None:
             token = await get_auth_token(client, mock_user)
 
             response = await client.post(
-                "/api/transactions/",
+                "/api/recurring-templates/",
                 json={
                     "entity_id": str(uuid4()),
                     "category_id": str(uuid4()),
+                    "name": "Test Template",
                     "amount": "50.00",
-                    "type": "invalid_type",  # Invalid type
-                    "description": "Test",
-                    "date": str(date.today()),
+                    "type": "expense",
+                    "frequency": "biweekly",  # Invalid frequency
+                    "start_date": str(date.today()),
                 },
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 422
-    print("INFO [TestTransactions]: test_create_transaction_invalid_type - PASSED")
+    print("INFO [TestRecurringTemplates]: test_create_recurring_template_invalid_frequency - PASSED")
 
 
 @pytest.mark.asyncio
-async def test_create_transaction_negative_amount() -> None:
+async def test_create_recurring_template_negative_amount() -> None:
     """Test that negative amount returns 422."""
     mock_user = create_mock_user()
 
@@ -214,29 +220,30 @@ async def test_create_transaction_negative_amount() -> None:
             token = await get_auth_token(client, mock_user)
 
             response = await client.post(
-                "/api/transactions/",
+                "/api/recurring-templates/",
                 json={
                     "entity_id": str(uuid4()),
                     "category_id": str(uuid4()),
+                    "name": "Test Template",
                     "amount": "-50.00",  # Negative amount
                     "type": "expense",
-                    "description": "Test",
-                    "date": str(date.today()),
+                    "frequency": "monthly",
+                    "start_date": str(date.today()),
                 },
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 422
-    print("INFO [TestTransactions]: test_create_transaction_negative_amount - PASSED")
+    print("INFO [TestRecurringTemplates]: test_create_recurring_template_negative_amount - PASSED")
 
 
 # ============================================================================
-# List Transaction Tests
+# List Recurring Template Tests
 # ============================================================================
 
 
 @pytest.mark.asyncio
-async def test_list_transactions_empty() -> None:
+async def test_list_recurring_templates_empty() -> None:
     """Test list returns empty for new entity."""
     mock_user = create_mock_user()
     entity_id = uuid4()
@@ -249,37 +256,38 @@ async def test_list_transactions_empty() -> None:
         ) as mock_auth_repo, patch(
             "src.core.services.auth_service.pwd_context"
         ) as mock_pwd_context, patch(
-            "src.core.services.transaction_service.transaction_repository"
-        ) as mock_trans_repo:
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
             mock_pwd_context.verify.return_value = True
 
-            mock_trans_repo.get_transactions_by_entity.return_value = []
-            mock_trans_repo.count_transactions_by_entity.return_value = 0
+            mock_template_repo.get_templates_by_entity.return_value = []
+            mock_template_repo.count_templates_by_entity.return_value = 0
 
             token = await get_auth_token(client, mock_user)
 
             response = await client.get(
-                f"/api/transactions/?entity_id={entity_id}",
+                f"/api/recurring-templates/?entity_id={entity_id}",
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 200
     data = response.json()
-    assert data["transactions"] == []
+    assert data["templates"] == []
     assert data["total"] == 0
-    print("INFO [TestTransactions]: test_list_transactions_empty - PASSED")
+    print("INFO [TestRecurringTemplates]: test_list_recurring_templates_empty - PASSED")
 
 
 @pytest.mark.asyncio
-async def test_list_transactions_with_filters() -> None:
-    """Test list with date and type filtering."""
+async def test_list_recurring_templates_with_data() -> None:
+    """Test list returns templates for entity."""
     mock_user = create_mock_user()
     entity_id = uuid4()
-    mock_transaction = create_mock_transaction(
+    mock_template = create_mock_recurring_template(
         entity_id=entity_id,
-        transaction_type="income",
+        name="Monthly Rent",
+        frequency="monthly",
     )
 
     async with AsyncClient(
@@ -290,40 +298,40 @@ async def test_list_transactions_with_filters() -> None:
         ) as mock_auth_repo, patch(
             "src.core.services.auth_service.pwd_context"
         ) as mock_pwd_context, patch(
-            "src.core.services.transaction_service.transaction_repository"
-        ) as mock_trans_repo:
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
             mock_pwd_context.verify.return_value = True
 
-            mock_trans_repo.get_transactions_by_entity.return_value = [mock_transaction]
-            mock_trans_repo.count_transactions_by_entity.return_value = 1
+            mock_template_repo.get_templates_by_entity.return_value = [mock_template]
+            mock_template_repo.count_templates_by_entity.return_value = 1
 
             token = await get_auth_token(client, mock_user)
 
             response = await client.get(
-                f"/api/transactions/?entity_id={entity_id}&type=income&start_date=2024-01-01",
+                f"/api/recurring-templates/?entity_id={entity_id}",
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 200
     data = response.json()
-    assert len(data["transactions"]) == 1
+    assert len(data["templates"]) == 1
     assert data["total"] == 1
-    print("INFO [TestTransactions]: test_list_transactions_with_filters - PASSED")
+    print("INFO [TestRecurringTemplates]: test_list_recurring_templates_with_data - PASSED")
 
 
 # ============================================================================
-# Get Single Transaction Tests
+# Get Single Recurring Template Tests
 # ============================================================================
 
 
 @pytest.mark.asyncio
-async def test_get_transaction_not_found() -> None:
-    """Test 404 for non-existent transaction."""
+async def test_get_recurring_template_not_found() -> None:
+    """Test 404 for non-existent template."""
     mock_user = create_mock_user()
     entity_id = uuid4()
-    transaction_id = uuid4()
+    template_id = uuid4()
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -333,44 +341,44 @@ async def test_get_transaction_not_found() -> None:
         ) as mock_auth_repo, patch(
             "src.core.services.auth_service.pwd_context"
         ) as mock_pwd_context, patch(
-            "src.core.services.transaction_service.transaction_repository"
-        ) as mock_trans_repo:
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
             mock_pwd_context.verify.return_value = True
 
-            mock_trans_repo.get_transaction_by_id.return_value = None
+            mock_template_repo.get_template_by_id.return_value = None
 
             token = await get_auth_token(client, mock_user)
 
             response = await client.get(
-                f"/api/transactions/{transaction_id}?entity_id={entity_id}",
+                f"/api/recurring-templates/{template_id}?entity_id={entity_id}",
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 404
-    print("INFO [TestTransactions]: test_get_transaction_not_found - PASSED")
+    print("INFO [TestRecurringTemplates]: test_get_recurring_template_not_found - PASSED")
 
 
 # ============================================================================
-# Update Transaction Tests
+# Update Recurring Template Tests
 # ============================================================================
 
 
 @pytest.mark.asyncio
-async def test_update_transaction_success() -> None:
-    """Test update existing transaction."""
+async def test_update_recurring_template_success() -> None:
+    """Test update existing recurring template."""
     mock_user = create_mock_user()
     entity_id = uuid4()
-    mock_transaction = create_mock_transaction(
+    mock_template = create_mock_recurring_template(
         entity_id=entity_id,
         amount=Decimal("100.00"),
     )
-    updated_transaction = create_mock_transaction(
+    updated_template = create_mock_recurring_template(
         entity_id=entity_id,
         amount=Decimal("75.00"),
     )
-    updated_transaction.id = mock_transaction.id
+    updated_template.id = mock_template.id
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -380,38 +388,46 @@ async def test_update_transaction_success() -> None:
         ) as mock_auth_repo, patch(
             "src.core.services.auth_service.pwd_context"
         ) as mock_pwd_context, patch(
-            "src.core.services.transaction_service.transaction_repository"
-        ) as mock_trans_repo:
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
             mock_pwd_context.verify.return_value = True
 
-            mock_trans_repo.get_transaction_by_id.return_value = mock_transaction
-            mock_trans_repo.update_transaction.return_value = updated_transaction
+            mock_template_repo.get_template_by_id.return_value = mock_template
+            mock_template_repo.update_template.return_value = updated_template
 
             token = await get_auth_token(client, mock_user)
 
             response = await client.put(
-                f"/api/transactions/{mock_transaction.id}?entity_id={entity_id}",
+                f"/api/recurring-templates/{mock_template.id}?entity_id={entity_id}",
                 json={"amount": "75.00"},
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 200
-    print("INFO [TestTransactions]: test_update_transaction_success - PASSED")
+    print("INFO [TestRecurringTemplates]: test_update_recurring_template_success - PASSED")
 
 
 # ============================================================================
-# Delete Transaction Tests
+# Deactivate Recurring Template Tests
 # ============================================================================
 
 
 @pytest.mark.asyncio
-async def test_delete_transaction_success() -> None:
-    """Test delete transaction as admin."""
-    mock_admin = create_mock_user(email="admin@example.com", role="admin")
+async def test_deactivate_recurring_template_success() -> None:
+    """Test deactivate (soft delete) recurring template."""
+    mock_user = create_mock_user()
     entity_id = uuid4()
-    mock_transaction = create_mock_transaction(entity_id=entity_id)
+    mock_template = create_mock_recurring_template(
+        entity_id=entity_id,
+        is_active=True,
+    )
+    deactivated_template = create_mock_recurring_template(
+        entity_id=entity_id,
+        is_active=False,
+    )
+    deactivated_template.id = mock_template.id
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -421,32 +437,74 @@ async def test_delete_transaction_success() -> None:
         ) as mock_auth_repo, patch(
             "src.core.services.auth_service.pwd_context"
         ) as mock_pwd_context, patch(
-            "src.core.services.transaction_service.transaction_repository"
-        ) as mock_trans_repo:
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
+            mock_auth_repo.get_user_by_email.return_value = mock_user
+            mock_auth_repo.get_user_by_id.return_value = mock_user
+            mock_pwd_context.verify.return_value = True
+
+            mock_template_repo.get_template_by_id.return_value = mock_template
+            mock_template_repo.deactivate_template.return_value = deactivated_template
+
+            token = await get_auth_token(client, mock_user)
+
+            response = await client.post(
+                f"/api/recurring-templates/{mock_template.id}/deactivate?entity_id={entity_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_active"] is False
+    print("INFO [TestRecurringTemplates]: test_deactivate_recurring_template_success - PASSED")
+
+
+# ============================================================================
+# Delete Recurring Template Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_delete_recurring_template_success() -> None:
+    """Test delete recurring template as admin."""
+    mock_admin = create_mock_user(email="admin@example.com", role="admin")
+    entity_id = uuid4()
+    mock_template = create_mock_recurring_template(entity_id=entity_id)
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        with patch(
+            "src.core.services.auth_service.user_repository"
+        ) as mock_auth_repo, patch(
+            "src.core.services.auth_service.pwd_context"
+        ) as mock_pwd_context, patch(
+            "src.core.services.recurring_template_service.recurring_template_repository"
+        ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_admin
             mock_auth_repo.get_user_by_id.return_value = mock_admin
             mock_pwd_context.verify.return_value = True
 
-            mock_trans_repo.get_transaction_by_id.return_value = mock_transaction
-            mock_trans_repo.delete_transaction.return_value = None
+            mock_template_repo.get_template_by_id.return_value = mock_template
+            mock_template_repo.delete_template.return_value = None
 
             token = await get_auth_token(client, mock_admin)
 
             response = await client.delete(
-                f"/api/transactions/{mock_transaction.id}?entity_id={entity_id}",
+                f"/api/recurring-templates/{mock_template.id}?entity_id={entity_id}",
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 204
-    print("INFO [TestTransactions]: test_delete_transaction_success - PASSED")
+    print("INFO [TestRecurringTemplates]: test_delete_recurring_template_success - PASSED")
 
 
 @pytest.mark.asyncio
-async def test_delete_transaction_forbidden() -> None:
+async def test_delete_recurring_template_forbidden() -> None:
     """Test 403 for regular user delete."""
     mock_user = create_mock_user(role="user")  # Regular user, not admin/manager
     entity_id = uuid4()
-    transaction_id = uuid4()
+    template_id = uuid4()
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -463,12 +521,12 @@ async def test_delete_transaction_forbidden() -> None:
             token = await get_auth_token(client, mock_user)
 
             response = await client.delete(
-                f"/api/transactions/{transaction_id}?entity_id={entity_id}",
+                f"/api/recurring-templates/{template_id}?entity_id={entity_id}",
                 headers={"Authorization": f"Bearer {token}"},
             )
 
     assert response.status_code == 403
-    print("INFO [TestTransactions]: test_delete_transaction_forbidden - PASSED")
+    print("INFO [TestRecurringTemplates]: test_delete_recurring_template_forbidden - PASSED")
 
 
 # ============================================================================
@@ -477,22 +535,23 @@ async def test_delete_transaction_forbidden() -> None:
 
 
 @pytest.mark.asyncio
-async def test_create_transaction_no_auth() -> None:
+async def test_create_recurring_template_no_auth() -> None:
     """Test that unauthenticated request returns 401."""
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
         response = await client.post(
-            "/api/transactions/",
+            "/api/recurring-templates/",
             json={
                 "entity_id": str(uuid4()),
                 "category_id": str(uuid4()),
+                "name": "Test Template",
                 "amount": "50.00",
                 "type": "expense",
-                "description": "Test",
-                "date": str(date.today()),
+                "frequency": "monthly",
+                "start_date": str(date.today()),
             },
         )
 
     assert response.status_code == 401
-    print("INFO [TestTransactions]: test_create_transaction_no_auth - PASSED")
+    print("INFO [TestRecurringTemplates]: test_create_recurring_template_no_auth - PASSED")

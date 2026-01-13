@@ -6,6 +6,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { EntitiesPage } from '@/pages/EntitiesPage'
 import { CategoriesPage } from '@/pages/CategoriesPage'
 import { TransactionsPage } from '@/pages/TransactionsPage'
+import { RecurringTemplatesPage } from '@/pages/RecurringTemplatesPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -113,6 +114,16 @@ function App() {
           <ProtectedRoute>
             <TRMainLayout>
               <TransactionsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recurring"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <RecurringTemplatesPage />
             </TRMainLayout>
           </ProtectedRoute>
         }
