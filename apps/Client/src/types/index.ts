@@ -46,36 +46,137 @@ export interface AuthState {
   isLoading: boolean
 }
 
-// Entity interface placeholder
+// Entity interface matching backend EntityResponseDTO
 export interface Entity {
   id: string
   name: string
   type: 'family' | 'startup'
-  createdAt: string
-  updatedAt: string
+  description?: string
+  created_at: string
+  updated_at?: string
 }
 
-// Transaction types placeholder
+// Data for creating a new entity
+export interface CreateEntityData {
+  name: string
+  type: 'family' | 'startup'
+  description?: string
+}
+
+// Data for updating an entity
+export interface UpdateEntityData {
+  name?: string
+  description?: string
+}
+
+// User-Entity membership interface
+export interface UserEntity {
+  id: string
+  user_id: string
+  entity_id: string
+  role: 'admin' | 'manager' | 'user' | 'viewer'
+  created_at: string
+}
+
+// Entity member with user details
+export interface EntityMember {
+  id: string
+  user_id: string
+  email: string
+  first_name?: string
+  last_name?: string
+  role: 'admin' | 'manager' | 'user' | 'viewer'
+  created_at: string
+}
+
+// Transaction types
 export type TransactionType = 'income' | 'expense'
 
 export interface Transaction {
   id: string
-  entityId: string
-  categoryId: string
+  entity_id: string
+  category_id: string
+  user_id?: string
   type: TransactionType
   amount: number
-  description: string
+  description?: string
   date: string
-  createdAt: string
-  updatedAt: string
+  notes?: string
+  created_at: string
+  updated_at?: string
 }
 
-// Category interface placeholder
+export interface TransactionCreate {
+  entity_id: string
+  category_id: string
+  amount: number
+  type: TransactionType
+  description?: string
+  date: string
+  notes?: string
+}
+
+export interface TransactionUpdate {
+  category_id?: string
+  amount?: number
+  type?: TransactionType
+  description?: string
+  date?: string
+  notes?: string
+}
+
+export interface TransactionFilters {
+  start_date?: string
+  end_date?: string
+  category_id?: string
+  type?: TransactionType
+}
+
+export interface TransactionListResponse {
+  transactions: Transaction[]
+  total: number
+}
+
+// Category type alias
+export type CategoryType = 'income' | 'expense'
+
+// Category interface matching backend CategoryResponseDTO
 export interface Category {
   id: string
+  entity_id: string
   name: string
-  type: TransactionType
-  parentId?: string
-  createdAt: string
-  updatedAt: string
+  type: CategoryType
+  parent_id?: string | null
+  description?: string | null
+  color?: string | null
+  icon?: string | null
+  is_active: boolean
+  created_at: string
+  updated_at?: string | null
+}
+
+// Category with nested children for tree display
+export interface CategoryTree extends Category {
+  children: CategoryTree[]
+}
+
+// Input for creating a category
+export interface CategoryCreateInput {
+  entity_id: string
+  name: string
+  type: CategoryType
+  parent_id?: string | null
+  description?: string | null
+  color?: string | null
+  icon?: string | null
+}
+
+// Input for updating a category
+export interface CategoryUpdateInput {
+  name?: string
+  parent_id?: string | null
+  description?: string | null
+  color?: string | null
+  icon?: string | null
+  is_active?: boolean
 }

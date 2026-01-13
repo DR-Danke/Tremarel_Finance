@@ -73,3 +73,41 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting frontend authentication or session issues
     - When adding new pages that require authentication
     - When working with the LoginPage or authentication flow
+
+- app_docs/feature-a201d4c8-main-layout-collapsible-sidebar.md
+  - Conditions:
+    - When working with the main application layout or navigation
+    - When modifying or creating components in apps/Client/src/components/layout/
+    - When implementing EntityContext or useEntity hook
+    - When adding new navigation items to the sidebar
+    - When working with entity switching functionality
+    - When troubleshooting sidebar collapse/expand behavior
+    - When adding new protected pages that need the main layout
+
+- app_docs/feature-d6d0f56d-entity-management-crud.md
+  - Conditions:
+    - When working with entity management (create, update, delete entities)
+    - When implementing or modifying EntityContext or useEntity hook
+    - When adding entity switching functionality
+    - When working with multi-entity support (family/startup separation)
+    - When implementing features that need to filter by current entity
+    - When troubleshooting entity-related access control or permissions
+    - When working with TREntitySelector or EntitiesPage components
+
+- app_docs/feature-a2d71086-category-management-crud.md
+  - Conditions:
+    - When working with categories (income/expense categories)
+    - When implementing hierarchical/tree data structures
+    - When working with CategoriesPage or category_routes
+    - When modifying TRCategoryForm or TRCategoryTree components
+    - When troubleshooting category creation, hierarchy, or deletion issues
+    - When working with the categories table or CategoryService
+
+- app_docs/feature-bda418fa-transaction-crud-management.md
+  - Conditions:
+    - When working with transactions (income/expense records)
+    - When implementing or modifying transaction CRUD operations
+    - When working with TransactionsPage, TRTransactionForm, or TRTransactionTable
+    - When using the useTransactions hook or transactionService
+    - When adding filters for date range, category, or transaction type
+    - When troubleshooting transaction API endpoints
