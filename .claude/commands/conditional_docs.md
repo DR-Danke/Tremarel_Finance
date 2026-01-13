@@ -55,3 +55,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying apps/Server/database/schema.sql
     - When troubleshooting foreign key constraints or database relationships
     - When implementing multi-entity support (family/startup separation)
+
+- app_docs/feature-16559deb-backend-auth-jwt-rbac.md
+  - Conditions:
+    - When working with user authentication or login/register functionality
+    - When implementing JWT token handling in the backend
+    - When adding role-based access control to API endpoints
+    - When troubleshooting authentication or authorization errors
+    - When working with apps/Server/src/adapter/rest/auth_routes.py
+    - When using get_current_user or require_roles dependencies
