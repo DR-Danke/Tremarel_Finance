@@ -120,3 +120,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When using the useDashboard hook or dashboardService
     - When working with Recharts for financial data visualization
     - When troubleshooting dashboard API endpoint or aggregations
+
+- app_docs/feature-d110d3f0-reports-export-csv.md
+  - Conditions:
+    - When working with ReportsPage or financial reports
+    - When implementing date range filtering for reports
+    - When working with TRReportDateRangePicker, TRIncomeExpenseChart, or TRCategoryBreakdownTable components
+    - When using the useReports hook or reportService
+    - When implementing CSV export functionality
+    - When troubleshooting reports API endpoints or data aggregations
