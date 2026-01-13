@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
-import { Box, Typography, Container } from '@mui/material'
+import { Routes, Route, useLocation, Link } from 'react-router-dom'
+import { Box, Typography, Container, Button } from '@mui/material'
+import { LoginPage } from '@/pages/LoginPage'
+import { DashboardPage } from '@/pages/DashboardPage'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 function HomePage() {
   return (
@@ -21,32 +24,17 @@ function HomePage() {
         <Typography variant="h5" color="text.secondary" paragraph>
           Track your income and expenses for family and startup management
         </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Welcome! Authentication and dashboard features coming soon.
+        <Typography variant="body1" color="text.secondary" paragraph>
+          Welcome! Sign in to access your dashboard.
         </Typography>
-      </Box>
-    </Container>
-  )
-}
-
-function LoginPage() {
-  return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '100vh',
-        }}
-      >
-        <Typography variant="h4" component="h1" gutterBottom>
-          Login
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Login form will be implemented in the authentication module.
-        </Typography>
+        <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+          <Button variant="contained" component={Link} to="/login">
+            Sign In
+          </Button>
+          <Button variant="outlined" component={Link} to="/dashboard">
+            Dashboard
+          </Button>
+        </Box>
       </Box>
     </Container>
   )
@@ -63,6 +51,14 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }
