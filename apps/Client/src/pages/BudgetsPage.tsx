@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Box,
   Container,
@@ -19,20 +19,18 @@ import {
 import { Add } from '@mui/icons-material'
 import { useAuth } from '@/hooks/useAuth'
 import { useBudgets } from '@/hooks/useBudgets'
+import { useEntity } from '@/hooks/useEntity'
 import { TRBudgetForm } from '@/components/forms/TRBudgetForm'
 import { TRBudgetCard } from '@/components/ui/TRBudgetCard'
 import type { BudgetWithSpending, BudgetCreate, BudgetUpdate, Category } from '@/types'
 import { apiClient } from '@/api/clients'
 
-// Placeholder entity ID - will be replaced with EntityContext
-const PLACEHOLDER_ENTITY_ID = 'b4e8f9a0-1234-5678-9abc-def012345678'
-
 export const BudgetsPage: React.FC = () => {
   const { user } = useAuth()
-  const [searchParams] = useSearchParams()
 
-  // Use entity_id from URL params if available, otherwise use placeholder
-  const entityId = searchParams.get('entity_id') || PLACEHOLDER_ENTITY_ID
+  // Get current entity from EntityContext
+  const { currentEntity, entities, isLoading: entityLoading } = useEntity()
+  const entityId = currentEntity?.id || null
 
   const {
     budgets,
@@ -185,6 +183,48 @@ export const BudgetsPage: React.FC = () => {
     }).format(amount)
   }
 
+  // Show loading state while entity context is loading
+  if (entityLoading) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    )
+  }
+
+  // Show message if no entity is selected
+  if (!currentEntity) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Budgets
+          </Typography>
+          <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              No Entity Selected
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {entities.length === 0
+                ? 'Create your first entity to start managing budgets.'
+                : 'Select an entity to view and manage its budgets.'}
+            </Typography>
+            <Button
+              variant="contained"
+              component={Link}
+              to="/entities"
+              sx={{ mt: 2 }}
+            >
+              {entities.length === 0 ? 'Create Entity' : 'Manage Entities'}
+            </Button>
+          </Paper>
+        </Box>
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
@@ -209,6 +249,13 @@ export const BudgetsPage: React.FC = () => {
             Add Budget
           </Button>
         </Box>
+
+        {/* Current Entity Info */}
+        <Paper elevation={1} sx={{ p: 2, mb: 3, backgroundColor: 'grey.50' }}>
+          <Typography variant="body2" color="text.secondary">
+            Managing budgets for: <strong>{currentEntity.name}</strong>
+          </Typography>
+        </Paper>
 
         {/* Global error display */}
         {error && (
@@ -330,7 +377,7 @@ export const BudgetsPage: React.FC = () => {
               <TRBudgetForm
                 onSubmit={handleCreateBudget}
                 categories={categories}
-                entityId={entityId}
+                entityId={currentEntity.id}
                 onCancel={handleCloseAddDialog}
               />
             </Box>
@@ -352,7 +399,7 @@ export const BudgetsPage: React.FC = () => {
                   onSubmit={handleUpdateBudget}
                   initialData={selectedBudget}
                   categories={categories}
-                  entityId={entityId}
+                  entityId={currentEntity.id}
                   onCancel={handleCloseEditDialog}
                 />
               )}

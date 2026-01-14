@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Container,
   Grid,
@@ -19,21 +19,18 @@ import AddIcon from '@mui/icons-material/Add'
 import { TRCategoryForm } from '@/components/forms/TRCategoryForm'
 import { TRCategoryTree } from '@/components/ui/TRCategoryTree'
 import { useCategories } from '@/hooks/useCategories'
+import { useEntity } from '@/hooks/useEntity'
 import type { Category, CategoryTree, CategoryCreateInput, CategoryUpdateInput } from '@/types'
 import { AxiosError } from 'axios'
-
-// Default entity ID for development/testing
-// In production, this would come from EntityContext
-const DEFAULT_ENTITY_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
 
 /**
  * Categories management page.
  * Displays category tree and provides CRUD operations.
  */
 export const CategoriesPage: React.FC = () => {
-  // Get entityId from URL params or use default
-  const { entityId: urlEntityId } = useParams<{ entityId?: string }>()
-  const entityId = urlEntityId || DEFAULT_ENTITY_ID
+  // Get current entity from EntityContext
+  const { currentEntity, entities, isLoading: entityLoading } = useEntity()
+  const entityId = currentEntity?.id || null
 
   // Category state and operations
   const {
@@ -158,6 +155,46 @@ export const CategoriesPage: React.FC = () => {
     console.error('ERROR [CategoriesPage]: Categories error:', categoriesError)
   }
 
+  // Show loading state while entity context is loading
+  if (entityLoading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    )
+  }
+
+  // Show message if no entity is selected
+  if (!currentEntity) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Categories
+        </Typography>
+        <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            No Entity Selected
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {entities.length === 0
+              ? 'Create your first entity to start managing categories.'
+              : 'Select an entity to view and manage its categories.'}
+          </Typography>
+          <Button
+            variant="contained"
+            component={Link}
+            to="/entities"
+            sx={{ mt: 2 }}
+          >
+            {entities.length === 0 ? 'Create Entity' : 'Manage Entities'}
+          </Button>
+        </Paper>
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Page Header */}
@@ -174,6 +211,13 @@ export const CategoriesPage: React.FC = () => {
           Add Category
         </Button>
       </Box>
+
+      {/* Current Entity Info */}
+      <Paper elevation={1} sx={{ p: 2, mb: 3, backgroundColor: 'grey.50' }}>
+        <Typography variant="body2" color="text.secondary">
+          Managing categories for: <strong>{currentEntity.name}</strong>
+        </Typography>
+      </Paper>
 
       {/* Error Alert */}
       {categoriesError && (
@@ -213,7 +257,7 @@ export const CategoriesPage: React.FC = () => {
               onSubmit={handleFormSubmit}
               category={editingCategory}
               parentCategories={categories}
-              entityId={entityId}
+              entityId={currentEntity.id}
               onCancel={handleCloseForm}
               isLoading={isSubmitting}
             />

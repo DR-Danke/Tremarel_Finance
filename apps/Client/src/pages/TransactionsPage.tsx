@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Box,
   Container,
@@ -17,10 +17,12 @@ import {
   MenuItem,
   Grid,
   DialogActions,
+  CircularProgress,
 } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { useAuth } from '@/hooks/useAuth'
 import { useTransactions } from '@/hooks/useTransactions'
+import { useEntity } from '@/hooks/useEntity'
 import { TRTransactionForm } from '@/components/forms/TRTransactionForm'
 import { TRTransactionTable } from '@/components/ui/TRTransactionTable'
 import type { Transaction, TransactionCreate, TransactionUpdate, Category } from '@/types'
@@ -35,15 +37,12 @@ const MOCK_CATEGORIES: Category[] = [
   { id: '5', entity_id: '', name: 'Utilities', type: 'expense', is_active: true, created_at: '' },
 ]
 
-// Placeholder entity ID - will be replaced with EntityContext
-const PLACEHOLDER_ENTITY_ID = 'b4e8f9a0-1234-5678-9abc-def012345678'
-
 export const TransactionsPage: React.FC = () => {
   const { user } = useAuth()
-  const [searchParams] = useSearchParams()
 
-  // Use entity_id from URL params if available, otherwise use placeholder
-  const entityId = searchParams.get('entity_id') || PLACEHOLDER_ENTITY_ID
+  // Get current entity from EntityContext
+  const { currentEntity, entities, isLoading: entityLoading } = useEntity()
+  const entityId = currentEntity?.id || null
 
   const {
     transactions,
@@ -203,6 +202,48 @@ export const TransactionsPage: React.FC = () => {
     setFilters({})
   }
 
+  // Show loading state while entity context is loading
+  if (entityLoading) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    )
+  }
+
+  // Show message if no entity is selected
+  if (!currentEntity) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Transactions
+          </Typography>
+          <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              No Entity Selected
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {entities.length === 0
+                ? 'Create your first entity to start tracking transactions.'
+                : 'Select an entity to view and manage its transactions.'}
+            </Typography>
+            <Button
+              variant="contained"
+              component={Link}
+              to="/entities"
+              sx={{ mt: 2 }}
+            >
+              {entities.length === 0 ? 'Create Entity' : 'Manage Entities'}
+            </Button>
+          </Paper>
+        </Box>
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
@@ -226,6 +267,13 @@ export const TransactionsPage: React.FC = () => {
             Add Transaction
           </Button>
         </Box>
+
+        {/* Current Entity Info */}
+        <Paper elevation={1} sx={{ p: 2, mb: 3, backgroundColor: 'grey.50' }}>
+          <Typography variant="body2" color="text.secondary">
+            Managing transactions for: <strong>{currentEntity.name}</strong>
+          </Typography>
+        </Paper>
 
         {/* Global error display */}
         {error && (
@@ -317,7 +365,7 @@ export const TransactionsPage: React.FC = () => {
               <TRTransactionForm
                 onSubmit={handleCreateTransaction}
                 categories={categories}
-                entityId={entityId}
+                entityId={currentEntity.id}
                 onCancel={handleCloseAddDialog}
               />
             </Box>
@@ -339,7 +387,7 @@ export const TransactionsPage: React.FC = () => {
                   onSubmit={handleUpdateTransaction}
                   initialData={selectedTransaction}
                   categories={categories}
-                  entityId={entityId}
+                  entityId={currentEntity.id}
                   onCancel={handleCloseEditDialog}
                 />
               )}

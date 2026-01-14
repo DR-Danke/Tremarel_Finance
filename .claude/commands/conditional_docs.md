@@ -172,3 +172,14 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with form submission error handling
     - When users report "Network Error" or "ERR_CONNECTION_REFUSED" issues
     - When enhancing user feedback for backend unavailability
+
+- app_docs/bug-NA-wsl2-backend-binding-entity-context.md
+  - Conditions:
+    - When troubleshooting "Cannot connect to server" errors in WSL2 environments
+    - When the backend is running but frontend cannot reach it
+    - When working with uvicorn host binding configuration
+    - When a page uses hardcoded entity IDs instead of EntityContext
+    - When adding new entity-specific pages that need current entity
+    - When troubleshooting foreign key violations related to entity_id
+    - When configuring the /start command or backend startup scripts
+    - When users report connection issues only in WSL2/Windows development
