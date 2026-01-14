@@ -20,7 +20,7 @@ interface UseTransactionsResult {
   setFilters: (filters: TransactionFilters) => void
 }
 
-export const useTransactions = (entityId: string): UseTransactionsResult => {
+export const useTransactions = (entityId: string | null): UseTransactionsResult => {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -70,6 +70,7 @@ export const useTransactions = (entityId: string): UseTransactionsResult => {
 
   const updateTransaction = useCallback(
     async (id: string, data: TransactionUpdate) => {
+      if (!entityId) return
       console.log('INFO [useTransactions]: Updating transaction:', id)
       setError(null)
 
@@ -88,6 +89,7 @@ export const useTransactions = (entityId: string): UseTransactionsResult => {
 
   const deleteTransaction = useCallback(
     async (id: string) => {
+      if (!entityId) return
       console.log('INFO [useTransactions]: Deleting transaction:', id)
       setError(null)
 

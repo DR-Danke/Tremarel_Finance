@@ -17,7 +17,7 @@ interface UseBudgetsResult {
   deleteBudget: (id: string) => Promise<void>
 }
 
-export const useBudgets = (entityId: string): UseBudgetsResult => {
+export const useBudgets = (entityId: string | null): UseBudgetsResult => {
   const [budgets, setBudgets] = useState<BudgetWithSpending[]>([])
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -66,6 +66,7 @@ export const useBudgets = (entityId: string): UseBudgetsResult => {
 
   const updateBudget = useCallback(
     async (id: string, data: BudgetUpdate) => {
+      if (!entityId) return
       console.log('INFO [useBudgets]: Updating budget:', id)
       setError(null)
 
@@ -84,6 +85,7 @@ export const useBudgets = (entityId: string): UseBudgetsResult => {
 
   const deleteBudget = useCallback(
     async (id: string) => {
+      if (!entityId) return
       console.log('INFO [useBudgets]: Deleting budget:', id)
       setError(null)
 
