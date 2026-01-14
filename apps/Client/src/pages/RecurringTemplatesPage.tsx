@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Box,
   Container,
@@ -13,10 +13,12 @@ import {
   FormControlLabel,
   Switch,
   DialogActions,
+  CircularProgress,
 } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { useAuth } from '@/hooks/useAuth'
 import { useRecurringTemplates } from '@/hooks/useRecurringTemplates'
+import { useEntity } from '@/hooks/useEntity'
 import { TRRecurringTemplateForm } from '@/components/forms/TRRecurringTemplateForm'
 import { TRRecurringTemplateTable } from '@/components/ui/TRRecurringTemplateTable'
 import type { RecurringTemplate, RecurringTemplateCreate, RecurringTemplateUpdate, Category } from '@/types'
@@ -32,15 +34,12 @@ const MOCK_CATEGORIES: Category[] = [
   { id: '6', entity_id: '', name: 'Rent', type: 'expense', is_active: true, created_at: '' },
 ]
 
-// Placeholder entity ID - will be replaced with EntityContext
-const PLACEHOLDER_ENTITY_ID = 'b4e8f9a0-1234-5678-9abc-def012345678'
-
 export const RecurringTemplatesPage: React.FC = () => {
   const { user } = useAuth()
-  const [searchParams] = useSearchParams()
 
-  // Use entity_id from URL params if available, otherwise use placeholder
-  const entityId = searchParams.get('entity_id') || PLACEHOLDER_ENTITY_ID
+  // Get current entity from EntityContext
+  const { currentEntity, entities, isLoading: entityLoading } = useEntity()
+  const entityId = currentEntity?.id || null
 
   const {
     templates,
@@ -213,6 +212,48 @@ export const RecurringTemplatesPage: React.FC = () => {
     }
   }
 
+  // Show loading state while entity context is loading
+  if (entityLoading) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    )
+  }
+
+  // Show message if no entity is selected
+  if (!currentEntity) {
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ py: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Recurring Transactions
+          </Typography>
+          <Paper elevation={2} sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              No Entity Selected
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {entities.length === 0
+                ? 'Create your first entity to start managing recurring transactions.'
+                : 'Select an entity to view and manage its recurring transactions.'}
+            </Typography>
+            <Button
+              variant="contained"
+              component={Link}
+              to="/entities"
+              sx={{ mt: 2 }}
+            >
+              {entities.length === 0 ? 'Create Entity' : 'Manage Entities'}
+            </Button>
+          </Paper>
+        </Box>
+      </Container>
+    )
+  }
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ py: 4 }}>
@@ -236,6 +277,13 @@ export const RecurringTemplatesPage: React.FC = () => {
             Add Recurring Template
           </Button>
         </Box>
+
+        {/* Current Entity Info */}
+        <Paper elevation={1} sx={{ p: 2, mb: 3, backgroundColor: 'grey.50' }}>
+          <Typography variant="body2" color="text.secondary">
+            Managing recurring transactions for: <strong>{currentEntity.name}</strong>
+          </Typography>
+        </Paper>
 
         {/* Global error display */}
         {error && (
@@ -286,7 +334,7 @@ export const RecurringTemplatesPage: React.FC = () => {
               <TRRecurringTemplateForm
                 onSubmit={handleCreateTemplate}
                 categories={categories}
-                entityId={entityId}
+                entityId={currentEntity.id}
                 onCancel={handleCloseAddDialog}
               />
             </Box>
@@ -308,7 +356,7 @@ export const RecurringTemplatesPage: React.FC = () => {
                   onSubmit={handleUpdateTemplate}
                   initialData={selectedTemplate}
                   categories={categories}
-                  entityId={entityId}
+                  entityId={currentEntity.id}
                   onCancel={handleCloseEditDialog}
                 />
               )}

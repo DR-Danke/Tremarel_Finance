@@ -46,6 +46,40 @@ review_image_dir: `<absolute path to codebase>/agents/<adw_id>/<agent_name>/revi
   - We'll immediately run JSON.parse() on the output, so make sure it's valid JSON
 - Ultra think as you work through the review process. Focus on the critical functionality paths and the user experience. Don't report issues if they are not critical to the feature.
 
+## Static Code Checks
+
+### Entity Context Validation
+
+Check for hardcoded entity patterns in page components that could cause runtime errors:
+
+1. **Search for hardcoded entity UUIDs in pages**:
+   ```bash
+   # Check for DEFAULT_ENTITY_ID constants
+   grep -rn "DEFAULT_ENTITY_ID" apps/Client/src/pages/
+
+   # Check for hardcoded UUID strings (entity IDs)
+   grep -rn "['\"][a-f0-9]\{8\}-[a-f0-9]\{4\}-[a-f0-9]\{4\}-[a-f0-9]\{4\}-[a-f0-9]\{12\}['\"]" apps/Client/src/pages/
+   ```
+
+2. **Verify entity-dependent pages use useEntity hook**:
+   - Pages that reference `entityId` should import and use `useEntity` from `@/hooks/useEntity`
+   - Check files in `apps/Client/src/pages/` that contain `entityId` but don't use the hook:
+   ```bash
+   # Find pages with entityId that may not use useEntity
+   for file in apps/Client/src/pages/*.tsx; do
+     if grep -q "entityId" "$file" && ! grep -q "useEntity" "$file"; then
+       echo "WARN: $file uses entityId but doesn't import useEntity hook"
+     fi
+   done
+   ```
+
+3. **Flag findings as tech_debt issues**:
+   - Hardcoded UUIDs in page components → `tech_debt` severity
+   - Missing useEntity import when entityId is used → `tech_debt` severity
+   - These patterns can cause ForeignKeyViolation errors if the hardcoded ID doesn't exist
+
+**Why this matters**: Hardcoded entity IDs caused runtime "Cannot connect to server" errors that were actually ForeignKeyViolation database errors. Pages should use EntityContext via `useEntity()` hook to get the current user's actual entity.
+
 ## Setup
 
 IMPORTANT: Read and **Execute** `.claude/commands/prepare_app.md` now to prepare the application for the review.

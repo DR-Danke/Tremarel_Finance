@@ -114,7 +114,8 @@ source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
 
 # Development server (http://localhost:8000)
-python -m uvicorn main:app --reload --port 8000
+# Note: --host 0.0.0.0 is required for WSL2 to make backend accessible from Windows
+python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 # Run tests
 pytest tests/

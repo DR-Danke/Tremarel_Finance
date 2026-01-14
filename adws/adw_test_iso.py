@@ -723,11 +723,38 @@ def main():
                            f"🔌 Ports - Server: {server_port}, Client: {client_port}\n"
                            f"🧪 E2E Tests: {'Skipped' if skip_e2e else 'Enabled'}")
     )
-    
+
+    # Run smoke test first (non-blocking)
+    logger.info("Running smoke test to validate frontend-backend connectivity...")
+    smoke_test_request = AgentTemplateRequest(
+        agent_name="smoke_tester",
+        slash_command="/smoke_test",
+        args=[],
+        adw_id=adw_id,
+        working_dir=worktree_path,
+    )
+
+    smoke_test_response = execute_template(smoke_test_request)
+
+    if not smoke_test_response.success:
+        # Log warning but continue - smoke test is non-blocking
+        logger.warning(f"Smoke test warning: {smoke_test_response.output}")
+        make_issue_comment(
+            issue_number,
+            format_issue_message(adw_id, "smoke_tester",
+                f"⚠️ Smoke test warning (non-blocking):\n```\n{smoke_test_response.output}\n```")
+        )
+    else:
+        logger.info("Smoke test passed - frontend-backend connectivity verified")
+        make_issue_comment(
+            issue_number,
+            format_issue_message(adw_id, "smoke_tester", "✅ Smoke test passed - connectivity verified")
+        )
+
     # Track results for resolution attempts
     test_results = []
     e2e_results = []
-    
+
     # Run unit tests (executing in worktree)
     logger.info("Running unit tests in worktree with automatic resolution")
     make_issue_comment(
