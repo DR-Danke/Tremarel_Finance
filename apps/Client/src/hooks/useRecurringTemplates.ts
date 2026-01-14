@@ -20,7 +20,7 @@ interface UseRecurringTemplatesResult {
   setIncludeInactive: (include: boolean) => void
 }
 
-export const useRecurringTemplates = (entityId: string): UseRecurringTemplatesResult => {
+export const useRecurringTemplates = (entityId: string | null): UseRecurringTemplatesResult => {
   const [templates, setTemplates] = useState<RecurringTemplate[]>([])
   const [total, setTotal] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -70,6 +70,10 @@ export const useRecurringTemplates = (entityId: string): UseRecurringTemplatesRe
 
   const updateTemplate = useCallback(
     async (id: string, data: RecurringTemplateUpdate) => {
+      if (!entityId) {
+        console.log('INFO [useRecurringTemplates]: No entityId provided, skipping update')
+        return
+      }
       console.log('INFO [useRecurringTemplates]: Updating template:', id)
       setError(null)
 
@@ -88,6 +92,10 @@ export const useRecurringTemplates = (entityId: string): UseRecurringTemplatesRe
 
   const deactivateTemplate = useCallback(
     async (id: string) => {
+      if (!entityId) {
+        console.log('INFO [useRecurringTemplates]: No entityId provided, skipping deactivate')
+        return
+      }
       console.log('INFO [useRecurringTemplates]: Deactivating template:', id)
       setError(null)
 
@@ -106,6 +114,10 @@ export const useRecurringTemplates = (entityId: string): UseRecurringTemplatesRe
 
   const deleteTemplate = useCallback(
     async (id: string) => {
+      if (!entityId) {
+        console.log('INFO [useRecurringTemplates]: No entityId provided, skipping delete')
+        return
+      }
       console.log('INFO [useRecurringTemplates]: Deleting template:', id)
       setError(null)
 
