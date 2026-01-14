@@ -89,30 +89,34 @@ export const TRCategoryForm: React.FC<TRCategoryFormProps> = ({
   const handleFormSubmit = async (data: CategoryFormData) => {
     console.log(`INFO [TRCategoryForm]: Submitting form - ${isEditMode ? 'update' : 'create'}`)
 
-    if (isEditMode) {
-      // For updates, only send changed fields
-      const updateData: CategoryUpdateInput = {}
-      if (data.name !== category.name) updateData.name = data.name
-      if (data.parent_id !== (category.parent_id || '')) {
-        updateData.parent_id = data.parent_id || null
+    try {
+      if (isEditMode) {
+        // For updates, only send changed fields
+        const updateData: CategoryUpdateInput = {}
+        if (data.name !== category.name) updateData.name = data.name
+        if (data.parent_id !== (category.parent_id || '')) {
+          updateData.parent_id = data.parent_id || null
+        }
+        if (data.description !== (category.description || '')) {
+          updateData.description = data.description || null
+        }
+        await onSubmit(updateData)
+      } else {
+        // For creation, send all required fields
+        const createData: CategoryCreateInput = {
+          entity_id: entityId,
+          name: data.name,
+          type: data.type,
+          parent_id: data.parent_id || null,
+          description: data.description || null,
+        }
+        await onSubmit(createData)
       }
-      if (data.description !== (category.description || '')) {
-        updateData.description = data.description || null
-      }
-      await onSubmit(updateData)
-    } else {
-      // For creation, send all required fields
-      const createData: CategoryCreateInput = {
-        entity_id: entityId,
-        name: data.name,
-        type: data.type,
-        parent_id: data.parent_id || null,
-        description: data.description || null,
-      }
-      await onSubmit(createData)
+      console.log(`INFO [TRCategoryForm]: Form submitted successfully`)
+    } catch (error) {
+      console.error(`ERROR [TRCategoryForm]: Form submission failed`)
+      throw error // Re-throw so parent can handle
     }
-
-    console.log(`INFO [TRCategoryForm]: Form submitted successfully`)
   }
 
   const isFormDisabled = isSubmitting || isLoading
