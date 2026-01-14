@@ -183,3 +183,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting foreign key violations related to entity_id
     - When configuring the /start command or backend startup scripts
     - When users report connection issues only in WSL2/Windows development
+
+- app_docs/bug-0cbd0859-recurring-templates-cors-error.md
+  - Conditions:
+    - When troubleshooting CORS errors with Pydantic validation
+    - When adding RequestValidationError or ValidationError exception handlers
+    - When working with recurring templates API endpoints
+    - When serializing complex types (UUID, Decimal, datetime) in error responses
+    - When debugging 500 errors that bypass CORS middleware
+    - When adding null entityId guards to frontend hooks
