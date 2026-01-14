@@ -22,17 +22,7 @@ import { useEntity } from '@/hooks/useEntity'
 import { TRRecurringTemplateForm } from '@/components/forms/TRRecurringTemplateForm'
 import { TRRecurringTemplateTable } from '@/components/ui/TRRecurringTemplateTable'
 import type { RecurringTemplate, RecurringTemplateCreate, RecurringTemplateUpdate, Category } from '@/types'
-import { apiClient } from '@/api/clients'
-
-// Mock categories for testing - will be replaced with actual category service
-const MOCK_CATEGORIES: Category[] = [
-  { id: '1', entity_id: '', name: 'Salary', type: 'income', is_active: true, created_at: '' },
-  { id: '2', entity_id: '', name: 'Freelance', type: 'income', is_active: true, created_at: '' },
-  { id: '3', entity_id: '', name: 'Food & Dining', type: 'expense', is_active: true, created_at: '' },
-  { id: '4', entity_id: '', name: 'Subscriptions', type: 'expense', is_active: true, created_at: '' },
-  { id: '5', entity_id: '', name: 'Utilities', type: 'expense', is_active: true, created_at: '' },
-  { id: '6', entity_id: '', name: 'Rent', type: 'expense', is_active: true, created_at: '' },
-]
+import { categoryService } from '@/services/categoryService'
 
 export const RecurringTemplatesPage: React.FC = () => {
   const { user } = useAuth()
@@ -63,7 +53,7 @@ export const RecurringTemplatesPage: React.FC = () => {
   const [operationError, setOperationError] = useState<string | null>(null)
 
   // Categories state
-  const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES)
+  const [categories, setCategories] = useState<Category[]>([])
 
   // Check if user can delete (admin or manager)
   const canDelete = user?.role === 'admin' || user?.role === 'manager'
@@ -77,19 +67,21 @@ export const RecurringTemplatesPage: React.FC = () => {
     return map
   }, [categories])
 
-  // Attempt to load real categories
+  // Load categories
   useEffect(() => {
     const loadCategories = async () => {
+      if (!entityId) {
+        console.log('INFO [RecurringTemplatesPage]: No entityId, skipping category load')
+        return
+      }
       try {
-        const response = await apiClient.get<{ categories: Category[] }>(
-          `/categories?entity_id=${entityId}`
-        )
-        if (response.data.categories && response.data.categories.length > 0) {
-          setCategories(response.data.categories)
-          console.log('INFO [RecurringTemplatesPage]: Loaded', response.data.categories.length, 'categories')
+        const fetchedCategories = await categoryService.getCategories(entityId)
+        if (fetchedCategories && fetchedCategories.length > 0) {
+          setCategories(fetchedCategories)
+          console.log('INFO [RecurringTemplatesPage]: Loaded', fetchedCategories.length, 'categories from API')
         }
       } catch (err) {
-        console.log('INFO [RecurringTemplatesPage]: Using mock categories (category API not available)')
+        console.error('ERROR [RecurringTemplatesPage]: Failed to load categories:', err)
       }
     }
     loadCategories()
