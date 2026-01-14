@@ -35,7 +35,13 @@ apiClient.interceptors.response.use(
     const status = error.response?.status
     const url = error.config?.url
 
-    console.error(`ERROR [ApiClient]: Response ${status} from ${url}:`, error.message)
+    // Handle network connectivity errors
+    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+      console.error(`ERROR [ApiClient]: Unable to connect to server. Please ensure the backend is running at ${error.config?.baseURL}`)
+      error.message = 'Unable to connect to server. Please ensure the backend is running.'
+    } else {
+      console.error(`ERROR [ApiClient]: Response ${status} from ${url}:`, error.message)
+    }
 
     // Handle common error cases
     if (status === 401) {

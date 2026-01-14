@@ -108,7 +108,11 @@ export const CategoriesPage: React.FC = () => {
       console.error('ERROR [CategoriesPage]: Form submission failed:', err)
       let errorMessage = 'An error occurred'
       if (err instanceof AxiosError) {
-        errorMessage = err.response?.data?.detail || err.message
+        if (err.code === 'ERR_NETWORK' || err.message.includes('Unable to connect')) {
+          errorMessage = 'Cannot connect to server. Please ensure the backend is running.'
+        } else {
+          errorMessage = err.response?.data?.detail || err.message
+        }
       }
       showNotification(errorMessage, 'error')
     } finally {
