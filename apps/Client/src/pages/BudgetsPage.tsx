@@ -23,7 +23,7 @@ import { useEntity } from '@/hooks/useEntity'
 import { TRBudgetForm } from '@/components/forms/TRBudgetForm'
 import { TRBudgetCard } from '@/components/ui/TRBudgetCard'
 import type { BudgetWithSpending, BudgetCreate, BudgetUpdate, Category } from '@/types'
-import { apiClient } from '@/api/clients'
+import { categoryService } from '@/services/categoryService'
 
 export const BudgetsPage: React.FC = () => {
   const { user } = useAuth()
@@ -59,17 +59,19 @@ export const BudgetsPage: React.FC = () => {
   // Load categories
   useEffect(() => {
     const loadCategories = async () => {
+      if (!entityId) {
+        console.log('INFO [BudgetsPage]: No entityId, skipping category load')
+        return
+      }
       setCategoriesLoading(true)
       try {
-        const response = await apiClient.get<{ categories: Category[] }>(
-          `/categories?entity_id=${entityId}`
-        )
-        if (response.data.categories && response.data.categories.length > 0) {
-          setCategories(response.data.categories)
-          console.log('INFO [BudgetsPage]: Loaded', response.data.categories.length, 'categories')
+        const fetchedCategories = await categoryService.getCategories(entityId)
+        if (fetchedCategories && fetchedCategories.length > 0) {
+          setCategories(fetchedCategories)
+          console.log('INFO [BudgetsPage]: Loaded', fetchedCategories.length, 'categories from API')
         }
       } catch (err) {
-        console.log('INFO [BudgetsPage]: Failed to load categories:', err)
+        console.error('ERROR [BudgetsPage]: Failed to load categories:', err)
       } finally {
         setCategoriesLoading(false)
       }

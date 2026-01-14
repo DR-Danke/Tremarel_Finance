@@ -28,15 +28,6 @@ import { TRTransactionTable } from '@/components/ui/TRTransactionTable'
 import { categoryService } from '@/services/categoryService'
 import type { Transaction, TransactionCreate, TransactionUpdate, Category } from '@/types'
 
-// Mock categories for testing - will be replaced with actual category service
-const MOCK_CATEGORIES: Category[] = [
-  { id: '1', entity_id: '', name: 'Salary', type: 'income', is_active: true, created_at: '' },
-  { id: '2', entity_id: '', name: 'Freelance', type: 'income', is_active: true, created_at: '' },
-  { id: '3', entity_id: '', name: 'Food & Dining', type: 'expense', is_active: true, created_at: '' },
-  { id: '4', entity_id: '', name: 'Transportation', type: 'expense', is_active: true, created_at: '' },
-  { id: '5', entity_id: '', name: 'Utilities', type: 'expense', is_active: true, created_at: '' },
-]
-
 export const TransactionsPage: React.FC = () => {
   const { user } = useAuth()
 
@@ -63,7 +54,7 @@ export const TransactionsPage: React.FC = () => {
   const [operationError, setOperationError] = useState<string | null>(null)
 
   // Categories state
-  const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES)
+  const [categories, setCategories] = useState<Category[]>([])
 
   // Filter state
   const [filterStartDate, setFilterStartDate] = useState('')
@@ -82,11 +73,11 @@ export const TransactionsPage: React.FC = () => {
     return map
   }, [categories])
 
-  // Load real categories using categoryService
+  // Load categories using categoryService
   useEffect(() => {
     const loadCategories = async () => {
       if (!entityId) {
-        console.log('INFO [TransactionsPage]: No entityId, using mock categories')
+        console.log('INFO [TransactionsPage]: No entityId, skipping category load')
         return
       }
       try {
@@ -95,10 +86,10 @@ export const TransactionsPage: React.FC = () => {
           setCategories(fetchedCategories)
           console.log('INFO [TransactionsPage]: Loaded', fetchedCategories.length, 'categories from API')
         } else {
-          console.log('INFO [TransactionsPage]: No categories found, using mock categories')
+          console.log('INFO [TransactionsPage]: No categories found for entity')
         }
       } catch (err) {
-        console.log('INFO [TransactionsPage]: Using mock categories (category API not available)', err)
+        console.error('ERROR [TransactionsPage]: Failed to load categories:', err)
       }
     }
     loadCategories()
