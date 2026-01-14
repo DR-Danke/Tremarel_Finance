@@ -4,8 +4,8 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from uuid import UUID
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from src.config.settings import get_settings
@@ -14,9 +14,6 @@ from src.models.user import User
 from src.repository.user_repository import user_repository
 
 settings = get_settings()
-
-# Password hashing context using bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AuthService:
@@ -33,7 +30,7 @@ class AuthService:
             Hashed password string
         """
         print("INFO [AuthService]: Hashing password")
-        return pwd_context.hash(password)
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """
@@ -47,7 +44,7 @@ class AuthService:
             True if password matches, False otherwise
         """
         print("INFO [AuthService]: Verifying password")
-        return pwd_context.verify(plain_password, hashed_password)
+        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
     def create_access_token(self, data: dict) -> str:
         """
