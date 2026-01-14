@@ -25,8 +25,8 @@ import { useTransactions } from '@/hooks/useTransactions'
 import { useEntity } from '@/hooks/useEntity'
 import { TRTransactionForm } from '@/components/forms/TRTransactionForm'
 import { TRTransactionTable } from '@/components/ui/TRTransactionTable'
+import { categoryService } from '@/services/categoryService'
 import type { Transaction, TransactionCreate, TransactionUpdate, Category } from '@/types'
-import { apiClient } from '@/api/clients'
 
 // Mock categories for testing - will be replaced with actual category service
 const MOCK_CATEGORIES: Category[] = [
@@ -82,19 +82,23 @@ export const TransactionsPage: React.FC = () => {
     return map
   }, [categories])
 
-  // Attempt to load real categories (will fail gracefully if categories endpoint doesn't exist yet)
+  // Load real categories using categoryService
   useEffect(() => {
     const loadCategories = async () => {
+      if (!entityId) {
+        console.log('INFO [TransactionsPage]: No entityId, using mock categories')
+        return
+      }
       try {
-        const response = await apiClient.get<{ categories: Category[] }>(
-          `/categories?entity_id=${entityId}`
-        )
-        if (response.data.categories && response.data.categories.length > 0) {
-          setCategories(response.data.categories)
-          console.log('INFO [TransactionsPage]: Loaded', response.data.categories.length, 'categories')
+        const fetchedCategories = await categoryService.getCategories(entityId)
+        if (fetchedCategories && fetchedCategories.length > 0) {
+          setCategories(fetchedCategories)
+          console.log('INFO [TransactionsPage]: Loaded', fetchedCategories.length, 'categories from API')
+        } else {
+          console.log('INFO [TransactionsPage]: No categories found, using mock categories')
         }
       } catch (err) {
-        console.log('INFO [TransactionsPage]: Using mock categories (category API not available)')
+        console.log('INFO [TransactionsPage]: Using mock categories (category API not available)', err)
       }
     }
     loadCategories()
