@@ -164,3 +164,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying FastAPI exception handling in main.py
     - When debugging error responses missing CORS headers
     - When working with global exception handlers in FastAPI
+
+- app_docs/bug-74b0e4f8-network-error-category-creation.md
+  - Conditions:
+    - When troubleshooting network connectivity errors in the frontend
+    - When improving error handling for API client requests
+    - When working with form submission error handling
+    - When users report "Network Error" or "ERR_CONNECTION_REFUSED" issues
+    - When enhancing user feedback for backend unavailability
