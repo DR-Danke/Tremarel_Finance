@@ -9,8 +9,10 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 from src.adapter.rest.auth_routes import router as auth_router
 from src.adapter.rest.entity_routes import router as entity_router
@@ -58,6 +60,63 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def _make_serializable(obj):
+    """Convert objects to JSON-serializable format."""
+    from decimal import Decimal
+    from uuid import UUID
+    from datetime import datetime, date
+
+    if isinstance(obj, dict):
+        return {k: _make_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_make_serializable(item) for item in obj]
+    elif isinstance(obj, Decimal):
+        return str(obj)
+    elif isinstance(obj, UUID):
+        return str(obj)
+    elif isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    elif isinstance(obj, Exception):
+        return str(obj)
+    return obj
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_exception_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """
+    Handle FastAPI request validation errors with proper CORS headers.
+
+    Catches validation errors from request body, query params, etc.
+    and returns a proper JSON response that the CORS middleware can process.
+    """
+    print(f"ERROR [Main]: Request validation error: {exc.errors()}")
+    serializable_errors = _make_serializable(exc.errors())
+    return JSONResponse(
+        status_code=422,
+        content={"detail": serializable_errors}
+    )
+
+
+@app.exception_handler(ValidationError)
+async def pydantic_validation_exception_handler(
+    request: Request, exc: ValidationError
+) -> JSONResponse:
+    """
+    Handle Pydantic validation errors with proper CORS headers.
+
+    Catches validation errors from Pydantic model validation
+    and returns a proper JSON response that the CORS middleware can process.
+    """
+    print(f"ERROR [Main]: Pydantic validation error: {exc.errors()}")
+    serializable_errors = _make_serializable(exc.errors())
+    return JSONResponse(
+        status_code=422,
+        content={"detail": serializable_errors}
+    )
 
 
 @app.exception_handler(Exception)

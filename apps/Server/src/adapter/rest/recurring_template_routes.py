@@ -73,19 +73,23 @@ async def list_recurring_templates(
     """
     print(f"INFO [RecurringTemplateRoutes]: List templates request for entity {entity_id}")
 
-    templates, total = recurring_template_service.list_templates(
-        db=db,
-        entity_id=entity_id,
-        include_inactive=include_inactive,
-        skip=skip,
-        limit=limit,
-    )
+    try:
+        templates, total = recurring_template_service.list_templates(
+            db=db,
+            entity_id=entity_id,
+            include_inactive=include_inactive,
+            skip=skip,
+            limit=limit,
+        )
 
-    print(f"INFO [RecurringTemplateRoutes]: Returning {len(templates)} templates (total: {total})")
-    return RecurringTemplateListResponseDTO(
-        templates=[RecurringTemplateResponseDTO.model_validate(t) for t in templates],
-        total=total,
-    )
+        print(f"INFO [RecurringTemplateRoutes]: Returning {len(templates)} templates (total: {total})")
+        return RecurringTemplateListResponseDTO(
+            templates=[RecurringTemplateResponseDTO.model_validate(t) for t in templates],
+            total=total,
+        )
+    except Exception as e:
+        print(f"ERROR [RecurringTemplateRoutes]: Failed to list templates: {type(e).__name__}: {str(e)}")
+        raise
 
 
 @router.get("/{template_id}", response_model=RecurringTemplateResponseDTO)
