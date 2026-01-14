@@ -51,10 +51,10 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         response = await client.post(
             "/api/auth/login",
@@ -93,8 +93,8 @@ async def test_get_dashboard_stats_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.dashboard_service.DashboardService.get_current_month_summary"
         ) as mock_summary, patch(
             "src.core.services.dashboard_service.DashboardService.get_monthly_trends"
@@ -104,7 +104,7 @@ async def test_get_dashboard_stats_success() -> None:
             # Setup auth mocks
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             # Setup dashboard service mocks
             from src.interface.dashboard_dto import (
@@ -166,8 +166,8 @@ async def test_get_dashboard_stats_empty_data() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.dashboard_service.DashboardService.get_current_month_summary"
         ) as mock_summary, patch(
             "src.core.services.dashboard_service.DashboardService.get_monthly_trends"
@@ -176,7 +176,7 @@ async def test_get_dashboard_stats_empty_data() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.dashboard_dto import (
                 CurrentMonthSummaryDTO,
@@ -218,8 +218,8 @@ async def test_get_dashboard_stats_only_income() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.dashboard_service.DashboardService.get_current_month_summary"
         ) as mock_summary, patch(
             "src.core.services.dashboard_service.DashboardService.get_monthly_trends"
@@ -228,7 +228,7 @@ async def test_get_dashboard_stats_only_income() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.dashboard_dto import (
                 CurrentMonthSummaryDTO,
@@ -278,8 +278,8 @@ async def test_get_dashboard_stats_only_expenses() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.dashboard_service.DashboardService.get_current_month_summary"
         ) as mock_summary, patch(
             "src.core.services.dashboard_service.DashboardService.get_monthly_trends"
@@ -288,7 +288,7 @@ async def test_get_dashboard_stats_only_expenses() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.dashboard_dto import (
                 CategoryBreakdownDTO,
@@ -354,8 +354,8 @@ async def test_get_dashboard_stats_multiple_months() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.dashboard_service.DashboardService.get_current_month_summary"
         ) as mock_summary, patch(
             "src.core.services.dashboard_service.DashboardService.get_monthly_trends"
@@ -364,7 +364,7 @@ async def test_get_dashboard_stats_multiple_months() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.dashboard_dto import (
                 CurrentMonthSummaryDTO,
@@ -445,11 +445,11 @@ async def test_get_dashboard_stats_missing_entity_id() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
             response = await client.get(

@@ -51,10 +51,10 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         response = await client.post(
             "/api/auth/login",
@@ -96,8 +96,8 @@ async def test_get_report_data_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.reports_service.ReportsService.get_report_summary"
         ) as mock_summary, patch(
             "src.core.services.reports_service.ReportsService.get_income_expense_comparison"
@@ -107,7 +107,7 @@ async def test_get_report_data_success() -> None:
             # Setup auth mocks
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             # Setup reports service mocks
             from src.interface.reports_dto import (
@@ -181,8 +181,8 @@ async def test_get_report_data_only_income() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.reports_service.ReportsService.get_report_summary"
         ) as mock_summary, patch(
             "src.core.services.reports_service.ReportsService.get_income_expense_comparison"
@@ -191,7 +191,7 @@ async def test_get_report_data_only_income() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.reports_dto import (
                 CategorySummaryDTO,
@@ -252,8 +252,8 @@ async def test_get_report_data_only_expenses() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.reports_service.ReportsService.get_report_summary"
         ) as mock_summary, patch(
             "src.core.services.reports_service.ReportsService.get_income_expense_comparison"
@@ -262,7 +262,7 @@ async def test_get_report_data_only_expenses() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.reports_dto import (
                 CategorySummaryDTO,
@@ -332,8 +332,8 @@ async def test_get_report_data_empty() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.reports_service.ReportsService.get_report_summary"
         ) as mock_summary, patch(
             "src.core.services.reports_service.ReportsService.get_income_expense_comparison"
@@ -342,7 +342,7 @@ async def test_get_report_data_empty() -> None:
         ) as mock_breakdown:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             from src.interface.reports_dto import ReportSummaryDTO
 
@@ -384,11 +384,11 @@ async def test_get_report_data_missing_entity_id() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
             response = await client.get(
@@ -412,11 +412,11 @@ async def test_get_report_data_missing_dates() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
             response = await client.get(
@@ -461,13 +461,13 @@ async def test_export_csv_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.reports_service.ReportsService.export_transactions_csv"
         ) as mock_export:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             # Mock CSV content
             csv_content = (
@@ -509,13 +509,13 @@ async def test_export_csv_empty() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.reports_service.ReportsService.export_transactions_csv"
         ) as mock_export:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             # Empty CSV (header only)
             csv_content = "Date,Type,Category,Amount,Description,Notes\n"
@@ -548,11 +548,11 @@ async def test_export_csv_missing_params() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
             response = await client.get(

@@ -85,11 +85,11 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
         mock_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         login_response = await client.post(
             "/api/auth/login",
@@ -112,13 +112,13 @@ async def test_create_entity_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.create_entity.return_value = mock_entity
         mock_entity_repo.add_user_to_entity.return_value = create_mock_user_entity(
             mock_user.id, mock_entity.id
@@ -153,11 +153,11 @@ async def test_create_entity_invalid_type() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -210,13 +210,13 @@ async def test_list_entities_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_entities_by_user_id.return_value = [mock_entity1, mock_entity2]
 
         async with AsyncClient(
@@ -242,13 +242,13 @@ async def test_list_entities_empty() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_entities_by_user_id.return_value = []
 
         async with AsyncClient(
@@ -280,13 +280,13 @@ async def test_get_entity_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = "admin"
         mock_entity_repo.get_entity_by_id.return_value = mock_entity
 
@@ -314,13 +314,13 @@ async def test_get_entity_no_access() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = None  # No access
 
         async with AsyncClient(
@@ -350,13 +350,13 @@ async def test_update_entity_admin_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = "admin"
         mock_entity_repo.get_entity_by_id.return_value = mock_entity
         mock_entity_repo.update_entity.return_value = mock_entity
@@ -384,13 +384,13 @@ async def test_update_entity_user_forbidden() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = "user"  # Regular user role
 
         async with AsyncClient(
@@ -421,13 +421,13 @@ async def test_delete_entity_admin_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = "admin"
         mock_entity_repo.delete_entity.return_value = True
 
@@ -453,13 +453,13 @@ async def test_delete_entity_manager_forbidden() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = "manager"  # Manager role
 
         async with AsyncClient(
@@ -491,13 +491,13 @@ async def test_add_member_admin_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         # First call for auth check (admin), second call for target user check (None = not member)
         mock_entity_repo.get_user_entity_role.side_effect = ["admin", None]
@@ -527,13 +527,13 @@ async def test_add_member_already_member() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         # First call for auth check (admin), second call for target user check (already member)
         mock_entity_repo.get_user_entity_role.side_effect = ["admin", "user"]
@@ -568,13 +568,13 @@ async def test_remove_member_admin_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         # First call for auth check, second for target user check
         mock_entity_repo.get_user_entity_role.side_effect = ["admin", "user"]
@@ -602,13 +602,13 @@ async def test_remove_last_admin_forbidden() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         # Both calls return admin (self-removal attempt)
         mock_entity_repo.get_user_entity_role.side_effect = ["admin", "admin"]
@@ -653,13 +653,13 @@ async def test_list_members_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.entity_service.entity_repository"
     ) as mock_entity_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_entity_repo.get_user_entity_role.return_value = "admin"
         mock_entity_repo.get_entity_members.return_value = members
 

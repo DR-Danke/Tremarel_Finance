@@ -100,10 +100,10 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         response = await client.post(
             "/api/auth/login",
@@ -137,8 +137,8 @@ async def test_create_budget_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.category_repository"
         ) as mock_cat_repo, patch(
             "src.core.services.budget_service.budget_repository"
@@ -146,7 +146,7 @@ async def test_create_budget_success() -> None:
             # Setup auth mocks
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             # Setup category and budget mocks
             mock_cat_repo.get_category_by_id.return_value = mock_category
@@ -189,13 +189,13 @@ async def test_create_budget_invalid_category_type() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.category_repository"
         ) as mock_cat_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
             mock_cat_repo.get_category_by_id.return_value = mock_category
 
             token = await get_auth_token(client, mock_user)
@@ -230,15 +230,15 @@ async def test_create_budget_duplicate() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.category_repository"
         ) as mock_cat_repo, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
             mock_cat_repo.get_category_by_id.return_value = mock_category
             mock_budget_repo.check_duplicate_budget.return_value = True
 
@@ -272,11 +272,11 @@ async def test_create_budget_negative_amount() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
 
@@ -307,11 +307,11 @@ async def test_create_budget_invalid_period_type() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
 
@@ -348,13 +348,13 @@ async def test_list_budgets_empty() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budgets_by_entity.return_value = []
             mock_budget_repo.count_budgets_by_entity.return_value = 0
@@ -389,15 +389,15 @@ async def test_list_budgets_with_spending() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo, patch(
             "src.core.services.budget_service.category_repository"
         ) as mock_cat_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budgets_by_entity.return_value = [mock_budget]
             mock_budget_repo.count_budgets_by_entity.return_value = 1
@@ -436,13 +436,13 @@ async def test_get_budget_not_found() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budget_by_id.return_value = None
 
@@ -483,13 +483,13 @@ async def test_update_budget_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budget_by_id.return_value = mock_budget
             mock_budget_repo.update_budget.return_value = updated_budget
@@ -520,13 +520,13 @@ async def test_update_budget_wrong_entity() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budget_by_id.return_value = mock_budget
 
@@ -560,13 +560,13 @@ async def test_delete_budget_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_admin
             mock_auth_repo.get_user_by_id.return_value = mock_admin
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budget_by_id.return_value = mock_budget
             mock_budget_repo.delete_budget.return_value = None
@@ -595,13 +595,13 @@ async def test_delete_budget_as_manager() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.budget_service.budget_repository"
         ) as mock_budget_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_manager
             mock_auth_repo.get_user_by_id.return_value = mock_manager
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_budget_repo.get_budget_by_id.return_value = mock_budget
             mock_budget_repo.delete_budget.return_value = None
@@ -630,11 +630,11 @@ async def test_delete_budget_forbidden() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
 

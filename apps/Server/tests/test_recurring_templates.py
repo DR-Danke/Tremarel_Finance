@@ -85,10 +85,10 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         response = await client.post(
             "/api/auth/login",
@@ -124,14 +124,14 @@ async def test_create_recurring_template_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             # Setup auth mocks
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             # Setup template repository mock
             mock_template_repo.create_template.return_value = mock_template
@@ -174,11 +174,11 @@ async def test_create_recurring_template_invalid_frequency() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
 
@@ -211,11 +211,11 @@ async def test_create_recurring_template_negative_amount() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
 
@@ -254,13 +254,13 @@ async def test_list_recurring_templates_empty() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_template_repo.get_templates_by_entity.return_value = []
             mock_template_repo.count_templates_by_entity.return_value = 0
@@ -296,13 +296,13 @@ async def test_list_recurring_templates_with_data() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_template_repo.get_templates_by_entity.return_value = [mock_template]
             mock_template_repo.count_templates_by_entity.return_value = 1
@@ -339,13 +339,13 @@ async def test_get_recurring_template_not_found() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_template_repo.get_template_by_id.return_value = None
 
@@ -386,13 +386,13 @@ async def test_update_recurring_template_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_template_repo.get_template_by_id.return_value = mock_template
             mock_template_repo.update_template.return_value = updated_template
@@ -435,13 +435,13 @@ async def test_deactivate_recurring_template_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_template_repo.get_template_by_id.return_value = mock_template
             mock_template_repo.deactivate_template.return_value = deactivated_template
@@ -477,13 +477,13 @@ async def test_delete_recurring_template_success() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context, patch(
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt, patch(
             "src.core.services.recurring_template_service.recurring_template_repository"
         ) as mock_template_repo:
             mock_auth_repo.get_user_by_email.return_value = mock_admin
             mock_auth_repo.get_user_by_id.return_value = mock_admin
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             mock_template_repo.get_template_by_id.return_value = mock_template
             mock_template_repo.delete_template.return_value = None
@@ -512,11 +512,11 @@ async def test_delete_recurring_template_forbidden() -> None:
         with patch(
             "src.core.services.auth_service.user_repository"
         ) as mock_auth_repo, patch(
-            "src.core.services.auth_service.pwd_context"
-        ) as mock_pwd_context:
+            "src.core.services.auth_service.bcrypt"
+        ) as mock_bcrypt:
             mock_auth_repo.get_user_by_email.return_value = mock_user
             mock_auth_repo.get_user_by_id.return_value = mock_user
-            mock_pwd_context.verify.return_value = True
+            mock_bcrypt.checkpw.return_value = True
 
             token = await get_auth_token(client, mock_user)
 
