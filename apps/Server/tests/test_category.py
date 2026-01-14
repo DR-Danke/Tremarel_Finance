@@ -74,10 +74,10 @@ async def get_auth_token(client: AsyncClient, mock_user: User) -> str:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         response = await client.post(
             "/api/auth/login",
@@ -101,13 +101,13 @@ async def test_create_category_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.create_category.return_value = mock_category
 
         async with AsyncClient(
@@ -150,13 +150,13 @@ async def test_create_category_with_parent() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = parent_category
         mock_cat_repo.create_category.return_value = child_category
 
@@ -191,11 +191,11 @@ async def test_create_category_invalid_type() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -224,11 +224,11 @@ async def test_create_category_missing_name() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -260,13 +260,13 @@ async def test_create_category_parent_type_mismatch() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = parent_category
 
         async with AsyncClient(
@@ -309,13 +309,13 @@ async def test_get_categories_by_entity() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_categories_by_entity.return_value = mock_categories
 
         async with AsyncClient(
@@ -350,13 +350,13 @@ async def test_get_category_tree() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_categories_by_entity.return_value = [parent, child]
 
         async with AsyncClient(
@@ -389,13 +389,13 @@ async def test_get_single_category() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = mock_category
 
         async with AsyncClient(
@@ -423,13 +423,13 @@ async def test_get_category_not_found() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = None
 
         async with AsyncClient(
@@ -462,13 +462,13 @@ async def test_update_category_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = mock_category
 
         # Update the mock to return updated name
@@ -511,13 +511,13 @@ async def test_delete_category_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = mock_category
         mock_cat_repo.has_children.return_value = False
         mock_cat_repo.has_transactions.return_value = False
@@ -548,13 +548,13 @@ async def test_delete_category_with_children() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = mock_category
         mock_cat_repo.has_children.return_value = True  # Has children
 
@@ -623,13 +623,13 @@ async def test_access_category_from_wrong_entity() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_auth_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
         "src.core.services.category_service.category_repository"
     ) as mock_cat_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
         mock_cat_repo.get_category_by_id.return_value = mock_category
 
         async with AsyncClient(

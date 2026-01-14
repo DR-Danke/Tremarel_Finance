@@ -157,3 +157,10 @@ This prompt helps you determine what documentation you should read based on the 
     - When setting up or modifying render.yaml or Vercel configuration
     - When troubleshooting CORS configuration or deployment issues
     - When updating .env.sample files
+
+- app_docs/bug-dd6d412a-cors-error-category-creation.md
+  - Conditions:
+    - When troubleshooting CORS errors on API endpoints
+    - When modifying FastAPI exception handling in main.py
+    - When debugging error responses missing CORS headers
+    - When working with global exception handlers in FastAPI

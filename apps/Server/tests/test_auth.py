@@ -62,13 +62,14 @@ async def test_register_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         # Mock repository to return None (no existing user)
         mock_repo.get_user_by_email.return_value = None
 
-        # Mock password hashing
-        mock_pwd_context.hash.return_value = PASSWORD_HASH
+        # Mock bcrypt password hashing
+        mock_bcrypt.gensalt.return_value = b"$2b$12$fakesalt"
+        mock_bcrypt.hashpw.return_value = PASSWORD_HASH.encode('utf-8')
 
         # Create a proper mock user object for the return
         mock_user = MagicMock(spec=User)
@@ -176,10 +177,10 @@ async def test_login_success() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -208,10 +209,10 @@ async def test_login_invalid_credentials() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = False  # Wrong password
+        mock_bcrypt.checkpw.return_value = False  # Wrong password
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -259,10 +260,10 @@ async def test_login_inactive_user() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_user
-        mock_pwd_context.verify.return_value = True  # Password is correct
+        mock_bcrypt.checkpw.return_value = True  # Password is correct
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -292,12 +293,12 @@ async def test_me_authenticated() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         # Mock for login
         mock_repo.get_user_by_email.return_value = mock_user
         mock_repo.get_user_by_id.return_value = mock_user
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -415,9 +416,10 @@ def test_password_hashing_with_mock() -> None:
     """Test password hashing and verification with mocking."""
     from src.core.services.auth_service import AuthService
 
-    with patch("src.core.services.auth_service.pwd_context") as mock_pwd_context:
-        mock_pwd_context.hash.return_value = PASSWORD_HASH
-        mock_pwd_context.verify.return_value = True
+    with patch("src.core.services.auth_service.bcrypt") as mock_bcrypt:
+        mock_bcrypt.gensalt.return_value = b"$2b$12$fakesalt"
+        mock_bcrypt.hashpw.return_value = PASSWORD_HASH.encode('utf-8')
+        mock_bcrypt.checkpw.return_value = True
 
         service = AuthService()
         password = "testpassword123"
@@ -435,8 +437,8 @@ def test_password_verification_failure_with_mock() -> None:
     """Test password verification failure with mocking."""
     from src.core.services.auth_service import AuthService
 
-    with patch("src.core.services.auth_service.pwd_context") as mock_pwd_context:
-        mock_pwd_context.verify.return_value = False
+    with patch("src.core.services.auth_service.bcrypt") as mock_bcrypt:
+        mock_bcrypt.checkpw.return_value = False
 
         service = AuthService()
 
@@ -458,10 +460,10 @@ async def test_rbac_admin_access() -> None:
     with patch(
         "src.core.services.auth_service.user_repository"
     ) as mock_repo, patch(
-        "src.core.services.auth_service.pwd_context"
-    ) as mock_pwd_context:
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
         mock_repo.get_user_by_email.return_value = mock_admin
-        mock_pwd_context.verify.return_value = True
+        mock_bcrypt.checkpw.return_value = True
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"

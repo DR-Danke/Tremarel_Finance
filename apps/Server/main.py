@@ -8,8 +8,9 @@ Run with: python -m uvicorn main:app --reload --port 8000
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from src.adapter.rest.auth_routes import router as auth_router
 from src.adapter.rest.entity_routes import router as entity_router
@@ -57,6 +58,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """
+    Global exception handler to ensure CORS headers are always added.
+
+    Catches all unhandled exceptions and returns a proper JSON response
+    that the CORS middleware can process.
+    """
+    print(f"ERROR [Main]: Unhandled exception: {type(exc).__name__}: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"}
+    )
 
 # Register routers
 app.include_router(health_router)
