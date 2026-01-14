@@ -64,6 +64,14 @@ SlashCommand = Literal[
     "/patch",
     "/document",
     "/track_agentic_kpis",
+    # Test phase commands
+    "/smoke_test",
+    "/test_api",
+    "/test_static",
+    # Application lifecycle commands
+    "/start",
+    "/prepare_app",
+    "/health_check",
     # Installation/setup commands
     "/install_worktree",
 ]
