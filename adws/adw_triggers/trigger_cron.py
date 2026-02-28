@@ -11,11 +11,10 @@
 """
 Cron-based ADW trigger system that monitors GitHub issues and automatically processes them.
 
-This script polls GitHub every 20 seconds to detect:
-1. New issues without comments
-2. Issues where the latest comment contains 'adw'
+This script polls GitHub every 20 seconds to detect issues where 'adw_run' appears
+in the issue body or as a comment. Only explicit 'adw_run' triggers processing.
 
-When a qualifying issue is found, it triggers the existing manual workflow script.
+When a qualifying issue is found, it triggers the ADW SDLC workflow.
 """
 
 import os
@@ -53,6 +52,8 @@ except ValueError as e:
 processed_issues: Set[int] = set()
 # Track issues with their last processed comment ID
 issue_last_comment: Dict[int, Optional[int]] = {}
+# Track running workflow processes (issue_number -> Popen)
+running_workflows: Dict[int, subprocess.Popen] = {}
 
 # Graceful shutdown flag
 shutdown_requested = False
@@ -65,66 +66,100 @@ def signal_handler(signum, frame):
     shutdown_requested = True
 
 
-def should_process_issue(issue_number: int) -> bool:
-    """Determine if an issue should be processed based on comments."""
+def should_process_issue(issue_number: int, issue_body: str) -> Optional[str]:
+    """Determine if an issue should be processed based on 'adw_run' in body or comments.
+
+    Returns the workflow name to trigger, or None if the issue should not be processed.
+    Only triggers when 'adw_run' (or 'adw run') appears in the issue body or as a comment.
+    """
+    # Check if 'adw_run' appears in the issue body
+    body_lower = (issue_body or "").lower().strip()
+    if "adw_run" in body_lower or "adw run" in body_lower:
+        # Only trigger once per issue — skip if already processed
+        if issue_number in processed_issues:
+            return None
+        print(f"INFO: Issue #{issue_number} - 'adw_run' found in issue body - marking for adw_sdlc_iso")
+        return "adw_sdlc_iso"
+
+    # Check comments for 'adw_run'
     comments = fetch_issue_comments(REPO_PATH, issue_number)
-    
-    # If no comments, it's a new issue - process it
+
     if not comments:
-        print(f"INFO: Issue #{issue_number} has no comments - marking for processing")
-        return True
-    
+        return None
+
     # Get the latest comment
     latest_comment = comments[-1]
-    comment_body = latest_comment.get("body", "").lower()
+    comment_body = latest_comment.get("body", "").lower().strip()
     comment_id = latest_comment.get("id")
-    
+
     # Check if we've already processed this comment
     last_processed_comment = issue_last_comment.get(issue_number)
     if last_processed_comment == comment_id:
-        # DEBUG level - not printing
-        return False
-    
-    # Check if latest comment is exactly 'adw' (after stripping whitespace)
-    if comment_body.strip() == "adw":
-        print(f"INFO: Issue #{issue_number} - latest comment is 'adw' - marking for processing")
+        return None
+
+    # Check if latest comment contains 'adw_run' or 'adw run'
+    if "adw_run" in comment_body or "adw run" in comment_body:
+        print(f"INFO: Issue #{issue_number} - 'adw_run' found in latest comment - marking for adw_sdlc_iso")
         issue_last_comment[issue_number] = comment_id
-        return True
-    
-    # DEBUG level - not printing
-    return False
+        return "adw_sdlc_iso"
+
+    return None
 
 
-def trigger_adw_workflow(issue_number: int) -> bool:
-    """Trigger the ADW plan and build workflow for a specific issue."""
+def trigger_adw_workflow(issue_number: int, workflow: str = "adw_plan_build_iso") -> bool:
+    """Trigger an ADW workflow for a specific issue (non-blocking).
+
+    Launches the workflow as a background process so the cron trigger
+    can continue polling and pick up other issues concurrently.
+    """
     try:
-        script_path = Path(__file__).parent.parent / "adw_plan_build_iso.py"
-        
-        print(f"INFO: Triggering ADW workflow for issue #{issue_number}")
-        
+        script_path = Path(__file__).parent.parent / f"{workflow}.py"
+
+        print(f"INFO: Triggering ADW workflow '{workflow}' for issue #{issue_number}")
+
         cmd = [sys.executable, str(script_path), str(issue_number)]
-        
-        # Run the manual trigger script with filtered environment
-        result = subprocess.run(
+
+        # Get project root for log directory
+        project_root = Path(__file__).parent.parent.parent
+        log_dir = project_root / "agents" / f"cron_issue_{issue_number}"
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        stdout_log = open(log_dir / "stdout.log", "w")
+        stderr_log = open(log_dir / "stderr.log", "w")
+
+        # Launch as non-blocking background process so the cron loop keeps polling
+        process = subprocess.Popen(
             cmd,
-            capture_output=True,
-            text=True,
+            stdout=stdout_log,
+            stderr=stderr_log,
             cwd=script_path.parent,
-            env=get_safe_subprocess_env()
+            env=get_safe_subprocess_env(),
         )
-        
-        if result.returncode == 0:
-            print(f"INFO: Successfully triggered workflow for issue #{issue_number}")
-            # DEBUG level - not printing output
-            return True
-        else:
-            print(f"ERROR: Failed to trigger workflow for issue #{issue_number}")
-            print(f"ERROR: {result.stderr}")
-            return False
-            
+
+        # Track the running process
+        running_workflows[issue_number] = process
+        print(f"INFO: Launched workflow for issue #{issue_number} (PID: {process.pid})")
+        return True
+
     except Exception as e:
         print(f"ERROR: Exception while triggering workflow for issue #{issue_number}: {e}")
         return False
+
+
+def check_running_workflows():
+    """Check on background workflow processes and log completions."""
+    completed = []
+    for issue_number, process in running_workflows.items():
+        retcode = process.poll()
+        if retcode is not None:
+            if retcode == 0:
+                print(f"INFO: Workflow for issue #{issue_number} completed successfully (PID: {process.pid})")
+            else:
+                print(f"WARNING: Workflow for issue #{issue_number} exited with code {retcode} (PID: {process.pid})")
+            completed.append(issue_number)
+
+    for issue_number in completed:
+        del running_workflows[issue_number]
 
 
 def check_and_process_issues():
@@ -132,9 +167,12 @@ def check_and_process_issues():
     if shutdown_requested:
         print(f"INFO: Shutdown requested, skipping check cycle")
         return
-    
+
+    # Check on any running background workflows
+    check_running_workflows()
+
     start_time = time.time()
-    print(f"INFO: Starting issue check cycle")
+    print(f"INFO: Starting issue check cycle (active workflows: {len(running_workflows)})")
     
     try:
         # Fetch all open issues
@@ -144,34 +182,35 @@ def check_and_process_issues():
             print(f"INFO: No open issues found")
             return
         
-        # Track newly qualified issues
+        # Track newly qualified issues as (issue_number, workflow) tuples
         new_qualifying_issues = []
-        
+
         # Check each issue
         for issue in issues:
             issue_number = issue.number
             if not issue_number:
                 continue
-            
+
             # Skip if already processed in this session
             if issue_number in processed_issues:
                 continue
-            
-            # Check if issue should be processed
-            if should_process_issue(issue_number):
-                new_qualifying_issues.append(issue_number)
-        
+
+            # Check if issue should be processed (pass body for adw_run detection)
+            workflow = should_process_issue(issue_number, issue.body)
+            if workflow:
+                new_qualifying_issues.append((issue_number, workflow))
+
         # Process qualifying issues
         if new_qualifying_issues:
-            print(f"INFO: Found {len(new_qualifying_issues)} new qualifying issues: {new_qualifying_issues}")
-            
-            for issue_number in new_qualifying_issues:
+            print(f"INFO: Found {len(new_qualifying_issues)} new qualifying issues: {[i for i, _ in new_qualifying_issues]}")
+
+            for issue_number, workflow in new_qualifying_issues:
                 if shutdown_requested:
                     print(f"INFO: Shutdown requested, stopping issue processing")
                     break
-                
+
                 # Trigger the workflow
-                if trigger_adw_workflow(issue_number):
+                if trigger_adw_workflow(issue_number, workflow):
                     processed_issues.add(issue_number)
                 else:
                     print(f"WARNING: Failed to process issue #{issue_number}, will retry in next cycle")

@@ -37,6 +37,7 @@ from adw_modules.github import (
     make_issue_comment,
     get_repo_url,
     extract_repo_path,
+    upload_file_as_comment,
 )
 from adw_modules.workflow_ops import (
     create_commit,
@@ -429,6 +430,24 @@ def main():
                 f"✅ Documentation generated successfully\n📁 Location: {doc_result.documentation_path}",
             ),
         )
+
+        # Upload the documentation file content to GitHub issue as a comment
+        try:
+            logger.info("Uploading documentation content to GitHub issue")
+            # Resolve the full documentation path
+            full_doc_path = os.path.join(worktree_path, doc_result.documentation_path)
+            upload_success = upload_file_as_comment(
+                issue_number=issue_number,
+                file_path=full_doc_path,
+                adw_id=adw_id,
+                file_type="documentation",
+            )
+            if upload_success:
+                logger.info("Documentation content uploaded to GitHub issue successfully")
+            else:
+                logger.warning("Failed to upload documentation content to GitHub issue - continuing anyway")
+        except Exception as e:
+            logger.warning(f"Error uploading documentation to GitHub issue: {e} - continuing anyway")
     else:
         logger.info("No documentation changes were needed")
         make_issue_comment(

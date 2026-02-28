@@ -19,7 +19,7 @@ class RetryCode(str, Enum):
 
 # Supported slash commands for issue classification
 # These should align with your custom slash commands in .claude/commands that you want to run
-IssueClassSlashCommand = Literal["/chore", "/bug", "/feature"]
+IssueClassSlashCommand = Literal["/chore", "/bug", "/feature", "/patch"]
 
 # Model set types for ADW workflows
 ModelSet = Literal["base", "heavy"]
@@ -40,6 +40,10 @@ ADWWorkflow = Literal[
     "adw_plan_build_document_iso",  # Plan + Build + Document
     "adw_plan_build_review_iso",  # Plan + Build + Review
     "adw_sdlc_iso",  # Complete SDLC: Plan + Build + Test + Review + Document
+    "adw_transcript_to_prd_iso",  # Transcript to PRD conversion
+    "adw_prd_to_prompts_iso",  # PRD to Implementation Prompts
+    "adw_prompts_to_issues_iso",  # Pipeline: Prompts to GitHub Issues
+    "adw_requirements_pipeline_iso",  # Requirements Pipeline: Transcript → PRD → Prompts → Issues
 ]
 
 # All slash commands used in the ADW system
@@ -74,6 +78,10 @@ SlashCommand = Literal[
     "/health_check",
     # Installation/setup commands
     "/install_worktree",
+    # Requirements pipeline commands
+    "/transcript_to_prd",
+    "/prd_to_prompts",
+    "/prompts_to_issues",
 ]
 
 
@@ -162,6 +170,7 @@ class AgentPromptRequest(BaseModel):
     dangerously_skip_permissions: bool = False
     output_file: str
     working_dir: Optional[str] = None
+    tools: Optional[str] = None  # Override available tools (e.g. "" to disable all)
 
 
 class AgentPromptResponse(BaseModel):
@@ -182,6 +191,7 @@ class AgentTemplateRequest(BaseModel):
     adw_id: str
     model: Literal["sonnet", "opus"] = "opus"  # Default to Opus 4.5
     working_dir: Optional[str] = None
+    tools: Optional[str] = None  # Override available tools (e.g. "" to disable all)
 
 
 class ClaudeCodeResultMessage(BaseModel):
@@ -234,6 +244,7 @@ class ADWStateData(BaseModel):
     issue_number: Optional[str] = None
     branch_name: Optional[str] = None
     plan_file: Optional[str] = None
+    prompts_file: Optional[str] = None
     issue_class: Optional[IssueClassSlashCommand] = None
     worktree_path: Optional[str] = None
     server_port: Optional[int] = None

@@ -26,6 +26,7 @@ parallel execution without interference.
 
 import sys
 import os
+import re
 import logging
 import json
 from typing import Optional
@@ -38,6 +39,7 @@ from adw_modules.github import (
     make_issue_comment,
     get_repo_url,
     extract_repo_path,
+    upload_file_as_comment,
 )
 from adw_modules.workflow_ops import (
     classify_issue,
@@ -250,18 +252,33 @@ def main():
 
     # Get the plan file path directly from response
     logger.info("Getting plan file path")
-    plan_file_path = plan_response.output.strip().strip('`')
-    
+    plan_file_path = None
+    # The agent output may contain a multi-line message with the path embedded.
+    # Look for a line containing "specs/" which is where plan files are created.
+    for line in plan_response.output.strip().splitlines():
+        cleaned = line.strip().strip('`').strip()
+        if cleaned.startswith("specs/") and cleaned.endswith(".md"):
+            plan_file_path = cleaned
+            break
+
+    # Fallback: try regex to find specs/*.md anywhere in the output
+    if not plan_file_path:
+        match = re.search(r'(specs/[^\s`]+\.md)', plan_response.output)
+        if match:
+            plan_file_path = match.group(1)
+
     # Validate the path exists (within worktree)
     if not plan_file_path:
-        error = "No plan file path returned from planning agent"
+        error = f"No plan file path found in planning agent output: {plan_response.output[:200]}"
         logger.error(error)
         make_issue_comment(
             issue_number,
             format_issue_message(adw_id, "ops", f"❌ {error}"),
         )
         sys.exit(1)
-    
+
+    logger.info(f"Extracted plan file path: {plan_file_path}")
+
     # Check if file exists in worktree
     worktree_plan_path = os.path.join(worktree_path, plan_file_path)
     if not os.path.exists(worktree_plan_path):
@@ -280,6 +297,22 @@ def main():
         issue_number,
         format_issue_message(adw_id, "ops", f"✅ Plan file created: {plan_file_path}"),
     )
+
+    # Upload the plan file content to GitHub issue as a comment
+    try:
+        logger.info("Uploading plan content to GitHub issue")
+        upload_success = upload_file_as_comment(
+            issue_number=issue_number,
+            file_path=worktree_plan_path,
+            adw_id=adw_id,
+            file_type="plan",
+        )
+        if upload_success:
+            logger.info("Plan content uploaded to GitHub issue successfully")
+        else:
+            logger.warning("Failed to upload plan content to GitHub issue - continuing anyway")
+    except Exception as e:
+        logger.warning(f"Error uploading plan to GitHub issue: {e} - continuing anyway")
 
     # Create commit message
     logger.info("Creating plan commit")

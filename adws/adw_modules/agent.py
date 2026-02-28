@@ -47,6 +47,9 @@ SLASH_COMMAND_MODEL_MAP: Final[Dict[SlashCommand, Dict[ModelSet, str]]] = {
     "/patch": {"base": "opus", "heavy": "opus"},
     "/install_worktree": {"base": "opus", "heavy": "opus"},
     "/track_agentic_kpis": {"base": "opus", "heavy": "opus"},
+    "/transcript_to_prd": {"base": "opus", "heavy": "opus"},
+    "/prd_to_prompts": {"base": "opus", "heavy": "opus"},
+    "/prompts_to_issues": {"base": "opus", "heavy": "opus"},
 }
 
 
@@ -165,6 +168,10 @@ def parse_jsonl_output(
 ) -> Tuple[List[Dict[str, Any]], Optional[Dict[str, Any]]]:
     """Parse JSONL output file and return all messages and the result message.
 
+    When multiple result messages exist (e.g. background task notifications after the
+    main result), we prefer the first result with substantive JSON content. This avoids
+    picking up a later background-task result whose text is not parseable JSON.
+
     Returns:
         Tuple of (all_messages, result_message) where result_message is None if not found
     """
@@ -173,14 +180,46 @@ def parse_jsonl_output(
             # Read all lines and parse each as JSON
             messages = [json.loads(line) for line in f if line.strip()]
 
-            # Find the result message (should be the last one)
-            result_message = None
-            for message in reversed(messages):
-                if message.get("type") == "result":
-                    result_message = message
-                    break
+            # Collect all result messages
+            result_messages = [m for m in messages if m.get("type") == "result"]
 
-            return messages, result_message
+            if not result_messages:
+                return messages, None
+
+            # If only one result, use it
+            if len(result_messages) == 1:
+                return messages, result_messages[0]
+
+            # Multiple result messages: prefer the one with JSON-parseable content.
+            # The main agent result typically contains JSON (possibly wrapped in
+            # markdown code blocks), while background task notifications contain
+            # plain text that fails JSON parsing.
+            for msg in result_messages:
+                result_text = msg.get("result", "")
+                if not result_text:
+                    continue
+                # Strip markdown code fences if present
+                stripped = result_text.strip()
+                if stripped.startswith("```"):
+                    # Remove opening fence (with optional language tag) and closing fence
+                    lines = stripped.split("\n")
+                    if len(lines) >= 3:
+                        stripped = "\n".join(lines[1:-1]).strip()
+                # Quick check: does it look like JSON?
+                if stripped.startswith("{") or stripped.startswith("["):
+                    try:
+                        json.loads(stripped)
+                        return messages, msg
+                    except json.JSONDecodeError:
+                        pass
+
+            # Fallback: return the first result message with non-empty content
+            for msg in result_messages:
+                if msg.get("result", "").strip():
+                    return messages, msg
+
+            # Last resort: return the first result message
+            return messages, result_messages[0]
     except Exception as e:
         return [], None
 
@@ -302,6 +341,47 @@ def prompt_claude_code_with_retry(
     return last_response
 
 
+def _extract_json_from_assistant_messages(
+    messages: List[Dict[str, Any]],
+) -> Optional[str]:
+    """Extract JSON content from the last assistant message that contains it.
+
+    When Claude Code emits the structured result as a conversation message
+    (rather than in the result field), this function scans backward through
+    assistant messages to find JSON content, optionally wrapped in markdown
+    code fences.
+
+    Returns:
+        The JSON string if found, None otherwise.
+    """
+    for msg in reversed(messages):
+        if msg.get("type") != "assistant" or not msg.get("message"):
+            continue
+        content = msg["message"].get("content", [])
+        if not isinstance(content, list):
+            continue
+        for block in reversed(content):
+            if block.get("type") != "text":
+                continue
+            text = block.get("text", "").strip()
+            if not text:
+                continue
+            # Strip markdown code fences if present
+            candidate = text
+            if candidate.startswith("```"):
+                lines = candidate.split("\n")
+                if len(lines) >= 3:
+                    candidate = "\n".join(lines[1:-1]).strip()
+            # Check if it's valid JSON
+            if candidate.startswith("{") or candidate.startswith("["):
+                try:
+                    json.loads(candidate)
+                    return candidate
+                except json.JSONDecodeError:
+                    pass
+    return None
+
+
 def prompt_claude_code(request: AgentPromptRequest) -> AgentPromptResponse:
     """Execute Claude Code with the given prompt configuration."""
 
@@ -334,6 +414,10 @@ def prompt_claude_code(request: AgentPromptRequest) -> AgentPromptResponse:
         mcp_config_path = os.path.join(request.working_dir, ".mcp.json")
         if os.path.exists(mcp_config_path):
             cmd.extend(["--mcp-config", mcp_config_path])
+
+    # Restrict available tools if specified (e.g. "" disables all tools)
+    if request.tools is not None:
+        cmd.extend(["--tools", request.tools])
 
     # Add dangerous skip permissions flag if enabled
     if request.dangerously_skip_permissions:
@@ -382,6 +466,20 @@ def prompt_claude_code(request: AgentPromptRequest) -> AgentPromptResponse:
                     )
 
                 result_text = result_message.get("result", "")
+
+                # If result_text is empty or not JSON, try to extract JSON from
+                # the last assistant message. Claude Code sometimes emits the actual
+                # structured output as a conversation message while leaving the
+                # result field empty (e.g. when background tasks produce additional
+                # result messages).
+                if not result_text.strip() or not (
+                    result_text.strip().startswith("{")
+                    or result_text.strip().startswith("[")
+                    or result_text.strip().startswith("```")
+                ):
+                    extracted = _extract_json_from_assistant_messages(messages)
+                    if extracted:
+                        result_text = extracted
 
                 # For error cases, truncate the output to prevent JSONL blobs
                 if is_error and len(result_text) > 1000:
@@ -531,7 +629,10 @@ def execute_template(request: AgentTemplateRequest) -> AgentPromptResponse:
     request = request.model_copy(update={"model": mapped_model})
 
     # Construct prompt from slash command and args
-    prompt = f"{request.slash_command} {' '.join(request.args)}"
+    # Sanitize args: replace literal apostrophes with JSON unicode escapes
+    # to prevent them from breaking Claude Code CLI's template $ARGUMENTS expansion
+    sanitized_args = [arg.replace("'", "\\u0027") for arg in request.args]
+    prompt = f"{request.slash_command} {' '.join(sanitized_args)}"
 
     # Create output directory with adw_id at project root
     # __file__ is in adws/adw_modules/, so we need to go up 3 levels to get to project root
@@ -555,6 +656,7 @@ def execute_template(request: AgentTemplateRequest) -> AgentPromptResponse:
         dangerously_skip_permissions=True,
         output_file=output_file,
         working_dir=request.working_dir,  # Pass through working_dir
+        tools=request.tools,  # Pass through tools restriction
     )
 
     # Execute with retry logic and return response (prompt_claude_code now handles all parsing)

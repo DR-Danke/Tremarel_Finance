@@ -8,6 +8,7 @@ Based on the `Github Issue` below, follow the `Instructions` to select the appro
 - IMPORTANT: Respond exclusively with '/' followed by the command to execute based on the `Command Mapping` below.
 - Use the command mapping to help you decide which command to respond with.
 - Don't examine the codebase just focus on the `Github Issue` and the `Command Mapping` below to determine the appropriate command to execute.
+- Do NOT return file paths, spec files, or any other text. ONLY respond with the slash command or `0`.
 
 ## Command Mapping
 

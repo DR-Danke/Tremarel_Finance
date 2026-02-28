@@ -26,6 +26,7 @@ AGENT_IMPLEMENTOR = "sdlc_implementor"
 AGENT_CLASSIFIER = "issue_classifier"
 AGENT_BRANCH_GENERATOR = "branch_generator"
 AGENT_PR_CREATOR = "pr_creator"
+AGENT_PROMPTS_GENERATOR = "prompts_generator"
 
 # Available ADW workflows for runtime validation
 AVAILABLE_ADW_WORKFLOWS = [
@@ -44,6 +45,10 @@ AVAILABLE_ADW_WORKFLOWS = [
     "adw_plan_build_document_iso",
     "adw_plan_build_review_iso",
     "adw_sdlc_iso",
+    "adw_transcript_to_prd_iso",  # Transcript to PRD conversion
+    "adw_prd_to_prompts_iso",
+    "adw_prompts_to_issues_iso",
+    "adw_requirements_pipeline_iso",  # Requirements Pipeline: Transcript → PRD → Prompts → Issues
 ]
 
 
@@ -121,6 +126,7 @@ def classify_issue(
         slash_command="/classify_issue",
         args=[minimal_issue_json],
         adw_id=adw_id,
+        tools="",  # Disable all tools — classification is pure text reasoning
     )
 
     logger.debug(f"Classifying issue: {issue.title}")
@@ -136,20 +142,43 @@ def classify_issue(
 
     # Extract the classification from the response
     output = response.output.strip()
+    # Clean common formatting artifacts (backticks, markdown)
+    output = output.strip('`').strip()
 
     # Look for the classification pattern in the output
     # Claude might add explanation, so we need to extract just the command
-    classification_match = re.search(r"(/chore|/bug|/feature|0)", output)
+    classification_pattern = r"(/chore|/bug|/feature|/patch|0)"
+    classification_match = re.search(classification_pattern, output)
 
     if classification_match:
         issue_command = classification_match.group(1)
     else:
-        issue_command = output
+        # Try harder: strip markdown, backticks, newlines and search again
+        cleaned = re.sub(r'[`\n\r]', ' ', output).strip()
+        secondary_match = re.search(classification_pattern, cleaned)
+        if secondary_match:
+            issue_command = secondary_match.group(1)
+        else:
+            # Last resort: infer command from keywords in the output
+            # (handles cases where the model returns prose or file paths instead of slash commands)
+            output_lower = output.lower()
+            keyword_map = {
+                "feature": "/feature",
+                "bug": "/bug",
+                "chore": "/chore",
+                "patch": "/patch",
+            }
+            issue_command = output  # default to raw output (will be rejected below)
+            for keyword, cmd in keyword_map.items():
+                if keyword in output_lower:
+                    issue_command = cmd
+                    logger.info(f"Inferred classification '{cmd}' from keyword in output: {output[:100]}")
+                    break
 
     if issue_command == "0":
         return None, f"No command selected: {response.output}"
 
-    if issue_command not in ["/chore", "/bug", "/feature"]:
+    if issue_command not in ["/chore", "/bug", "/feature", "/patch"]:
         return None, f"Invalid command selected: {response.output}"
 
     return issue_command, None  # type: ignore

@@ -114,16 +114,25 @@ async def github_webhook(request: Request):
             if ADW_BOT_IDENTIFIER in comment_body:
                 print(f"Ignoring ADW bot comment to prevent loop")
                 workflow = None
-            # Check if comment contains "adw_"
-            elif "adw_" in comment_body.lower():
-                # Use temporary ID for classification
-                temp_id = make_adw_id()
-                extraction_result = extract_adw_info(comment_body, temp_id)
-                if extraction_result.has_workflow:
-                    workflow = extraction_result.workflow_command
-                    provided_adw_id = extraction_result.adw_id
-                    model_set = extraction_result.model_set
-                    trigger_reason = f"Comment with {workflow} workflow"
+            else:
+                # Check for exact keyword shortcuts (fast-path, bypasses classifier)
+                stripped_comment = comment_body.strip().lower()
+                if stripped_comment in ("adw_run", "adw run"):
+                    workflow = "adw_sdlc_iso"
+                    trigger_reason = f"Comment keyword '{stripped_comment}' → adw_sdlc_iso"
+                elif stripped_comment == "adw":
+                    workflow = "adw_plan_build_iso"
+                    trigger_reason = "Comment keyword 'adw' → adw_plan_build_iso"
+                # Fallback: check if comment contains "adw_" for classifier-based extraction
+                elif "adw_" in comment_body.lower():
+                    # Use temporary ID for classification
+                    temp_id = make_adw_id()
+                    extraction_result = extract_adw_info(comment_body, temp_id)
+                    if extraction_result.has_workflow:
+                        workflow = extraction_result.workflow_command
+                        provided_adw_id = extraction_result.adw_id
+                        model_set = extraction_result.model_set
+                        trigger_reason = f"Comment with {workflow} workflow"
 
         # Validate workflow constraints
         if workflow in DEPENDENT_WORKFLOWS:

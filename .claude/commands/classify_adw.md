@@ -4,9 +4,12 @@ Extract ADW workflow information from the text below and return a JSON response.
 
 ## Instructions
 
-- Look for ADW workflow commands in the text (e.g., `/adw_plan_iso`, `/adw_build_iso`, `/adw_test_iso`, `/adw_review_iso`, `/adw_document_iso`, `/adw_patch_iso`, `/adw_plan_build_iso`, `/adw_plan_build_test_iso`, `/adw_plan_build_test_review_iso`, `/adw_sdlc_iso`, `/adw_sdlc_ZTE_iso`)
-- Also recognize commands without the `_iso` suffix and automatically add it (e.g., `/adw_plan` → `/adw_plan_iso`)
+- Look for ADW workflow commands in the text (e.g., `/adw_plan_iso`, `/adw_build_iso`, `/adw_test_iso`, `/adw_review_iso`, `/adw_document_iso`, `/adw_patch_iso`, `/adw_plan_build_iso`, `/adw_plan_build_test_iso`, `/adw_plan_build_test_review_iso`, `/adw_sdlc_iso`, `/adw_sdlc_ZTE_iso`, `/adw_prompts_to_issues_iso`, `/adw_requirements_pipeline_iso`)
+- Also recognize commands without the `_iso` suffix and automatically add it (e.g., `/adw_plan` → `/adw_plan_iso`, `/adw_prd_to_prompts` → `/adw_prd_to_prompts_iso`)
 - Also recognize variations like `adw_plan_build`, `adw plan build`, `/adw plan then build`, etc. and map to the correct command
+- **Shorthand trigger keywords** (handled directly by cron/webhook triggers, documented here for completeness):
+  - `adw` — Maps to `adw_plan_build_iso` (Plan + Build)
+  - `adw_run` or `adw run` — Maps to `adw_sdlc_iso` (full SDLC: Plan + Build + Test + Review + Document)
 - Look for ADW IDs (8-character alphanumeric strings, often after "adw_id:" or "ADW ID:" or similar)
 - Look for model set specification: "model_set base" or "model_set heavy" (case insensitive)
   - Default to "base" if no model_set is specified
@@ -31,6 +34,10 @@ Extract ADW workflow information from the text below and return a JSON response.
 - `/adw_plan_build_test_review_iso` - Plan + Build + Test + Review
 - `/adw_sdlc_iso` - Complete SDLC: Plan + Build + Test + Review + Document
 - `/adw_sdlc_zte_iso` - Zero Touch Execution: Complete SDLC + auto-merge to production. Note: as per instructions, 'ZTE' must be capitalized. Do not run this if 'zte' is not capitalized.
+- `/adw_transcript_to_prd_iso` - Transcript to PRD conversion in isolation
+- `/adw_prd_to_prompts_iso` - PRD to Implementation Prompts (requires prd-path)
+- `/adw_prompts_to_issues_iso` - Prompts to Issues: creates GitHub issues from implementation prompts document
+- `/adw_requirements_pipeline_iso` - Requirements Pipeline: Transcript → PRD → Prompts → GitHub Issues (requires transcript-path)
 
 ## Response Format
 

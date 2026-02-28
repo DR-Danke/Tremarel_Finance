@@ -184,6 +184,80 @@ def approve_pr(pr_number: str, logger: logging.Logger) -> Tuple[bool, Optional[s
     return True, None
 
 
+def merge_branch_to_main(
+    branch_name: str, cwd: Optional[str] = None
+) -> Tuple[bool, Optional[str]]:
+    """Merge a branch into main locally and push.
+
+    Performs: checkout main → pull → merge branch → push → checkout branch back.
+    Uses the main repo (cwd), NOT a worktree.
+
+    Args:
+        branch_name: The branch to merge into main
+        cwd: Working directory (should be the main repo root, not a worktree)
+
+    Returns:
+        Tuple of (success, error_message)
+    """
+    # Save current branch to restore later
+    original_branch = get_current_branch(cwd=cwd)
+
+    # Checkout main
+    result = subprocess.run(
+        ["git", "checkout", "main"], capture_output=True, text=True, cwd=cwd
+    )
+    if result.returncode != 0:
+        return False, f"Failed to checkout main: {result.stderr}"
+
+    # Pull latest main
+    result = subprocess.run(
+        ["git", "pull", "origin", "main"], capture_output=True, text=True, cwd=cwd
+    )
+    if result.returncode != 0:
+        # Restore original branch before returning
+        subprocess.run(
+            ["git", "checkout", original_branch],
+            capture_output=True, text=True, cwd=cwd,
+        )
+        return False, f"Failed to pull main: {result.stderr}"
+
+    # Merge the branch
+    result = subprocess.run(
+        ["git", "merge", branch_name, "--no-edit"],
+        capture_output=True, text=True, cwd=cwd,
+    )
+    if result.returncode != 0:
+        # Abort merge and restore
+        subprocess.run(
+            ["git", "merge", "--abort"], capture_output=True, text=True, cwd=cwd
+        )
+        subprocess.run(
+            ["git", "checkout", original_branch],
+            capture_output=True, text=True, cwd=cwd,
+        )
+        return False, f"Merge conflict or failure: {result.stderr}"
+
+    # Push main
+    result = subprocess.run(
+        ["git", "push", "origin", "main"], capture_output=True, text=True, cwd=cwd
+    )
+    if result.returncode != 0:
+        # Restore original branch
+        subprocess.run(
+            ["git", "checkout", original_branch],
+            capture_output=True, text=True, cwd=cwd,
+        )
+        return False, f"Failed to push main: {result.stderr}"
+
+    # Restore original branch
+    subprocess.run(
+        ["git", "checkout", original_branch],
+        capture_output=True, text=True, cwd=cwd,
+    )
+
+    return True, None
+
+
 def merge_pr(
     pr_number: str, logger: logging.Logger, merge_method: str = "squash"
 ) -> Tuple[bool, Optional[str]]:

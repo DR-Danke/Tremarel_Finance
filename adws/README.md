@@ -94,7 +94,10 @@ uv run adw_sdlc_zte_iso.py 123
 
 # Run individual isolated phases
 uv run adw_plan_iso.py 123              # Planning phase (creates worktree)
+uv run adw_transcript_to_prd_iso.py transcript.md  # Transcript to PRD (creates worktree)
 uv run adw_patch_iso.py 123             # Patch workflow (creates worktree)
+uv run adw_prompts_to_issues_iso.py prompts.md  # Create issues from prompts
+uv run adw_requirements_pipeline_iso.py transcript.md  # Full pipeline: transcript → issues
 uv run adw_build_iso.py 123 <adw-id>    # Build phase (requires worktree)
 uv run adw_test_iso.py 123 <adw-id>     # Test phase (requires worktree)
 uv run adw_review_iso.py 123 <adw-id>   # Review phase (requires worktree)
@@ -106,6 +109,9 @@ uv run adw_triggers/trigger_cron.py
 
 # Start webhook server (for instant GitHub events)
 uv run adw_triggers/trigger_webhook.py
+
+# Start transcript folder watcher (polls every 30 seconds)
+uv run adw_triggers/trigger_transcript_watch.py
 ```
 
 ## ADW Isolated Workflow Scripts
@@ -130,6 +136,64 @@ uv run adw_plan_iso.py <issue-number> [adw-id]
 7. Commits and pushes from worktree
 8. Creates/updates pull request
 
+#### adw_transcript_to_prd_iso.py - Transcript to PRD
+Converts a meeting transcript into a structured PRD in an isolated worktree.
+
+**Usage:**
+```bash
+uv run adw_transcript_to_prd_iso.py <transcript-path> [adw-id]
+```
+
+**What it does:**
+1. Validates transcript file exists (must be `.md`)
+2. Creates isolated git worktree at `trees/<adw_id>/`
+3. Reads transcript content from file
+4. Executes `/transcript_to_prd` slash command via `execute_template()`
+5. Parses PRD output and generates slugified filename
+6. Saves PRD to `ai_docs/prds/prd-{adw_id}-{slug}.md` in worktree
+7. Commits and pushes from worktree
+
+**Note:** This is a file-based workflow - no GitHub issue is required.
+
+#### adw_prd_to_prompts_iso.py - PRD to Implementation Prompts
+Converts a PRD document into implementation prompts in an isolated worktree.
+
+**Usage:**
+```bash
+uv run adw_prd_to_prompts_iso.py <prd-path> [adw-id] [--example <example-prompts-path>]
+```
+
+**What it does:**
+1. Validates PRD file exists
+2. Creates isolated git worktree at `trees/<adw_id>/`
+3. Copies PRD into worktree if not already inside it
+4. Executes `/prd_to_prompts` slash command with PRD + example format reference
+5. Saves resulting prompts to `ai_docs/{slugified-prd-name}-implementation-prompts.md`
+6. Commits and pushes from worktree
+7. Updates state with `prompts_file` path
+
+**Default example:** `ai_docs/tendery_v2_implementation_prompts.md`
+
+#### adw_requirements_pipeline_iso.py - Requirements Pipeline Orchestrator
+Chains all three requirements pipeline stages into a single command: Transcript → PRD → Prompts → GitHub Issues.
+
+**Usage:**
+```bash
+uv run adw_requirements_pipeline_iso.py <transcript-path> [adw-id] [--example <path>] [--skip-issues]
+```
+
+**What it does:**
+1. Runs `adw_transcript_to_prd_iso.py` to convert transcript to PRD
+2. Runs `adw_prd_to_prompts_iso.py` to convert PRD to implementation prompts
+3. Runs `adw_prompts_to_issues_iso.py` to create GitHub issues from prompts
+4. Tracks pipeline state and logs output to `agents/{adw_id}/pipeline/`
+
+**Flags:**
+- `--skip-issues` — Stop after Stage 2 (skip GitHub issue creation)
+- `--example PATH` — Custom example prompts path for Stage 2
+
+**Note:** All three stages share the same ADW ID for worktree reuse.
+
 #### adw_patch_iso.py - Isolated Patch Workflow
 Quick patches in isolated environment triggered by 'adw_patch' keyword.
 
@@ -144,6 +208,28 @@ uv run adw_patch_iso.py <issue-number> [adw-id]
 3. Creates targeted patch plan in isolation
 4. Implements specific changes
 5. Commits and creates PR from worktree
+
+#### adw_prompts_to_issues_iso.py - Prompts to GitHub Issues
+Creates GitHub issues from an implementation prompts document.
+
+**Usage:**
+```bash
+uv run adw_prompts_to_issues_iso.py <prompts-path> [adw-id]
+```
+
+**What it does:**
+1. Validates prompts file exists and `gh` CLI is authenticated
+2. Creates or reuses isolated git worktree
+3. Copies prompts file into worktree
+4. Executes `/prompts_to_issues` slash command
+5. Parses output to capture created issue numbers
+6. Posts summary to GitHub tracking issue or prints to console
+7. Logs to `agents/{adw_id}/issue_creator/`
+
+**Requirements:**
+- `gh` CLI authenticated (`gh auth login`)
+- Prompts file must exist at the provided path
+- `.claude/commands/prompts_to_issues.md` slash command must exist (Issue #428)
 
 ### Dependent Workflows (Require Existing Worktree)
 
@@ -380,6 +466,30 @@ uv run adw_triggers/trigger_webhook.py
 - Validates GitHub webhook signatures
 - Requires `GITHUB_WEBHOOK_SECRET` environment variable
 
+#### trigger_transcript_watch.py - Transcript Folder Watcher
+Monitors `External_Requirements/transcripts/` for new `.md` or `.pdf` transcript files and triggers the requirements pipeline.
+
+**Usage:**
+```bash
+uv run adw_triggers/trigger_transcript_watch.py
+```
+
+**CLI flags:**
+- `--once` — Run a single check and exit (no continuous polling)
+- `--folder <path>` — Override the watched folder path
+
+**Triggers on:**
+- New `.md` or `.pdf` files in the watched folder
+- Modified files (changed modification time since last processing)
+
+**Pipeline:**
+- Invokes `adw_requirements_pipeline_iso.py` for each new transcript (non-blocking)
+- Tracks processed files in `agents/transcript_watch_processed.json`
+
+**Environment variables:**
+- `ADW_TRANSCRIPT_FOLDER` — Override watched folder path (default: `External_Requirements/transcripts/`)
+- `ADW_TRANSCRIPT_POLL_INTERVAL` — Override poll interval in seconds (default: `30`)
+
 ## How ADW Works
 
 1. **Issue Classification**: Analyzes GitHub issue and determines type:
@@ -486,10 +596,13 @@ Include the workflow name in your issue body to trigger a specific isolated work
 **Available Workflows:**
 - `adw_plan_iso` - Isolated planning only
 - `adw_patch_iso` - Quick patch in isolation
+- `adw_transcript_to_prd_iso` - Transcript to PRD conversion in isolation
 - `adw_plan_build_iso` - Plan and build in isolation
 - `adw_plan_build_test_iso` - Plan, build, and test in isolation
 - `adw_plan_build_test_review_iso` - Plan, build, test, and review in isolation
 - `adw_sdlc_iso` - Complete SDLC in isolation
+- `adw_prd_to_prompts_iso` - PRD to implementation prompts (requires prd-path)
+- `adw_requirements_pipeline_iso` - Requirements pipeline: Transcript → PRD → Prompts → Issues (requires transcript-path)
 
 **Example Issue:**
 ```
@@ -757,6 +870,10 @@ app_docs/                         # Generated documentation
 #### Entry Point Workflows (Create Worktrees)
 - `adw_plan_iso.py` - Isolated planning workflow
 - `adw_patch_iso.py` - Isolated patch workflow
+- `adw_transcript_to_prd_iso.py` - Transcript to PRD workflow
+- `adw_prd_to_prompts_iso.py` - PRD to implementation prompts workflow
+- `adw_prompts_to_issues_iso.py` - Pipeline: prompts to GitHub issues
+- `adw_requirements_pipeline_iso.py` - Requirements pipeline orchestrator
 
 #### Dependent Workflows (Require Worktrees)
 - `adw_build_iso.py` - Isolated implementation workflow
@@ -771,6 +888,7 @@ app_docs/                         # Generated documentation
 - `adw_plan_build_review_iso.py` - Plan & build & review in isolation
 - `adw_plan_build_document_iso.py` - Plan & build & document in isolation
 - `adw_sdlc_iso.py` - Complete SDLC in isolation
+- `adw_requirements_pipeline_iso.py` - Requirements pipeline: Transcript → PRD → Prompts → Issues
 
 ### Branch Naming
 ```
