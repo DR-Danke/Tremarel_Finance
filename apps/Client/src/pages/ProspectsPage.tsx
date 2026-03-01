@@ -19,6 +19,7 @@ import { useProspects } from '@/hooks/useProspects'
 import { usePipelineStages } from '@/hooks/usePipelineStages'
 import { TRKanbanBoard } from '@/components/ui/TRKanbanBoard'
 import { TRProspectForm } from '@/components/forms/TRProspectForm'
+import { TRProspectDetailDrawer } from '@/components/ui/TRProspectDetailDrawer'
 import type { Prospect, ProspectCreate, ProspectUpdate, ProspectStage } from '@/types'
 
 export const ProspectsPage: React.FC = () => {
@@ -40,6 +41,8 @@ export const ProspectsPage: React.FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null)
   const [operationError, setOperationError] = useState<string | null>(null)
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false)
+  const [detailProspect, setDetailProspect] = useState<Prospect | null>(null)
 
   const handleDragEnd = useCallback(
     async (result: DropResult) => {
@@ -89,6 +92,27 @@ export const ProspectsPage: React.FC = () => {
 
   const handleProspectClick = (prospect: Prospect) => {
     console.log('INFO [ProspectsPage]: Opening edit dialog for prospect:', prospect.id)
+    setOperationError(null)
+    setSelectedProspect(prospect)
+    setIsEditDialogOpen(true)
+  }
+
+  const handleProspectCardClick = (prospect: Prospect) => {
+    console.log('INFO [ProspectsPage]: Opening detail drawer for prospect:', prospect.id)
+    setDetailProspect(prospect)
+    setIsDetailDrawerOpen(true)
+  }
+
+  const handleCloseDetailDrawer = () => {
+    console.log('INFO [ProspectsPage]: Closing detail drawer')
+    setIsDetailDrawerOpen(false)
+    setDetailProspect(null)
+  }
+
+  const handleEditFromDrawer = (prospect: Prospect) => {
+    console.log('INFO [ProspectsPage]: Opening edit dialog from drawer for prospect:', prospect.id)
+    setIsDetailDrawerOpen(false)
+    setDetailProspect(null)
     setOperationError(null)
     setSelectedProspect(prospect)
     setIsEditDialogOpen(true)
@@ -209,7 +233,7 @@ export const ProspectsPage: React.FC = () => {
           stages={stages}
           prospects={prospects}
           isLoading={stagesLoading || prospectsLoading}
-          onProspectClick={handleProspectClick}
+          onProspectClick={handleProspectCardClick}
           onProspectEdit={handleProspectClick}
           onDragEnd={handleDragEnd}
         />
@@ -256,6 +280,16 @@ export const ProspectsPage: React.FC = () => {
             </Box>
           </DialogContent>
         </Dialog>
+
+        {/* Prospect Detail Drawer */}
+        <TRProspectDetailDrawer
+          prospect={detailProspect}
+          open={isDetailDrawerOpen}
+          onClose={handleCloseDetailDrawer}
+          onEdit={handleEditFromDrawer}
+          entityId={currentEntity.id}
+          stages={stages}
+        />
       </Box>
     </Container>
   )
