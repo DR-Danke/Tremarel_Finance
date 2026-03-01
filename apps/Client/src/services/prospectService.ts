@@ -3,12 +3,20 @@ import type {
   Prospect,
   ProspectCreate,
   ProspectUpdate,
-  ProspectStage,
+  ProspectStageUpdate,
   ProspectFilters,
   ProspectListResponse,
 } from '@/types'
 
+/**
+ * Prospect service for CRUD operations on CRM prospects.
+ */
 export const prospectService = {
+  /**
+   * Create a new prospect.
+   * @param data - Prospect creation data
+   * @returns Created prospect
+   */
   async create(data: ProspectCreate): Promise<Prospect> {
     console.log('INFO [ProspectService]: Creating prospect for entity:', data.entity_id)
     try {
@@ -21,6 +29,14 @@ export const prospectService = {
     }
   },
 
+  /**
+   * List prospects for an entity with optional filters.
+   * @param entityId - Entity ID to filter by
+   * @param filters - Optional filter criteria
+   * @param skip - Number of records to skip
+   * @param limit - Maximum records to return
+   * @returns List of prospects with total count
+   */
   async list(
     entityId: string,
     filters?: ProspectFilters,
@@ -61,6 +77,12 @@ export const prospectService = {
     }
   },
 
+  /**
+   * Get a single prospect by ID.
+   * @param prospectId - Prospect ID
+   * @param entityId - Entity ID for validation
+   * @returns Prospect data
+   */
   async get(prospectId: string, entityId: string): Promise<Prospect> {
     console.log('INFO [ProspectService]: Getting prospect:', prospectId)
     try {
@@ -75,6 +97,13 @@ export const prospectService = {
     }
   },
 
+  /**
+   * Update an existing prospect.
+   * @param prospectId - Prospect ID to update
+   * @param entityId - Entity ID for validation
+   * @param data - Update data
+   * @returns Updated prospect
+   */
   async update(
     prospectId: string,
     entityId: string,
@@ -94,17 +123,23 @@ export const prospectService = {
     }
   },
 
+  /**
+   * Update a prospect's pipeline stage.
+   * @param prospectId - Prospect ID
+   * @param entityId - Entity ID for validation
+   * @param data - Stage update data
+   * @returns Updated prospect
+   */
   async updateStage(
     prospectId: string,
     entityId: string,
-    newStage: ProspectStage,
-    notes?: string
+    data: ProspectStageUpdate
   ): Promise<Prospect> {
-    console.log('INFO [ProspectService]: Updating stage for prospect:', prospectId, 'to:', newStage)
+    console.log('INFO [ProspectService]: Updating stage for prospect:', prospectId, 'to', data.new_stage)
     try {
       const response = await apiClient.patch<Prospect>(
         `/prospects/${prospectId}/stage?entity_id=${entityId}`,
-        { new_stage: newStage, notes }
+        data
       )
       console.log('INFO [ProspectService]: Prospect stage updated:', response.data.id)
       return response.data
@@ -114,6 +149,11 @@ export const prospectService = {
     }
   },
 
+  /**
+   * Delete a prospect.
+   * @param prospectId - Prospect ID to delete
+   * @param entityId - Entity ID for validation
+   */
   async delete(prospectId: string, entityId: string): Promise<void> {
     console.log('INFO [ProspectService]: Deleting prospect:', prospectId)
     try {

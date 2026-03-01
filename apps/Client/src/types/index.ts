@@ -342,7 +342,7 @@ export interface RecurringTemplateListResponse {
   total: number
 }
 
-// Prospect types
+// CRM Prospect types
 export type ProspectStage = 'lead' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
 
 export interface Prospect {
@@ -384,6 +384,12 @@ export interface ProspectUpdate {
   notes?: string
   is_active?: boolean
 }
+
+export interface ProspectStageUpdate {
+  new_stage: ProspectStage
+  notes?: string
+}
+
 
 export interface ProspectFilters {
   stage?: ProspectStage

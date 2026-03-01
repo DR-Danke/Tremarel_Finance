@@ -244,3 +244,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying useProspects or useMeetingRecords hooks
     - When troubleshooting prospect or meeting record API calls from the frontend
     - When adding new prospect pipeline stage transitions in the UI
+
+- app_docs/feature-ab11c9f9-prospect-creation-form.md
+  - Conditions:
+    - When working with TRProspectForm or prospect creation/editing UI
+    - When implementing or modifying the useProspects hook or prospectService
+    - When integrating the prospect form into a dialog or page (e.g., Kanban Board)
+    - When working with CRM prospect TypeScript types (Prospect, ProspectCreate, ProspectStage)
+    - When troubleshooting prospect form validation, submission, or API integration

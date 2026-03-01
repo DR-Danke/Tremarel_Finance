@@ -4,7 +4,7 @@ import type {
   Prospect,
   ProspectCreate,
   ProspectUpdate,
-  ProspectStage,
+  ProspectStageUpdate,
   ProspectFilters,
 } from '@/types'
 
@@ -17,7 +17,7 @@ interface UseProspectsResult {
   fetchProspects: () => Promise<void>
   createProspect: (data: ProspectCreate) => Promise<void>
   updateProspect: (id: string, data: ProspectUpdate) => Promise<void>
-  updateProspectStage: (id: string, newStage: ProspectStage, notes?: string) => Promise<void>
+  updateProspectStage: (id: string, data: ProspectStageUpdate) => Promise<void>
   deleteProspect: (id: string) => Promise<void>
   setFilters: (filters: ProspectFilters) => void
 }
@@ -90,13 +90,13 @@ export const useProspects = (entityId: string | null): UseProspectsResult => {
   )
 
   const updateProspectStage = useCallback(
-    async (id: string, newStage: ProspectStage, notes?: string) => {
+    async (id: string, data: ProspectStageUpdate) => {
       if (!entityId) return
-      console.log('INFO [useProspects]: Updating prospect stage:', id, 'to:', newStage)
+      console.log('INFO [useProspects]: Updating prospect stage:', id, 'to', data.new_stage)
       setError(null)
 
       try {
-        await prospectService.updateStage(id, entityId, newStage, notes)
+        await prospectService.updateStage(id, entityId, data)
         console.log('INFO [useProspects]: Prospect stage updated, refreshing list')
         await fetchProspects()
       } catch (err) {
@@ -127,6 +127,7 @@ export const useProspects = (entityId: string | null): UseProspectsResult => {
     [entityId, fetchProspects]
   )
 
+  // Fetch prospects when entityId or filters change
   useEffect(() => {
     fetchProspects()
   }, [fetchProspects])
