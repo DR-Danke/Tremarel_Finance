@@ -396,6 +396,139 @@ def find_keyword_from_comment(keyword: str, issue: GitHubIssue) -> Optional[GitH
 GITHUB_COMMENT_MAX_SIZE = 65000
 
 
+def check_gh_authenticated() -> bool:
+    """Check if gh CLI is authenticated via 'gh auth status'.
+
+    Returns True if authenticated, False if not authenticated or gh not installed.
+    """
+    try:
+        result = subprocess.run(
+            ["gh", "auth", "status"],
+            capture_output=True,
+            text=True,
+        )
+        return result.returncode == 0
+    except FileNotFoundError:
+        return False
+
+
+def ensure_labels_exist(labels: List[str], repo_path: Optional[str] = None) -> None:
+    """Ensure GitHub labels exist in the repository.
+
+    Creates labels if they don't exist (--force makes it a no-op for existing labels).
+    Failures are logged but non-fatal — gh issue create can auto-create labels.
+    """
+    if repo_path is None:
+        github_repo_url = get_repo_url()
+        repo_path = extract_repo_path(github_repo_url)
+
+    env = get_github_env()
+
+    for label in labels:
+        try:
+            cmd = [
+                "gh", "label", "create", label,
+                "--repo", repo_path,
+                "--force",
+            ]
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, env=env, timeout=15
+            )
+            if result.returncode != 0:
+                print(f"Note: Could not ensure label '{label}': {result.stderr.strip()}", file=sys.stderr)
+        except (subprocess.TimeoutExpired, FileNotFoundError, Exception) as e:
+            print(f"Note: Could not ensure label '{label}': {e}", file=sys.stderr)
+
+
+def create_issue(
+    title: str,
+    body: str,
+    labels: List[str],
+    repo_path: Optional[str] = None,
+    max_retries: int = 3,
+) -> Optional[str]:
+    """Create a GitHub issue using gh CLI.
+
+    Args:
+        title: Issue title
+        body: Issue body (markdown)
+        labels: List of labels to apply
+        repo_path: Owner/repo path (derived from git remote if not provided)
+        max_retries: Maximum retry attempts for network failures
+
+    Returns:
+        Issue number string on success, None on failure.
+    """
+    if repo_path is None:
+        try:
+            github_repo_url = get_repo_url()
+            repo_path = extract_repo_path(github_repo_url)
+        except ValueError as e:
+            print(f"ERROR: Cannot determine repository: {e}", file=sys.stderr)
+            return None
+
+    cmd = [
+        "gh", "issue", "create",
+        "--title", title,
+        "--body", body,
+        "--repo", repo_path,
+    ]
+    for label in labels:
+        cmd.extend(["--label", label])
+
+    env = get_github_env()
+
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            result = subprocess.run(
+                cmd, capture_output=True, text=True, env=env, timeout=30
+            )
+
+            if result.returncode == 0:
+                # gh issue create prints the issue URL on success
+                # e.g. https://github.com/owner/repo/issues/123
+                issue_url = result.stdout.strip()
+                # Extract issue number from URL
+                if "/issues/" in issue_url:
+                    issue_number = issue_url.split("/issues/")[-1].strip()
+                    print(f"Successfully created issue #{issue_number}: {issue_url}")
+                    return issue_number
+                # Fallback: return the full output
+                print(f"Created issue: {issue_url}")
+                return issue_url
+            else:
+                last_error = result.stderr
+                if any(kw in last_error.lower() for kw in ["timeout", "i/o", "dial tcp"]):
+                    if attempt < max_retries:
+                        wait = 2 ** attempt
+                        print(f"Network error creating issue (attempt {attempt}/{max_retries}), retrying in {wait}s: {last_error.strip()}", file=sys.stderr)
+                        time.sleep(wait)
+                        continue
+                print(f"ERROR: Failed to create issue: {last_error.strip()}", file=sys.stderr)
+                return None
+        except subprocess.TimeoutExpired:
+            last_error = "subprocess timed out after 30s"
+            if attempt < max_retries:
+                wait = 2 ** attempt
+                print(f"gh command timed out (attempt {attempt}/{max_retries}), retrying in {wait}s", file=sys.stderr)
+                time.sleep(wait)
+                continue
+        except FileNotFoundError:
+            print("ERROR: GitHub CLI (gh) is not installed.", file=sys.stderr)
+            return None
+        except Exception as e:
+            last_error = str(e)
+            if attempt < max_retries:
+                wait = 2 ** attempt
+                print(f"Error creating issue (attempt {attempt}/{max_retries}), retrying in {wait}s: {e}", file=sys.stderr)
+                time.sleep(wait)
+                continue
+
+    print(f"Failed to create issue after {max_retries} attempts: {last_error}", file=sys.stderr)
+    return None
+
+
 def upload_file_as_comment(
     issue_number: str,
     file_path: str,
