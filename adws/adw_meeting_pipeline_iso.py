@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run
 # /// script
-# dependencies = ["python-dotenv", "pydantic", "PyMuPDF"]
+# dependencies = ["python-dotenv", "pydantic", "PyMuPDF", "requests"]
 # ///
 
 """
@@ -30,6 +30,7 @@ import json
 import logging
 from dotenv import load_dotenv
 
+from adw_modules.crm_api_client import CrmApiClient
 from adw_modules.state import ADWState
 from adw_modules.git_ops import commit_changes, push_branch
 from adw_modules.workflow_ops import ensure_adw_id
@@ -216,6 +217,106 @@ def save_meeting_outputs(meeting_data: dict, adw_id: str, logger: logging.Logger
     return output_dir
 
 
+def update_crm(
+    meeting_data: dict, transcript_path: str, adw_id: str, logger: logging.Logger
+) -> None:
+    """Update CRM with prospect and meeting record from processed transcript.
+
+    Authenticates with the backend API using service account credentials,
+    searches for or creates a prospect, creates a meeting record, and
+    optionally advances the prospect's pipeline stage.
+
+    CRM failures are logged but do NOT raise exceptions — the pipeline's
+    primary deliverable (JSON/HTML/markdown) is already saved.
+    """
+    base_url = os.environ.get("ADW_API_BASE_URL", "http://localhost:8000/api")
+    service_email = os.environ.get("ADW_SERVICE_EMAIL")
+    service_password = os.environ.get("ADW_SERVICE_PASSWORD")
+    entity_id = os.environ.get("ADW_ENTITY_ID")
+
+    if not all([service_email, service_password, entity_id]):
+        logger.warning(
+            "CRM update skipped: ADW_SERVICE_EMAIL, ADW_SERVICE_PASSWORD, "
+            "and ADW_ENTITY_ID must all be set"
+        )
+        return
+
+    client = CrmApiClient(base_url, logger)
+
+    if not client.authenticate(service_email, service_password):
+        logger.error("CRM update aborted: authentication failed")
+        return
+
+    company_name = meeting_data.get("company_name")
+    if not company_name:
+        logger.warning("CRM update skipped: no company_name in meeting data")
+        return
+
+    # Search for existing prospect
+    prospect = client.search_prospect(entity_id, company_name)
+
+    if prospect:
+        logger.info(f"CRM: Matched existing prospect {prospect['id']} for '{company_name}'")
+        # Advance from lead to contacted if applicable
+        if prospect.get("stage") == "lead":
+            client.advance_prospect_stage(
+                prospect["id"],
+                entity_id,
+                "contacted",
+                "Auto-advanced: meeting transcript processed",
+            )
+    else:
+        # Create new prospect
+        contact_name = meeting_data.get("contact_name")
+        contact_email = meeting_data.get("contact_email")
+        prospect = client.create_prospect(
+            entity_id=entity_id,
+            company_name=company_name,
+            contact_name=contact_name,
+            contact_email=contact_email,
+            stage="contacted",
+            source="meeting-transcript",
+            notes=f"Auto-created from transcript processing (ADW: {adw_id})",
+        )
+        if not prospect:
+            logger.error("CRM update aborted: failed to create prospect")
+            return
+
+    prospect_id = prospect["id"]
+
+    # Extract participants and action items
+    participants = [
+        p.get("name", "Unknown") if isinstance(p, dict) else str(p)
+        for p in meeting_data.get("participants", [])
+    ]
+    action_items = [
+        a.get("description", str(a)) if isinstance(a, dict) else str(a)
+        for a in meeting_data.get("action_items", [])
+    ]
+
+    title = meeting_data.get("title") or "Untitled Meeting"
+    summary = meeting_data.get("summary")
+    html_output = meeting_data.get("html_output")
+    meeting_date = meeting_data.get("meeting_date")
+
+    record = client.create_meeting_record(
+        entity_id=entity_id,
+        prospect_id=prospect_id,
+        title=title,
+        transcript_ref=transcript_path,
+        summary=summary,
+        action_items=action_items if action_items else None,
+        participants=participants if participants else None,
+        html_output=html_output,
+        meeting_date=meeting_date,
+    )
+
+    if record:
+        logger.info(f"CRM update complete: meeting record {record['id']} linked to prospect {prospect_id}")
+    else:
+        logger.error("CRM update: failed to create meeting record")
+
+
 def main():
     """Main entry point."""
     load_dotenv()
@@ -353,6 +454,12 @@ def main():
     # Save outputs to agents/{adw_id}/meeting_outputs/
     output_dir = save_meeting_outputs(meeting_data, adw_id, logger)
     logger.info(f"Meeting outputs saved to {output_dir}")
+
+    # Update CRM with prospect and meeting record
+    try:
+        update_crm(meeting_data, transcript_path, adw_id, logger)
+    except Exception as e:
+        logger.error(f"CRM update failed (non-fatal): {e}")
 
     # Generate and save markdown summary to worktree
     title = meeting_data.get("title") or "untitled"

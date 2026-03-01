@@ -295,3 +295,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with meeting summary JSON/HTML output generation
     - When troubleshooting LLM-based meeting transcript parsing or structured data extraction
     - When extending the meeting processing pipeline (REQ-013 CRM updates, REQ-014 issue generation)
+
+- app_docs/feature-a61cf509-crm-update-from-processed-transcript.md
+  - Conditions:
+    - When working with CRM updates triggered by transcript processing
+    - When modifying the update_crm function or CrmApiClient module
+    - When configuring service account credentials for pipeline-to-API communication
+    - When troubleshooting automatic prospect creation or meeting record linking
+    - When extending the meeting pipeline with additional CRM integration steps

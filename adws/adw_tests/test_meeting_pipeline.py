@@ -1,17 +1,20 @@
 """Unit tests for the meeting pipeline workflow."""
 
 import json
+import logging
 import os
 import sys
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 import pytest
+import requests
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import adw_meeting_pipeline_iso as pipeline
+from adw_modules.crm_api_client import CrmApiClient
 
 
 # --- slugify ---
@@ -212,3 +215,336 @@ def test_main_unsupported_extension(tmp_path):
         with pytest.raises(SystemExit) as exc:
             pipeline.main()
         assert exc.value.code == 1
+
+
+# --- CrmApiClient ---
+
+
+@pytest.fixture
+def crm_client():
+    """Create a CrmApiClient with a mock logger."""
+    logger = MagicMock(spec=logging.Logger)
+    return CrmApiClient("http://localhost:8000/api", logger)
+
+
+@patch("adw_modules.crm_api_client.requests.post")
+def test_crm_client_authenticate_success(mock_post, crm_client):
+    """Authenticates and caches JWT token on 200 response."""
+    mock_post.return_value = MagicMock(
+        status_code=200,
+        json=MagicMock(return_value={"access_token": "test-jwt-token"}),
+    )
+    result = crm_client.authenticate("user@test.com", "password123")
+    assert result is True
+    assert crm_client._token == "test-jwt-token"
+    mock_post.assert_called_once()
+
+
+@patch("adw_modules.crm_api_client.requests.post")
+def test_crm_client_authenticate_failure(mock_post, crm_client):
+    """Returns False on 401 response."""
+    mock_post.return_value = MagicMock(status_code=401)
+    result = crm_client.authenticate("user@test.com", "wrong")
+    assert result is False
+    assert crm_client._token is None
+
+
+@patch("adw_modules.crm_api_client.requests.get")
+def test_crm_client_search_prospect_found(mock_get, crm_client):
+    """Finds matching prospect by company name."""
+    crm_client._token = "test-token"
+    mock_get.return_value = MagicMock(
+        status_code=200,
+        json=MagicMock(return_value={
+            "prospects": [
+                {"id": "p-123", "company_name": "Acme Corp", "stage": "lead"},
+                {"id": "p-456", "company_name": "Other Inc", "stage": "contacted"},
+            ],
+            "total": 2,
+        }),
+    )
+    result = crm_client.search_prospect("entity-1", "Acme Corp")
+    assert result is not None
+    assert result["id"] == "p-123"
+
+
+@patch("adw_modules.crm_api_client.requests.get")
+def test_crm_client_search_prospect_not_found(mock_get, crm_client):
+    """Returns None when no prospect matches."""
+    crm_client._token = "test-token"
+    mock_get.return_value = MagicMock(
+        status_code=200,
+        json=MagicMock(return_value={"prospects": [], "total": 0}),
+    )
+    result = crm_client.search_prospect("entity-1", "NonExistent Corp")
+    assert result is None
+
+
+@patch("adw_modules.crm_api_client.requests.get")
+def test_crm_client_search_prospect_case_insensitive(mock_get, crm_client):
+    """Matches prospect name case-insensitively."""
+    crm_client._token = "test-token"
+    mock_get.return_value = MagicMock(
+        status_code=200,
+        json=MagicMock(return_value={
+            "prospects": [
+                {"id": "p-789", "company_name": "ACME CORP", "stage": "lead"},
+            ],
+            "total": 1,
+        }),
+    )
+    result = crm_client.search_prospect("entity-1", "acme corp")
+    assert result is not None
+    assert result["id"] == "p-789"
+
+
+@patch("adw_modules.crm_api_client.requests.post")
+def test_crm_client_create_prospect_success(mock_post, crm_client):
+    """Creates prospect and returns response dict on 201."""
+    crm_client._token = "test-token"
+    mock_post.return_value = MagicMock(
+        status_code=201,
+        json=MagicMock(return_value={
+            "id": "p-new",
+            "company_name": "New Corp",
+            "stage": "contacted",
+        }),
+    )
+    result = crm_client.create_prospect(
+        entity_id="entity-1",
+        company_name="New Corp",
+        contact_name="Alice",
+        contact_email="alice@new.com",
+        stage="contacted",
+        source="meeting-transcript",
+        notes="Auto-created",
+    )
+    assert result is not None
+    assert result["id"] == "p-new"
+
+
+@patch("adw_modules.crm_api_client.requests.post")
+def test_crm_client_create_meeting_record_success(mock_post, crm_client):
+    """Creates meeting record and returns response dict on 201."""
+    crm_client._token = "test-token"
+    mock_post.return_value = MagicMock(
+        status_code=201,
+        json=MagicMock(return_value={
+            "id": "mr-new",
+            "title": "Sprint Planning",
+            "prospect_id": "p-123",
+        }),
+    )
+    result = crm_client.create_meeting_record(
+        entity_id="entity-1",
+        prospect_id="p-123",
+        title="Sprint Planning",
+        transcript_ref="/path/to/transcript.md",
+        summary="Discussed sprint goals.",
+        action_items=["Create tickets"],
+        participants=["Alice", "Bob"],
+        meeting_date="2026-03-01",
+    )
+    assert result is not None
+    assert result["id"] == "mr-new"
+
+
+@patch("adw_modules.crm_api_client.requests.patch")
+def test_crm_client_advance_stage_success(mock_patch, crm_client):
+    """Advances prospect stage and returns updated dict on 200."""
+    crm_client._token = "test-token"
+    mock_patch.return_value = MagicMock(
+        status_code=200,
+        json=MagicMock(return_value={
+            "id": "p-123",
+            "stage": "contacted",
+        }),
+    )
+    result = crm_client.advance_prospect_stage(
+        "p-123", "entity-1", "contacted", "Auto-advanced"
+    )
+    assert result is not None
+    assert result["stage"] == "contacted"
+
+
+@patch("adw_modules.crm_api_client.requests.post")
+def test_crm_client_request_timeout(mock_post, crm_client):
+    """Handles request timeout gracefully."""
+    mock_post.side_effect = requests.Timeout("Connection timed out")
+    result = crm_client.authenticate("user@test.com", "password123")
+    assert result is False
+
+
+# --- update_crm ---
+
+
+FULL_MEETING_DATA = {
+    "title": "Sprint Planning",
+    "meeting_date": "2026-03-01",
+    "company_name": "Acme Corp",
+    "contact_name": "Bob",
+    "contact_email": "bob@acme.com",
+    "summary": "Discussed sprint goals.",
+    "participants": [{"name": "Alice", "role": "PM"}, {"name": "Bob"}],
+    "action_items": [{"description": "Create tickets"}, "Follow up"],
+    "html_output": "<html><body>Summary</body></html>",
+}
+
+
+@patch.dict(os.environ, {}, clear=True)
+def test_update_crm_skips_when_env_vars_missing():
+    """Skips CRM update when required env vars are not set."""
+    logger = MagicMock(spec=logging.Logger)
+    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    logger.warning.assert_called_once()
+    assert "ADW_SERVICE_EMAIL" in logger.warning.call_args[0][0]
+
+
+@patch.dict(os.environ, {
+    "ADW_SERVICE_EMAIL": "svc@test.com",
+    "ADW_SERVICE_PASSWORD": "pass",
+    "ADW_ENTITY_ID": "entity-1",
+})
+@patch("adw_meeting_pipeline_iso.CrmApiClient")
+def test_update_crm_skips_when_no_company_name(mock_client_cls):
+    """Skips CRM update when meeting data has no company_name."""
+    mock_client = MagicMock()
+    mock_client.authenticate.return_value = True
+    mock_client_cls.return_value = mock_client
+
+    logger = MagicMock(spec=logging.Logger)
+    data = {"title": "Meeting", "summary": "No company info."}
+    pipeline.update_crm(data, "/path/transcript.md", "adw-1", logger)
+
+    mock_client.search_prospect.assert_not_called()
+    logger.warning.assert_called()
+    assert "company_name" in logger.warning.call_args[0][0]
+
+
+@patch.dict(os.environ, {
+    "ADW_SERVICE_EMAIL": "svc@test.com",
+    "ADW_SERVICE_PASSWORD": "pass",
+    "ADW_ENTITY_ID": "entity-1",
+})
+@patch("adw_meeting_pipeline_iso.CrmApiClient")
+def test_update_crm_creates_new_prospect_and_meeting(mock_client_cls):
+    """Creates new prospect and meeting record when no match found."""
+    mock_client = MagicMock()
+    mock_client.authenticate.return_value = True
+    mock_client.search_prospect.return_value = None
+    mock_client.create_prospect.return_value = {"id": "p-new", "stage": "contacted"}
+    mock_client.create_meeting_record.return_value = {"id": "mr-new"}
+    mock_client_cls.return_value = mock_client
+
+    logger = MagicMock(spec=logging.Logger)
+    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+
+    mock_client.create_prospect.assert_called_once()
+    call_kwargs = mock_client.create_prospect.call_args
+    assert call_kwargs.kwargs["company_name"] == "Acme Corp"
+    assert call_kwargs.kwargs["stage"] == "contacted"
+    assert call_kwargs.kwargs["source"] == "meeting-transcript"
+
+    mock_client.create_meeting_record.assert_called_once()
+    mr_kwargs = mock_client.create_meeting_record.call_args.kwargs
+    assert mr_kwargs["prospect_id"] == "p-new"
+    assert mr_kwargs["title"] == "Sprint Planning"
+
+
+@patch.dict(os.environ, {
+    "ADW_SERVICE_EMAIL": "svc@test.com",
+    "ADW_SERVICE_PASSWORD": "pass",
+    "ADW_ENTITY_ID": "entity-1",
+})
+@patch("adw_meeting_pipeline_iso.CrmApiClient")
+def test_update_crm_matches_existing_prospect(mock_client_cls):
+    """Uses existing prospect and does not create a new one."""
+    mock_client = MagicMock()
+    mock_client.authenticate.return_value = True
+    mock_client.search_prospect.return_value = {
+        "id": "p-existing",
+        "company_name": "Acme Corp",
+        "stage": "contacted",
+    }
+    mock_client.create_meeting_record.return_value = {"id": "mr-new"}
+    mock_client_cls.return_value = mock_client
+
+    logger = MagicMock(spec=logging.Logger)
+    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+
+    mock_client.create_prospect.assert_not_called()
+    mock_client.create_meeting_record.assert_called_once()
+    mr_kwargs = mock_client.create_meeting_record.call_args.kwargs
+    assert mr_kwargs["prospect_id"] == "p-existing"
+
+
+@patch.dict(os.environ, {
+    "ADW_SERVICE_EMAIL": "svc@test.com",
+    "ADW_SERVICE_PASSWORD": "pass",
+    "ADW_ENTITY_ID": "entity-1",
+})
+@patch("adw_meeting_pipeline_iso.CrmApiClient")
+def test_update_crm_advances_lead_to_contacted(mock_client_cls):
+    """Advances prospect from 'lead' to 'contacted' stage."""
+    mock_client = MagicMock()
+    mock_client.authenticate.return_value = True
+    mock_client.search_prospect.return_value = {
+        "id": "p-lead",
+        "company_name": "Acme Corp",
+        "stage": "lead",
+    }
+    mock_client.advance_prospect_stage.return_value = {"id": "p-lead", "stage": "contacted"}
+    mock_client.create_meeting_record.return_value = {"id": "mr-new"}
+    mock_client_cls.return_value = mock_client
+
+    logger = MagicMock(spec=logging.Logger)
+    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+
+    mock_client.advance_prospect_stage.assert_called_once_with(
+        "p-lead", "entity-1", "contacted", "Auto-advanced: meeting transcript processed"
+    )
+
+
+@patch.dict(os.environ, {
+    "ADW_SERVICE_EMAIL": "svc@test.com",
+    "ADW_SERVICE_PASSWORD": "pass",
+    "ADW_ENTITY_ID": "entity-1",
+})
+@patch("adw_meeting_pipeline_iso.CrmApiClient")
+def test_update_crm_does_not_advance_non_lead(mock_client_cls):
+    """Does not advance stage when prospect is not at 'lead'."""
+    mock_client = MagicMock()
+    mock_client.authenticate.return_value = True
+    mock_client.search_prospect.return_value = {
+        "id": "p-qual",
+        "company_name": "Acme Corp",
+        "stage": "qualified",
+    }
+    mock_client.create_meeting_record.return_value = {"id": "mr-new"}
+    mock_client_cls.return_value = mock_client
+
+    logger = MagicMock(spec=logging.Logger)
+    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+
+    mock_client.advance_prospect_stage.assert_not_called()
+
+
+@patch.dict(os.environ, {
+    "ADW_SERVICE_EMAIL": "svc@test.com",
+    "ADW_SERVICE_PASSWORD": "pass",
+    "ADW_ENTITY_ID": "entity-1",
+})
+@patch("adw_meeting_pipeline_iso.CrmApiClient")
+def test_update_crm_handles_api_failure_gracefully(mock_client_cls):
+    """Does not raise exceptions when authentication fails."""
+    mock_client = MagicMock()
+    mock_client.authenticate.return_value = False
+    mock_client_cls.return_value = mock_client
+
+    logger = MagicMock(spec=logging.Logger)
+    # Should not raise
+    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+
+    mock_client.search_prospect.assert_not_called()
+    mock_client.create_prospect.assert_not_called()
+    logger.error.assert_called()
