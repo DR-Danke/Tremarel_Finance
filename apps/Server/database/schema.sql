@@ -330,3 +330,84 @@ CREATE TRIGGER prospects_updated_at
     BEFORE UPDATE ON prospects
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- TABLE: pipeline_stages
+-- Configurable pipeline stages per entity for Kanban column display
+-- ============================================================================
+CREATE TABLE pipeline_stages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    entity_id UUID NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    display_name VARCHAR(100) NOT NULL,
+    order_index INTEGER NOT NULL,
+    color VARCHAR(50),
+    is_default BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE,
+
+    CONSTRAINT uq_pipeline_stages_entity_name UNIQUE (entity_id, name),
+    CONSTRAINT uq_pipeline_stages_entity_order UNIQUE (entity_id, order_index),
+
+    CONSTRAINT fk_pipeline_stages_entity
+        FOREIGN KEY (entity_id)
+        REFERENCES entities(id)
+        ON DELETE CASCADE
+);
+
+-- Indexes for efficient queries
+CREATE INDEX idx_pipeline_stages_entity_id ON pipeline_stages(entity_id);
+CREATE INDEX idx_pipeline_stages_is_active ON pipeline_stages(is_active);
+CREATE INDEX idx_pipeline_stages_entity_order ON pipeline_stages(entity_id, order_index);
+
+-- Trigger for updated_at
+CREATE TRIGGER pipeline_stages_updated_at
+    BEFORE UPDATE ON pipeline_stages
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- TABLE: stage_transitions
+-- Immutable audit trail of prospect stage changes
+-- ============================================================================
+CREATE TABLE stage_transitions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    prospect_id UUID NOT NULL,
+    entity_id UUID NOT NULL,
+    from_stage_id UUID,
+    to_stage_id UUID NOT NULL,
+    transitioned_by UUID,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    CONSTRAINT fk_stage_transitions_prospect
+        FOREIGN KEY (prospect_id)
+        REFERENCES prospects(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_stage_transitions_entity
+        FOREIGN KEY (entity_id)
+        REFERENCES entities(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_stage_transitions_from_stage
+        FOREIGN KEY (from_stage_id)
+        REFERENCES pipeline_stages(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_stage_transitions_to_stage
+        FOREIGN KEY (to_stage_id)
+        REFERENCES pipeline_stages(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_stage_transitions_user
+        FOREIGN KEY (transitioned_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+);
+
+-- Indexes for efficient queries
+CREATE INDEX idx_stage_transitions_prospect_id ON stage_transitions(prospect_id);
+CREATE INDEX idx_stage_transitions_entity_id ON stage_transitions(entity_id);
+CREATE INDEX idx_stage_transitions_prospect_created ON stage_transitions(prospect_id, created_at);
