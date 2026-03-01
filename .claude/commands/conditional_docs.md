@@ -235,3 +235,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When building the CRM prospect management frontend (Wave 2)
     - When implementing pipeline automation that creates or updates prospects (Wave 3)
     - When troubleshooting prospect API routes, service, or repository
+
+- app_docs/feature-aa2af2a8-prospect-service-hook-types.md
+  - Conditions:
+    - When working with frontend prospect or meeting record services, hooks, or types
+    - When building CRM UI components that consume prospect or meeting record data
+    - When implementing the Kanban board, detail view, or drag-and-drop for prospects
+    - When modifying useProspects or useMeetingRecords hooks
+    - When troubleshooting prospect or meeting record API calls from the frontend
+    - When adding new prospect pipeline stage transitions in the UI
