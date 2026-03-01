@@ -218,3 +218,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When linking meeting data to prospects in the CRM pipeline
     - When working with transcript processing or meeting summaries
     - When implementing action items or participant tracking for meetings
+
+- app_docs/feature-70362135-prospect-crud-api-endpoints.md
+  - Conditions:
+    - When working with prospect CRUD API endpoints or prospect management
+    - When implementing prospect listing, filtering, or pagination
+    - When working with prospect stage updates or pipeline stage transitions
+    - When building the CRM prospect management frontend (Wave 2)
+    - When implementing pipeline automation that creates or updates prospects (Wave 3)
+    - When troubleshooting prospect API routes, service, or repository
