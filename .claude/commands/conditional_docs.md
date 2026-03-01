@@ -209,3 +209,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When seeding default pipeline stages for an entity
     - When adding prospect stage change functionality (PATCH endpoint)
     - When building CRM pipeline UI that displays configurable stages
+
+- app_docs/feature-17ff3ddf-meeting-record-data-model.md
+  - Conditions:
+    - When working with meeting records or meeting tracking features
+    - When implementing meeting record CRUD API endpoints or services
+    - When working with the meeting_records table or MeetingRecord model
+    - When linking meeting data to prospects in the CRM pipeline
+    - When working with transcript processing or meeting summaries
+    - When implementing action items or participant tracking for meetings
