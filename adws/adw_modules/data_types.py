@@ -44,6 +44,7 @@ ADWWorkflow = Literal[
     "adw_prd_to_prompts_iso",  # PRD to Implementation Prompts
     "adw_prompts_to_issues_iso",  # Pipeline: Prompts to GitHub Issues
     "adw_requirements_pipeline_iso",  # Requirements Pipeline: Transcript → PRD → Prompts → Issues
+    "adw_meeting_pipeline_iso",  # Meeting Pipeline: Process transcript into structured summary + HTML
 ]
 
 # All slash commands used in the ADW system
@@ -82,6 +83,8 @@ SlashCommand = Literal[
     "/transcript_to_prd",
     "/prd_to_prompts",
     "/prompts_to_issues",
+    # Meeting processing commands
+    "/process_meeting_transcript",
 ]
 
 

@@ -4,7 +4,7 @@ Extract ADW workflow information from the text below and return a JSON response.
 
 ## Instructions
 
-- Look for ADW workflow commands in the text (e.g., `/adw_plan_iso`, `/adw_build_iso`, `/adw_test_iso`, `/adw_review_iso`, `/adw_document_iso`, `/adw_patch_iso`, `/adw_plan_build_iso`, `/adw_plan_build_test_iso`, `/adw_plan_build_test_review_iso`, `/adw_sdlc_iso`, `/adw_sdlc_ZTE_iso`, `/adw_prompts_to_issues_iso`, `/adw_requirements_pipeline_iso`)
+- Look for ADW workflow commands in the text (e.g., `/adw_plan_iso`, `/adw_build_iso`, `/adw_test_iso`, `/adw_review_iso`, `/adw_document_iso`, `/adw_patch_iso`, `/adw_plan_build_iso`, `/adw_plan_build_test_iso`, `/adw_plan_build_test_review_iso`, `/adw_sdlc_iso`, `/adw_sdlc_ZTE_iso`, `/adw_prompts_to_issues_iso`, `/adw_requirements_pipeline_iso`, `/adw_meeting_pipeline_iso`)
 - Also recognize commands without the `_iso` suffix and automatically add it (e.g., `/adw_plan` → `/adw_plan_iso`, `/adw_prd_to_prompts` → `/adw_prd_to_prompts_iso`)
 - Also recognize variations like `adw_plan_build`, `adw plan build`, `/adw plan then build`, etc. and map to the correct command
 - **Shorthand trigger keywords** (handled directly by cron/webhook triggers, documented here for completeness):
@@ -38,6 +38,7 @@ Extract ADW workflow information from the text below and return a JSON response.
 - `/adw_prd_to_prompts_iso` - PRD to Implementation Prompts (requires prd-path)
 - `/adw_prompts_to_issues_iso` - Prompts to Issues: creates GitHub issues from implementation prompts document
 - `/adw_requirements_pipeline_iso` - Requirements Pipeline: Transcript → PRD → Prompts → GitHub Issues (requires transcript-path)
+- `/adw_meeting_pipeline_iso` - Meeting Pipeline: Process meeting transcript into structured summary and HTML output
 
 ## Response Format
 
