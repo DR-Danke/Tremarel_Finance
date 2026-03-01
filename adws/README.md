@@ -95,6 +95,7 @@ uv run adw_sdlc_zte_iso.py 123
 # Run individual isolated phases
 uv run adw_plan_iso.py 123              # Planning phase (creates worktree)
 uv run adw_transcript_to_prd_iso.py transcript.md  # Transcript to PRD (creates worktree)
+uv run adw_meeting_pipeline_iso.py transcript.md  # Meeting summary from transcript (creates worktree)
 uv run adw_patch_iso.py 123             # Patch workflow (creates worktree)
 uv run adw_prompts_to_issues_iso.py prompts.md  # Create issues from prompts
 uv run adw_requirements_pipeline_iso.py transcript.md  # Full pipeline: transcript → issues
@@ -157,6 +158,26 @@ uv run adw_transcript_to_prd_iso.py <transcript-path> [adw-id]
 7. Commits and pushes from worktree
 
 **Note:** This is a file-based workflow - no GitHub issue is required.
+
+#### adw_meeting_pipeline_iso.py - Meeting Transcript to Structured Summary
+Processes a meeting transcript into a structured JSON summary and professionally styled HTML document.
+
+**Usage:**
+```bash
+uv run adw_meeting_pipeline_iso.py <transcript-path> [adw-id]
+```
+
+**What it does:**
+1. Validates transcript file exists (must be `.md` or `.pdf`)
+2. Creates isolated git worktree at `trees/<adw_id>/`
+3. Reads transcript content (PDF text extraction via PyMuPDF)
+4. Executes `/process_meeting_transcript` slash command via `execute_template()`
+5. Parses LLM output into structured JSON (participants, discussion points, action items, decisions, next steps)
+6. Saves structured JSON + HTML to `agents/{adw_id}/meeting_outputs/`
+7. Saves markdown summary to `ai_docs/meeting-summaries/` in worktree
+8. Commits and pushes from worktree
+
+**Note:** This is a file-based workflow - no GitHub issue is required. Invoked by `trigger_meeting_transcript_watch.py`. Implements REQ-012 from the meeting processing CRM pipeline PRD.
 
 #### adw_prd_to_prompts_iso.py - PRD to Implementation Prompts
 Converts a PRD document into implementation prompts in an isolated worktree.
@@ -899,6 +920,7 @@ app_docs/                         # Generated documentation
 - `adw_plan_iso.py` - Isolated planning workflow
 - `adw_patch_iso.py` - Isolated patch workflow
 - `adw_transcript_to_prd_iso.py` - Transcript to PRD workflow
+- `adw_meeting_pipeline_iso.py` - Meeting transcript to structured summary + HTML workflow
 - `adw_prd_to_prompts_iso.py` - PRD to implementation prompts workflow
 - `adw_prompts_to_issues_iso.py` - Pipeline: prompts to GitHub issues
 - `adw_requirements_pipeline_iso.py` - Requirements pipeline orchestrator
