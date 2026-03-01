@@ -235,3 +235,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When building the CRM prospect management frontend (Wave 2)
     - When implementing pipeline automation that creates or updates prospects (Wave 3)
     - When troubleshooting prospect API routes, service, or repository
+
+- app_docs/feature-ab11c9f9-prospect-creation-form.md
+  - Conditions:
+    - When working with TRProspectForm or prospect creation/editing UI
+    - When implementing or modifying the useProspects hook or prospectService
+    - When integrating the prospect form into a dialog or page (e.g., Kanban Board)
+    - When working with CRM prospect TypeScript types (Prospect, ProspectCreate, ProspectStage)
+    - When troubleshooting prospect form validation, submission, or API integration
