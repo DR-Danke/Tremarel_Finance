@@ -341,3 +341,62 @@ export interface RecurringTemplateListResponse {
   templates: RecurringTemplate[]
   total: number
 }
+
+// CRM Prospect types
+export type ProspectStage = 'lead' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
+
+export interface Prospect {
+  id: string
+  entity_id: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+  is_active: boolean
+  created_at: string
+  updated_at?: string
+}
+
+export interface ProspectCreate {
+  entity_id: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage?: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+}
+
+export interface ProspectUpdate {
+  company_name?: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage?: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+  is_active?: boolean
+}
+
+export interface ProspectStageUpdate {
+  new_stage: ProspectStage
+  notes?: string
+}
+
+export interface ProspectFilters {
+  stage?: ProspectStage
+  is_active?: boolean
+  source?: string
+}
+
+export interface ProspectListResponse {
+  prospects: Prospect[]
+  total: number
+}
