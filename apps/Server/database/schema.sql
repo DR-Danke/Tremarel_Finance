@@ -290,3 +290,43 @@ ALTER TABLE transactions
 
 -- Index for recurring template lookups
 CREATE INDEX idx_transactions_recurring_template_id ON transactions(recurring_template_id);
+
+-- ============================================================================
+-- TABLE: prospects
+-- CRM pipeline prospects — entity-scoped companies/contacts being tracked
+-- ============================================================================
+CREATE TABLE prospects (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    entity_id UUID NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    contact_name VARCHAR(255),
+    contact_email VARCHAR(255),
+    contact_phone VARCHAR(100),
+    stage VARCHAR(50) NOT NULL DEFAULT 'lead',
+    estimated_value DECIMAL(15, 2),
+    source VARCHAR(100),
+    notes TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE,
+
+    CONSTRAINT prospects_stage_check CHECK (stage IN ('lead', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost')),
+    CONSTRAINT prospects_estimated_value_check CHECK (estimated_value IS NULL OR estimated_value >= 0),
+
+    CONSTRAINT fk_prospects_entity
+        FOREIGN KEY (entity_id)
+        REFERENCES entities(id)
+        ON DELETE CASCADE
+);
+
+-- Indexes for efficient queries
+CREATE INDEX idx_prospects_entity_id ON prospects(entity_id);
+CREATE INDEX idx_prospects_stage ON prospects(stage);
+CREATE INDEX idx_prospects_is_active ON prospects(is_active);
+CREATE INDEX idx_prospects_entity_stage ON prospects(entity_id, stage);
+
+-- Trigger for updated_at
+CREATE TRIGGER prospects_updated_at
+    BEFORE UPDATE ON prospects
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
