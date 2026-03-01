@@ -341,3 +341,109 @@ export interface RecurringTemplateListResponse {
   templates: RecurringTemplate[]
   total: number
 }
+
+// Prospect types
+export type ProspectStage = 'lead' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
+
+export interface Prospect {
+  id: string
+  entity_id: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+  is_active: boolean
+  created_at: string
+  updated_at?: string
+}
+
+export interface ProspectCreate {
+  entity_id: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage?: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+}
+
+export interface ProspectUpdate {
+  company_name?: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage?: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+  is_active?: boolean
+}
+
+export interface ProspectFilters {
+  stage?: ProspectStage
+  is_active?: boolean
+  source?: string
+}
+
+export interface ProspectListResponse {
+  prospects: Prospect[]
+  total: number
+}
+
+// Meeting record types
+export interface MeetingRecord {
+  id: string
+  entity_id: string
+  prospect_id: string
+  title: string
+  transcript_ref?: string
+  summary?: string
+  action_items?: string
+  participants?: string
+  html_output?: string
+  meeting_date?: string
+  is_active: boolean
+  created_at: string
+  updated_at?: string
+}
+
+export interface MeetingRecordCreate {
+  entity_id: string
+  prospect_id: string
+  title: string
+  transcript_ref?: string
+  summary?: string
+  action_items?: string[]
+  participants?: string[]
+  html_output?: string
+  meeting_date?: string
+}
+
+export interface MeetingRecordUpdate {
+  title?: string
+  transcript_ref?: string
+  summary?: string
+  action_items?: string[]
+  participants?: string[]
+  html_output?: string
+  meeting_date?: string
+  is_active?: boolean
+}
+
+export interface MeetingRecordFilters {
+  prospect_id?: string
+  is_active?: boolean
+  meeting_date_from?: string
+  meeting_date_to?: string
+}
+
+export interface MeetingRecordListResponse {
+  meeting_records: MeetingRecord[]
+  total: number
+}
