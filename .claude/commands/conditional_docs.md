@@ -262,3 +262,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with prospectService or pipelineStageService on the frontend
     - When adding drag-and-drop or other Kanban board enhancements
     - When troubleshooting prospect display, grouping by stage, or pipeline stage auto-seeding
+
+- app_docs/feature-66325370-prospect-card-drag-and-drop.md
+  - Conditions:
+    - When working with drag-and-drop on the Kanban board or @hello-pangea/dnd integration
+    - When implementing optimistic UI updates for prospect stage changes
+    - When modifying TRKanbanBoard, TRKanbanColumn, or TRProspectCard drag props
+    - When troubleshooting drag-and-drop behavior or rollback logic on the Prospects page
+    - When working with the setProspects setter from useProspects hook
