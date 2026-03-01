@@ -5,7 +5,7 @@
       "args": [
         "@anthropic-ai/playwright-mcp",
         "--config",
-        "/mnt/c/Users/user/danke_apps/Tremarel_Finance/trees/a61cf509/playwright-mcp-config.json"
+        "/mnt/c/Users/user/danke_apps/Tremarel_Finance/trees/342ed7df/playwright-mcp-config.json"
       ]
     }
   }
