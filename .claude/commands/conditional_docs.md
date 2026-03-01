@@ -192,3 +192,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When serializing complex types (UUID, Decimal, datetime) in error responses
     - When debugging 500 errors that bypass CORS middleware
     - When adding null entityId guards to frontend hooks
+
+- app_docs/feature-57f962c3-prospect-data-model.md
+  - Conditions:
+    - When working with the CRM pipeline or prospect features
+    - When implementing prospect CRUD API endpoints or services
+    - When working with the prospects table or Prospect model
+    - When adding meeting records or other prospect-related entities
+    - When implementing pipeline stage filtering or prospect management UI
