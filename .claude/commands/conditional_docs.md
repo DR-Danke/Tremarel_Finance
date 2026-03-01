@@ -218,3 +218,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When linking meeting data to prospects in the CRM pipeline
     - When working with transcript processing or meeting summaries
     - When implementing action items or participant tracking for meetings
+
+- app_docs/feature-d1b26544-meeting-record-api-endpoints.md
+  - Conditions:
+    - When working with meeting record REST API endpoints or routes
+    - When implementing or modifying meeting_record_routes, meeting_record_service, or meeting_record_repository
+    - When adding HTML download endpoints or text/html response types
+    - When troubleshooting meeting record CRUD operations or entity-scoping validation
+    - When building frontend UI that consumes meeting record API endpoints
