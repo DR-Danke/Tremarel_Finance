@@ -252,3 +252,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When integrating the prospect form into a dialog or page (e.g., Kanban Board)
     - When working with CRM prospect TypeScript types (Prospect, ProspectCreate, ProspectStage)
     - When troubleshooting prospect form validation, submission, or API integration
+
+- app_docs/feature-6835fdde-prospect-kanban-board.md
+  - Conditions:
+    - When working with the Prospect Kanban board UI or ProspectsPage
+    - When implementing or modifying TRKanbanBoard, TRKanbanColumn, or TRProspectCard components
+    - When working with TRProspectForm or prospect create/edit dialogs
+    - When using the useProspects or usePipelineStages hooks
+    - When working with prospectService or pipelineStageService on the frontend
+    - When adding drag-and-drop or other Kanban board enhancements
+    - When troubleshooting prospect display, grouping by stage, or pipeline stage auto-seeding

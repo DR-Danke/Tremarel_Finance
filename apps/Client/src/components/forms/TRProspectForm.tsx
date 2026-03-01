@@ -4,51 +4,43 @@ import {
   TextField,
   Button,
   Box,
-  MenuItem,
   FormControl,
   InputLabel,
   Select,
+  MenuItem,
   FormHelperText,
   InputAdornment,
   CircularProgress,
 } from '@mui/material'
-import type { Prospect, ProspectCreate, ProspectStage } from '@/types'
+import type { Prospect, ProspectCreate, ProspectUpdate, PipelineStage } from '@/types'
 
 interface ProspectFormData {
   company_name: string
   contact_name: string
   contact_email: string
   contact_phone: string
-  stage: ProspectStage
+  stage: string
   estimated_value: string
   source: string
   notes: string
 }
 
 interface TRProspectFormProps {
-  onSubmit: (data: ProspectCreate) => Promise<void>
+  onSubmit: (data: ProspectCreate | ProspectUpdate) => Promise<void>
   initialData?: Prospect
   entityId: string
-  isLoading?: boolean
-  onCancel?: () => void
+  stages: PipelineStage[]
+  onCancel: () => void
+  isSubmitting?: boolean
 }
-
-const STAGE_OPTIONS: { value: ProspectStage; label: string }[] = [
-  { value: 'lead', label: 'Lead' },
-  { value: 'contacted', label: 'Contacted' },
-  { value: 'qualified', label: 'Qualified' },
-  { value: 'proposal', label: 'Proposal' },
-  { value: 'negotiation', label: 'Negotiation' },
-  { value: 'won', label: 'Won' },
-  { value: 'lost', label: 'Lost' },
-]
 
 export const TRProspectForm: React.FC<TRProspectFormProps> = ({
   onSubmit,
   initialData,
   entityId,
-  isLoading = false,
+  stages,
   onCancel,
+  isSubmitting = false,
 }) => {
   const isEditMode = !!initialData
 
@@ -57,7 +49,7 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting: formSubmitting },
   } = useForm<ProspectFormData>({
     defaultValues: {
       company_name: initialData?.company_name || '',
@@ -71,7 +63,6 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
     },
   })
 
-  // Reset form when initialData changes
   useEffect(() => {
     if (initialData) {
       reset({
@@ -90,18 +81,32 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
   const handleFormSubmit = async (data: ProspectFormData) => {
     console.log('INFO [TRProspectForm]: Form submitted', data)
     try {
-      const payload: ProspectCreate = {
-        entity_id: entityId,
-        company_name: data.company_name,
-        stage: data.stage,
-        contact_name: data.contact_name || undefined,
-        contact_email: data.contact_email || undefined,
-        contact_phone: data.contact_phone || undefined,
-        estimated_value: data.estimated_value ? parseFloat(data.estimated_value) : undefined,
-        source: data.source || undefined,
-        notes: data.notes || undefined,
+      if (isEditMode) {
+        const updateData: ProspectUpdate = {
+          company_name: data.company_name,
+          contact_name: data.contact_name || undefined,
+          contact_email: data.contact_email || undefined,
+          contact_phone: data.contact_phone || undefined,
+          stage: data.stage as ProspectCreate['stage'],
+          estimated_value: data.estimated_value ? parseFloat(data.estimated_value) : undefined,
+          source: data.source || undefined,
+          notes: data.notes || undefined,
+        }
+        await onSubmit(updateData)
+      } else {
+        const createData: ProspectCreate = {
+          entity_id: entityId,
+          company_name: data.company_name,
+          contact_name: data.contact_name || undefined,
+          contact_email: data.contact_email || undefined,
+          contact_phone: data.contact_phone || undefined,
+          stage: (data.stage as ProspectCreate['stage']) || 'lead',
+          estimated_value: data.estimated_value ? parseFloat(data.estimated_value) : undefined,
+          source: data.source || undefined,
+          notes: data.notes || undefined,
+        }
+        await onSubmit(createData)
       }
-      await onSubmit(payload)
       console.log('INFO [TRProspectForm]: Prospect submitted successfully')
       if (!isEditMode) {
         reset()
@@ -111,7 +116,7 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
     }
   }
 
-  const isFormLoading = isLoading || isSubmitting
+  const isFormLoading = isSubmitting || formSubmitting
 
   return (
     <Box
@@ -123,7 +128,7 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
       <TextField
         {...register('company_name', {
           required: 'Company name is required',
-          maxLength: { value: 255, message: 'Company name must be 255 characters or less' },
+          maxLength: { value: 255, message: 'Max 255 characters' },
         })}
         label="Company Name"
         fullWidth
@@ -134,7 +139,7 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
 
       <TextField
         {...register('contact_name', {
-          maxLength: { value: 255, message: 'Contact name must be 255 characters or less' },
+          maxLength: { value: 255, message: 'Max 255 characters' },
         })}
         label="Contact Name"
         fullWidth
@@ -145,9 +150,9 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
 
       <TextField
         {...register('contact_email', {
-          maxLength: { value: 255, message: 'Contact email must be 255 characters or less' },
+          maxLength: { value: 255, message: 'Max 255 characters' },
           pattern: {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            value: /^$|^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             message: 'Invalid email format',
           },
         })}
@@ -161,7 +166,7 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
 
       <TextField
         {...register('contact_phone', {
-          maxLength: { value: 100, message: 'Contact phone must be 100 characters or less' },
+          maxLength: { value: 100, message: 'Max 100 characters' },
         })}
         label="Contact Phone"
         fullWidth
@@ -173,32 +178,34 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
       <Controller
         name="stage"
         control={control}
-        rules={{ required: 'Pipeline stage is required' }}
+        rules={{ required: 'Stage is required' }}
         render={({ field }) => (
           <FormControl fullWidth error={!!errors.stage}>
-            <InputLabel id="stage-label">Pipeline Stage</InputLabel>
+            <InputLabel id="stage-label">Stage</InputLabel>
             <Select
               {...field}
               labelId="stage-label"
-              label="Pipeline Stage"
+              label="Stage"
               disabled={isFormLoading}
             >
-              {STAGE_OPTIONS.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {stages.map((s) => (
+                <MenuItem key={s.id} value={s.name}>
+                  {s.display_name}
                 </MenuItem>
               ))}
             </Select>
-            {errors.stage && (
-              <FormHelperText>{errors.stage.message}</FormHelperText>
-            )}
+            {errors.stage && <FormHelperText>{errors.stage.message}</FormHelperText>}
           </FormControl>
         )}
       />
 
       <TextField
         {...register('estimated_value', {
-          min: { value: 0, message: 'Estimated value must be 0 or greater' },
+          min: { value: 0, message: 'Value must be 0 or greater' },
+          pattern: {
+            value: /^$|^\d+(\.\d{1,2})?$/,
+            message: 'Invalid value format',
+          },
         })}
         label="Estimated Value"
         type="number"
@@ -217,7 +224,7 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
 
       <TextField
         {...register('source', {
-          maxLength: { value: 100, message: 'Source must be 100 characters or less' },
+          maxLength: { value: 100, message: 'Max 100 characters' },
         })}
         label="Source"
         fullWidth
@@ -238,16 +245,14 @@ export const TRProspectForm: React.FC<TRProspectFormProps> = ({
       />
 
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 1 }}>
-        {onCancel && (
-          <Button
-            type="button"
-            variant="outlined"
-            onClick={onCancel}
-            disabled={isFormLoading}
-          >
-            Cancel
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="outlined"
+          onClick={onCancel}
+          disabled={isFormLoading}
+        >
+          Cancel
+        </Button>
         <Button
           type="submit"
           variant="contained"
