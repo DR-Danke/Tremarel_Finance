@@ -28,9 +28,15 @@ import os
 import re
 import json
 import logging
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 
 from adw_modules.crm_api_client import CrmApiClient
+from adw_modules.github import (
+    check_gh_authenticated,
+    create_issue,
+    ensure_labels_exist,
+)
 from adw_modules.state import ADWState
 from adw_modules.git_ops import commit_changes, push_branch
 from adw_modules.workflow_ops import ensure_adw_id
@@ -219,7 +225,7 @@ def save_meeting_outputs(meeting_data: dict, adw_id: str, logger: logging.Logger
 
 def update_crm(
     meeting_data: dict, transcript_path: str, adw_id: str, logger: logging.Logger
-) -> None:
+) -> dict:
     """Update CRM with prospect and meeting record from processed transcript.
 
     Authenticates with the backend API using service account credentials,
@@ -228,7 +234,23 @@ def update_crm(
 
     CRM failures are logged but do NOT raise exceptions — the pipeline's
     primary deliverable (JSON/HTML/markdown) is already saved.
+
+    Returns a result dict with keys:
+        success, skipped, skip_reason, prospect_action, prospect_id,
+        prospect_company, meeting_record_id, stage_advanced, errors
     """
+    result = {
+        "success": False,
+        "skipped": False,
+        "skip_reason": None,
+        "prospect_action": None,
+        "prospect_id": None,
+        "prospect_company": None,
+        "meeting_record_id": None,
+        "stage_advanced": False,
+        "errors": [],
+    }
+
     base_url = os.environ.get("ADW_API_BASE_URL", "http://localhost:8000/api")
     service_email = os.environ.get("ADW_SERVICE_EMAIL")
     service_password = os.environ.get("ADW_SERVICE_PASSWORD")
@@ -239,32 +261,42 @@ def update_crm(
             "CRM update skipped: ADW_SERVICE_EMAIL, ADW_SERVICE_PASSWORD, "
             "and ADW_ENTITY_ID must all be set"
         )
-        return
+        result["skipped"] = True
+        result["skip_reason"] = "Missing required env vars (ADW_SERVICE_EMAIL, ADW_SERVICE_PASSWORD, ADW_ENTITY_ID)"
+        return result
 
     client = CrmApiClient(base_url, logger)
 
     if not client.authenticate(service_email, service_password):
         logger.error("CRM update aborted: authentication failed")
-        return
+        result["errors"].append("Authentication failed")
+        return result
 
     company_name = meeting_data.get("company_name")
     if not company_name:
         logger.warning("CRM update skipped: no company_name in meeting data")
-        return
+        result["skipped"] = True
+        result["skip_reason"] = "No company_name in meeting data"
+        return result
+
+    result["prospect_company"] = company_name
 
     # Search for existing prospect
     prospect = client.search_prospect(entity_id, company_name)
 
     if prospect:
         logger.info(f"CRM: Matched existing prospect {prospect['id']} for '{company_name}'")
+        result["prospect_action"] = "matched"
         # Advance from lead to contacted if applicable
         if prospect.get("stage") == "lead":
-            client.advance_prospect_stage(
+            advance_result = client.advance_prospect_stage(
                 prospect["id"],
                 entity_id,
                 "contacted",
                 "Auto-advanced: meeting transcript processed",
             )
+            if advance_result:
+                result["stage_advanced"] = True
     else:
         # Create new prospect
         contact_name = meeting_data.get("contact_name")
@@ -280,9 +312,12 @@ def update_crm(
         )
         if not prospect:
             logger.error("CRM update aborted: failed to create prospect")
-            return
+            result["errors"].append("Failed to create prospect")
+            return result
+        result["prospect_action"] = "created"
 
     prospect_id = prospect["id"]
+    result["prospect_id"] = prospect_id
 
     # Extract participants and action items
     participants = [
@@ -312,9 +347,147 @@ def update_crm(
     )
 
     if record:
+        result["meeting_record_id"] = record["id"]
+        result["success"] = True
         logger.info(f"CRM update complete: meeting record {record['id']} linked to prospect {prospect_id}")
     else:
+        result["errors"].append("Failed to create meeting record")
         logger.error("CRM update: failed to create meeting record")
+
+    return result
+
+
+def generate_github_issue(
+    meeting_data: dict,
+    crm_result: dict,
+    adw_id: str,
+    transcript_path: str,
+    logger: logging.Logger,
+) -> str | None:
+    """Generate a GitHub issue summarizing meeting processing results.
+
+    Creates an issue with structured sections and machine-parseable metadata.
+    Failures are logged but do NOT raise exceptions.
+
+    Returns the created issue number string, or None on failure.
+    """
+    if not check_gh_authenticated():
+        logger.warning("GitHub issue generation skipped: gh CLI not authenticated")
+        return None
+
+    # Build issue title
+    title = meeting_data.get("title") or "Untitled Meeting"
+    company_name = meeting_data.get("company_name") or "Unknown"
+    issue_title = f"[Meeting Processed] {title} - {company_name}"
+    if len(issue_title) > 100:
+        issue_title = issue_title[:97] + "..."
+
+    # Build issue body sections
+    sections = []
+
+    # Meeting Summary
+    meeting_date = meeting_data.get("meeting_date") or "Not specified"
+    summary_text = meeting_data.get("summary") or "No summary available."
+    participants = meeting_data.get("participants") or []
+    participant_list = ", ".join(
+        p.get("name", "Unknown") if isinstance(p, dict) else str(p)
+        for p in participants
+    ) or "Not specified"
+
+    sections.append(
+        f"## Meeting Summary\n\n"
+        f"- **Title:** {title}\n"
+        f"- **Date:** {meeting_date}\n"
+        f"- **Participants:** {participant_list}\n\n"
+        f"{summary_text}"
+    )
+
+    # Prospect Information
+    contact_name = meeting_data.get("contact_name")
+    contact_email = meeting_data.get("contact_email")
+    prospect_action = crm_result.get("prospect_action") or "N/A"
+    prospect_lines = [f"- **Company:** {company_name}"]
+    if contact_name:
+        prospect_lines.append(f"- **Contact:** {contact_name}")
+    if contact_email:
+        prospect_lines.append(f"- **Email:** {contact_email}")
+    prospect_lines.append(f"- **Prospect Action:** {prospect_action}")
+    sections.append(f"## Prospect Information\n\n" + "\n".join(prospect_lines))
+
+    # CRM Update Results
+    crm_success = crm_result.get("success", False)
+    crm_skipped = crm_result.get("skipped", False)
+    crm_lines = []
+    if crm_skipped:
+        skip_reason = crm_result.get("skip_reason") or "Unknown"
+        crm_lines.append(f"- **Status:** Skipped ({skip_reason})")
+    elif crm_success:
+        crm_lines.append("- **Status:** Success")
+    else:
+        crm_lines.append("- **Status:** Failed")
+    if crm_result.get("prospect_id"):
+        crm_lines.append(f"- **Prospect ID:** {crm_result['prospect_id']}")
+    if crm_result.get("meeting_record_id"):
+        crm_lines.append(f"- **Meeting Record ID:** {crm_result['meeting_record_id']}")
+    crm_lines.append(f"- **Stage Advanced:** {'Yes' if crm_result.get('stage_advanced') else 'No'}")
+    crm_errors = crm_result.get("errors") or []
+    if crm_errors:
+        crm_lines.append(f"- **Errors:** {'; '.join(crm_errors)}")
+    sections.append(f"## CRM Update Results\n\n" + "\n".join(crm_lines))
+
+    # Action Items
+    action_items = meeting_data.get("action_items") or []
+    if action_items:
+        items = []
+        for ai in action_items:
+            desc = ai.get("description", str(ai)) if isinstance(ai, dict) else str(ai)
+            items.append(f"- {desc}")
+        sections.append(f"## Action Items\n\n" + "\n".join(items))
+
+    # Decisions
+    decisions = meeting_data.get("decisions") or []
+    if decisions:
+        sections.append(f"## Decisions\n\n" + "\n".join(f"- {d}" for d in decisions))
+
+    # Next Steps
+    next_steps = meeting_data.get("next_steps") or []
+    if next_steps:
+        sections.append(f"## Next Steps\n\n" + "\n".join(f"- {ns}" for ns in next_steps))
+
+    # Pipeline Metadata
+    timestamp = datetime.now(timezone.utc).isoformat()
+    sections.append(
+        f"## Pipeline Metadata\n\n"
+        f"- **ADW ID:** {adw_id}\n"
+        f"- **Transcript:** `{transcript_path}`\n"
+        f"- **Processed At:** {timestamp}"
+    )
+
+    # Machine-parseable metadata block
+    metadata = {
+        "adw_id": adw_id,
+        "prospect_id": crm_result.get("prospect_id"),
+        "meeting_record_id": crm_result.get("meeting_record_id"),
+        "prospect_company": crm_result.get("prospect_company"),
+        "crm_success": crm_result.get("success", False),
+        "crm_skipped": crm_result.get("skipped", False),
+        "timestamp": timestamp,
+    }
+    sections.append(f"<!-- ADW_METADATA: {json.dumps(metadata)} -->")
+
+    body = "\n\n".join(sections)
+
+    # Create issue with labels
+    labels = ["meeting-processed", "adw-generated"]
+    ensure_labels_exist(labels)
+    issue_number = create_issue(issue_title, body, labels)
+
+    if issue_number:
+        logger.info(f"GitHub issue created: #{issue_number}")
+        return issue_number
+    else:
+        logger.warning("GitHub issue creation failed")
+        return None
 
 
 def main():
@@ -457,9 +630,21 @@ def main():
 
     # Update CRM with prospect and meeting record
     try:
-        update_crm(meeting_data, transcript_path, adw_id, logger)
+        crm_result = update_crm(meeting_data, transcript_path, adw_id, logger)
     except Exception as e:
         logger.error(f"CRM update failed (non-fatal): {e}")
+        crm_result = {"success": False, "skipped": False, "errors": [str(e)]}
+
+    # Generate GitHub issue summarizing processing results
+    try:
+        issue_number = generate_github_issue(
+            meeting_data, crm_result, adw_id, transcript_path, logger
+        )
+        if issue_number:
+            state.update(generated_issue_number=issue_number)
+            state.save("adw_meeting_pipeline_iso")
+    except Exception as e:
+        logger.error(f"GitHub issue generation failed (non-fatal): {e}")
 
     # Generate and save markdown summary to worktree
     title = meeting_data.get("title") or "untitled"

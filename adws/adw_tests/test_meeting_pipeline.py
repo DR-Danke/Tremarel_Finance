@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
 from unittest.mock import patch, MagicMock
@@ -15,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import adw_meeting_pipeline_iso as pipeline
 from adw_modules.crm_api_client import CrmApiClient
+from adw_modules import github as github_module
 
 
 # --- slugify ---
@@ -395,9 +397,12 @@ FULL_MEETING_DATA = {
 def test_update_crm_skips_when_env_vars_missing():
     """Skips CRM update when required env vars are not set."""
     logger = MagicMock(spec=logging.Logger)
-    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
     logger.warning.assert_called_once()
     assert "ADW_SERVICE_EMAIL" in logger.warning.call_args[0][0]
+    assert result["success"] is False
+    assert result["skipped"] is True
+    assert result["skip_reason"] is not None
 
 
 @patch.dict(os.environ, {
@@ -414,11 +419,13 @@ def test_update_crm_skips_when_no_company_name(mock_client_cls):
 
     logger = MagicMock(spec=logging.Logger)
     data = {"title": "Meeting", "summary": "No company info."}
-    pipeline.update_crm(data, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(data, "/path/transcript.md", "adw-1", logger)
 
     mock_client.search_prospect.assert_not_called()
     logger.warning.assert_called()
     assert "company_name" in logger.warning.call_args[0][0]
+    assert result["skipped"] is True
+    assert result["skip_reason"] is not None
 
 
 @patch.dict(os.environ, {
@@ -437,7 +444,7 @@ def test_update_crm_creates_new_prospect_and_meeting(mock_client_cls):
     mock_client_cls.return_value = mock_client
 
     logger = MagicMock(spec=logging.Logger)
-    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
 
     mock_client.create_prospect.assert_called_once()
     call_kwargs = mock_client.create_prospect.call_args
@@ -449,6 +456,11 @@ def test_update_crm_creates_new_prospect_and_meeting(mock_client_cls):
     mr_kwargs = mock_client.create_meeting_record.call_args.kwargs
     assert mr_kwargs["prospect_id"] == "p-new"
     assert mr_kwargs["title"] == "Sprint Planning"
+
+    assert result["success"] is True
+    assert result["prospect_action"] == "created"
+    assert result["prospect_id"] == "p-new"
+    assert result["meeting_record_id"] == "mr-new"
 
 
 @patch.dict(os.environ, {
@@ -470,12 +482,16 @@ def test_update_crm_matches_existing_prospect(mock_client_cls):
     mock_client_cls.return_value = mock_client
 
     logger = MagicMock(spec=logging.Logger)
-    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
 
     mock_client.create_prospect.assert_not_called()
     mock_client.create_meeting_record.assert_called_once()
     mr_kwargs = mock_client.create_meeting_record.call_args.kwargs
     assert mr_kwargs["prospect_id"] == "p-existing"
+
+    assert result["success"] is True
+    assert result["prospect_action"] == "matched"
+    assert result["prospect_id"] == "p-existing"
 
 
 @patch.dict(os.environ, {
@@ -498,11 +514,12 @@ def test_update_crm_advances_lead_to_contacted(mock_client_cls):
     mock_client_cls.return_value = mock_client
 
     logger = MagicMock(spec=logging.Logger)
-    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
 
     mock_client.advance_prospect_stage.assert_called_once_with(
         "p-lead", "entity-1", "contacted", "Auto-advanced: meeting transcript processed"
     )
+    assert result["stage_advanced"] is True
 
 
 @patch.dict(os.environ, {
@@ -524,9 +541,10 @@ def test_update_crm_does_not_advance_non_lead(mock_client_cls):
     mock_client_cls.return_value = mock_client
 
     logger = MagicMock(spec=logging.Logger)
-    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
 
     mock_client.advance_prospect_stage.assert_not_called()
+    assert result["stage_advanced"] is False
 
 
 @patch.dict(os.environ, {
@@ -543,8 +561,216 @@ def test_update_crm_handles_api_failure_gracefully(mock_client_cls):
 
     logger = MagicMock(spec=logging.Logger)
     # Should not raise
-    pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
+    result = pipeline.update_crm(FULL_MEETING_DATA, "/path/transcript.md", "adw-1", logger)
 
     mock_client.search_prospect.assert_not_called()
     mock_client.create_prospect.assert_not_called()
     logger.error.assert_called()
+    assert result["success"] is False
+    assert "Authentication failed" in result["errors"]
+
+
+# --- check_gh_authenticated ---
+
+
+@patch("adw_modules.github.subprocess.run")
+def test_check_gh_authenticated_success(mock_run):
+    """Returns True when gh auth status succeeds."""
+    mock_run.return_value = MagicMock(returncode=0)
+    assert github_module.check_gh_authenticated() is True
+    mock_run.assert_called_once_with(
+        ["gh", "auth", "status"],
+        capture_output=True,
+        text=True,
+    )
+
+
+@patch("adw_modules.github.subprocess.run")
+def test_check_gh_authenticated_failure(mock_run):
+    """Returns False when gh auth status fails."""
+    mock_run.return_value = MagicMock(returncode=1)
+    assert github_module.check_gh_authenticated() is False
+
+
+@patch("adw_modules.github.subprocess.run", side_effect=FileNotFoundError)
+def test_check_gh_authenticated_not_installed(mock_run):
+    """Returns False when gh CLI is not installed."""
+    assert github_module.check_gh_authenticated() is False
+
+
+# --- ensure_labels_exist ---
+
+
+@patch("adw_modules.github.get_repo_url", return_value="https://github.com/owner/repo.git")
+@patch("adw_modules.github.get_github_env", return_value=None)
+@patch("adw_modules.github.subprocess.run")
+def test_ensure_labels_exist(mock_run, mock_env, mock_url):
+    """Runs gh label create for each label."""
+    mock_run.return_value = MagicMock(returncode=0)
+    github_module.ensure_labels_exist(["label-a", "label-b"])
+    assert mock_run.call_count == 2
+    # Check that --force is used
+    for call in mock_run.call_args_list:
+        assert "--force" in call[0][0]
+
+
+# --- create_issue ---
+
+
+@patch("adw_modules.github.get_repo_url", return_value="https://github.com/owner/repo.git")
+@patch("adw_modules.github.get_github_env", return_value=None)
+@patch("adw_modules.github.subprocess.run")
+def test_create_issue_success(mock_run, mock_env, mock_url):
+    """Creates issue and returns issue number from URL."""
+    mock_run.return_value = MagicMock(
+        returncode=0,
+        stdout="https://github.com/owner/repo/issues/99\n",
+    )
+    result = github_module.create_issue("Test Title", "Test Body", ["bug"])
+    assert result == "99"
+
+
+@patch("adw_modules.github.get_repo_url", return_value="https://github.com/owner/repo.git")
+@patch("adw_modules.github.get_github_env", return_value=None)
+@patch("adw_modules.github.subprocess.run")
+def test_create_issue_failure(mock_run, mock_env, mock_url):
+    """Returns None on non-zero exit code."""
+    mock_run.return_value = MagicMock(
+        returncode=1,
+        stderr="Not found",
+    )
+    result = github_module.create_issue("Test Title", "Test Body", ["bug"], max_retries=1)
+    assert result is None
+
+
+@patch("adw_modules.github.get_repo_url", return_value="https://github.com/owner/repo.git")
+@patch("adw_modules.github.get_github_env", return_value=None)
+@patch("adw_modules.github.subprocess.run")
+@patch("adw_modules.github.time.sleep")
+def test_create_issue_timeout_retry(mock_sleep, mock_run, mock_env, mock_url):
+    """Retries on timeout and succeeds on second attempt."""
+    mock_run.side_effect = [
+        subprocess.TimeoutExpired(cmd="gh", timeout=30),
+        MagicMock(returncode=0, stdout="https://github.com/owner/repo/issues/42\n"),
+    ]
+    result = github_module.create_issue("Test Title", "Test Body", ["bug"], max_retries=3)
+    assert result == "42"
+    mock_sleep.assert_called_once()
+
+
+# --- generate_github_issue ---
+
+
+@patch("adw_meeting_pipeline_iso.check_gh_authenticated", return_value=True)
+@patch("adw_meeting_pipeline_iso.ensure_labels_exist")
+@patch("adw_meeting_pipeline_iso.create_issue", return_value="99")
+def test_generate_github_issue_success(mock_create, mock_labels, mock_auth):
+    """Generates issue and returns issue number."""
+    logger = MagicMock(spec=logging.Logger)
+    crm_result = {
+        "success": True,
+        "skipped": False,
+        "prospect_action": "created",
+        "prospect_id": "p-123",
+        "prospect_company": "Acme Corp",
+        "meeting_record_id": "mr-456",
+        "stage_advanced": False,
+        "errors": [],
+    }
+    result = pipeline.generate_github_issue(
+        FULL_MEETING_DATA, crm_result, "adw-1", "/path/transcript.md", logger
+    )
+    assert result == "99"
+    mock_create.assert_called_once()
+    # Verify title and body content
+    title_arg = mock_create.call_args[0][0]
+    body_arg = mock_create.call_args[0][1]
+    assert "[Meeting Processed]" in title_arg
+    assert "Sprint Planning" in title_arg
+    assert "## Meeting Summary" in body_arg
+    assert "## CRM Update Results" in body_arg
+    assert "<!-- ADW_METADATA:" in body_arg
+
+
+@patch("adw_meeting_pipeline_iso.check_gh_authenticated", return_value=False)
+def test_generate_github_issue_gh_not_authenticated(mock_auth):
+    """Returns None when gh is not authenticated."""
+    logger = MagicMock(spec=logging.Logger)
+    crm_result = {"success": False, "skipped": True, "errors": []}
+    result = pipeline.generate_github_issue(
+        FULL_MEETING_DATA, crm_result, "adw-1", "/path/transcript.md", logger
+    )
+    assert result is None
+    logger.warning.assert_called()
+
+
+@patch("adw_meeting_pipeline_iso.check_gh_authenticated", return_value=True)
+@patch("adw_meeting_pipeline_iso.ensure_labels_exist")
+@patch("adw_meeting_pipeline_iso.create_issue", return_value=None)
+def test_generate_github_issue_create_fails(mock_create, mock_labels, mock_auth):
+    """Returns None when create_issue fails."""
+    logger = MagicMock(spec=logging.Logger)
+    crm_result = {"success": True, "skipped": False, "errors": []}
+    result = pipeline.generate_github_issue(
+        FULL_MEETING_DATA, crm_result, "adw-1", "/path/transcript.md", logger
+    )
+    assert result is None
+    logger.warning.assert_called()
+
+
+@patch("adw_meeting_pipeline_iso.check_gh_authenticated", return_value=True)
+@patch("adw_meeting_pipeline_iso.ensure_labels_exist")
+@patch("adw_meeting_pipeline_iso.create_issue", return_value="101")
+def test_generate_github_issue_minimal_data(mock_create, mock_labels, mock_auth):
+    """Creates issue even with minimal meeting data."""
+    logger = MagicMock(spec=logging.Logger)
+    minimal_data = {"title": "Quick Chat"}
+    crm_result = {
+        "success": False,
+        "skipped": True,
+        "skip_reason": "No env vars",
+        "prospect_action": None,
+        "prospect_id": None,
+        "prospect_company": None,
+        "meeting_record_id": None,
+        "stage_advanced": False,
+        "errors": [],
+    }
+    result = pipeline.generate_github_issue(
+        minimal_data, crm_result, "adw-1", "/path/transcript.md", logger
+    )
+    assert result == "101"
+    title_arg = mock_create.call_args[0][0]
+    assert "Quick Chat" in title_arg
+
+
+@patch("adw_meeting_pipeline_iso.check_gh_authenticated", return_value=True)
+@patch("adw_meeting_pipeline_iso.ensure_labels_exist")
+@patch("adw_meeting_pipeline_iso.create_issue", return_value="102")
+def test_generate_github_issue_includes_metadata_block(mock_create, mock_labels, mock_auth):
+    """Issue body contains ADW_METADATA HTML comment with correct JSON."""
+    logger = MagicMock(spec=logging.Logger)
+    crm_result = {
+        "success": True,
+        "skipped": False,
+        "prospect_action": "matched",
+        "prospect_id": "p-abc",
+        "prospect_company": "Acme Corp",
+        "meeting_record_id": "mr-xyz",
+        "stage_advanced": True,
+        "errors": [],
+    }
+    pipeline.generate_github_issue(
+        FULL_MEETING_DATA, crm_result, "adw-1", "/path/transcript.md", logger
+    )
+    body_arg = mock_create.call_args[0][1]
+    # Find and parse the metadata block
+    assert "<!-- ADW_METADATA:" in body_arg
+    import re
+    match = re.search(r"<!-- ADW_METADATA: ({.*}) -->", body_arg)
+    assert match is not None
+    metadata = json.loads(match.group(1))
+    assert metadata["adw_id"] == "adw-1"
+    assert metadata["prospect_id"] == "p-abc"
+    assert metadata["meeting_record_id"] == "mr-xyz"
+    assert metadata["crm_success"] is True
