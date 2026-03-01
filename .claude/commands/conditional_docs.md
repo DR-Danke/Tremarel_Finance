@@ -287,3 +287,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with the meeting processing pipeline (adw_meeting_pipeline_iso.py)
     - When troubleshooting meeting transcript detection, processing, or pipeline triggering
     - When working with files in External_Requirements/meeting_transcripts/
+
+- app_docs/feature-e924e4a7-meeting-transcript-summary-processor.md
+  - Conditions:
+    - When working with adw_meeting_pipeline_iso.py or the meeting transcript processing pipeline
+    - When implementing or modifying the /process_meeting_transcript slash command
+    - When working with meeting summary JSON/HTML output generation
+    - When troubleshooting LLM-based meeting transcript parsing or structured data extraction
+    - When extending the meeting processing pipeline (REQ-013 CRM updates, REQ-014 issue generation)
