@@ -200,3 +200,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with the prospects table or Prospect model
     - When adding meeting records or other prospect-related entities
     - When implementing pipeline stage filtering or prospect management UI
+
+- app_docs/feature-eb19b5cd-pipeline-stage-configuration.md
+  - Conditions:
+    - When working with CRM pipeline stages or Kanban board columns
+    - When implementing or modifying stage transition tracking or audit trails
+    - When working with pipeline_stages or stage_transitions tables
+    - When seeding default pipeline stages for an entity
+    - When adding prospect stage change functionality (PATCH endpoint)
+    - When building CRM pipeline UI that displays configurable stages
