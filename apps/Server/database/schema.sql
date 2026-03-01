@@ -411,3 +411,45 @@ CREATE TABLE stage_transitions (
 CREATE INDEX idx_stage_transitions_prospect_id ON stage_transitions(prospect_id);
 CREATE INDEX idx_stage_transitions_entity_id ON stage_transitions(entity_id);
 CREATE INDEX idx_stage_transitions_prospect_created ON stage_transitions(prospect_id, created_at);
+
+-- ============================================================================
+-- TABLE: meeting_records
+-- Processed meeting records linked to prospects with summaries and action items
+-- ============================================================================
+CREATE TABLE meeting_records (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    entity_id UUID NOT NULL,
+    prospect_id UUID NOT NULL,
+    title VARCHAR(500) NOT NULL,
+    transcript_ref VARCHAR(1000),
+    summary TEXT,
+    action_items TEXT,
+    participants TEXT,
+    html_output TEXT,
+    meeting_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE,
+
+    CONSTRAINT fk_meeting_records_entity
+        FOREIGN KEY (entity_id)
+        REFERENCES entities(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_meeting_records_prospect
+        FOREIGN KEY (prospect_id)
+        REFERENCES prospects(id)
+        ON DELETE CASCADE
+);
+
+-- Indexes for efficient queries
+CREATE INDEX idx_meeting_records_entity_id ON meeting_records(entity_id);
+CREATE INDEX idx_meeting_records_prospect_id ON meeting_records(prospect_id);
+CREATE INDEX idx_meeting_records_is_active ON meeting_records(is_active);
+CREATE INDEX idx_meeting_records_entity_prospect ON meeting_records(entity_id, prospect_id);
+
+-- Trigger for updated_at
+CREATE TRIGGER meeting_records_updated_at
+    BEFORE UPDATE ON meeting_records
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
