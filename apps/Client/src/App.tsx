@@ -9,6 +9,7 @@ import { TransactionsPage } from '@/pages/TransactionsPage'
 import { BudgetsPage } from '@/pages/BudgetsPage'
 import { ReportsPage } from '@/pages/ReportsPage'
 import { RecurringTemplatesPage } from '@/pages/RecurringTemplatesPage'
+import { ProspectsPage } from '@/pages/ProspectsPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -139,6 +140,16 @@ function App() {
           <ProtectedRoute>
             <TRMainLayout>
               <ReportsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/prospects"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <ProspectsPage />
             </TRMainLayout>
           </ProtectedRoute>
         }

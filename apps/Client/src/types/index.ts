@@ -341,3 +341,76 @@ export interface RecurringTemplateListResponse {
   templates: RecurringTemplate[]
   total: number
 }
+
+// Prospect types
+export type ProspectStage = 'lead' | 'contacted' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
+
+export interface Prospect {
+  id: string
+  entity_id: string
+  company_name: string
+  contact_name?: string | null
+  contact_email?: string | null
+  contact_phone?: string | null
+  stage: ProspectStage
+  estimated_value?: number | null
+  source?: string | null
+  notes?: string | null
+  is_active: boolean
+  created_at: string
+  updated_at?: string | null
+}
+
+export interface ProspectCreate {
+  entity_id: string
+  company_name: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage?: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+}
+
+export interface ProspectUpdate {
+  company_name?: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  stage?: ProspectStage
+  estimated_value?: number
+  source?: string
+  notes?: string
+  is_active?: boolean
+}
+
+export interface ProspectListResponse {
+  prospects: Prospect[]
+  total: number
+}
+
+export interface ProspectFilters {
+  stage?: ProspectStage
+  is_active?: boolean
+  source?: string
+}
+
+// Pipeline stage types
+export interface PipelineStage {
+  id: string
+  entity_id: string
+  name: string
+  display_name: string
+  order_index: number
+  color?: string | null
+  is_default: boolean
+  is_active: boolean
+  created_at: string
+  updated_at?: string | null
+}
+
+export interface PipelineStageListResponse {
+  stages: PipelineStage[]
+  total: number
+}
