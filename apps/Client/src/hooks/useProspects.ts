@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react'
 import { prospectService } from '@/services/prospectService'
 import type {
   Prospect,
@@ -20,6 +20,7 @@ interface UseProspectsResult {
   updateProspectStage: (id: string, data: ProspectStageUpdate) => Promise<void>
   deleteProspect: (id: string) => Promise<void>
   setFilters: (filters: ProspectFilters) => void
+  setProspects: Dispatch<SetStateAction<Prospect[]>>
 }
 
 export const useProspects = (entityId: string | null): UseProspectsResult => {
@@ -144,6 +145,7 @@ export const useProspects = (entityId: string | null): UseProspectsResult => {
     updateProspectStage,
     deleteProspect,
     setFilters,
+    setProspects,
   }
 }
 

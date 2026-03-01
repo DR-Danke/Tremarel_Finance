@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { Box, Skeleton } from '@mui/material'
+import { DragDropContext, type DropResult } from '@hello-pangea/dnd'
 import { TRKanbanColumn } from '@/components/ui/TRKanbanColumn'
 import type { PipelineStage, Prospect } from '@/types'
 
@@ -9,6 +10,7 @@ interface TRKanbanBoardProps {
   isLoading: boolean
   onProspectClick?: (prospect: Prospect) => void
   onProspectEdit?: (prospect: Prospect) => void
+  onDragEnd?: (result: DropResult) => void
 }
 
 export const TRKanbanBoard: React.FC<TRKanbanBoardProps> = ({
@@ -17,6 +19,7 @@ export const TRKanbanBoard: React.FC<TRKanbanBoardProps> = ({
   isLoading,
   onProspectClick,
   onProspectEdit,
+  onDragEnd,
 }) => {
   const prospectsByStage = useMemo(() => {
     const map = new Map<string, Prospect[]>()
@@ -48,17 +51,19 @@ export const TRKanbanBoard: React.FC<TRKanbanBoardProps> = ({
   const sortedStages = [...stages].sort((a, b) => a.order_index - b.order_index)
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', pb: 2 }}>
-      {sortedStages.map((stage) => (
-        <TRKanbanColumn
-          key={stage.id}
-          stage={stage}
-          prospects={prospectsByStage.get(stage.name) || []}
-          onProspectClick={onProspectClick}
-          onProspectEdit={onProspectEdit}
-        />
-      ))}
-    </Box>
+    <DragDropContext onDragEnd={onDragEnd || (() => {})}>
+      <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', pb: 2 }}>
+        {sortedStages.map((stage) => (
+          <TRKanbanColumn
+            key={stage.id}
+            stage={stage}
+            prospects={prospectsByStage.get(stage.name) || []}
+            onProspectClick={onProspectClick}
+            onProspectEdit={onProspectEdit}
+          />
+        ))}
+      </Box>
+    </DragDropContext>
   )
 }
 

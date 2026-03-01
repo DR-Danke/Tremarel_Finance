@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Box,
@@ -13,12 +13,13 @@ import {
   CircularProgress,
 } from '@mui/material'
 import { Add } from '@mui/icons-material'
+import type { DropResult } from '@hello-pangea/dnd'
 import { useEntity } from '@/hooks/useEntity'
 import { useProspects } from '@/hooks/useProspects'
 import { usePipelineStages } from '@/hooks/usePipelineStages'
 import { TRKanbanBoard } from '@/components/ui/TRKanbanBoard'
 import { TRProspectForm } from '@/components/forms/TRProspectForm'
-import type { Prospect, ProspectCreate, ProspectUpdate } from '@/types'
+import type { Prospect, ProspectCreate, ProspectUpdate, ProspectStage } from '@/types'
 
 export const ProspectsPage: React.FC = () => {
   const { currentEntity, entities, isLoading: entityLoading } = useEntity()
@@ -31,12 +32,49 @@ export const ProspectsPage: React.FC = () => {
     error: prospectsError,
     createProspect,
     updateProspect,
+    updateProspectStage,
+    setProspects,
   } = useProspects(entityId)
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [selectedProspect, setSelectedProspect] = useState<Prospect | null>(null)
   const [operationError, setOperationError] = useState<string | null>(null)
+
+  const handleDragEnd = useCallback(
+    async (result: DropResult) => {
+      if (!result.destination) return
+      if (
+        result.source.droppableId === result.destination.droppableId &&
+        result.source.index === result.destination.index
+      ) {
+        return
+      }
+
+      const prospectId = result.draggableId
+      const newStage = result.destination.droppableId as ProspectStage
+      const sourceStage = result.source.droppableId
+
+      console.log(
+        `INFO [ProspectsPage]: Dragging prospect ${prospectId} from ${sourceStage} to ${newStage}`
+      )
+
+      const savedProspects = [...prospects]
+
+      setProspects((prev) =>
+        prev.map((p) => (p.id === prospectId ? { ...p, stage: newStage } : p))
+      )
+
+      try {
+        await updateProspectStage(prospectId, { new_stage: newStage })
+      } catch (err) {
+        console.error('ERROR [ProspectsPage]: Failed to update prospect stage via drag:', err)
+        setProspects(savedProspects)
+        setOperationError('Failed to update prospect stage. Please try again.')
+      }
+    },
+    [prospects, setProspects, updateProspectStage]
+  )
 
   const handleOpenAddDialog = () => {
     console.log('INFO [ProspectsPage]: Opening add prospect dialog')
@@ -173,6 +211,7 @@ export const ProspectsPage: React.FC = () => {
           isLoading={stagesLoading || prospectsLoading}
           onProspectClick={handleProspectClick}
           onProspectEdit={handleProspectClick}
+          onDragEnd={handleDragEnd}
         />
 
         {/* Add Prospect Dialog */}

@@ -1,11 +1,15 @@
 import React from 'react'
 import { Card, CardContent, Typography, Chip, Box } from '@mui/material'
+import type { DraggableProvidedDragHandleProps, DraggableProvidedDraggableProps } from '@hello-pangea/dnd'
 import type { Prospect } from '@/types'
 
 interface TRProspectCardProps {
   prospect: Prospect
   onEdit?: (prospect: Prospect) => void
   onClick?: (prospect: Prospect) => void
+  dragHandleProps?: DraggableProvidedDragHandleProps | null
+  draggableProps?: DraggableProvidedDraggableProps
+  innerRef?: (element: HTMLElement | null) => void
 }
 
 const formatCurrency = (value: number): string => {
@@ -28,6 +32,9 @@ export const TRProspectCard: React.FC<TRProspectCardProps> = ({
   prospect,
   onEdit,
   onClick,
+  dragHandleProps,
+  draggableProps,
+  innerRef,
 }) => {
   const handleClick = () => {
     if (onClick) {
@@ -39,6 +46,9 @@ export const TRProspectCard: React.FC<TRProspectCardProps> = ({
 
   return (
     <Card
+      ref={innerRef}
+      {...draggableProps}
+      {...dragHandleProps}
       sx={{
         cursor: 'pointer',
         transition: 'box-shadow 0.2s',

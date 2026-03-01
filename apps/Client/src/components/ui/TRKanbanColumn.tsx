@@ -1,5 +1,6 @@
 import React from 'react'
-import { Paper, Typography, Stack, Box, Chip } from '@mui/material'
+import { Paper, Typography, Box, Chip } from '@mui/material'
+import { Droppable, Draggable } from '@hello-pangea/dnd'
 import { TRProspectCard } from '@/components/ui/TRProspectCard'
 import type { PipelineStage, Prospect } from '@/types'
 
@@ -57,36 +58,50 @@ export const TRKanbanColumn: React.FC<TRKanbanColumnProps> = ({
         />
       </Paper>
 
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: 'auto',
-          backgroundColor: 'grey.100',
-          borderRadius: 1,
-          p: 1,
-        }}
-      >
-        {prospects.length === 0 ? (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ textAlign: 'center', py: 2 }}
+      <Droppable droppableId={stage.name}>
+        {(provided) => (
+          <Box
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+              backgroundColor: 'grey.100',
+              borderRadius: 1,
+              p: 1,
+              minHeight: 100,
+            }}
           >
-            No prospects
-          </Typography>
-        ) : (
-          <Stack spacing={1}>
-            {prospects.map((prospect) => (
-              <TRProspectCard
-                key={prospect.id}
-                prospect={prospect}
-                onClick={onProspectClick}
-                onEdit={onProspectEdit}
-              />
-            ))}
-          </Stack>
+            {prospects.length === 0 ? (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ textAlign: 'center', py: 2 }}
+              >
+                No prospects
+              </Typography>
+            ) : (
+              prospects.map((prospect, index) => (
+                <Draggable key={prospect.id} draggableId={prospect.id} index={index}>
+                  {(draggableProvided) => (
+                    <Box sx={{ mb: 1 }}>
+                      <TRProspectCard
+                        prospect={prospect}
+                        onClick={onProspectClick}
+                        onEdit={onProspectEdit}
+                        innerRef={draggableProvided.innerRef}
+                        draggableProps={draggableProvided.draggableProps}
+                        dragHandleProps={draggableProvided.dragHandleProps}
+                      />
+                    </Box>
+                  )}
+                </Draggable>
+              ))
+            )}
+            {provided.placeholder}
+          </Box>
         )}
-      </Box>
+      </Droppable>
     </Box>
   )
 }
