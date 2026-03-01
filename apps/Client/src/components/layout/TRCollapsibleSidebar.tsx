@@ -22,6 +22,7 @@ import CategoryIcon from '@mui/icons-material/Category'
 import RepeatIcon from '@mui/icons-material/Repeat'
 import SavingsIcon from '@mui/icons-material/Savings'
 import AssessmentIcon from '@mui/icons-material/Assessment'
+import BusinessIcon from '@mui/icons-material/Business'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useEntity } from '@/hooks/useEntity'
 
@@ -41,6 +42,7 @@ const navigationItems: NavItem[] = [
   { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
   { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
   { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },
+  { label: 'Prospects', path: '/prospects', icon: <BusinessIcon /> },
   { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
 ]
 

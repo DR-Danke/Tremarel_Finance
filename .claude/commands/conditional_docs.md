@@ -235,3 +235,30 @@ This prompt helps you determine what documentation you should read based on the 
     - When building the CRM prospect management frontend (Wave 2)
     - When implementing pipeline automation that creates or updates prospects (Wave 3)
     - When troubleshooting prospect API routes, service, or repository
+
+- app_docs/feature-aa2af2a8-prospect-service-hook-types.md
+  - Conditions:
+    - When working with frontend prospect or meeting record services, hooks, or types
+    - When building CRM UI components that consume prospect or meeting record data
+    - When implementing the Kanban board, detail view, or drag-and-drop for prospects
+    - When modifying useProspects or useMeetingRecords hooks
+    - When troubleshooting prospect or meeting record API calls from the frontend
+    - When adding new prospect pipeline stage transitions in the UI
+
+- app_docs/feature-ab11c9f9-prospect-creation-form.md
+  - Conditions:
+    - When working with TRProspectForm or prospect creation/editing UI
+    - When implementing or modifying the useProspects hook or prospectService
+    - When integrating the prospect form into a dialog or page (e.g., Kanban Board)
+    - When working with CRM prospect TypeScript types (Prospect, ProspectCreate, ProspectStage)
+    - When troubleshooting prospect form validation, submission, or API integration
+
+- app_docs/feature-6835fdde-prospect-kanban-board.md
+  - Conditions:
+    - When working with the Prospect Kanban board UI or ProspectsPage
+    - When implementing or modifying TRKanbanBoard, TRKanbanColumn, or TRProspectCard components
+    - When working with TRProspectForm or prospect create/edit dialogs
+    - When using the useProspects or usePipelineStages hooks
+    - When working with prospectService or pipelineStageService on the frontend
+    - When adding drag-and-drop or other Kanban board enhancements
+    - When troubleshooting prospect display, grouping by stage, or pipeline stage auto-seeding
