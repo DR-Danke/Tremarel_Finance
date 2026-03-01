@@ -472,3 +472,20 @@ export interface PipelineStageListResponse {
   stages: PipelineStage[]
   total: number
 }
+
+// Stage transition types
+export interface StageTransition {
+  id: string
+  prospect_id: string
+  entity_id: string
+  from_stage_id: string | null
+  to_stage_id: string
+  transitioned_by: string | null
+  notes: string | null
+  created_at: string
+}
+
+export interface StageTransitionListResponse {
+  transitions: StageTransition[]
+  total: number
+}

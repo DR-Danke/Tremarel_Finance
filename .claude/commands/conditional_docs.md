@@ -270,3 +270,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying TRKanbanBoard, TRKanbanColumn, or TRProspectCard drag props
     - When troubleshooting drag-and-drop behavior or rollback logic on the Prospects page
     - When working with the setProspects setter from useProspects hook
+
+- app_docs/feature-17480a03-prospect-detail-meeting-history.md
+  - Conditions:
+    - When working with the prospect detail drawer or TRProspectDetailDrawer component
+    - When implementing or modifying stage transition history display
+    - When working with meeting history display or HTML download functionality
+    - When modifying the prospect card click behavior on the Kanban board
+    - When working with pipelineStageService.getTransitions or StageTransition types
+    - When troubleshooting the detail drawer opening, closing, or edit-from-drawer flow
