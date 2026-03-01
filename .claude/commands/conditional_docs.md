@@ -303,3 +303,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When configuring service account credentials for pipeline-to-API communication
     - When troubleshooting automatic prospect creation or meeting record linking
     - When extending the meeting pipeline with additional CRM integration steps
+
+- app_docs/feature-342ed7df-github-issue-generation-pipeline.md
+  - Conditions:
+    - When working with GitHub issue generation from the meeting pipeline
+    - When modifying generate_github_issue, create_issue, or check_gh_authenticated functions
+    - When working with adw_modules/github.py issue creation or label management
+    - When troubleshooting automatic issue creation after transcript processing
+    - When extending the meeting pipeline with additional post-processing steps
+    - When working with ADW_METADATA blocks in GitHub issues
