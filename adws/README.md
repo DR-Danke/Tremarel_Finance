@@ -112,6 +112,9 @@ uv run adw_triggers/trigger_webhook.py
 
 # Start transcript folder watcher (polls every 30 seconds)
 uv run adw_triggers/trigger_transcript_watch.py
+
+# Start meeting transcript folder watcher (polls every 30 seconds)
+uv run adw_triggers/trigger_meeting_transcript_watch.py
 ```
 
 ## ADW Isolated Workflow Scripts
@@ -489,6 +492,31 @@ uv run adw_triggers/trigger_transcript_watch.py
 **Environment variables:**
 - `ADW_TRANSCRIPT_FOLDER` — Override watched folder path (default: `External_Requirements/transcripts/`)
 - `ADW_TRANSCRIPT_POLL_INTERVAL` — Override poll interval in seconds (default: `30`)
+
+#### trigger_meeting_transcript_watch.py - Meeting Transcript Folder Watcher
+Monitors `External_Requirements/meeting_transcripts/` for new `.md` or `.pdf` meeting transcript files and triggers the meeting processing pipeline.
+
+**Usage:**
+```bash
+uv run adw_triggers/trigger_meeting_transcript_watch.py
+```
+
+**CLI flags:**
+- `--once` — Run a single check and exit (no continuous polling)
+- `--folder <path>` — Override the watched folder path
+
+**Triggers on:**
+- New `.md` or `.pdf` files in the watched folder
+- Modified files (changed modification time since last processing)
+
+**Pipeline:**
+- Invokes `adw_meeting_pipeline_iso.py` for each new meeting transcript (non-blocking)
+- Tracks processed files in `agents/meeting_transcript_watch_processed.json`
+- Pipeline logs written to `agents/meeting_pipeline_logs/`
+
+**Environment variables:**
+- `ADW_MEETING_TRANSCRIPT_FOLDER` — Override watched folder path (default: `External_Requirements/meeting_transcripts/`)
+- `ADW_MEETING_TRANSCRIPT_POLL_INTERVAL` — Override poll interval in seconds (default: `30`)
 
 ## How ADW Works
 
