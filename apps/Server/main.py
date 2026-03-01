@@ -25,6 +25,7 @@ from src.adapter.rest.reports_routes import router as reports_router
 from src.adapter.rest.health_routes import router as health_router
 from src.adapter.rest.pipeline_stage_routes import router as pipeline_stage_router
 from src.adapter.rest.meeting_record_routes import router as meeting_record_router
+from src.adapter.rest.prospect_routes import router as prospect_router
 from src.config.settings import get_settings
 
 settings = get_settings()
@@ -147,6 +148,7 @@ app.include_router(dashboard_router)
 app.include_router(reports_router)
 app.include_router(pipeline_stage_router)
 app.include_router(meeting_record_router)
+app.include_router(prospect_router)
 
 print("INFO [Main]: Auth router registered")
 print("INFO [Main]: Entity router registered")
@@ -158,6 +160,7 @@ print("INFO [Main]: Dashboard router registered")
 print("INFO [Main]: Reports router registered")
 print("INFO [Main]: Pipeline Stage router registered")
 print("INFO [Main]: Meeting Record router registered")
+print("INFO [Main]: Prospect router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 

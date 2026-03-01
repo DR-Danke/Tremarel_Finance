@@ -226,3 +226,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When adding HTML download endpoints or text/html response types
     - When troubleshooting meeting record CRUD operations or entity-scoping validation
     - When building frontend UI that consumes meeting record API endpoints
+
+- app_docs/feature-70362135-prospect-crud-api-endpoints.md
+  - Conditions:
+    - When working with prospect CRUD API endpoints or prospect management
+    - When implementing prospect listing, filtering, or pagination
+    - When working with prospect stage updates or pipeline stage transitions
+    - When building the CRM prospect management frontend (Wave 2)
+    - When implementing pipeline automation that creates or updates prospects (Wave 3)
+    - When troubleshooting prospect API routes, service, or repository
