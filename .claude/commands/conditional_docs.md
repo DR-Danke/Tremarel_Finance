@@ -279,3 +279,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying the prospect card click behavior on the Kanban board
     - When working with pipelineStageService.getTransitions or StageTransition types
     - When troubleshooting the detail drawer opening, closing, or edit-from-drawer flow
+
+- app_docs/feature-9d184498-meeting-transcript-watcher.md
+  - Conditions:
+    - When working with the meeting transcript folder watcher or trigger_meeting_transcript_watch.py
+    - When implementing or modifying ADW triggers that monitor folders for new files
+    - When working with the meeting processing pipeline (adw_meeting_pipeline_iso.py)
+    - When troubleshooting meeting transcript detection, processing, or pipeline triggering
+    - When working with files in External_Requirements/meeting_transcripts/
