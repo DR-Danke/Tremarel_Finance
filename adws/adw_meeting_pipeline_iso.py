@@ -74,26 +74,72 @@ def slugify(text: str, max_length: int = 50) -> str:
 def parse_meeting_json(raw_output: str) -> dict:
     """Parse the LLM response to extract meeting summary JSON.
 
-    Handles JSON wrapped in markdown code fences or raw JSON.
+    Handles JSON wrapped in markdown code fences, raw JSON, or JSON
+    embedded within markdown commentary. Uses multiple strategies:
+    1. Direct JSON parse
+    2. Strip markdown code fences and parse
+    3. Extract JSON block from within markdown text
     Returns parsed dict or raises ValueError on failure.
     """
     text = raw_output.strip()
 
-    # Strip markdown code fences if present
-    if text.startswith("```"):
-        lines = text.split("\n")
-        # Remove opening fence (with optional language tag) and closing fence
-        if len(lines) >= 3:
-            text = "\n".join(lines[1:-1]).strip()
+    # Strategy 1: Direct parse (response is pure JSON)
+    if text.startswith("{"):
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
 
-    # Try to find JSON object in the text
-    if not text.startswith("{"):
-        # Search for JSON block in the text
-        match = re.search(r"\{[\s\S]*\}", text)
-        if match:
-            text = match.group(0)
+    # Strategy 2: Strip markdown code fences
+    # Find all fenced code blocks and try to parse each as JSON
+    fence_pattern = re.compile(r"```(?:json)?\s*\n([\s\S]*?)\n```")
+    for match in fence_pattern.finditer(text):
+        try:
+            return json.loads(match.group(1).strip())
+        except json.JSONDecodeError:
+            continue
 
-    return json.loads(text)
+    # Strategy 3: Find the largest JSON object in the text
+    # Use a balanced-brace approach to find complete JSON objects
+    candidates = []
+    for match in re.finditer(r"\{", text):
+        start = match.start()
+        depth = 0
+        in_string = False
+        escape_next = False
+        for i in range(start, len(text)):
+            ch = text[i]
+            if escape_next:
+                escape_next = False
+                continue
+            if ch == "\\":
+                escape_next = True
+                continue
+            if ch == '"' and not escape_next:
+                in_string = not in_string
+                continue
+            if in_string:
+                continue
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    candidates.append(text[start : i + 1])
+                    break
+
+    # Try candidates from largest to smallest (the meeting JSON is typically the biggest)
+    candidates.sort(key=len, reverse=True)
+    for candidate in candidates:
+        try:
+            parsed = json.loads(candidate)
+            # Validate it looks like meeting data (has at least a title or summary)
+            if isinstance(parsed, dict) and ("title" in parsed or "summary" in parsed):
+                return parsed
+        except json.JSONDecodeError:
+            continue
+
+    raise ValueError("No valid meeting JSON found in LLM output")
 
 
 def generate_markdown_summary(meeting_data: dict, adw_id: str) -> str:
@@ -614,15 +660,237 @@ def main():
 
     logger.info(f"Meeting transcript processed - {len(response.output)} characters output")
 
-    # Parse the LLM response into structured JSON
-    try:
-        meeting_data = parse_meeting_json(response.output)
-    except (json.JSONDecodeError, ValueError) as e:
-        logger.error(f"Error parsing meeting JSON output: {e}")
+    # Obtain structured meeting data using multiple strategies:
+    # 1. Parse raw_output.jsonl for JSON text blocks and Write tool calls
+    # 2. Search for summary JSON files in worktree and agents output
+    # 3. Parse the final LLM response text
+    meeting_data = None
+    meeting_json_dir = None  # Track where the JSON was found for sibling HTML lookup
+    import glob as glob_mod
+
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    agents_output_dir = os.path.join(project_root, "agents", adw_id)
+
+    # Strategy 1: Parse raw_output.jsonl for JSON in assistant messages and Write tool calls
+    raw_jsonl_path = os.path.join(agents_output_dir, "meeting_processor", "raw_output.jsonl")
+    if os.path.exists(raw_jsonl_path):
+        logger.info(f"Parsing raw output JSONL: {raw_jsonl_path}")
+        try:
+            with open(raw_jsonl_path, "r", encoding="utf-8") as rjf:
+                for line in rjf:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    entry = json.loads(line)
+                    if entry.get("type") != "assistant":
+                        continue
+                    msg = entry.get("message", {})
+                    for block in msg.get("content", []):
+                        # Check text blocks for JSON content
+                        if block.get("type") == "text" and meeting_data is None:
+                            text = block.get("text", "").strip()
+                            try:
+                                meeting_data = parse_meeting_json(text)
+                                logger.info("Meeting data extracted from JSONL text block")
+                            except (json.JSONDecodeError, ValueError):
+                                pass
+                        # Check Write tool calls for HTML content
+                        if block.get("type") == "tool_use" and block.get("name") == "Write":
+                            inp = block.get("input", {})
+                            fp = inp.get("file_path", "")
+                            if fp.endswith(".html") and inp.get("content", "").strip().startswith("<"):
+                                html_from_jsonl = inp["content"]
+                                if meeting_data and (not meeting_data.get("html_output") or not meeting_data["html_output"].strip().startswith("<")):
+                                    meeting_data["html_output"] = html_from_jsonl
+                                    logger.info(f"HTML output loaded from JSONL Write call: {fp}")
+        except Exception as e:
+            logger.warning(f"Error parsing raw JSONL: {e}")
+
+    # Strategy 2: Search for summary JSON files in worktree and agents output
+    if meeting_data is None:
+        search_patterns = [
+            os.path.join(worktree_path, "meetings", "**", "summary.json"),
+            os.path.join(worktree_path, "meetings", "**", "*.json"),
+            os.path.join(worktree_path, "agents", "**", "*summary*.json"),
+            os.path.join(worktree_path, "agents", "**", "summary.json"),
+            os.path.join(agents_output_dir, "**", "*summary*.json"),
+            os.path.join(agents_output_dir, "**", "summary.json"),
+        ]
+        json_candidates = []
+        for pattern in search_patterns:
+            json_candidates.extend(glob_mod.glob(pattern, recursive=True))
+        json_candidates = sorted(set(json_candidates), key=os.path.getmtime, reverse=True)
+        for json_path in json_candidates:
+            try:
+                with open(json_path, "r", encoding="utf-8") as jf:
+                    meeting_data = json.load(jf)
+                if isinstance(meeting_data, dict) and ("title" in meeting_data or "summary" in meeting_data):
+                    meeting_json_dir = os.path.dirname(json_path)
+                    logger.info(f"Loaded meeting data from file: {json_path}")
+                    break
+                meeting_data = None
+            except (json.JSONDecodeError, OSError) as fe:
+                logger.warning(f"Could not read {json_path}: {fe}")
+                meeting_data = None
+
+    # Strategy 3: Parse JSON from the final LLM response text
+    if meeting_data is None:
+        logger.info("Attempting to parse LLM response text as fallback")
+        try:
+            meeting_data = parse_meeting_json(response.output)
+            logger.info("Meeting data parsed from LLM response text")
+        except (json.JSONDecodeError, ValueError) as e:
+            logger.warning(f"Could not parse JSON from LLM response: {e}")
+
+    if meeting_data is None:
+        logger.error("Failed to obtain meeting data from worktree files or LLM response")
         logger.error(f"Raw output (first 500 chars): {response.output[:500]}")
         sys.exit(1)
 
+    # If html_output is missing or is a reference (not actual HTML), load from sibling HTML file
+    html_content = meeting_data.get("html_output", "")
+    if not html_content or not html_content.strip().startswith("<"):
+        logger.info("html_output is missing or is a file reference, searching for HTML file")
+        html_candidates = []
+        if meeting_json_dir:
+            html_candidates.extend(glob_mod.glob(os.path.join(meeting_json_dir, "*.html")))
+        html_candidates.extend(glob_mod.glob(os.path.join(worktree_path, "meetings", "**", "*.html"), recursive=True))
+        html_candidates.extend(glob_mod.glob(os.path.join(worktree_path, "agents", "**", "*summary*.html"), recursive=True))
+        html_candidates.extend(glob_mod.glob(os.path.join(agents_output_dir, "**", "*.html"), recursive=True))
+        html_candidates = sorted(set(html_candidates), key=os.path.getmtime, reverse=True)
+        for html_path in html_candidates:
+            try:
+                with open(html_path, "r", encoding="utf-8") as hf:
+                    loaded_html = hf.read()
+                if loaded_html.strip().startswith("<"):
+                    meeting_data["html_output"] = loaded_html
+                    logger.info(f"Loaded HTML output from: {html_path}")
+                    break
+            except OSError as he:
+                logger.warning(f"Could not read {html_path}: {he}")
+
     logger.info("Meeting data parsed successfully")
+
+    # Generate technical diagrams in a separate focused call if none were produced
+    if not meeting_data.get("diagrams"):
+        logger.info("No diagrams in meeting data, running dedicated diagram generation step")
+        summary_text = meeting_data.get("summary", "")
+        discussion_text = json.dumps(meeting_data.get("discussion_points", []), indent=2)
+        diagram_prompt = (
+            "Based on the following meeting summary and discussion points, generate Mermaid diagrams "
+            "that visualize the technical systems, architectures, and workflows discussed.\n\n"
+            f"## Summary\n{summary_text}\n\n"
+            f"## Discussion Points\n{discussion_text}\n\n"
+            "## Instructions\n"
+            "Generate 2-4 Mermaid diagrams. For each diagram, respond with ONLY a JSON array. "
+            "No preamble, no commentary, just the JSON array.\n\n"
+            "Use these diagram types as appropriate:\n"
+            "- flowchart TD for processes and decision flows\n"
+            "- flowchart LR for system architecture and component connections\n"
+            "- sequenceDiagram for multi-party interactions\n\n"
+            "```json\n"
+            '[{"title": "Diagram Title", "mermaid_code": "flowchart TD\\n  A[Start] --> B[End]"}]\n'
+            "```\n\n"
+            "Respond ONLY with the JSON array in a code block. No other text."
+        )
+        # Use direct prompt (not slash command) for focused diagram generation
+        from adw_modules.agent import AgentPromptRequest, prompt_claude_code_with_retry
+        diagram_output_file = os.path.join(agents_output_dir, "diagram_generator", "raw_output.jsonl")
+        diagram_prompt_request = AgentPromptRequest(
+            prompt=diagram_prompt,
+            adw_id=adw_id,
+            agent_name="diagram_generator",
+            model="sonnet",
+            dangerously_skip_permissions=True,
+            output_file=diagram_output_file,
+            working_dir=worktree_path,
+        )
+        os.makedirs(os.path.dirname(diagram_prompt_request.output_file), exist_ok=True)
+        try:
+            diagram_response = prompt_claude_code_with_retry(diagram_prompt_request)
+            if diagram_response.success:
+                # Try to parse diagrams from response text
+                diagram_text = diagram_response.output.strip()
+                try:
+                    diagrams = parse_meeting_json(diagram_text) if diagram_text.startswith("{") else None
+                except (json.JSONDecodeError, ValueError):
+                    diagrams = None
+
+                if diagrams is None:
+                    # Try parsing as array
+                    fence_pattern = re.compile(r"```(?:json)?\s*\n([\s\S]*?)\n```")
+                    for m in fence_pattern.finditer(diagram_text):
+                        try:
+                            diagrams = json.loads(m.group(1).strip())
+                            break
+                        except json.JSONDecodeError:
+                            continue
+                    if diagrams is None:
+                        # Try direct array parse
+                        arr_match = re.search(r"\[[\s\S]*\]", diagram_text)
+                        if arr_match:
+                            try:
+                                diagrams = json.loads(arr_match.group(0))
+                            except json.JSONDecodeError:
+                                pass
+
+                # Also check JSONL for diagrams
+                if not diagrams:
+                    jsonl_path = diagram_prompt_request.output_file
+                    if os.path.exists(jsonl_path):
+                        with open(jsonl_path, "r") as djf:
+                            for dline in djf:
+                                dentry = json.loads(dline.strip())
+                                if dentry.get("type") != "assistant":
+                                    continue
+                                for dblock in dentry.get("message", {}).get("content", []):
+                                    if dblock.get("type") == "text":
+                                        dtxt = dblock.get("text", "").strip()
+                                        for dm in fence_pattern.finditer(dtxt):
+                                            try:
+                                                diagrams = json.loads(dm.group(1).strip())
+                                                if isinstance(diagrams, list):
+                                                    break
+                                            except json.JSONDecodeError:
+                                                continue
+                                        if not diagrams:
+                                            arr_m = re.search(r"\[[\s\S]*\]", dtxt)
+                                            if arr_m:
+                                                try:
+                                                    diagrams = json.loads(arr_m.group(0))
+                                                except json.JSONDecodeError:
+                                                    pass
+                                    if diagrams:
+                                        break
+                                if diagrams:
+                                    break
+
+                if isinstance(diagrams, list) and len(diagrams) > 0:
+                    meeting_data["diagrams"] = diagrams
+                    logger.info(f"Generated {len(diagrams)} technical diagram(s)")
+                    for d in diagrams:
+                        logger.info(f"  - {d.get('title', 'untitled')}")
+                    # Inject diagrams into HTML if present
+                    html = meeting_data.get("html_output", "")
+                    if html and diagrams:
+                        mermaid_section = '\n<div style="margin-top:32px;"><h2 style="color:#1565C0;border-bottom:2px solid #1565C0;padding-bottom:8px;">Technical Architecture</h2>\n'
+                        for d in diagrams:
+                            title = d.get("title", "")
+                            code = d.get("mermaid_code", "")
+                            mermaid_section += f'<h3 style="color:#333;margin-top:24px;">{title}</h3>\n<pre class="mermaid">\n{code}\n</pre>\n'
+                        mermaid_section += '</div>\n'
+                        mermaid_script = '<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>\n<script>mermaid.initialize({startOnLoad:true});</script>\n'
+                        # Insert before </body>
+                        if "</body>" in html:
+                            html = html.replace("</body>", mermaid_section + mermaid_script + "</body>")
+                        else:
+                            html += mermaid_section + mermaid_script
+                        meeting_data["html_output"] = html
+                        logger.info("Injected Mermaid diagrams into HTML output")
+                else:
+                    logger.warning("Diagram generation returned no valid diagrams")
+        except Exception as e:
+            logger.warning(f"Diagram generation failed (non-fatal): {e}")
 
     # Save outputs to agents/{adw_id}/meeting_outputs/
     output_dir = save_meeting_outputs(meeting_data, adw_id, logger)

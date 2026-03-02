@@ -195,7 +195,7 @@ def trigger_pipeline(transcript_path: Path) -> bool:
         stem = transcript_path.stem[:60]
         log_file = log_dir / f"{timestamp}_{stem}.log"
 
-        cmd = [sys.executable, str(pipeline_script), str(transcript_path.resolve())]
+        cmd = ["uv", "run", str(pipeline_script), str(transcript_path.resolve())]
 
         log_handle = open(log_file, "w")
         process = subprocess.Popen(

@@ -8,11 +8,11 @@ Summary metrics across all ADW runs.
 
 | Metric            | Value        | Last Updated |
 | ----------------- | ------------ | ------------ |
-| Current Streak    | 20           | 2026-03-01   |
-| Longest Streak    | 20           | 2026-03-01   |
-| Total Plan Size   | 4623 lines   | 2026-03-01   |
+| Current Streak    | 23           | 2026-03-01   |
+| Longest Streak    | 23           | 2026-03-01   |
+| Total Plan Size   | 5139 lines   | 2026-03-01   |
 | Largest Plan Size | 421 lines    | 2026-03-01   |
-| Total Diff Size   | 30283 lines  | 2026-03-01   |
+| Total Diff Size   | 32715 lines  | 2026-03-01   |
 | Largest Diff Size | 3446 lines   | 2026-03-01   |
 | Average Presence  | 1.00         | 2026-03-01   |
 
@@ -40,5 +40,8 @@ Detailed metrics for individual ADW workflow runs.
 | 2026-03-01 | aa2af2a8 | 52           | /feature    | 1        | 184               | 948/2/10                        | 2026-03-01 | 2026-03-01 |
 | 2026-03-01 | ab11c9f9 | 53           | /feature    | 1        | 263               | 1170/2/10                       | 2026-03-01 | 2026-03-01 |
 | 2026-03-01 | 6835fdde | 54           | /feature    | 1        | 301               | 1761/2/18                       | 2026-03-01 | 2026-03-01 |
+| 2026-03-01 | 66325370 | 55           | /feature    | 1        | 158               | 540/45/13                       | 2026-03-01 | 2026-03-01 |
+| 2026-03-01 | 17480a03 | 56           | /feature    | 1        | 236               | 909/4/10                        | 2026-03-01 | 2026-03-01 |
+| 2026-03-01 | 9d184498 | 57           | /feature    | 1        | 163               | 810/2/9                         | 2026-03-01 | 2026-03-01 |
+| 2026-03-01 | e924e4a7 | 58           | /feature    | 1        | 187               | 1006/3/12                       | 2026-03-01 | 2026-03-01 |
 | 2026-03-01 | a61cf509 | 59           | /feature    | 1        | 207               | 1002/3/8                        | 2026-03-01 | 2026-03-01 |
-| 2026-03-01 | 342ed7df | 60           | /feature    | 1        | 228               | 868/16/8                        | 2026-03-01 | 2026-03-01 |

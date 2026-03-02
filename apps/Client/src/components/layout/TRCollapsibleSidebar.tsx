@@ -23,6 +23,7 @@ import RepeatIcon from '@mui/icons-material/Repeat'
 import SavingsIcon from '@mui/icons-material/Savings'
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import SettingsIcon from '@mui/icons-material/Settings'
+import PeopleIcon from '@mui/icons-material/People'
 import { useEntity } from '@/hooks/useEntity'
 
 export const DRAWER_WIDTH_EXPANDED = 240
@@ -40,6 +41,7 @@ const navigationItems: NavItem[] = [
   { label: 'Recurring', path: '/recurring', icon: <RepeatIcon /> },
   { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
   { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
+  { label: 'Prospects', path: '/prospects', icon: <PeopleIcon /> },
   { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },
   { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
 ]
