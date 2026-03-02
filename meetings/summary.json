@@ -1,0 +1,110 @@
+{
+  "title": "ASV Corp <> KAI - Discovery & Exploratory Meeting",
+  "meeting_date": "2026-02-26",
+  "participants": [
+    {"name": "Daniel Cardona", "role": "Co-founder of KAI, Marketing & Growth Lead"},
+    {"name": "Daniel Restrepo", "role": "Co-founder of KAI, VP of Product & Technology Implementation"},
+    {"name": "Ricardo Gonzalez", "role": "Owner/Operator of ASV Corp (Water Filtration Business, Panama)"}
+  ],
+  "company_name": "ASV Corp",
+  "contact_name": "Ricardo Gonzalez",
+  "contact_email": null,
+  "summary": "Introductory discovery meeting between KAI (Daniel Cardona & Daniel Restrepo) and Ricardo Gonzalez of ASV Corp, a Panama-based commercial water filtration company serving McDonald's (92 locations), Starbucks (21), Panama Canal (200 fountains), and other major clients. Ricardo is exploring expansion into the residential apartment segment, which would require scaling from 3 in-house technicians to 50+ subcontractors, creating a need for technician assignment/routing technology, digital compliance documentation, and demand generation via social media. KAI presented their capabilities in financial reconciliation, service desk management, conversational bots, and growth marketing. Both parties agreed to scope the initial project focused on field service management for the residential expansion and reconvene in 1-2 weeks with a preliminary estimate.",
+  "discussion_points": [
+    {
+      "topic": "Residential Expansion Opportunity",
+      "description": "Ricardo is considering expanding from commercial clients (McDonald's, Starbucks, Panama Canal) into residential apartments. A single upscale urbanization like Santa Maria could yield 1,200 potential apartments and $500K/year in revenue. However, this requires solving technician scaling, lead generation, and back-office automation challenges."
+    },
+    {
+      "topic": "Field Service Management & Technician Assignment System",
+      "description": "The core solution discussed was a system to manage subcontracted technicians via WhatsApp: work order assignment with route optimization, technician onboarding/rating, task queue distribution, and compliance documentation (digital stamps/signatures to replace paper-based verification required by clients like Starbucks and Panama Canal)."
+    },
+    {
+      "topic": "Digital Compliance & Documentation Workflow",
+      "description": "Ricardo currently uses paper forms with physical stamps/seals for work verification. Starbucks and McDonald's require physical stamps for invoice payment — without them, payment is blocked. Panama Canal uses barcode stickers that technicians copy by hand. Digitizing this process would eliminate costly return trips ($20 per trip just to get a seal) and scale to 1,000+ clients."
+    },
+    {
+      "topic": "KAI Service Offerings Presentation",
+      "description": "KAI presented four solution verticals: (1) Bank reconciliation and financial system cross-matching, (2) Corporate service desk for ticket management and field service, (3) CRM and conversational bots for lead nurturing and sales via WhatsApp, (4) Growth marketing and demand generation via digital channels."
+    },
+    {
+      "topic": "Lead Generation & Demand Creation",
+      "description": "Ricardo recognizes that expanding into residential requires demand generation (Instagram/TikTok targeted at affluent apartment dwellers). He tested informally in two buildings and converted 16 of 40 apartments in one and 8 in another. However, he cannot handle inbound leads manually — needs automated conversational agents via WhatsApp to qualify and respond."
+    },
+    {
+      "topic": "Revenue Share Partnership Model",
+      "description": "KAI proposed a revenue share model where Ricardo refers his existing commercial clients (McDonald's, Starbucks, Super 7) for back-office solutions (reconciliation, ticket management), and KAI shares revenue from implementations for one year."
+    },
+    {
+      "topic": "Ricardo's Background & Current Business",
+      "description": "Ricardo previously worked at Chiper (scaled from 13 to 900 employees) leading product segmentation engines (128 customer types, pricing/promotion personalization). His family company (ASV Corp, 20+ years, relocated from Venezuela to Panama) provides premium water filtration for commercial kitchens with recurring 3-month replacement cycles. Current clients: McDonald's (92), Starbucks (21), Panama Canal (200 fountains), Juan Valdez, Super 7, plus 16 identified prospects."
+    },
+    {
+      "topic": "Pricing & Budget Expectations",
+      "description": "Ricardo's average ticket is $300 (bimodal: $100-120 for maintenance or $500-550 for filter changes every 3 months). He expects back-office costs to not exceed 8% of revenue. He is open to investing if he can build a financial model showing ROI against the residential expansion target revenue."
+    },
+    {
+      "topic": "Sales Lead: Ortiz Meeting",
+      "description": "Briefly mentioned an upcoming sales meeting with a prospect named Ortiz next week, focused on financial consolidation and reporting pain points."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Dimension and scope the initial project for the residential field service management system (technician assignment, WhatsApp integration, route optimization, digital compliance documentation)",
+      "owner": "Daniel Restrepo & Daniel Cardona",
+      "deadline": "Within 1-2 weeks"
+    },
+    {
+      "description": "Create a preliminary mockup/sketch of the proposed solution architecture to review with Ricardo",
+      "owner": "Daniel Restrepo",
+      "deadline": "Before next meeting"
+    },
+    {
+      "description": "Schedule follow-up meeting with Ricardo in 1-2 weeks to present scope and estimate",
+      "owner": "Daniel Cardona",
+      "deadline": "Within 1-2 weeks"
+    },
+    {
+      "description": "Inquire with Super 7 (Puma gas stations) and Starbucks about their reconciliation and ticket-crossing pain points as potential referral opportunities for KAI",
+      "owner": "Ricardo Gonzalez",
+      "deadline": null
+    },
+    {
+      "description": "Prepare for sales meeting with Ortiz regarding financial consolidation and reporting",
+      "owner": "Daniel Cardona & Daniel Restrepo",
+      "deadline": "Next week"
+    }
+  ],
+  "decisions": [
+    "Initial project scope will focus on the residential apartment expansion use case: field service management with technician assignment, routing, and digital compliance documentation",
+    "WhatsApp will be the primary interface for technician interaction with the system (due to technician demographics and device constraints)",
+    "KAI will offer a revenue share model to Ricardo for referring commercial clients (McDonald's, Starbucks, Super 7) for back-office automation solutions",
+    "Both parties agreed there is no urgency — the approach will be methodical with proper scoping before commitment",
+    "Ricardo was referred to KAI by Lina Rengifo Calle from the innovation ecosystem (connection from Universidad de los Andes innovation class)"
+  ],
+  "next_steps": [
+    "KAI to prepare a scope document with preliminary estimate for the field service management solution",
+    "Follow-up meeting in 1-2 weeks to review scope, discuss feasibility, and align on budget expectations",
+    "Ricardo to investigate reconciliation pain points at Super 7 and Starbucks for potential KAI referrals",
+    "Ricardo to build his own financial model for the residential expansion based on KAI's estimate (revenue targets, apartment penetration, break-even analysis)",
+    "Explore demand generation strategy (Instagram/TikTok campaigns targeting affluent residential buildings) as a parallel workstream"
+  ],
+  "diagrams": [
+    {
+      "title": "Proposed Field Service Management System",
+      "mermaid_code": "flowchart TD\n    A[\"Demand Generation\\n(Instagram / TikTok)\"] --> B[\"Lead Intake\\n(WhatsApp Bot)\"]\n    B --> C[\"Lead Qualification\\n& Quoting\"]\n    C --> D[\"Work Order Created\"]\n    D --> E{\"Assign Technician\"}\n    E --> F[\"Technician Pool\\n(Subcontractors)\"]\n    F --> G[\"Route Optimization\\n& Scheduling\"]\n    G --> H[\"Technician Accepts\\nvia WhatsApp\"]\n    H --> I[\"On-Site Installation\\nor Maintenance\"]\n    I --> J[\"Digital Compliance\\nDocument Signed\"]\n    J --> K{\"Documentation\\nComplete?\"}\n    K -->|Yes| L[\"Invoice Generated\\n& Payment Released\"]\n    K -->|No| M[\"Return Visit\\nScheduled\"]\n    M --> I\n    L --> N[\"Customer Follow-up\\n& Replacement Reminder\"]"
+    },
+    {
+      "title": "Current vs Proposed Documentation Flow",
+      "mermaid_code": "sequenceDiagram\n    participant T as Technician\n    participant C as Client Location\n    participant R as Ricardo (Admin)\n    participant A as Accounting\n\n    Note over T,A: CURRENT FLOW (Paper-Based)\n    T->>C: Perform filter change\n    C->>T: Paper form + physical stamp/seal\n    T->>R: Deliver paper form\n    R->>R: Scan document\n    R->>R: Upload to Google Drive\n    R->>R: Update Google Sheet with reference\n    R->>A: Send invoice with reference number\n    A->>R: Cross-reference in Google Sheet\n    A->>R: Approve payment\n\n    Note over T,A: PROPOSED FLOW (Digital)\n    T->>C: Perform filter change\n    T->>T: Log completion via WhatsApp\n    C->>T: Digital signature on device\n    T->>R: Auto-uploaded to system\n    R->>A: Auto-generated invoice with proof\n    A->>R: Auto-verified and approved"
+    },
+    {
+      "title": "ASV Corp System Architecture Overview",
+      "mermaid_code": "flowchart LR\n    subgraph Demand[\"Demand Generation\"]\n        IG[\"Instagram Ads\"]\n        TK[\"TikTok Ads\"]\n        WOM[\"Word of Mouth\\n& Referrals\"]\n    end\n\n    subgraph CRM[\"Customer Management\"]\n        WA[\"WhatsApp Bot\\n(Conversational Agent)\"]\n        LM[\"Lead Management\\n& Qualification\"]\n        QT[\"Automated\\nQuoting Engine\"]\n    end\n\n    subgraph FSM[\"Field Service Management\"]\n        WO[\"Work Order\\nQueue\"]\n        TP[\"Technician Pool\\n(Rated & Onboarded)\"]\n        RO[\"Route\\nOptimization\"]\n        SC[\"Scheduling\\nEngine\"]\n    end\n\n    subgraph Compliance[\"Compliance & Billing\"]\n        DS[\"Digital Signatures\\n& Stamps\"]\n        INV[\"Invoice\\nGeneration\"]\n        PAY[\"Technician\\nPayment Control\"]\n    end\n\n    subgraph Data[\"Data Layer\"]\n        CDB[(\"Client\\nDatabase\")]\n        IDB[(\"Inventory\\nDatabase\")]\n        PDB[(\"Product per\\nLocation DB\")]\n    end\n\n    IG --> WA\n    TK --> WA\n    WOM --> WA\n    WA --> LM\n    LM --> QT\n    QT --> WO\n    WO --> TP\n    TP --> SC\n    SC --> RO\n    RO --> DS\n    DS --> INV\n    INV --> PAY\n    CDB --> QT\n    IDB --> QT\n    PDB --> WO"
+    },
+    {
+      "title": "Technician Work Assignment via WhatsApp",
+      "mermaid_code": "sequenceDiagram\n    participant S as System\n    participant WA as WhatsApp API\n    participant T1 as Technician 1\n    participant T2 as Technician 2\n    participant CL as Client\n\n    S->>S: New work order created\n    S->>S: Calculate optimal route\n    S->>S: Select technicians by rating and proximity\n    S->>WA: Send job offer to Technician 1\n    WA->>T1: Job details + route + payment info\n    T1->>WA: Accepts job\n    WA->>S: Confirmed assignment\n    S->>WA: Send job offer to Technician 2\n    WA->>T2: Job details + route + payment info\n    T2->>WA: Accepts job\n    WA->>S: Confirmed assignment\n    T1->>CL: Arrives at location\n    T1->>WA: Marks job started\n    T1->>CL: Completes installation\n    CL->>T1: Signs on device\n    T1->>WA: Uploads completion proof\n    WA->>S: Job completed with digital signature\n    S->>S: 30% advance already paid\n    S->>S: Release remaining 70% payment"
+    }
+  ]
+}

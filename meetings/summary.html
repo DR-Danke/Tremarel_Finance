@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary — ASV Corp &lt;&gt; KAI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #2d3748; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: #fff; padding: 40px 36px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+        .header .subtitle { font-size: 14px; opacity: 0.85; }
+        .header .meta { display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap; }
+        .header .meta-item { background: rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 14px; font-size: 13px; }
+        .body-card { background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 36px; }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1a365d; border-bottom: 3px solid #bee3f8; padding-bottom: 8px; margin-bottom: 16px; }
+        .summary-text { font-size: 15px; color: #4a5568; background: #ebf8ff; border-left: 4px solid #3182ce; padding: 16px 20px; border-radius: 0 8px 8px 0; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; }
+        .participant-card .name { font-weight: 600; color: #2d3748; font-size: 15px; }
+        .participant-card .role { font-size: 13px; color: #718096; margin-top: 2px; }
+        .discussion-item { margin-bottom: 16px; padding: 14px 18px; background: #f7fafc; border-radius: 8px; border-left: 4px solid #4299e1; }
+        .discussion-item .topic { font-weight: 600; color: #2b6cb0; font-size: 15px; margin-bottom: 4px; }
+        .discussion-item .desc { font-size: 14px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-table thead th { background: #edf2f7; color: #2d3748; padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 2px solid #cbd5e0; }
+        .action-table tbody td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        .action-table tbody tr:hover { background: #f7fafc; }
+        .badge { display: inline-block; background: #bee3f8; color: #2b6cb0; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .badge-green { background: #c6f6d5; color: #276749; }
+        .decision-list, .nextstep-list { list-style: none; padding: 0; }
+        .decision-list li, .nextstep-list li { padding: 10px 14px; margin-bottom: 8px; border-radius: 8px; font-size: 14px; position: relative; padding-left: 34px; }
+        .decision-list li { background: #f0fff4; border: 1px solid #c6f6d5; }
+        .decision-list li::before { content: '✓'; position: absolute; left: 12px; color: #38a169; font-weight: 700; font-size: 16px; }
+        .nextstep-list li { background: #fffaf0; border: 1px solid #feebc8; }
+        .nextstep-list li::before { content: '→'; position: absolute; left: 12px; color: #dd6b20; font-weight: 700; font-size: 16px; }
+        .diagram-section { margin-top: 16px; }
+        .diagram-block { margin-bottom: 24px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+        .diagram-block h4 { font-size: 15px; color: #2b6cb0; margin-bottom: 12px; font-weight: 600; }
+        .mermaid { background: #fff; border-radius: 6px; padding: 16px; }
+        .prospect-card { background: linear-gradient(135deg, #ebf8ff 0%, #f0fff4 100%); border: 1px solid #bee3f8; border-radius: 10px; padding: 20px 24px; display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+        .prospect-card .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #718096; font-weight: 600; }
+        .prospect-card .value { font-size: 16px; font-weight: 600; color: #1a365d; }
+        .footer { text-align: center; margin-top: 24px; font-size: 12px; color: #a0aec0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ASV Corp &lt;&gt; KAI — Discovery &amp; Exploratory Meeting</h1>
+            <div class="subtitle">Meeting Summary &amp; Action Items</div>
+            <div class="meta">
+                <div class="meta-item">📅 February 26, 2026 — 3:30 PM</div>
+                <div class="meta-item">⏱ ~64 minutes</div>
+                <div class="meta-item">📍 Virtual Meeting</div>
+            </div>
+        </div>
+
+        <div class="body-card">
+
+            <!-- Prospect Info -->
+            <div class="section">
+                <div class="section-title">Prospect Information</div>
+                <div class="prospect-card">
+                    <div>
+                        <div class="label">Company</div>
+                        <div class="value">ASV Corp</div>
+                    </div>
+                    <div>
+                        <div class="label">Primary Contact</div>
+                        <div class="value">Ricardo Gonzalez</div>
+                    </div>
+                    <div>
+                        <div class="label">Location</div>
+                        <div class="value">Panama City, Panama</div>
+                    </div>
+                    <div>
+                        <div class="label">Industry</div>
+                        <div class="value">Water Filtration Systems</div>
+                    </div>
+                    <div>
+                        <div class="label">Referred By</div>
+                        <div class="value">Lina Rengifo Calle</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <div class="section-title">Participants</div>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Daniel Cardona</div>
+                        <div class="role">Co-founder of KAI — Marketing &amp; Growth Lead</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Daniel Restrepo</div>
+                        <div class="role">Co-founder of KAI — VP of Product &amp; Tech Implementation</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Ricardo Gonzalez</div>
+                        <div class="role">Owner/Operator — ASV Corp (Water Filtration, Panama)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <div class="section-title">Executive Summary</div>
+                <div class="summary-text">
+                    Introductory discovery meeting between KAI and Ricardo Gonzalez of ASV Corp, a Panama-based commercial water filtration company serving major clients including McDonald's (92 locations), Starbucks (21 locations), and the Panama Canal (200 water fountains). Ricardo is exploring expansion into the residential apartment segment, which would require scaling from 3 in-house technicians to 50+ subcontractors — creating a need for technician assignment/routing technology, digital compliance documentation, and demand generation via social media. KAI presented their capabilities across financial reconciliation, service desk management, conversational bots, and growth marketing. Both parties agreed to scope the initial project focused on field service management for the residential expansion and reconvene in 1-2 weeks with a preliminary estimate. A revenue share partnership model was also discussed for referrals into Ricardo's commercial client base.
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <div class="section-title">Discussion Points</div>
+
+                <div class="discussion-item">
+                    <div class="topic">1. Residential Expansion Opportunity</div>
+                    <div class="desc">Ricardo is considering expanding from commercial clients into residential apartments. A single upscale urbanization like Santa María could yield 1,200 potential apartments and ~$500K/year in revenue. However, this requires solving technician scaling, lead generation, and back-office automation challenges. Ricardo was previously resistant to residential but sees potential with the right technology.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">2. Field Service Management &amp; Technician Assignment System</div>
+                    <div class="desc">The core solution discussed: a system to manage subcontracted technicians via WhatsApp — work order assignment with route optimization, technician onboarding/rating, task queue distribution, and automatic job allocation based on technician quality scores and geographic proximity.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">3. Digital Compliance &amp; Documentation Workflow</div>
+                    <div class="desc">Ricardo currently uses paper forms with physical stamps/seals for work verification. Starbucks and McDonald's require physical stamps for invoice payment — without them, payment is blocked and return trips cost $20 each. Panama Canal uses barcode stickers that technicians copy by hand. Digitizing this process is critical for scaling to 1,000+ clients.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">4. KAI Service Offerings</div>
+                    <div class="desc">KAI presented four verticals: (1) Bank reconciliation and financial system cross-matching, (2) Corporate service desk for ticket management and field service, (3) CRM and conversational bots for lead nurturing and sales, (4) Growth marketing and demand generation. Current key client: a Bolivian family office (Burger King franchise, construction, Marriott hotel — 1,000+ employees).</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">5. Lead Generation &amp; Demand Creation</div>
+                    <div class="desc">Residential expansion requires demand generation via Instagram/TikTok targeting affluent apartment buildings. Ricardo tested informally: 16/40 apartments converted in one building, 8/40 in another. He cannot handle inbound volume manually — needs automated WhatsApp conversational agents to qualify and respond to leads at scale.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">6. Revenue Share Partnership Model</div>
+                    <div class="desc">KAI proposed that Ricardo refer his commercial clients for back-office solutions (reconciliation, ticket management), with KAI sharing revenue from implementations for one year. Potential targets: Super 7 convenience stores (Puma gas stations), Starbucks, and other chains with high-volume reconciliation needs.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">7. Pricing &amp; Budget Expectations</div>
+                    <div class="desc">Ricardo's average ticket: $300 (bimodal — $120 maintenance / $500 filter changes every 3 months). Back-office costs should not exceed 8% of revenue. He will build a financial model using KAI's estimate to determine if the residential expansion ROI justifies the investment.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">8. Ricardo's Background &amp; Business Context</div>
+                    <div class="desc">Former Chiper employee (scaled 13 → 900, led segmentation engines with 128 customer types). Family company (20+ years, Venezuela → Panama) provides premium water filtration for commercial kitchens. Recurring revenue model: 3-month filter replacement cycles. Also does segmentation consulting for distributors in Panama with a partner based in Barcelona.</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <div class="section-title">Action Items</div>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Action</th>
+                            <th style="width: 28%;">Owner</th>
+                            <th style="width: 22%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dimension and scope the initial project for the residential field service management system (technician assignment, WhatsApp integration, route optimization, digital compliance documentation)</td>
+                            <td><span class="badge">Daniel Restrepo</span> <span class="badge">Daniel Cardona</span></td>
+                            <td>1-2 weeks</td>
+                        </tr>
+                        <tr>
+                            <td>Create a preliminary mockup/sketch of the proposed solution architecture to review with Ricardo</td>
+                            <td><span class="badge">Daniel Restrepo</span></td>
+                            <td>Before next meeting</td>
+                        </tr>
+                        <tr>
+                            <td>Schedule follow-up meeting with Ricardo to present scope and estimate</td>
+                            <td><span class="badge">Daniel Cardona</span></td>
+                            <td>1-2 weeks</td>
+                        </tr>
+                        <tr>
+                            <td>Inquire with Super 7 (Puma) and Starbucks about their reconciliation and ticket-crossing pain points — potential referral opportunities for KAI</td>
+                            <td><span class="badge-green badge">Ricardo Gonzalez</span></td>
+                            <td>Before next meeting</td>
+                        </tr>
+                        <tr>
+                            <td>Prepare for sales meeting with Ortiz regarding financial consolidation and reporting</td>
+                            <td><span class="badge">Daniel Cardona</span> <span class="badge">Daniel Restrepo</span></td>
+                            <td>Next week</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions -->
+            <div class="section">
+                <div class="section-title">Decisions Made</div>
+                <ul class="decision-list">
+                    <li>Initial project scope will focus on the residential apartment expansion use case: field service management with technician assignment, routing, and digital compliance documentation</li>
+                    <li>WhatsApp will be the primary interface for technician interaction with the system (due to technician demographics and device constraints)</li>
+                    <li>KAI will offer a revenue share model to Ricardo for referring commercial clients for back-office automation solutions (1-year duration)</li>
+                    <li>Both parties agreed there is no urgency — the approach will be methodical with proper scoping before commitment</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <div class="section-title">Next Steps</div>
+                <ul class="nextstep-list">
+                    <li>KAI to prepare a scope document with preliminary estimate for the field service management solution</li>
+                    <li>Follow-up meeting in 1-2 weeks to review scope, discuss feasibility, and align on budget expectations</li>
+                    <li>Ricardo to investigate reconciliation pain points at Super 7 and Starbucks for potential KAI referrals</li>
+                    <li>Ricardo to build his own financial model for the residential expansion based on KAI's estimate (revenue targets, apartment penetration, break-even analysis)</li>
+                    <li>Explore demand generation strategy (Instagram/TikTok campaigns targeting affluent residential buildings) as a parallel workstream</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <div class="section-title">Technical Architecture</div>
+                <div class="diagram-section">
+
+                    <div class="diagram-block">
+                        <h4>Proposed Field Service Management System</h4>
+                        <pre class="mermaid">
+flowchart TD
+    A["Demand Generation<br/>(Instagram / TikTok)"] --> B["Lead Intake<br/>(WhatsApp Bot)"]
+    B --> C["Lead Qualification<br/>& Quoting"]
+    C --> D["Work Order Created"]
+    D --> E{"Assign Technician"}
+    E --> F["Technician Pool<br/>(Subcontractors)"]
+    F --> G["Route Optimization<br/>& Scheduling"]
+    G --> H["Technician Accepts<br/>via WhatsApp"]
+    H --> I["On-Site Installation<br/>or Maintenance"]
+    I --> J["Digital Compliance<br/>Document Signed"]
+    J --> K{"Documentation<br/>Complete?"}
+    K -->|Yes| L["Invoice Generated<br/>& Payment Released"]
+    K -->|No| M["Return Visit<br/>Scheduled"]
+    M --> I
+    L --> N["Customer Follow-up<br/>& Replacement Reminder"]
+                        </pre>
+                    </div>
+
+                    <div class="diagram-block">
+                        <h4>Current vs Proposed Documentation Flow</h4>
+                        <pre class="mermaid">
+sequenceDiagram
+    participant T as Technician
+    participant C as Client Location
+    participant R as Ricardo (Admin)
+    participant A as Accounting
+
+    Note over T,A: CURRENT FLOW (Paper-Based)
+    T->>C: Perform filter change
+    C->>T: Paper form + physical stamp/seal
+    T->>R: Deliver paper form
+    R->>R: Scan document
+    R->>R: Upload to Google Drive
+    R->>R: Update Google Sheet with reference
+    R->>A: Send invoice with reference number
+    A->>R: Cross-reference in Google Sheet
+    A->>R: Approve payment
+
+    Note over T,A: PROPOSED FLOW (Digital)
+    T->>C: Perform filter change
+    T->>T: Log completion via WhatsApp
+    C->>T: Digital signature on device
+    T->>R: Auto-uploaded to system
+    R->>A: Auto-generated invoice with proof
+    A->>R: Auto-verified and approved
+                        </pre>
+                    </div>
+
+                    <div class="diagram-block">
+                        <h4>ASV Corp System Architecture Overview</h4>
+                        <pre class="mermaid">
+flowchart LR
+    subgraph Demand["Demand Generation"]
+        IG["Instagram Ads"]
+        TK["TikTok Ads"]
+        WOM["Word of Mouth<br/>& Referrals"]
+    end
+
+    subgraph CRM["Customer Management"]
+        WA["WhatsApp Bot<br/>(Conversational Agent)"]
+        LM["Lead Management<br/>& Qualification"]
+        QT["Automated<br/>Quoting Engine"]
+    end
+
+    subgraph FSM["Field Service Management"]
+        WO["Work Order<br/>Queue"]
+        TP["Technician Pool<br/>(Rated & Onboarded)"]
+        RO["Route<br/>Optimization"]
+        SC["Scheduling<br/>Engine"]
+    end
+
+    subgraph Compliance["Compliance & Billing"]
+        DS["Digital Signatures<br/>& Stamps"]
+        INV["Invoice<br/>Generation"]
+        PAY["Technician<br/>Payment Control"]
+    end
+
+    subgraph Data["Data Layer"]
+        CDB[("Client<br/>Database")]
+        IDB[("Inventory<br/>Database")]
+        PDB[("Product per<br/>Location DB")]
+    end
+
+    IG --> WA
+    TK --> WA
+    WOM --> WA
+    WA --> LM
+    LM --> QT
+    QT --> WO
+    WO --> TP
+    TP --> SC
+    SC --> RO
+    RO --> DS
+    DS --> INV
+    INV --> PAY
+    CDB --> QT
+    IDB --> QT
+    PDB --> WO
+                        </pre>
+                    </div>
+
+                    <div class="diagram-block">
+                        <h4>Technician Work Assignment via WhatsApp</h4>
+                        <pre class="mermaid">
+sequenceDiagram
+    participant S as System
+    participant WA as WhatsApp API
+    participant T1 as Technician 1
+    participant T2 as Technician 2
+    participant CL as Client
+
+    S->>S: New work order created
+    S->>S: Calculate optimal route
+    S->>S: Select technicians by rating & proximity
+    S->>WA: Send job offer to Technician 1
+    WA->>T1: Job details + route + payment info
+    T1->>WA: Accepts job
+    WA->>S: Confirmed assignment
+    S->>WA: Send job offer to Technician 2
+    WA->>T2: Job details + route + payment info
+    T2->>WA: Accepts job
+    WA->>S: Confirmed assignment
+    T1->>CL: Arrives at location
+    T1->>WA: Marks job started
+    T1->>CL: Completes installation
+    CL->>T1: Signs on device
+    T1->>WA: Uploads completion proof
+    WA->>S: Job completed with digital signature
+    S->>S: 30% advance already paid
+    S->>S: Release remaining 70% payment
+                        </pre>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Generated by KAI Meeting Intelligence — February 26, 2026
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true, theme: 'neutral'});</script>
+</body>
+</html>
