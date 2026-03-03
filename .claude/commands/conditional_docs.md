@@ -337,3 +337,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with person CRUD API endpoints, service, or repository
     - When adding employee, supplier, or owner management features
     - When working with restaurant-scoped person authorization or PersonType enum
+
+- app_docs/feature-8d28116a-resource-entity-crud-backend.md
+  - Conditions:
+    - When working with the resource table or Resource model in RestaurantOS
+    - When implementing RestaurantOS entities that reference resource_id (Inventory Movements, Recipes)
+    - When working with resource CRUD API endpoints, service, or repository
+    - When implementing stock tracking, low-stock detection, or inventory features
+    - When working with ResourceType enum (producto, activo, servicio)
+    - When working with restaurant-scoped resource authorization
