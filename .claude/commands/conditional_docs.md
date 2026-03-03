@@ -84,6 +84,15 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting sidebar collapse/expand behavior
     - When adding new protected pages that need the main layout
 
+- app_docs/feature-75704e1f-section-based-sidebar-navigation.md
+  - Conditions:
+    - When adding new navigation sections or subsections to the sidebar
+    - When adding a new POC module to the sidebar navigation
+    - When working with sidebar section collapse/expand state or localStorage persistence
+    - When modifying the NavSection interface or navigationSections data structure
+    - When adding routes under /poc/ path prefix
+    - When troubleshooting section-based sidebar rendering or collapsed mode behavior
+
 - app_docs/feature-d6d0f56d-entity-management-crud.md
   - Conditions:
     - When working with entity management (create, update, delete entities)
