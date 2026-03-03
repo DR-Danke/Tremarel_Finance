@@ -2,6 +2,7 @@
 
 from src.models.document import Document
 from src.models.entity import Entity
+from src.models.inventory_movement import InventoryMovement
 from src.models.meeting_record import MeetingRecord
 from src.models.person import Person
 from src.models.pipeline_stage import PipelineStage
@@ -26,4 +27,5 @@ __all__ = [
     "Person",
     "Resource",
     "Document",
+    "InventoryMovement",
 ]
