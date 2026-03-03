@@ -366,3 +366,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with event types (tarea, vencimiento, pago, turno, checklist, alerta_stock, alerta_rentabilidad)
     - When working with recurring instance generation or parent-child event relationships
     - When working with restaurant-scoped event authorization or notification channels
+
+- app_docs/feature-02529be1-inventory-movement-tracking.md
+  - Conditions:
+    - When working with the inventory_movement table or InventoryMovement model in RestaurantOS
+    - When implementing stock entry/exit tracking or movement history
+    - When working with inventory movement API endpoints, service, or repository
+    - When implementing automatic current_stock updates on resources
+    - When working with negative stock prevention or low-stock warning logic
+    - When building inventory management frontend (Wave 4)
+    - When working with MovementType or MovementReason enums
