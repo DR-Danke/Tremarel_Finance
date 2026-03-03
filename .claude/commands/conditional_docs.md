@@ -468,3 +468,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with ingredient-to-recipe linking or RecipeItem management
     - When building the recipe management frontend (Wave 6)
     - When implementing automatic cost recalculation from resource price changes
+
+- app_docs/feature-327dae14-document-expiration-alert-automation.md
+  - Conditions:
+    - When working with document expiration alerts or vencimiento events
+    - When implementing or modifying automated event creation from document lifecycle
+    - When working with the notification processing endpoint for expiration alerts
+    - When modifying DEFAULT_ALERT_WINDOWS or alert scheduling logic in DocumentService
+    - When troubleshooting automatic vencimiento event creation on document create/update/delete
+    - When extending the notification scheduler with new alert processing functions
