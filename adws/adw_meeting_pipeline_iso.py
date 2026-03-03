@@ -320,10 +320,8 @@ def update_crm(
 
     company_name = meeting_data.get("company_name")
     if not company_name:
-        logger.warning("CRM update skipped: no company_name in meeting data")
-        result["skipped"] = True
-        result["skip_reason"] = "No company_name in meeting data"
-        return result
+        company_name = meeting_data.get("title", f"Meeting Transcript {adw_id}")
+        logger.info(f"No company_name in meeting data, using title as fallback: {company_name}")
 
     result["prospect_company"] = company_name
 
