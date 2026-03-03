@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Drawer,
   List,
@@ -6,6 +6,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
+  Collapse,
   Divider,
   Box,
   FormControl,
@@ -24,6 +26,8 @@ import SavingsIcon from '@mui/icons-material/Savings'
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import SettingsIcon from '@mui/icons-material/Settings'
 import PeopleIcon from '@mui/icons-material/People'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import { useEntity } from '@/hooks/useEntity'
 
 export const DRAWER_WIDTH_EXPANDED = 240
@@ -35,16 +39,67 @@ interface NavItem {
   icon: React.ReactNode
 }
 
-const navigationItems: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
-  { label: 'Transactions', path: '/transactions', icon: <AccountBalanceWalletIcon /> },
-  { label: 'Recurring', path: '/recurring', icon: <RepeatIcon /> },
-  { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
-  { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
-  { label: 'Prospects', path: '/prospects', icon: <PeopleIcon /> },
-  { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },
-  { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
+interface NavSection {
+  label: string
+  collapsible?: boolean
+  defaultOpen?: boolean
+  items: NavItem[]
+  subsections?: NavSection[]
+}
+
+const navigationSections: NavSection[] = [
+  {
+    label: 'Finance',
+    collapsible: false,
+    items: [
+      { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+      { label: 'Transactions', path: '/transactions', icon: <AccountBalanceWalletIcon /> },
+      { label: 'Recurring', path: '/recurring', icon: <RepeatIcon /> },
+      { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
+      { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
+      { label: 'Prospects', path: '/prospects', icon: <PeopleIcon /> },
+      { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },
+    ],
+  },
+  {
+    label: 'POCs',
+    collapsible: true,
+    defaultOpen: false,
+    items: [],
+    subsections: [
+      {
+        label: 'RestaurantOS',
+        items: [],
+      },
+    ],
+  },
+  {
+    label: '',
+    items: [
+      { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
+    ],
+  },
 ]
+
+const SIDEBAR_SECTIONS_KEY = 'sidebarSectionState'
+
+const getInitialSectionState = (): Record<string, boolean> => {
+  try {
+    const stored = localStorage.getItem(SIDEBAR_SECTIONS_KEY)
+    if (stored) {
+      return JSON.parse(stored) as Record<string, boolean>
+    }
+  } catch {
+    // localStorage unavailable or corrupted — fall back to defaults
+  }
+  const initial: Record<string, boolean> = {}
+  navigationSections.forEach((section) => {
+    if (section.label && section.collapsible !== false) {
+      initial[section.label] = section.defaultOpen ?? true
+    }
+  })
+  return initial
+}
 
 interface TRCollapsibleSidebarProps {
   open: boolean
@@ -56,12 +111,172 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
 }) => {
   const location = useLocation()
   const { currentEntity, entities, switchEntity } = useEntity()
+  const [sectionState, setSectionState] = useState<Record<string, boolean>>(getInitialSectionState)
 
   const handleEntityChange = (event: SelectChangeEvent) => {
     switchEntity(event.target.value)
   }
 
+  const handleSectionToggle = (sectionLabel: string) => {
+    setSectionState((prev) => {
+      const next = { ...prev, [sectionLabel]: !prev[sectionLabel] }
+      try {
+        localStorage.setItem(SIDEBAR_SECTIONS_KEY, JSON.stringify(next))
+      } catch {
+        // localStorage unavailable — state remains in memory only
+      }
+      return next
+    })
+  }
+
   const drawerWidth = open ? DRAWER_WIDTH_EXPANDED : DRAWER_WIDTH_COLLAPSED
+
+  const renderNavItem = (item: NavItem, indentLevel: number = 0) => {
+    const isActive = location.pathname === item.path
+    return (
+      <ListItem key={item.path} disablePadding sx={{ display: 'block' }}>
+        <ListItemButton
+          component={NavLink}
+          to={item.path}
+          sx={{
+            minHeight: 48,
+            justifyContent: open ? 'initial' : 'center',
+            px: 2.5,
+            pl: open ? 2.5 + indentLevel * 2 : 2.5,
+            backgroundColor: isActive ? 'action.selected' : 'transparent',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              minWidth: 0,
+              mr: open ? 3 : 'auto',
+              justifyContent: 'center',
+              color: isActive ? 'primary.main' : 'inherit',
+            }}
+          >
+            {item.icon}
+          </ListItemIcon>
+          {open && (
+            <ListItemText
+              primary={item.label}
+              sx={{
+                '& .MuiListItemText-primary': {
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? 'primary.main' : 'inherit',
+                },
+              }}
+            />
+          )}
+        </ListItemButton>
+      </ListItem>
+    )
+  }
+
+  const renderSection = (section: NavSection, index: number) => {
+    const isOpen = section.label ? (sectionState[section.label] ?? true) : true
+    const isCollapsible = section.collapsible !== false && !!section.label
+    const hasLabel = !!section.label
+
+    // Collapsed sidebar (icon-only mode)
+    if (!open) {
+      return (
+        <React.Fragment key={section.label || `section-${index}`}>
+          {index > 0 && <Divider />}
+          {section.items.map((item) => renderNavItem(item))}
+          {section.subsections?.map((sub) =>
+            sub.items.map((item) => renderNavItem(item))
+          )}
+        </React.Fragment>
+      )
+    }
+
+    // Expanded sidebar
+    return (
+      <React.Fragment key={section.label || `section-${index}`}>
+        {/* Bottom section (no label) gets a divider */}
+        {!hasLabel && <Divider sx={{ my: 1 }} />}
+
+        {/* Section header */}
+        {hasLabel && (
+          <ListSubheader
+            component="div"
+            sx={{
+              lineHeight: '36px',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              color: 'text.secondary',
+              backgroundColor: 'transparent',
+              cursor: isCollapsible ? 'pointer' : 'default',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              userSelect: 'none',
+            }}
+            onClick={isCollapsible ? () => handleSectionToggle(section.label) : undefined}
+          >
+            {section.label}
+            {isCollapsible && (isOpen ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />)}
+          </ListSubheader>
+        )}
+
+        {/* Section content */}
+        {isCollapsible ? (
+          <Collapse in={isOpen} timeout="auto" unmountOnExit>
+            {section.items.map((item) => renderNavItem(item))}
+            {section.subsections?.map((sub) => (
+              <React.Fragment key={sub.label}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    pl: 4,
+                    py: 0.5,
+                    display: 'block',
+                    color: 'text.disabled',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {sub.label}
+                </Typography>
+                {sub.items.map((item) => renderNavItem(item, 1))}
+              </React.Fragment>
+            ))}
+          </Collapse>
+        ) : (
+          <>
+            {section.items.map((item) => renderNavItem(item))}
+            {section.subsections?.map((sub) => (
+              <React.Fragment key={sub.label}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    pl: 4,
+                    py: 0.5,
+                    display: 'block',
+                    color: 'text.disabled',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {sub.label}
+                </Typography>
+                {sub.items.map((item) => renderNavItem(item, 1))}
+              </React.Fragment>
+            ))}
+          </>
+        )}
+      </React.Fragment>
+    )
+  }
 
   return (
     <Drawer
@@ -140,49 +355,7 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
 
       {/* Navigation Links */}
       <List>
-        {navigationItems.map((item) => {
-          const isActive = location.pathname === item.path
-
-          return (
-            <ListItem key={item.path} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                component={NavLink}
-                to={item.path}
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                  backgroundColor: isActive ? 'action.selected' : 'transparent',
-                  '&:hover': {
-                    backgroundColor: 'action.hover',
-                  },
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                    color: isActive ? 'primary.main' : 'inherit',
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                {open && (
-                  <ListItemText
-                    primary={item.label}
-                    sx={{
-                      '& .MuiListItemText-primary': {
-                        fontWeight: isActive ? 600 : 400,
-                        color: isActive ? 'primary.main' : 'inherit',
-                      },
-                    }}
-                  />
-                )}
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
+        {navigationSections.map((section, index) => renderSection(section, index))}
       </List>
     </Drawer>
   )

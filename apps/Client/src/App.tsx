@@ -174,6 +174,21 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/poc/restaurant-os/*"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <Box>
+                <Typography variant="h4">RestaurantOS</Typography>
+                <Typography color="text.secondary">
+                  RestaurantOS pages coming soon.
+                </Typography>
+              </Box>
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }
