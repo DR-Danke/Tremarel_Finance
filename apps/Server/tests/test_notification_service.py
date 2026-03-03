@@ -1,4 +1,4 @@
-"""Tests for notification service, WhatsApp adapter, and message formatters."""
+"""Tests for notification service, adapters, email templates, and message formatters."""
 
 from datetime import date
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -6,6 +6,12 @@ from uuid import uuid4
 
 import pytest
 
+from src.adapter.email_adapter import EmailAdapter
+from src.adapter.email_templates import (
+    format_daily_tasks_html,
+    format_expiration_alert_html,
+    format_low_stock_alert_html,
+)
 from src.adapter.whatsapp_adapter import WhatsAppAdapter
 from src.core.services.notification_scheduler import (
     format_daily_tasks_message,
@@ -252,6 +258,7 @@ async def test_send_morning_task_summaries_success() -> None:
 
     mock_person = MagicMock()
     mock_person.whatsapp = "+573001234567"
+    mock_person.email = None
 
     mock_db = MagicMock()
 
@@ -296,6 +303,7 @@ async def test_send_morning_task_summaries_skip_no_whatsapp() -> None:
 
     mock_person = MagicMock()
     mock_person.whatsapp = None
+    mock_person.email = None
 
     mock_db = MagicMock()
 
@@ -359,6 +367,7 @@ async def test_send_morning_task_summaries_skip_empty_whatsapp() -> None:
 
     mock_person = MagicMock()
     mock_person.whatsapp = ""
+    mock_person.email = ""
 
     mock_db = MagicMock()
 
@@ -376,3 +385,299 @@ async def test_send_morning_task_summaries_skip_empty_whatsapp() -> None:
     assert result["sent_count"] == 0
     mock_notif_svc.send_notification.assert_not_called()
     print("INFO [TestNotificationService]: test_send_morning_task_summaries_skip_empty_whatsapp - PASSED")
+
+
+# ============================================================================
+# EmailAdapter Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_email_adapter_valid_recipient() -> None:
+    """Test EmailAdapter send with valid email address."""
+    adapter = EmailAdapter()
+    result = await adapter.send("test@example.com", "<p>Hello</p>")
+
+    assert result["status"] == "sent"
+    assert result["recipient"] == "test@example.com"
+    print("INFO [TestNotificationService]: test_email_adapter_valid_recipient - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_email_adapter_invalid_recipient_no_at() -> None:
+    """Test EmailAdapter rejects recipient without @ symbol."""
+    adapter = EmailAdapter()
+
+    with pytest.raises(ValueError, match="Invalid email recipient format"):
+        await adapter.send("invalid-email", "<p>Hello</p>")
+    print("INFO [TestNotificationService]: test_email_adapter_invalid_recipient_no_at - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_email_adapter_invalid_recipient_empty() -> None:
+    """Test EmailAdapter rejects empty recipient."""
+    adapter = EmailAdapter()
+
+    with pytest.raises(ValueError, match="Invalid email recipient format"):
+        await adapter.send("", "<p>Hello</p>")
+    print("INFO [TestNotificationService]: test_email_adapter_invalid_recipient_empty - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_email_adapter_stub_mode() -> None:
+    """Test EmailAdapter works in stub mode when SMTP credentials are empty."""
+    adapter = EmailAdapter(smtp_host="", smtp_port=587, username="", password="")
+    assert adapter.stub_mode is True
+
+    result = await adapter.send("user@example.com", "<p>Test</p>")
+    assert result["status"] == "sent"
+    print("INFO [TestNotificationService]: test_email_adapter_stub_mode - PASSED")
+
+
+# ============================================================================
+# HTML Email Template Tests
+# ============================================================================
+
+
+def test_format_daily_tasks_html_normal() -> None:
+    """Test daily tasks HTML formatting with normal tasks."""
+    summary = {
+        "person_name": "Maria Garcia",
+        "date": date(2026, 3, 3),
+        "total_tasks": 2,
+        "overdue_count": 0,
+        "tasks": [
+            {"description": "Limpiar cocina", "time": "08:00", "status": "pending", "is_overdue": False},
+            {"description": "Inventario", "time": "14:00", "status": "pending", "is_overdue": False},
+        ],
+    }
+
+    html = format_daily_tasks_html(summary)
+
+    assert "Maria Garcia" in html
+    assert "2026-03-03" in html
+    assert "2 tarea(s)" in html
+    assert "Limpiar cocina" in html
+    assert "Inventario" in html
+    assert "08:00" in html
+    assert "14:00" in html
+    assert "<table" in html
+    assert "VENCIDA" not in html
+    print("INFO [TestNotificationService]: test_format_daily_tasks_html_normal - PASSED")
+
+
+def test_format_daily_tasks_html_empty_tasks() -> None:
+    """Test daily tasks HTML formatting with no tasks."""
+    summary = {
+        "person_name": "Juan",
+        "date": date(2026, 3, 3),
+        "total_tasks": 0,
+        "overdue_count": 0,
+        "tasks": [],
+    }
+
+    html = format_daily_tasks_html(summary)
+
+    assert "Juan" in html
+    assert "No tienes tareas pendientes" in html
+    print("INFO [TestNotificationService]: test_format_daily_tasks_html_empty_tasks - PASSED")
+
+
+def test_format_daily_tasks_html_overdue() -> None:
+    """Test daily tasks HTML formatting with overdue tasks."""
+    summary = {
+        "person_name": "Carlos",
+        "date": date(2026, 3, 3),
+        "total_tasks": 1,
+        "overdue_count": 1,
+        "tasks": [
+            {"description": "Pagar factura", "time": "09:00", "status": "overdue", "is_overdue": True},
+        ],
+    }
+
+    html = format_daily_tasks_html(summary)
+
+    assert "Carlos" in html
+    assert "1 tarea(s) vencida(s)" in html
+    assert "VENCIDA" in html
+    assert "Pagar factura" in html
+    assert "ffebee" in html  # red background for overdue
+    print("INFO [TestNotificationService]: test_format_daily_tasks_html_overdue - PASSED")
+
+
+def test_format_expiration_alert_html_normal() -> None:
+    """Test document expiration HTML with days > 7 (attention level)."""
+    html = format_expiration_alert_html("Licencia sanitaria", "2026-04-15", 43)
+
+    assert "Atencion" in html
+    assert "Licencia sanitaria" in html
+    assert "2026-04-15" in html
+    assert "43 dia(s)" in html
+    assert "URGENTE" not in html
+    print("INFO [TestNotificationService]: test_format_expiration_alert_html_normal - PASSED")
+
+
+def test_format_expiration_alert_html_urgent() -> None:
+    """Test document expiration HTML with days <= 7 (urgent level)."""
+    html = format_expiration_alert_html("Permiso bomberos", "2026-03-10", 5)
+
+    assert "URGENTE" in html
+    assert "Permiso bomberos" in html
+    assert "5 dia(s)" in html
+    assert "c62828" in html  # urgent red color
+    print("INFO [TestNotificationService]: test_format_expiration_alert_html_urgent - PASSED")
+
+
+def test_format_low_stock_alert_html() -> None:
+    """Test low stock alert HTML formatting."""
+    html = format_low_stock_alert_html("Arroz", 2.5, 10.0)
+
+    assert "Alerta de Stock Bajo" in html
+    assert "Arroz" in html
+    assert "2.5" in html
+    assert "10.0" in html
+    assert "<table" in html
+    print("INFO [TestNotificationService]: test_format_low_stock_alert_html - PASSED")
+
+
+# ============================================================================
+# Scheduler Channel Routing Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_send_morning_task_summaries_email_channel() -> None:
+    """Test that person with email but no WhatsApp sends via email."""
+    from src.core.services.notification_scheduler import send_morning_task_summaries
+
+    user_id = uuid4()
+    restaurant_id = uuid4()
+    person_id = uuid4()
+
+    mock_summary = {
+        "person_id": person_id,
+        "person_name": "Laura Email",
+        "date": date.today(),
+        "total_tasks": 1,
+        "overdue_count": 0,
+        "tasks": [{"description": "Revisar menu", "time": "09:00", "status": "pending", "is_overdue": False}],
+    }
+
+    mock_person = MagicMock()
+    mock_person.email = "laura@example.com"
+    mock_person.whatsapp = None
+
+    mock_db = MagicMock()
+
+    with patch("src.core.services.notification_scheduler.event_service") as mock_event_svc, \
+         patch("src.core.services.notification_scheduler.person_service") as mock_person_svc, \
+         patch("src.core.services.notification_scheduler.notification_service") as mock_notif_svc, \
+         patch("src.core.services.notification_scheduler.notification_log_repository") as mock_log_repo:
+
+        mock_event_svc.get_all_daily_summaries.return_value = [mock_summary]
+        mock_person_svc.get_person.return_value = mock_person
+        mock_notif_svc.send_notification = AsyncMock(return_value={"status": "sent", "recipient": "laura@example.com"})
+        mock_log_repo.create.return_value = MagicMock()
+
+        result = await send_morning_task_summaries(mock_db, user_id, restaurant_id)
+
+    assert result["sent_count"] == 1
+    assert result["skipped_count"] == 0
+    mock_notif_svc.send_notification.assert_called_once()
+    call_args = mock_notif_svc.send_notification.call_args
+    assert call_args[0][0] == "email"
+    assert call_args[0][1] == "laura@example.com"
+    assert "<div" in call_args[0][2]  # HTML content
+    mock_log_repo.create.assert_called_once()
+    assert mock_log_repo.create.call_args[1]["channel"] == "email"
+    print("INFO [TestNotificationService]: test_send_morning_task_summaries_email_channel - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_send_morning_task_summaries_both_channels() -> None:
+    """Test that person with both email and WhatsApp sends via both."""
+    from src.core.services.notification_scheduler import send_morning_task_summaries
+
+    user_id = uuid4()
+    restaurant_id = uuid4()
+    person_id = uuid4()
+
+    mock_summary = {
+        "person_id": person_id,
+        "person_name": "Diego Both",
+        "date": date.today(),
+        "total_tasks": 1,
+        "overdue_count": 0,
+        "tasks": [{"description": "Abrir local", "time": "07:00", "status": "pending", "is_overdue": False}],
+    }
+
+    mock_person = MagicMock()
+    mock_person.email = "diego@example.com"
+    mock_person.whatsapp = "+573009876543"
+
+    mock_db = MagicMock()
+
+    with patch("src.core.services.notification_scheduler.event_service") as mock_event_svc, \
+         patch("src.core.services.notification_scheduler.person_service") as mock_person_svc, \
+         patch("src.core.services.notification_scheduler.notification_service") as mock_notif_svc, \
+         patch("src.core.services.notification_scheduler.notification_log_repository") as mock_log_repo:
+
+        mock_event_svc.get_all_daily_summaries.return_value = [mock_summary]
+        mock_person_svc.get_person.return_value = mock_person
+        mock_notif_svc.send_notification = AsyncMock(return_value={"status": "sent", "recipient": "test"})
+        mock_log_repo.create.return_value = MagicMock()
+
+        result = await send_morning_task_summaries(mock_db, user_id, restaurant_id)
+
+    assert result["sent_count"] == 1
+    assert result["skipped_count"] == 0
+    assert mock_notif_svc.send_notification.call_count == 2
+    assert mock_log_repo.create.call_count == 2
+
+    # Verify both channels were called
+    channels_called = [call[0][0] for call in mock_notif_svc.send_notification.call_args_list]
+    assert "email" in channels_called
+    assert "whatsapp" in channels_called
+    print("INFO [TestNotificationService]: test_send_morning_task_summaries_both_channels - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_send_morning_task_summaries_skip_no_contact() -> None:
+    """Test that person with neither email nor WhatsApp is skipped."""
+    from src.core.services.notification_scheduler import send_morning_task_summaries
+
+    user_id = uuid4()
+    restaurant_id = uuid4()
+    person_id = uuid4()
+
+    mock_summary = {
+        "person_id": person_id,
+        "person_name": "Sin Contacto",
+        "date": date.today(),
+        "total_tasks": 1,
+        "overdue_count": 0,
+        "tasks": [{"description": "Tarea", "time": "08:00", "status": "pending", "is_overdue": False}],
+    }
+
+    mock_person = MagicMock()
+    mock_person.email = None
+    mock_person.whatsapp = None
+
+    mock_db = MagicMock()
+
+    with patch("src.core.services.notification_scheduler.event_service") as mock_event_svc, \
+         patch("src.core.services.notification_scheduler.person_service") as mock_person_svc, \
+         patch("src.core.services.notification_scheduler.notification_service") as mock_notif_svc, \
+         patch("src.core.services.notification_scheduler.notification_log_repository") as mock_log_repo:
+
+        mock_event_svc.get_all_daily_summaries.return_value = [mock_summary]
+        mock_person_svc.get_person.return_value = mock_person
+
+        result = await send_morning_task_summaries(mock_db, user_id, restaurant_id)
+
+    assert result["skipped_count"] == 1
+    assert result["sent_count"] == 0
+    assert result["results"][0]["error_message"] == "No email or WhatsApp number"
+    mock_notif_svc.send_notification.assert_not_called()
+    mock_log_repo.create.assert_not_called()
+    print("INFO [TestNotificationService]: test_send_morning_task_summaries_skip_no_contact - PASSED")
