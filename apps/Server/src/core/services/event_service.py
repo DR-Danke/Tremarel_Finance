@@ -7,7 +7,7 @@ from uuid import UUID
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.orm import Session
 
-from src.interface.event_dto import EventCreateDTO, EventStatusUpdateDTO, EventUpdateDTO
+from src.interface.event_dto import EventCreateDTO, EventStatusUpdateDTO, EventUpdateDTO, TaskCreateDTO
 from src.models.event import Event
 from src.repository.event_repository import event_repository
 from src.repository.restaurant_repository import restaurant_repository
@@ -232,10 +232,27 @@ class EventService:
 
         self._check_restaurant_access(db, user_id, event.restaurant_id)
 
-        event.status = data.status.value
+        current_status = event.status
+        new_status = data.status.value
+
+        if current_status == "completed":
+            print(f"ERROR [EventService]: Cannot change status of completed event {event_id}")
+            raise ValueError("Cannot change status of a completed task")
+
+        if current_status == "overdue" and new_status == "pending":
+            print(f"ERROR [EventService]: Cannot revert overdue event {event_id} to pending")
+            raise ValueError("Cannot revert an overdue task to pending")
+
+        event.status = new_status
+
+        if new_status == "completed":
+            event.completed_at = datetime.utcnow()
+        else:
+            event.completed_at = None
+
         updated_event = event_repository.update(db, event)
 
-        print(f"INFO [EventService]: Event {event_id} status updated to '{data.status.value}'")
+        print(f"INFO [EventService]: Event {event_id} status updated to '{new_status}'")
         return updated_event
 
     def delete_event(
@@ -348,6 +365,121 @@ class EventService:
 
         print(f"INFO [EventService]: No recurring instances needed for event {event_id}")
         return []
+
+    def create_task(
+        self,
+        db: Session,
+        user_id: UUID,
+        data: TaskCreateDTO,
+    ) -> Event:
+        """
+        Create a task (event with type=tarea).
+
+        Forces type to tarea, validates responsible_id is present (enforced by DTO),
+        validates date is not in the past, and generates recurring instances if frequency is set.
+
+        Args:
+            db: Database session
+            user_id: ID of the user creating the task
+            data: Task creation data
+
+        Returns:
+            Created Event object
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+            ValueError: If date is in the past
+        """
+        print(f"INFO [EventService]: Creating task in restaurant {data.restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, data.restaurant_id)
+
+        if data.date < datetime.utcnow():
+            print(f"ERROR [EventService]: Task date {data.date} is in the past")
+            raise ValueError("Task date cannot be in the past")
+
+        event = event_repository.create(
+            db=db,
+            restaurant_id=data.restaurant_id,
+            event_type="tarea",
+            description=data.description,
+            event_date=data.date,
+            frequency=data.frequency.value,
+            responsible_id=data.responsible_id,
+            notification_channel=data.notification_channel,
+        )
+
+        if data.frequency.value != "none":
+            print(f"INFO [EventService]: Generating recurring instances for task {event.id} (frequency={data.frequency.value})")
+            self.generate_recurring_instances(db, event.id)
+
+        print(f"INFO [EventService]: Task created with id {event.id}")
+        return event
+
+    def get_tasks(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        responsible_id: Optional[UUID] = None,
+        date_from: Optional[datetime] = None,
+        date_to: Optional[datetime] = None,
+        status_filter: Optional[str] = None,
+    ) -> list[Event]:
+        """
+        Get all tasks (events with type=tarea) in a restaurant.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+            responsible_id: Optional responsible person filter
+            date_from: Optional start date filter
+            date_to: Optional end date filter
+            status_filter: Optional status filter
+
+        Returns:
+            List of Event objects with type=tarea
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [EventService]: Getting tasks for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return event_repository.get_by_restaurant(
+            db, restaurant_id, type_filter="tarea", status_filter=status_filter,
+            date_from=date_from, date_to=date_to, responsible_id_filter=responsible_id,
+        )
+
+    def flag_overdue_events(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+    ) -> int:
+        """
+        Bulk-update pending events past their due date to overdue status.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            Count of flagged events
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [EventService]: Flagging overdue events for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        count = event_repository.update_overdue(db, restaurant_id, datetime.utcnow())
+        print(f"INFO [EventService]: Flagged {count} events as overdue")
+        return count
 
     def get_due_events(
         self,

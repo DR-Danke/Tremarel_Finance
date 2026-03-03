@@ -40,6 +40,7 @@ class Event(Base):
     parent_event_id: Optional[uuid.UUID] = Column(
         UUID(as_uuid=True), ForeignKey("event.id", ondelete="CASCADE"), nullable=True
     )
+    completed_at: Optional[datetime] = Column(DateTime(timezone=True), nullable=True)
     created_at: datetime = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Optional[datetime] = Column(DateTime(timezone=True), onupdate=datetime.utcnow)
 

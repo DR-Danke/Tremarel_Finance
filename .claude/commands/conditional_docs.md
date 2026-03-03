@@ -376,3 +376,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with negative stock prevention or low-stock warning logic
     - When building inventory management frontend (Wave 4)
     - When working with MovementType or MovementReason enums
+
+- app_docs/feature-07ac42cd-task-assignment-recurrence.md
+  - Conditions:
+    - When working with task creation, assignment, or recurrence in RestaurantOS
+    - When implementing task-specific endpoints or business rules for events with type=tarea
+    - When working with overdue detection or bulk overdue flagging
+    - When implementing status transition validation (pending/completed/overdue)
+    - When working with the completed_at timestamp or task completion tracking
+    - When building the task management frontend (ROS-012)
+    - When implementing the daily task summary service (ROS-009)

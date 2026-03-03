@@ -13,6 +13,7 @@ CREATE TABLE event (
     status VARCHAR(50) DEFAULT 'pending',
     related_document_id UUID,
     parent_event_id UUID REFERENCES event(id) ON DELETE CASCADE,
+    completed_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
