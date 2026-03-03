@@ -2,7 +2,7 @@
 
 from datetime import date, datetime, time, timedelta
 from typing import Generator
-from unittest.mock import AsyncMock, MagicMock, call, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 
 import pytest
@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 from main import app
 from src.adapter.rest.dependencies import get_db
-from src.core.services.document_service import DocumentService
 from src.models.document import Document
 from src.models.event import Event
 from src.models.user import User
