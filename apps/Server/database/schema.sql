@@ -453,3 +453,57 @@ CREATE TRIGGER meeting_records_updated_at
     BEFORE UPDATE ON meeting_records
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- TABLE: restaurant
+-- RestaurantOS multi-tenant entity — each restaurant is a separate scope
+-- ============================================================================
+CREATE TABLE restaurant (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    address TEXT,
+    owner_id UUID,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    CONSTRAINT fk_restaurant_owner
+        FOREIGN KEY (owner_id)
+        REFERENCES users(id)
+);
+
+-- Index for owner lookups
+CREATE INDEX idx_restaurant_owner_id ON restaurant(owner_id);
+
+-- Trigger for updated_at
+CREATE TRIGGER restaurant_updated_at
+    BEFORE UPDATE ON restaurant
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================================================
+-- TABLE: user_restaurants
+-- Many-to-many relationship between users and restaurants with per-restaurant roles
+-- ============================================================================
+CREATE TABLE user_restaurants (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    restaurant_id UUID NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'user',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    CONSTRAINT user_restaurants_unique UNIQUE (user_id, restaurant_id),
+
+    CONSTRAINT fk_user_restaurants_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_user_restaurants_restaurant
+        FOREIGN KEY (restaurant_id)
+        REFERENCES restaurant(id)
+        ON DELETE CASCADE
+);
+
+-- Indexes for efficient lookups
+CREATE INDEX idx_user_restaurants_user_id ON user_restaurants(user_id);
+CREATE INDEX idx_user_restaurants_restaurant_id ON user_restaurants(restaurant_id);
