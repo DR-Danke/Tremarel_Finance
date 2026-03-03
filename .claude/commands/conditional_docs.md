@@ -449,3 +449,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When integrating a real WhatsApp provider (Twilio, Meta Cloud API)
     - When building the Event Notification Dispatcher (Wave 8)
     - When troubleshooting notification sending, retry logic, or audit logging
+
+- app_docs/feature-c53dc15a-email-notification-integration.md
+  - Conditions:
+    - When working with email notifications or the EmailAdapter
+    - When configuring SMTP settings for email delivery
+    - When implementing or modifying HTML email templates for notifications
+    - When working with notification channel routing (email, WhatsApp, or both)
+    - When extending the notification system with new channels
+    - When troubleshooting email sending, stub mode, or email validation

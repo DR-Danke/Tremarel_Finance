@@ -32,6 +32,13 @@ class Settings(BaseSettings):
     WHATSAPP_API_KEY: str = ""
     WHATSAPP_PHONE_NUMBER_ID: str = ""
 
+    # SMTP Email
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_EMAIL: str = "noreply@restaurant-os.com"
+
     # Application
     APP_NAME: str = "Finance Tracker API"
     APP_VERSION: str = "1.0.0"
