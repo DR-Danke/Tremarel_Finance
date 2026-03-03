@@ -2,7 +2,7 @@
 
 import os
 import uuid
-from datetime import date, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Optional
 from uuid import UUID
 
@@ -12,7 +12,10 @@ from sqlalchemy.orm import Session
 from src.interface.document_dto import DocumentCreateDTO, DocumentUpdateDTO
 from src.models.document import Document
 from src.repository.document_repository import document_repository
+from src.repository.event_repository import event_repository
 from src.repository.restaurant_repository import restaurant_repository
+
+DEFAULT_ALERT_WINDOWS = [30, 7, 0]
 
 
 class DocumentService:
@@ -73,12 +76,79 @@ class DocumentService:
         )
 
         if document.expiration_date is not None:
-            days_until = (document.expiration_date - date.today()).days
-            if days_until <= 30:
-                print(f"WARNING [DocumentService]: Document '{document.type}' expires in {days_until} days")
+            self.create_expiration_alerts(
+                db, document.id, document.expiration_date, document.restaurant_id, document.person_id
+            )
 
         print(f"INFO [DocumentService]: Document type '{document.type}' created with id {document.id}")
         return document
+
+    def create_expiration_alerts(
+        self,
+        db: Session,
+        document_id: UUID,
+        expiration_date: date,
+        restaurant_id: UUID,
+        person_id: Optional[UUID] = None,
+    ) -> int:
+        """
+        Create vencimiento events at 30-day, 7-day, and 0-day intervals before expiration.
+
+        Skips any alert dates that are on or before today.
+
+        Args:
+            db: Database session
+            document_id: Document UUID
+            expiration_date: Document expiration date
+            restaurant_id: Restaurant UUID
+            person_id: Optional responsible person UUID
+
+        Returns:
+            Count of created alert events
+        """
+        today = date.today()
+        count = 0
+
+        for days_before in DEFAULT_ALERT_WINDOWS:
+            alert_date = expiration_date - timedelta(days=days_before)
+            if alert_date <= today:
+                continue
+
+            if days_before == 0:
+                description = "Documento vence hoy"
+            else:
+                description = f"Documento vence en {days_before} dias"
+
+            event_repository.create(
+                db=db,
+                restaurant_id=restaurant_id,
+                event_type="vencimiento",
+                description=description,
+                event_date=datetime.combine(alert_date, time(8, 0)),
+                frequency="none",
+                responsible_id=person_id,
+                notification_channel="whatsapp",
+                related_document_id=document_id,
+            )
+            count += 1
+
+        print(f"INFO [DocumentService]: Created {count} expiration alerts for document {document_id}")
+        return count
+
+    def delete_expiration_alerts(self, db: Session, document_id: UUID) -> int:
+        """
+        Delete all vencimiento events linked to a document.
+
+        Args:
+            db: Database session
+            document_id: Document UUID
+
+        Returns:
+            Count of deleted events
+        """
+        count = event_repository.delete_by_related_document(db, document_id)
+        print(f"INFO [DocumentService]: Deleted {count} expiration alerts for document {document_id}")
+        return count
 
     def get_documents(
         self,
@@ -194,6 +264,8 @@ class DocumentService:
 
         self._check_restaurant_access(db, user_id, document.restaurant_id)
 
+        old_expiration_date = document.expiration_date
+
         # Update fields if provided
         if data.type is not None:
             document.type = data.type
@@ -207,6 +279,15 @@ class DocumentService:
             document.description = data.description
 
         updated_document = document_repository.update(db, document)
+
+        if data.expiration_date is not None and data.expiration_date != old_expiration_date:
+            self.delete_expiration_alerts(db, document.id)
+            if updated_document.expiration_date is not None:
+                self.create_expiration_alerts(
+                    db, updated_document.id, updated_document.expiration_date,
+                    updated_document.restaurant_id, updated_document.person_id,
+                )
+            print(f"INFO [DocumentService]: Refreshed expiration alerts for document {document_id}")
 
         print(f"INFO [DocumentService]: Document {document_id} updated successfully")
         return updated_document
@@ -240,6 +321,9 @@ class DocumentService:
             raise ValueError("Document not found")
 
         self._check_restaurant_access(db, user_id, document.restaurant_id)
+
+        self.delete_expiration_alerts(db, document_id)
+        print(f"INFO [DocumentService]: Cleaned up expiration alerts for deleted document {document_id}")
 
         deleted = document_repository.delete(db, document_id)
         if not deleted:
