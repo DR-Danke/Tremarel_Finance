@@ -30,6 +30,7 @@ from src.adapter.rest.restaurant_routes import router as restaurant_router
 from src.adapter.rest.person_routes import router as person_router
 from src.adapter.rest.resource_routes import router as resource_router
 from src.adapter.rest.document_routes import router as document_router
+from src.adapter.rest.event_routes import router as event_router
 from src.config.settings import get_settings
 
 settings = get_settings()
@@ -157,6 +158,7 @@ app.include_router(restaurant_router)
 app.include_router(person_router)
 app.include_router(resource_router)
 app.include_router(document_router)
+app.include_router(event_router)
 
 print("INFO [Main]: Auth router registered")
 print("INFO [Main]: Entity router registered")
@@ -173,6 +175,7 @@ print("INFO [Main]: Restaurant router registered")
 print("INFO [Main]: Person router registered")
 print("INFO [Main]: Resource router registered")
 print("INFO [Main]: Document router registered")
+print("INFO [Main]: Event router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 
