@@ -420,3 +420,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing file upload with drag-and-drop or multipart/form-data submissions
     - When implementing frontend CRUD pages that follow the document management pattern
     - When troubleshooting document filters, file upload, or expiration badge issues
+
+- app_docs/feature-9297a9a2-event-task-management-page.md
+  - Conditions:
+    - When working with the RestaurantOS event/task management frontend page
+    - When modifying RestaurantOSEventsPage, TREventForm, TREventStatusBadge, useEvents, or eventService
+    - When implementing quick-complete actions or event status transitions in the UI
+    - When working with date-grouped tables or overdue event highlighting
+    - When implementing frontend CRUD pages that follow the event management pattern
+    - When troubleshooting event filters, conditional form validation, or status badge display
