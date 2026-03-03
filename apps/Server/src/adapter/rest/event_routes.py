@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from src.adapter.rest.dependencies import get_current_user, get_db
 from src.core.services.event_service import event_service
 from src.interface.event_dto import (
+    DailyTaskSummaryDTO,
     EventCreateDTO,
     EventResponseDTO,
     EventStatusUpdateDTO,
@@ -239,6 +240,84 @@ async def flag_overdue_events(
         count = event_service.flag_overdue_events(db, user_id, restaurant_id)
         print(f"INFO [EventRoutes]: Flagged {count} events as overdue")
         return {"flagged_count": count}
+    except PermissionError as e:
+        print(f"ERROR [EventRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+
+
+@router.get("/tasks/daily-summary", response_model=DailyTaskSummaryDTO)
+async def get_daily_task_summary(
+    restaurant_id: UUID = Query(..., description="Restaurant UUID"),
+    person_id: UUID = Query(..., description="Person UUID of the employee"),
+    summary_date: date = Query(..., description="Date to summarize tasks for"),
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> DailyTaskSummaryDTO:
+    """
+    Get a daily task summary for a single employee.
+
+    Args:
+        restaurant_id: Restaurant UUID
+        person_id: Person UUID
+        summary_date: Date to summarize
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        DailyTaskSummaryDTO with task counts and details
+    """
+    print(f"INFO [EventRoutes]: Daily task summary request from user {current_user['email']} (restaurant={restaurant_id}, person={person_id}, date={summary_date})")
+
+    user_id = UUID(current_user["id"])
+    try:
+        summary = event_service.get_daily_task_summary(db, user_id, restaurant_id, person_id, summary_date)
+        print(f"INFO [EventRoutes]: Returning daily summary with {summary['total_tasks']} tasks")
+        return summary
+    except PermissionError as e:
+        print(f"ERROR [EventRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        print(f"ERROR [EventRoutes]: Not found: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e),
+        )
+
+
+@router.get("/tasks/daily-summary/all", response_model=List[DailyTaskSummaryDTO])
+async def get_all_daily_summaries(
+    restaurant_id: UUID = Query(..., description="Restaurant UUID"),
+    summary_date: date = Query(..., description="Date to summarize tasks for"),
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[DailyTaskSummaryDTO]:
+    """
+    Get daily task summaries for all employees in a restaurant.
+
+    Only includes employees with at least one pending or overdue task.
+
+    Args:
+        restaurant_id: Restaurant UUID
+        summary_date: Date to summarize
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        List of DailyTaskSummaryDTO objects
+    """
+    print(f"INFO [EventRoutes]: All daily summaries request from user {current_user['email']} (restaurant={restaurant_id}, date={summary_date})")
+
+    user_id = UUID(current_user["id"])
+    try:
+        summaries = event_service.get_all_daily_summaries(db, user_id, restaurant_id, summary_date)
+        print(f"INFO [EventRoutes]: Returning {len(summaries)} daily summaries")
+        return summaries
     except PermissionError as e:
         print(f"ERROR [EventRoutes]: Access denied: {str(e)}")
         raise HTTPException(

@@ -395,3 +395,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing RestaurantOS frontend features that need to scope data by current restaurant
     - When adding new navigation items to the RestaurantOS sidebar subsection
     - When troubleshooting restaurant selection persistence or empty-state handling
+
+- app_docs/feature-206ba84f-daily-employee-task-summary.md
+  - Conditions:
+    - When working with daily task summaries or employee task aggregation
+    - When implementing the notification system that sends daily task lists (Wave 5)
+    - When working with /api/events/tasks/daily-summary endpoints
+    - When building batch summary features across restaurant employees
+    - When implementing the daily task summary service (ROS-009)
