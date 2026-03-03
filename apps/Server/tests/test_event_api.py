@@ -74,6 +74,7 @@ def create_mock_event(
     event.status = status
     event.related_document_id = related_document_id
     event.parent_event_id = parent_event_id
+    event.completed_at = None
     event.created_at = MagicMock()
     event.updated_at = None
     return event
@@ -616,10 +617,13 @@ async def test_update_event_no_access() -> None:
 
 @pytest.mark.asyncio
 async def test_update_event_status_success() -> None:
-    """Test that authorized user can update event status."""
+    """Test that authorized user can update event status from pending to completed."""
     mock_user = create_mock_user()
-    mock_event = create_mock_event()
-    mock_event.status = "completed"
+    mock_event = create_mock_event(status="pending")
+
+    def mock_update(db, event):
+        event.status = "completed"
+        return event
 
     with patch(
         "src.core.services.auth_service.user_repository"
@@ -635,7 +639,7 @@ async def test_update_event_status_success() -> None:
         mock_bcrypt.checkpw.return_value = True
         mock_event_repo.get_by_id.return_value = mock_event
         mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
-        mock_event_repo.update.return_value = mock_event
+        mock_event_repo.update.side_effect = mock_update
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -1027,3 +1031,612 @@ async def test_is_overdue_completed_past_date() -> None:
         data = response.json()
         assert data["is_overdue"] is False
         print("INFO [TestEventAPI]: test_is_overdue_completed_past_date - PASSED")
+
+
+# ============================================================================
+# Task Creation Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_create_task_success() -> None:
+    """Test that valid task creation returns 201 with type=tarea."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    responsible_id = uuid4()
+    mock_event = create_mock_event(
+        event_type="tarea", restaurant_id=restaurant_id, responsible_id=responsible_id
+    )
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.create.return_value = mock_event
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                "/api/events/tasks",
+                json={
+                    "restaurant_id": str(restaurant_id),
+                    "date": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+                    "description": "Daily cleaning task",
+                    "responsible_id": str(responsible_id),
+                },
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 201
+        data = response.json()
+        assert data["type"] == "tarea"
+        print("INFO [TestEventAPI]: test_create_task_success - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_create_task_missing_responsible_id() -> None:
+    """Test that task without responsible_id returns 422 (Pydantic validation)."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                "/api/events/tasks",
+                json={
+                    "restaurant_id": str(restaurant_id),
+                    "date": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+                    "description": "Task without responsible",
+                },
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 422
+        print("INFO [TestEventAPI]: test_create_task_missing_responsible_id - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_create_task_past_date() -> None:
+    """Test that task with past date returns 400."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    responsible_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                "/api/events/tasks",
+                json={
+                    "restaurant_id": str(restaurant_id),
+                    "date": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+                    "description": "Past date task",
+                    "responsible_id": str(responsible_id),
+                },
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 400
+        assert "past" in response.json()["detail"].lower()
+        print("INFO [TestEventAPI]: test_create_task_past_date - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_create_task_with_recurrence() -> None:
+    """Test that task with frequency=daily generates recurring instances."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    responsible_id = uuid4()
+    mock_event = create_mock_event(
+        event_type="tarea", restaurant_id=restaurant_id,
+        responsible_id=responsible_id, frequency="daily",
+    )
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.create.return_value = mock_event
+        mock_event_repo.get_by_id.return_value = mock_event
+        mock_event_repo.bulk_create.return_value = []
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                "/api/events/tasks",
+                json={
+                    "restaurant_id": str(restaurant_id),
+                    "date": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+                    "description": "Daily cleaning",
+                    "frequency": "daily",
+                    "responsible_id": str(responsible_id),
+                },
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 201
+        mock_event_repo.bulk_create.assert_called_once()
+        print("INFO [TestEventAPI]: test_create_task_with_recurrence - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_create_task_unauthenticated() -> None:
+    """Test that unauthenticated task creation returns 401."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            "/api/events/tasks",
+            json={
+                "restaurant_id": str(uuid4()),
+                "date": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+                "responsible_id": str(uuid4()),
+            },
+        )
+
+    assert response.status_code == 401
+    print("INFO [TestEventAPI]: test_create_task_unauthenticated - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_create_task_no_access() -> None:
+    """Test that user without restaurant access gets 403 on task creation."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = None
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                "/api/events/tasks",
+                json={
+                    "restaurant_id": str(restaurant_id),
+                    "date": (datetime.utcnow() + timedelta(days=1)).isoformat(),
+                    "responsible_id": str(uuid4()),
+                },
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 403
+        print("INFO [TestEventAPI]: test_create_task_no_access - PASSED")
+
+
+# ============================================================================
+# Task Query Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_get_tasks_success() -> None:
+    """Test that get tasks returns only tarea-type events."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    mock_task = create_mock_event(event_type="tarea", restaurant_id=restaurant_id)
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.get_by_restaurant.return_value = [mock_task]
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.get(
+                f"/api/events/tasks?restaurant_id={restaurant_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["type"] == "tarea"
+        mock_event_repo.get_by_restaurant.assert_called_once()
+        call_args = mock_event_repo.get_by_restaurant.call_args
+        assert call_args[0][1] == restaurant_id
+        assert call_args.kwargs.get("type_filter") == "tarea" or call_args[0][2] == "tarea"
+        print("INFO [TestEventAPI]: test_get_tasks_success - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_get_tasks_filter_by_responsible() -> None:
+    """Test that get tasks filters by responsible_id."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    responsible_id = uuid4()
+    mock_task = create_mock_event(
+        event_type="tarea", restaurant_id=restaurant_id, responsible_id=responsible_id
+    )
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.get_by_restaurant.return_value = [mock_task]
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.get(
+                f"/api/events/tasks?restaurant_id={restaurant_id}&responsible_id={responsible_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 1
+        print("INFO [TestEventAPI]: test_get_tasks_filter_by_responsible - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_get_tasks_filter_by_status() -> None:
+    """Test that get tasks filters by status."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    mock_task = create_mock_event(
+        event_type="tarea", restaurant_id=restaurant_id, status="completed"
+    )
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.get_by_restaurant.return_value = [mock_task]
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.get(
+                f"/api/events/tasks?restaurant_id={restaurant_id}&status=completed",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert len(data) == 1
+        assert data[0]["status"] == "completed"
+        print("INFO [TestEventAPI]: test_get_tasks_filter_by_status - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_get_tasks_unauthenticated() -> None:
+    """Test that unauthenticated task list returns 401."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.get(
+            f"/api/events/tasks?restaurant_id={uuid4()}",
+        )
+
+    assert response.status_code == 401
+    print("INFO [TestEventAPI]: test_get_tasks_unauthenticated - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_get_tasks_no_access() -> None:
+    """Test that user without restaurant access gets 403 on task list."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = None
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.get(
+                f"/api/events/tasks?restaurant_id={restaurant_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 403
+        print("INFO [TestEventAPI]: test_get_tasks_no_access - PASSED")
+
+
+# ============================================================================
+# Flag Overdue Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_flag_overdue_events_success() -> None:
+    """Test that flag overdue returns flagged_count."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.update_overdue.return_value = 3
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/events/tasks/flag-overdue?restaurant_id={restaurant_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["flagged_count"] == 3
+        print("INFO [TestEventAPI]: test_flag_overdue_events_success - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_flag_overdue_events_unauthenticated() -> None:
+    """Test that unauthenticated flag overdue returns 401."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            f"/api/events/tasks/flag-overdue?restaurant_id={uuid4()}",
+        )
+
+    assert response.status_code == 401
+    print("INFO [TestEventAPI]: test_flag_overdue_events_unauthenticated - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_flag_overdue_events_no_access() -> None:
+    """Test that user without restaurant access gets 403 on flag overdue."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = None
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/events/tasks/flag-overdue?restaurant_id={restaurant_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 403
+        print("INFO [TestEventAPI]: test_flag_overdue_events_no_access - PASSED")
+
+
+# ============================================================================
+# Task Completion Enhancement Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_complete_task_sets_completed_at() -> None:
+    """Test that completing a task sets completed_at timestamp."""
+    mock_user = create_mock_user()
+    mock_event = create_mock_event(status="pending")
+
+    def mock_update(db, event):
+        return event
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_event_repo.get_by_id.return_value = mock_event
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.update.side_effect = mock_update
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.patch(
+                f"/api/events/{mock_event.id}/status",
+                json={"status": "completed"},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["completed_at"] is not None
+        print("INFO [TestEventAPI]: test_complete_task_sets_completed_at - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_complete_already_completed_task_fails() -> None:
+    """Test that completing an already completed task returns 400."""
+    mock_user = create_mock_user()
+    mock_event = create_mock_event(status="completed")
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_event_repo.get_by_id.return_value = mock_event
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.patch(
+                f"/api/events/{mock_event.id}/status",
+                json={"status": "completed"},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 400
+        assert "completed" in response.json()["detail"].lower()
+        print("INFO [TestEventAPI]: test_complete_already_completed_task_fails - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_overdue_task_can_be_completed() -> None:
+    """Test that an overdue task can be completed (overdue -> completed)."""
+    mock_user = create_mock_user()
+    mock_event = create_mock_event(status="overdue")
+
+    def mock_update(db, event):
+        return event
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.event_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.event_service.event_repository"
+    ) as mock_event_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_event_repo.get_by_id.return_value = mock_event
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_event_repo.update.side_effect = mock_update
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.patch(
+                f"/api/events/{mock_event.id}/status",
+                json={"status": "completed"},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "completed"
+        assert data["completed_at"] is not None
+        print("INFO [TestEventAPI]: test_overdue_task_can_be_completed - PASSED")

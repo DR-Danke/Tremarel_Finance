@@ -14,6 +14,7 @@ from src.interface.event_dto import (
     EventResponseDTO,
     EventStatusUpdateDTO,
     EventUpdateDTO,
+    TaskCreateDTO,
 )
 
 router = APIRouter(prefix="/api/events", tags=["Events"])
@@ -134,6 +135,118 @@ async def list_events(
         )
 
 
+@router.post("/tasks", response_model=EventResponseDTO, status_code=status.HTTP_201_CREATED)
+async def create_task(
+    data: TaskCreateDTO,
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> EventResponseDTO:
+    """
+    Create a new task (event with type=tarea).
+
+    Args:
+        data: Task creation data
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        EventResponseDTO: Created task information
+    """
+    print(f"INFO [EventRoutes]: Create task request from user {current_user['email']}")
+
+    user_id = UUID(current_user["id"])
+    try:
+        event = event_service.create_task(db, user_id, data)
+        print(f"INFO [EventRoutes]: Task created successfully with id {event.id}")
+        return _to_response(event)
+    except PermissionError as e:
+        print(f"ERROR [EventRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        print(f"ERROR [EventRoutes]: Validation error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+
+
+@router.get("/tasks", response_model=List[EventResponseDTO])
+async def get_tasks(
+    restaurant_id: UUID = Query(..., description="Restaurant UUID"),
+    responsible_id: Optional[UUID] = Query(None, description="Filter by responsible person"),
+    date_from: Optional[datetime] = Query(None, description="Filter tasks from this date"),
+    date_to: Optional[datetime] = Query(None, description="Filter tasks until this date"),
+    status_filter: Optional[str] = Query(None, alias="status", description="Filter by task status"),
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[EventResponseDTO]:
+    """
+    List tasks (events with type=tarea) with optional filtering.
+
+    Args:
+        restaurant_id: Restaurant UUID
+        responsible_id: Optional responsible person filter
+        date_from: Optional start date filter
+        date_to: Optional end date filter
+        status_filter: Optional status filter
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        List of EventResponseDTO objects
+    """
+    print(f"INFO [EventRoutes]: Get tasks request from user {current_user['email']} (restaurant={restaurant_id})")
+
+    user_id = UUID(current_user["id"])
+    try:
+        events = event_service.get_tasks(
+            db, user_id, restaurant_id, responsible_id, date_from, date_to, status_filter
+        )
+        print(f"INFO [EventRoutes]: Returning {len(events)} tasks")
+        return [_to_response(e) for e in events]
+    except PermissionError as e:
+        print(f"ERROR [EventRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+
+
+@router.post("/tasks/flag-overdue")
+async def flag_overdue_events(
+    restaurant_id: UUID = Query(..., description="Restaurant UUID"),
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, int]:
+    """
+    Flag overdue events by bulk-updating pending events past their due date.
+
+    Args:
+        restaurant_id: Restaurant UUID
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        Dictionary with flagged_count
+    """
+    print(f"INFO [EventRoutes]: Flag overdue request from user {current_user['email']} (restaurant={restaurant_id})")
+
+    user_id = UUID(current_user["id"])
+    try:
+        count = event_service.flag_overdue_events(db, user_id, restaurant_id)
+        print(f"INFO [EventRoutes]: Flagged {count} events as overdue")
+        return {"flagged_count": count}
+    except PermissionError as e:
+        print(f"ERROR [EventRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+
+
 @router.get("/{event_id}", response_model=EventResponseDTO)
 async def get_event(
     event_id: UUID,
@@ -245,10 +358,17 @@ async def update_event_status(
             detail=str(e),
         )
     except ValueError as e:
-        print(f"ERROR [EventRoutes]: Event not found: {str(e)}")
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+            print(f"ERROR [EventRoutes]: Event not found: {error_msg}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=error_msg,
+            )
+        print(f"ERROR [EventRoutes]: Status transition error: {error_msg}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e),
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_msg,
         )
 
 

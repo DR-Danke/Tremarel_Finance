@@ -69,6 +69,17 @@ class EventStatusUpdateDTO(BaseModel):
     status: EventStatus = Field(..., description="New event status")
 
 
+class TaskCreateDTO(BaseModel):
+    """DTO for task creation request. Tasks are events with type=tarea."""
+
+    restaurant_id: UUID = Field(..., description="Restaurant UUID this task belongs to")
+    date: datetime = Field(..., description="Task due date and time")
+    description: Optional[str] = Field(None, description="Task description")
+    frequency: EventFrequency = Field(EventFrequency.NONE, description="Recurrence frequency")
+    responsible_id: UUID = Field(..., description="Person UUID responsible for this task (required)")
+    notification_channel: str = Field("email", description="Notification channel")
+
+
 class EventResponseDTO(BaseModel):
     """DTO for event information in responses."""
 
@@ -83,6 +94,7 @@ class EventResponseDTO(BaseModel):
     status: str = Field(..., description="Event status")
     related_document_id: Optional[UUID] = Field(None, description="Related document UUID")
     parent_event_id: Optional[UUID] = Field(None, description="Parent event UUID for recurring instances")
+    completed_at: Optional[datetime] = Field(None, description="Timestamp when task was completed")
     is_overdue: bool = Field(False, description="Computed: whether event is overdue")
     created_at: datetime = Field(..., description="Event creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Event last update timestamp")
@@ -113,6 +125,7 @@ class EventResponseDTO(BaseModel):
                 "status": event_status,
                 "related_document_id": getattr(data, "related_document_id", None),
                 "parent_event_id": getattr(data, "parent_event_id", None),
+                "completed_at": getattr(data, "completed_at", None),
                 "is_overdue": is_overdue,
                 "created_at": data.created_at,
                 "updated_at": getattr(data, "updated_at", None),

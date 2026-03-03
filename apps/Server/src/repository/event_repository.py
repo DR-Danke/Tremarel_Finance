@@ -192,6 +192,32 @@ class EventRepository:
         print(f"INFO [EventRepository]: Found {len(events)} due events")
         return events
 
+    def update_overdue(self, db: Session, restaurant_id: UUID, cutoff_time: datetime) -> int:
+        """
+        Bulk update pending events with date before cutoff to overdue status.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            cutoff_time: Events with date before this time are considered overdue
+
+        Returns:
+            Count of updated rows
+        """
+        print(f"INFO [EventRepository]: Flagging overdue events for restaurant {restaurant_id} (cutoff={cutoff_time})")
+        count = (
+            db.query(Event)
+            .filter(
+                Event.restaurant_id == restaurant_id,
+                Event.status == "pending",
+                Event.date < cutoff_time,
+            )
+            .update({"status": "overdue"}, synchronize_session="fetch")
+        )
+        db.commit()
+        print(f"INFO [EventRepository]: Flagged {count} events as overdue")
+        return count
+
     def bulk_create(self, db: Session, events_data: list[dict]) -> list[Event]:
         """
         Bulk insert events for recurring instance generation.
