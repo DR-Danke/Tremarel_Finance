@@ -386,3 +386,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with the completed_at timestamp or task completion tracking
     - When building the task management frontend (ROS-012)
     - When implementing the daily task summary service (ROS-009)
+
+- app_docs/feature-342b3948-restaurant-selector-multitenant-navigation.md
+  - Conditions:
+    - When working with the RestaurantContext, useRestaurant hook, or RestaurantProvider
+    - When adding or modifying RestaurantOS frontend pages under /poc/restaurant-os/
+    - When working with the TRRestaurantSelector component or restaurant switching
+    - When implementing RestaurantOS frontend features that need to scope data by current restaurant
+    - When adding new navigation items to the RestaurantOS sidebar subsection
+    - When troubleshooting restaurant selection persistence or empty-state handling

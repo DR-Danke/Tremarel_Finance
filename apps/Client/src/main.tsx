@@ -7,6 +7,7 @@ import App from './App'
 import theme from './theme'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { EntityProvider } from '@/contexts/EntityContext'
+import { RestaurantProvider } from '@/contexts/RestaurantContext'
 
 console.log('INFO [Main]: Initializing Finance Tracker application')
 
@@ -15,10 +16,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <AuthProvider>
         <EntityProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
+          <RestaurantProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <App />
+            </ThemeProvider>
+          </RestaurantProvider>
         </EntityProvider>
       </AuthProvider>
     </BrowserRouter>

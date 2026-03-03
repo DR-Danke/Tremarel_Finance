@@ -26,9 +26,14 @@ import SavingsIcon from '@mui/icons-material/Savings'
 import AssessmentIcon from '@mui/icons-material/Assessment'
 import SettingsIcon from '@mui/icons-material/Settings'
 import PeopleIcon from '@mui/icons-material/People'
+import RestaurantIcon from '@mui/icons-material/Restaurant'
+import DescriptionIcon from '@mui/icons-material/Description'
+import EventIcon from '@mui/icons-material/Event'
+import InventoryIcon from '@mui/icons-material/Inventory'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { useEntity } from '@/hooks/useEntity'
+import { TRRestaurantSelector } from './TRRestaurantSelector'
 
 export const DRAWER_WIDTH_EXPANDED = 240
 export const DRAWER_WIDTH_COLLAPSED = 56
@@ -69,7 +74,13 @@ const navigationSections: NavSection[] = [
     subsections: [
       {
         label: 'RestaurantOS',
-        items: [],
+        items: [
+          { label: 'Dashboard', path: '/poc/restaurant-os/dashboard', icon: <RestaurantIcon /> },
+          { label: 'Personas', path: '/poc/restaurant-os/persons', icon: <PeopleIcon /> },
+          { label: 'Documentos', path: '/poc/restaurant-os/documents', icon: <DescriptionIcon /> },
+          { label: 'Eventos / Tareas', path: '/poc/restaurant-os/events', icon: <EventIcon /> },
+          { label: 'Recursos / Inventario', path: '/poc/restaurant-os/resources', icon: <InventoryIcon /> },
+        ],
       },
     ],
   },
@@ -352,6 +363,14 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
       )}
 
       <Divider />
+
+      {/* Restaurant Selector — only visible on RestaurantOS routes */}
+      {location.pathname.startsWith('/poc/restaurant-os') && (
+        <>
+          <TRRestaurantSelector open={open} />
+          <Divider />
+        </>
+      )}
 
       {/* Navigation Links */}
       <List>

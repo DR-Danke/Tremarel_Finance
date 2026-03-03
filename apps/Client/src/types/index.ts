@@ -489,3 +489,6 @@ export interface StageTransitionListResponse {
   transitions: StageTransition[]
   total: number
 }
+
+// Restaurant types
+export type { Restaurant, CreateRestaurantData, UpdateRestaurantData } from './restaurant'
