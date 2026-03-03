@@ -1,5 +1,6 @@
 """Pydantic DTOs for event requests and responses."""
 
+import datetime as _dt
 from datetime import datetime
 from enum import Enum
 from typing import Optional
@@ -139,3 +140,24 @@ class EventResponseDTO(BaseModel):
             else:
                 data["is_overdue"] = False
         return data
+
+
+class TaskSummaryItemDTO(BaseModel):
+    """DTO for a single task in a daily summary."""
+
+    id: UUID = Field(..., description="Task unique identifier")
+    description: Optional[str] = Field(None, description="Task description")
+    time: Optional[str] = Field(None, description="Task time in HH:MM format")
+    status: str = Field(..., description="Task status (pending or overdue)")
+    is_overdue: bool = Field(..., description="Whether the task is overdue")
+
+
+class DailyTaskSummaryDTO(BaseModel):
+    """DTO for an employee's daily task summary."""
+
+    person_id: UUID = Field(..., description="Employee person UUID")
+    person_name: str = Field(..., description="Employee name")
+    date: _dt.date = Field(..., description="Summary date")
+    total_tasks: int = Field(..., description="Total number of pending/overdue tasks")
+    overdue_count: int = Field(..., description="Number of overdue tasks")
+    tasks: list[TaskSummaryItemDTO] = Field(default_factory=list, description="List of task details")

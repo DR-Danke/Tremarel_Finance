@@ -1,6 +1,6 @@
 """Event service for business logic operations."""
 
-from datetime import datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Optional
 from uuid import UUID
 
@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from src.interface.event_dto import EventCreateDTO, EventStatusUpdateDTO, EventUpdateDTO, TaskCreateDTO
 from src.models.event import Event
 from src.repository.event_repository import event_repository
+from src.repository.person_repository import person_repository
 from src.repository.restaurant_repository import restaurant_repository
 
 
@@ -508,6 +509,159 @@ class EventService:
         self._check_restaurant_access(db, user_id, restaurant_id)
 
         return event_repository.get_due_events(db, restaurant_id, target_date)
+
+    def get_daily_task_summary(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        person_id: UUID,
+        summary_date: date,
+    ) -> dict:
+        """
+        Get a daily task summary for a single employee.
+
+        Fetches all tasks (type=tarea) assigned to the person on the given date,
+        filters to only pending and overdue statuses, and returns a structured summary.
+
+        Args:
+            db: Database session
+            user_id: User UUID for authorization
+            restaurant_id: Restaurant UUID
+            person_id: Person UUID of the employee
+            summary_date: Date to summarize tasks for
+
+        Returns:
+            Dictionary with person_id, person_name, date, total_tasks, overdue_count, and tasks list
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+            ValueError: If person not found
+        """
+        print(f"INFO [EventService]: Getting daily task summary for person {person_id} on {summary_date} in restaurant {restaurant_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        person = person_repository.get_by_id(db, person_id)
+        if person is None:
+            print(f"ERROR [EventService]: Person {person_id} not found")
+            raise ValueError("Person not found")
+
+        date_from = datetime.combine(summary_date, time.min)
+        date_to = datetime.combine(summary_date, time.max)
+
+        events = event_repository.get_by_restaurant(
+            db, restaurant_id,
+            type_filter="tarea",
+            responsible_id_filter=person_id,
+            date_from=date_from,
+            date_to=date_to,
+        )
+
+        active_tasks = [e for e in events if e.status in ("pending", "overdue")]
+
+        tasks = []
+        overdue_count = 0
+        for task in active_tasks:
+            is_overdue = task.status == "overdue"
+            if is_overdue:
+                overdue_count += 1
+            task_time = task.date.strftime("%H:%M") if task.date else None
+            tasks.append({
+                "id": task.id,
+                "description": task.description,
+                "time": task_time,
+                "status": task.status,
+                "is_overdue": is_overdue,
+            })
+
+        summary = {
+            "person_id": person_id,
+            "person_name": person.name,
+            "date": summary_date,
+            "total_tasks": len(active_tasks),
+            "overdue_count": overdue_count,
+            "tasks": tasks,
+        }
+
+        print(f"INFO [EventService]: Daily summary for person {person_id}: {len(active_tasks)} tasks, {overdue_count} overdue")
+        return summary
+
+    def get_all_daily_summaries(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        summary_date: date,
+    ) -> list[dict]:
+        """
+        Get daily task summaries for all employees in a restaurant.
+
+        Fetches all employees, generates a summary for each, and filters out
+        employees with zero tasks.
+
+        Args:
+            db: Database session
+            user_id: User UUID for authorization
+            restaurant_id: Restaurant UUID
+            summary_date: Date to summarize tasks for
+
+        Returns:
+            List of summary dictionaries for employees with at least one task
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [EventService]: Getting all daily summaries for restaurant {restaurant_id} on {summary_date}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        employees = person_repository.get_by_restaurant(db, restaurant_id, type_filter="employee")
+        print(f"INFO [EventService]: Found {len(employees)} employees in restaurant {restaurant_id}")
+
+        summaries = []
+        for employee in employees:
+            date_from = datetime.combine(summary_date, time.min)
+            date_to = datetime.combine(summary_date, time.max)
+
+            events = event_repository.get_by_restaurant(
+                db, restaurant_id,
+                type_filter="tarea",
+                responsible_id_filter=employee.id,
+                date_from=date_from,
+                date_to=date_to,
+            )
+
+            active_tasks = [e for e in events if e.status in ("pending", "overdue")]
+            if not active_tasks:
+                continue
+
+            tasks = []
+            overdue_count = 0
+            for task in active_tasks:
+                is_overdue = task.status == "overdue"
+                if is_overdue:
+                    overdue_count += 1
+                task_time = task.date.strftime("%H:%M") if task.date else None
+                tasks.append({
+                    "id": task.id,
+                    "description": task.description,
+                    "time": task_time,
+                    "status": task.status,
+                    "is_overdue": is_overdue,
+                })
+
+            summaries.append({
+                "person_id": employee.id,
+                "person_name": employee.name,
+                "date": summary_date,
+                "total_tasks": len(active_tasks),
+                "overdue_count": overdue_count,
+                "tasks": tasks,
+            })
+
+        print(f"INFO [EventService]: Generated {len(summaries)} daily summaries with tasks")
+        return summaries
 
 
 # Singleton instance
