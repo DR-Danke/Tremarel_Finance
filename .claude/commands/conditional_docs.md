@@ -438,3 +438,14 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with Resource or InventoryMovement TypeScript types and Spanish label constants
     - When implementing frontend CRUD pages that follow the resource management pattern
     - When troubleshooting resource filters, movement registration, or detail drawer issues
+
+- app_docs/feature-879ccc05-whatsapp-notification-integration.md
+  - Conditions:
+    - When working with WhatsApp notifications or the notification system
+    - When implementing or modifying NotificationService, NotificationAdapter, or WhatsAppAdapter
+    - When working with the notification_log table or NotificationLogRepository
+    - When working with notification REST routes or /api/notifications endpoints
+    - When implementing message formatters for daily tasks, low stock, or document expiry alerts
+    - When integrating a real WhatsApp provider (Twilio, Meta Cloud API)
+    - When building the Event Notification Dispatcher (Wave 8)
+    - When troubleshooting notification sending, retry logic, or audit logging

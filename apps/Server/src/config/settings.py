@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     # CORS - JSON array format: ["http://localhost:5173"]
     CORS_ORIGINS: str = '["http://localhost:5173"]'
 
+    # WhatsApp Business API
+    WHATSAPP_API_KEY: str = ""
+    WHATSAPP_PHONE_NUMBER_ID: str = ""
+
     # Application
     APP_NAME: str = "Finance Tracker API"
     APP_VERSION: str = "1.0.0"
