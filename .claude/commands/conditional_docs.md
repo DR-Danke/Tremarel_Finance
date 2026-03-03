@@ -403,3 +403,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with /api/events/tasks/daily-summary endpoints
     - When building batch summary features across restaurant employees
     - When implementing the daily task summary service (ROS-009)
+
+- app_docs/feature-de82eb81-person-management-page.md
+  - Conditions:
+    - When working with the RestaurantOS person management frontend page
+    - When modifying RestaurantOSPersonsPage, TRPersonForm, usePersons, or personService
+    - When adding employee, supplier, or owner management UI features
+    - When implementing frontend CRUD pages that follow the person management pattern
+    - When troubleshooting person list, search, type filter, or dialog-based form issues
