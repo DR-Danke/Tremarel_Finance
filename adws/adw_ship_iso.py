@@ -32,6 +32,7 @@ import logging
 import json
 import subprocess
 from typing import Optional, Dict, Any, Tuple
+from datetime import datetime
 from dotenv import load_dotenv
 
 from adw_modules.state import ADWState
@@ -40,10 +41,15 @@ from adw_modules.github import (
     get_repo_url,
     extract_repo_path,
 )
-from adw_modules.workflow_ops import format_issue_message
+from adw_modules.workflow_ops import (
+    format_issue_message,
+    create_commit,
+)
 from adw_modules.utils import setup_logger, check_env_vars
 from adw_modules.worktree_ops import validate_worktree
-from adw_modules.data_types import ADWStateData
+from adw_modules.data_types import ADWStateData, GitHubIssue, GitHubUser, AgentTemplateRequest
+from adw_modules.agent import execute_template
+from adw_modules.git_ops import commit_changes
 
 # Agent name constant
 AGENT_SHIPPER = "shipper"
@@ -145,6 +151,81 @@ def manual_merge_to_main(branch_name: str, logger: logging.Logger) -> Tuple[bool
         except:
             pass
         return False, str(e)
+
+
+def track_agentic_kpis_on_main(
+    issue_number: str,
+    adw_id: str,
+    state: ADWState,
+    logger: logging.Logger,
+) -> None:
+    """Track agentic KPIs on main branch after merge — never fails the workflow.
+
+    Running KPI tracking on main (instead of in the worktree/feature branch)
+    prevents merge conflicts when multiple branches modify agentic_kpis.md.
+    """
+    repo_root = get_main_repo_root()
+    try:
+        logger.info("Tracking agentic KPIs on main...")
+        make_issue_comment(
+            issue_number,
+            format_issue_message(adw_id, "ops", "📊 Updating agentic KPIs"),
+        )
+
+        kpi_request = AgentTemplateRequest(
+            agent_name="kpi_tracker",
+            slash_command="/track_agentic_kpis",
+            args=[json.dumps(state.data, indent=2)],
+            adw_id=adw_id,
+            working_dir=repo_root,
+        )
+
+        kpi_response = execute_template(kpi_request)
+
+        if kpi_response.success:
+            logger.info("Successfully updated agentic KPIs")
+
+            commit_msg, error = create_commit(
+                "kpi_tracker",
+                GitHubIssue(
+                    number=int(issue_number),
+                    title="Update agentic KPIs",
+                    body="Tracking ADW performance metrics",
+                    state="open",
+                    author=GitHubUser(login="system"),
+                    created_at=datetime.now(),
+                    updated_at=datetime.now(),
+                    url="",
+                ),
+                "/chore",
+                adw_id,
+                logger,
+                repo_root,
+            )
+            if commit_msg and not error:
+                # Push the KPI commit on main
+                result = subprocess.run(
+                    ["git", "push", "origin", "main"],
+                    capture_output=True, text=True, cwd=repo_root,
+                )
+                if result.returncode == 0:
+                    logger.info(f"Committed and pushed KPI update: {commit_msg}")
+                    make_issue_comment(
+                        issue_number,
+                        format_issue_message(adw_id, "kpi_tracker", "✅ Agentic KPIs updated"),
+                    )
+                else:
+                    logger.warning(f"KPI commit created but push failed: {result.stderr}")
+            elif error:
+                logger.warning(f"Failed to create KPI commit: {error}")
+        else:
+            logger.warning("Failed to update agentic KPIs - continuing anyway")
+    except Exception as e:
+        logger.warning(f"Error tracking agentic KPIs (non-fatal): {e}")
+        make_issue_comment(
+            issue_number,
+            format_issue_message(adw_id, "kpi_tracker", "⚠️ Error tracking KPIs - continuing anyway"),
+        )
 
 
 def validate_state_completeness(state: ADWState, logger: logging.Logger) -> tuple[bool, list[str]]:
@@ -289,8 +370,12 @@ def main():
         sys.exit(1)
     
     logger.info(f"✅ Successfully merged {branch_name} to main")
-    
-    # Step 5: Post success message
+
+    # Step 5: Track KPIs on main (after merge, before success message)
+    # This runs on main so KPI updates are always sequential — no merge conflicts
+    track_agentic_kpis_on_main(issue_number, adw_id, state, logger)
+
+    # Step 6: Post success message
     make_issue_comment(
         issue_number,
         format_issue_message(adw_id, AGENT_SHIPPER, 

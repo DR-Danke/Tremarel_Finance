@@ -509,8 +509,8 @@ def main():
         format_issue_message(adw_id, AGENT_DOCUMENTER, "✅ Documentation committed"),
     )
 
-    # Track Agentic KPIs before finalizing - this never fails the workflow
-    track_agentic_kpis(issue_number, adw_id, state, logger, worktree_path)
+    # KPI tracking moved to adw_ship_iso.py (runs on main after merge)
+    # to prevent merge conflicts when multiple branches modify agentic_kpis.md
 
     # Finalize git operations (push and PR)
     # Note: This will work from the worktree context

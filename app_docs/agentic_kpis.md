@@ -8,11 +8,11 @@ Summary metrics across all ADW runs.
 
 | Metric            | Value        | Last Updated |
 | ----------------- | ------------ | ------------ |
-| Current Streak    | 25           | 2026-03-03   |
-| Longest Streak    | 25           | 2026-03-03   |
-| Total Plan Size   | 5620 lines   | 2026-03-03   |
+| Current Streak    | 28           | 2026-03-03   |
+| Longest Streak    | 28           | 2026-03-03   |
+| Total Plan Size   | 6453 lines   | 2026-03-03   |
 | Largest Plan Size | 421 lines    | 2026-03-03   |
-| Total Diff Size   | 37010 lines  | 2026-03-03   |
+| Total Diff Size   | 42210 lines  | 2026-03-03   |
 | Largest Diff Size | 3446 lines   | 2026-03-03   |
 | Average Presence  | 1.00         | 2026-03-03   |
 
@@ -45,5 +45,8 @@ Detailed metrics for individual ADW workflow runs.
 | 2026-03-01 | 9d184498 | 57           | /feature    | 1        | 163               | 810/2/9                         | 2026-03-01 | 2026-03-01 |
 | 2026-03-01 | e924e4a7 | 58           | /feature    | 1        | 187               | 1006/3/12                       | 2026-03-01 | 2026-03-01 |
 | 2026-03-01 | a61cf509 | 59           | /feature    | 1        | 207               | 1002/3/8                        | 2026-03-01 | 2026-03-01 |
+| 2026-03-03 | 75704e1f | 100          | /feature    | 1        | 249               | 719/60/10                       | 2026-03-03 | 2026-03-03 |
 | 2026-03-03 | a692d2db | 78           | /feature    | 1        | 255               | 1832/2/17                       | 2026-03-03 | 2026-03-03 |
-| 2026-03-03 | dc999a0b | 82           | /feature    | 1        | 226               | 2456/2/13                       | 2026-03-03 | 2026-03-03 |
+| 2026-03-03 | 14633eae | 79           | /feature    | 1        | 258               | 2143/2/15                       | 2026-03-03 | 2026-03-03 |
+| 2026-03-03 | 8d28116a | 80           | /feature    | 1        | 297               | 2377/2/15                       | 2026-03-03 | 2026-03-03 |
+| 2026-03-03 | 95deee5d | 81           | /feature    | 1        | 255               | 2353/2/15                       | 2026-03-03 | 2026-03-03 |
