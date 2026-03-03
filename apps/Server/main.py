@@ -33,6 +33,7 @@ from src.adapter.rest.document_routes import router as document_router
 from src.adapter.rest.event_routes import router as event_router
 from src.adapter.rest.inventory_movement_routes import router as inventory_movement_router
 from src.adapter.rest.notification_routes import router as notification_router
+from src.adapter.rest.recipe_routes import router as recipe_router
 from src.config.settings import get_settings
 
 settings = get_settings()
@@ -163,6 +164,7 @@ app.include_router(document_router)
 app.include_router(event_router)
 app.include_router(inventory_movement_router)
 app.include_router(notification_router)
+app.include_router(recipe_router)
 
 print("INFO [Main]: Auth router registered")
 print("INFO [Main]: Entity router registered")
@@ -182,6 +184,7 @@ print("INFO [Main]: Document router registered")
 print("INFO [Main]: Event router registered")
 print("INFO [Main]: Inventory Movement router registered")
 print("INFO [Main]: Notification router registered")
+print("INFO [Main]: Recipe router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 
