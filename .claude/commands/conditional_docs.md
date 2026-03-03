@@ -321,3 +321,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When troubleshooting automatic issue creation after transcript processing
     - When extending the meeting pipeline with additional post-processing steps
     - When working with ADW_METADATA blocks in GitHub issues
+
+- app_docs/feature-a692d2db-restaurant-multi-tenant-entity.md
+  - Conditions:
+    - When working with the restaurant table or RestaurantOS multi-tenant scoping
+    - When implementing RestaurantOS entities that reference restaurant_id
+    - When working with restaurant CRUD API endpoints, service, or repository
+    - When working with user_restaurants junction table or per-restaurant roles
+    - When adding new features to the RestaurantOS module
