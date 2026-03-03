@@ -346,3 +346,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing stock tracking, low-stock detection, or inventory features
     - When working with ResourceType enum (producto, activo, servicio)
     - When working with restaurant-scoped resource authorization
+
+- app_docs/feature-95deee5d-document-entity-crud-backend.md
+  - Conditions:
+    - When working with the document table or Document model in RestaurantOS
+    - When implementing RestaurantOS entities that reference document_id (Contracts, Permits, Payments)
+    - When working with document CRUD API endpoints, service, or repository
+    - When implementing file upload via multipart/form-data for documents
+    - When working with expiration tracking, expiration_status computation, or expiring document alerts
+    - When working with person-document linking (person_id FK with ON DELETE SET NULL)
+    - When working with restaurant-scoped document authorization
