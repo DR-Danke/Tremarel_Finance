@@ -9,7 +9,7 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from src.interface.document_dto import DocumentCreateDTO, DocumentResponseDTO, DocumentUpdateDTO
+from src.interface.document_dto import DocumentCreateDTO, DocumentUpdateDTO
 from src.models.document import Document
 from src.repository.document_repository import document_repository
 from src.repository.restaurant_repository import restaurant_repository
