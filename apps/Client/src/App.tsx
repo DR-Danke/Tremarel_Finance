@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Routes, Route, useLocation, Link } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom'
 import { Box, Typography, Container, Button } from '@mui/material'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
@@ -10,6 +10,11 @@ import { BudgetsPage } from '@/pages/BudgetsPage'
 import { ReportsPage } from '@/pages/ReportsPage'
 import { RecurringTemplatesPage } from '@/pages/RecurringTemplatesPage'
 import { ProspectsPage } from '@/pages/ProspectsPage'
+import { RestaurantOSDashboardPage } from '@/pages/restaurantos/RestaurantOSDashboardPage'
+import { RestaurantOSPersonsPage } from '@/pages/restaurantos/RestaurantOSPersonsPage'
+import { RestaurantOSDocumentsPage } from '@/pages/restaurantos/RestaurantOSDocumentsPage'
+import { RestaurantOSEventsPage } from '@/pages/restaurantos/RestaurantOSEventsPage'
+import { RestaurantOSResourcesPage } from '@/pages/restaurantos/RestaurantOSResourcesPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -174,17 +179,57 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* RestaurantOS routes */}
       <Route
-        path="/poc/restaurant-os/*"
+        path="/poc/restaurant-os"
+        element={<Navigate to="/poc/restaurant-os/dashboard" replace />}
+      />
+      <Route
+        path="/poc/restaurant-os/dashboard"
         element={
           <ProtectedRoute>
             <TRMainLayout>
-              <Box>
-                <Typography variant="h4">RestaurantOS</Typography>
-                <Typography color="text.secondary">
-                  RestaurantOS pages coming soon.
-                </Typography>
-              </Box>
+              <RestaurantOSDashboardPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/restaurant-os/persons"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <RestaurantOSPersonsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/restaurant-os/documents"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <RestaurantOSDocumentsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/restaurant-os/events"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <RestaurantOSEventsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/restaurant-os/resources"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <RestaurantOSResourcesPage />
             </TRMainLayout>
           </ProtectedRoute>
         }
