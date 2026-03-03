@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary — Restaurant Operating System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f4f6f9;
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 0;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+            color: #fff;
+            padding: 40px 32px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .header .meta {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px 48px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header {
+            background: #edf2f7;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a365d;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .card-body {
+            padding: 20px;
+        }
+        .summary-text {
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        .badge-phase1 { background: #c6f6d5; color: #22543d; }
+        .badge-phase2 { background: #bee3f8; color: #2a4365; }
+        .badge-phase3 { background: #e9d8fd; color: #44337a; }
+        .badge-role { background: #edf2f7; color: #2d3748; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        table th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        table tr:last-child td { border-bottom: none; }
+        table tr:hover td { background: #f7fafc; }
+        .discussion-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .discussion-item:last-child { border-bottom: none; }
+        .discussion-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+        .discussion-item p {
+            font-size: 14px;
+            color: #718096;
+        }
+        .decision-list, .next-steps-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decision-list li, .next-steps-list li {
+            padding: 10px 0 10px 28px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+            position: relative;
+        }
+        .decision-list li:last-child, .next-steps-list li:last-child { border-bottom: none; }
+        .decision-list li::before {
+            content: "\2713";
+            position: absolute;
+            left: 4px;
+            color: #38a169;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .next-steps-list li::before {
+            content: "\279C";
+            position: absolute;
+            left: 4px;
+            color: #3182ce;
+            font-weight: 700;
+        }
+        .diagram-section {
+            margin-top: 12px;
+        }
+        .diagram-section h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #3182ce;
+            display: inline-block;
+        }
+        .diagram-wrapper {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .entity-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+        .entity-card.person { border-color: #4A90D9; background: #ebf4ff; }
+        .entity-card.document { border-color: #7B68EE; background: #f0edff; }
+        .entity-card.event { border-color: #E8833A; background: #fff4eb; }
+        .entity-card.resource { border-color: #50C878; background: #edfff4; }
+        .entity-card h5 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .entity-card p {
+            font-size: 12px;
+            color: #718096;
+        }
+        .footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div style="max-width: 900px; margin: 0 auto;">
+        <h1>Restaurant Operating System</h1>
+        <p class="meta">Project Architecture & MVP Planning Session</p>
+        <p class="meta" style="margin-top: 4px;">Meeting Summary &mdash; Generated automatically</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Participants -->
+    <div class="card">
+        <div class="card-header">Participants</div>
+        <div class="card-body">
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Speaker 1</td><td><span class="badge badge-role">Project Lead / Product Architect</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="card">
+        <div class="card-header">Executive Summary</div>
+        <div class="card-body">
+            <p class="summary-text">
+                The meeting presented the complete architecture and phased roadmap for a centralized operational management platform targeting small restaurants. The system is built on four universal entities (Person, Document, Event, Resource) that compose all business functions without rigid modules. MVP Phase 1 covers employee management, task assignment with WhatsApp notifications, document tracking with expiry alerts, and basic inventory. A Phase 2 extension was detailed for recipe standardization, automatic cost calculation via invoice OCR scanning, and profitability alerts.
+            </p>
+        </div>
+    </div>
+
+    <!-- Core Entities -->
+    <div class="card">
+        <div class="card-header">Core Entity Architecture</div>
+        <div class="card-body">
+            <p class="summary-text" style="margin-bottom: 12px;">The entire system is built on 4 universal entities. All business functions (contracts, permits, payroll, inventory, etc.) are compositions of these entities &mdash; no rigid modules.</p>
+            <div class="entity-grid">
+                <div class="entity-card person">
+                    <h5>Person</h5>
+                    <p>Employees, suppliers, owners</p>
+                </div>
+                <div class="entity-card document">
+                    <h5>Document</h5>
+                    <p>Contracts, permits, invoices</p>
+                </div>
+                <div class="entity-card event">
+                    <h5>Event</h5>
+                    <p>Tasks, reminders, payments, shifts</p>
+                </div>
+                <div class="entity-card resource">
+                    <h5>Resource</h5>
+                    <p>Products, assets, services</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discussion Points -->
+    <div class="card">
+        <div class="card-header">Discussion Points</div>
+        <div class="card-body">
+            <div class="discussion-item">
+                <h4>1. Problem Statement</h4>
+                <p>Small restaurants suffer from operational disorder: unclear task ownership, expired permits, inventory discrepancies, uncontrolled waste, and forgotten payments/taxes. Current tools (WhatsApp, notebooks, memory) are insufficient. POS systems only handle sales; ERPs are expensive and rigid.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>2. Core Entity Architecture</h4>
+                <p>The entire system is built on 4 universal entities: Person, Document, Event, and Resource. All business functions are composed from combinations of these entities rather than rigid modules.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>3. Event-Driven System Design</h4>
+                <p>The Event entity serves as the system's nervous system. All key flows pass through Events: documents with expiry dates create Events, Events trigger notifications, recurring tasks generate daily Events, and inventory changes register movements.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>4. MVP Phase 1 Scope</h4>
+                <p>Employee directory, task lists with date/frequency assignment, daily WhatsApp task notifications, document upload with expiration dates, automatic pre-expiry alerts, and basic inventory with entry/exit movements.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>5. Module Composition Pattern</h4>
+                <p>Business functions are entity combinations: Contracts = Person + Document + Event, Permits = Document + Event, Checklists = Event + Person, Inventory = Resource + Event, Payments = Event + Document, and more.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>6. Recipe & Cost Management Extension</h4>
+                <p>Phase 2 adds Recipe and Recipe_Item entities. Recipes define theoretical dish costs by linking resources with quantities. Ingredient cost changes trigger automatic recipe cost recalculation.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>7. Invoice Scanning & OCR Pipeline</h4>
+                <p>Supplier invoices are photographed and processed via AI/OCR to extract products, quantities, and unit prices. This automatically updates Resource costs and triggers recipe recalculations.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>8. Profitability Alerts</h4>
+                <p>Each Recipe tracks current cost and margin. When margin drops below threshold (e.g., 60%), the system creates an alert Event notifying the owner via WhatsApp/push with dish details and margin data.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>9. Permit & Compliance Management</h4>
+                <p>Document + Event combinations handle regulatory compliance: food handling, fire department, commerce registration, extinguisher recharges, and health inspections with advance alerts.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>10. Technology Stack</h4>
+                <p>PostgreSQL (Supabase), REST/GraphQL API, React/FlutterFlow frontend, Email + WhatsApp API notifications, DocuSign API for digital signatures (Phase 2).</p>
+            </div>
+            <div class="discussion-item">
+                <h4>11. Phased Roadmap</h4>
+                <p><span class="badge badge-phase1">Phase 1</span> CRUD + Notifications + Basic Inventory &nbsp; <span class="badge badge-phase2">Phase 2</span> Contracts + Payroll + Production &nbsp; <span class="badge badge-phase3">Phase 3</span> AI: Prediction, Analysis, Agents</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Items -->
+    <div class="card">
+        <div class="card-header">Action Items</div>
+        <div class="card-body" style="padding: 0;">
+            <table>
+                <thead>
+                    <tr><th>Action</th><th>Owner</th><th>Target</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Build CRUD operations for Person, Document, Event, Resource</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase1">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td>Implement notification system (email, push, WhatsApp channels)</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase1">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td>Build Inventory_Movement tracking (purchase, usage, production, waste)</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase1">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td>Implement event-driven automation (document expiry &rarr; Events, recurring tasks &rarr; daily Events)</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase1">Phase 1</span></td>
+                    </tr>
+                    <tr>
+                        <td>Design and implement Recipe and Recipe_Item data models</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase2">Phase 2</span></td>
+                    </tr>
+                    <tr>
+                        <td>Build invoice scanning pipeline with OCR for automatic cost extraction</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase2">Phase 2</span></td>
+                    </tr>
+                    <tr>
+                        <td>Implement automatic recipe cost recalculation on ingredient price changes</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase2">Phase 2</span></td>
+                    </tr>
+                    <tr>
+                        <td>Build profitability alert system with configurable margin thresholds</td>
+                        <td>&mdash;</td>
+                        <td><span class="badge badge-phase2">Phase 2</span></td>
+                    </tr>
+                    <tr>
+                        <td>Convert project overview into architecture diagram and technical backlog</td>
+                        <td>&mdash;</td>
+                        <td>&mdash;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Decisions -->
+    <div class="card">
+        <div class="card-header">Decisions Made</div>
+        <div class="card-body">
+            <ul class="decision-list">
+                <li>The system will be built on 4 universal entities (Person, Document, Event, Resource) rather than rigid modules</li>
+                <li>Event entity serves as the central nervous system &mdash; all workflows pass through Events</li>
+                <li>MVP Phase 1 scope: employee management, task assignment with WhatsApp notifications, document tracking with expiry alerts, and basic inventory</li>
+                <li>Recipe and cost management is explicitly deferred to Phase 2 (depends on established inventory, defined recipes, digitized invoices, and minimum operational discipline)</li>
+                <li>No sub-inventories or complex cost centers in Phase 1 &mdash; kept deliberately simple</li>
+                <li>Technology stack: PostgreSQL (Supabase), REST/GraphQL API, React/FlutterFlow frontend, WhatsApp + Email notifications</li>
+                <li>The platform is positioned as a &ldquo;daily operating system for small restaurants&rdquo; &mdash; not a POS or ERP</li>
+                <li>Design principle: &ldquo;We don&rsquo;t design functions. We design a system that enables functions.&rdquo;</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="card">
+        <div class="card-header">Next Steps</div>
+        <div class="card-body">
+            <ul class="next-steps-list">
+                <li>Set up PostgreSQL database on Supabase with the 4 core entity schemas plus Inventory_Movement</li>
+                <li>Build Phase 1 MVP with CRUD, notifications, and basic inventory</li>
+                <li>Convert project overview into a formal architecture diagram</li>
+                <li>Create a technical development backlog from the phased roadmap</li>
+                <li>Validate Phase 1 with real small restaurant operations before proceeding to Phase 2</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Technical Architecture Diagrams -->
+    <div class="card">
+        <div class="card-header">Technical Architecture Diagrams</div>
+        <div class="card-body">
+
+            <div class="diagram-section">
+                <h4>Core Entity Architecture</h4>
+                <div class="diagram-wrapper">
+                    <pre class="mermaid">
+flowchart TD
+    subgraph Universal Entities
+        P["Person\n(employees, suppliers, owners)"]
+        D["Document\n(contracts, permits, invoices)"]
+        E["Event\n(tasks, reminders, payments, shifts)"]
+        R["Resource\n(products, assets, services)"]
+    end
+
+    subgraph Relationships
+        P -->|has| D
+        P -->|responsible for| E
+        D -->|triggers| E
+        R -->|tracked by| E
+        R -->|referenced in| D
+    end
+
+    subgraph Inventory
+        IM["Inventory_Movement\n(entry/exit with motive)"]
+        R -->|stock changes| IM
+        P -->|registers| IM
+    end
+
+    style P fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style D fill:#7B68EE,stroke:#5A4CB5,color:#fff
+    style E fill:#E8833A,stroke:#B8652D,color:#fff
+    style R fill:#50C878,stroke:#3A9458,color:#fff
+    style IM fill:#FFD700,stroke:#B8960A,color:#333
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Event-Driven System Flow</h4>
+                <div class="diagram-wrapper">
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Triggers
+        DOC["Document\nwith expiry date"]
+        TASK["Recurring Task\nwith frequency"]
+        INV["Inventory Change"]
+        RECIPE["Margin Below\nThreshold"]
+    end
+
+    DOC -->|creates| EVT["EVENT"]
+    TASK -->|generates daily| EVT
+    INV -->|registers| MOV["Inventory\nMovement"]
+    RECIPE -->|creates| EVT
+
+    EVT -->|date arrives| NOTIFY{"Notification\nEngine"}
+
+    NOTIFY -->|channel| EMAIL["Email"]
+    NOTIFY -->|channel| PUSH_N["Push"]
+    NOTIFY -->|channel| WA["WhatsApp"]
+
+    style EVT fill:#E8833A,stroke:#B8652D,color:#fff
+    style NOTIFY fill:#FF6B6B,stroke:#CC5555,color:#fff
+    style EMAIL fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style PUSH_N fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style WA fill:#25D366,stroke:#1DA851,color:#fff
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Module Composition from Entities</h4>
+                <div class="diagram-wrapper">
+                    <pre class="mermaid">
+flowchart TD
+    P["Person"]
+    D["Document"]
+    E["Event"]
+    R["Resource"]
+    AI["AI Engine"]
+
+    P & D & E --> CONTRACTS["Contracts"]
+    D & E --> PERMITS["Permits"]
+    E & P --> CHECKLISTS["Checklists"]
+    R & E --> INVENTORY_MOD["Inventory"]
+    E & D --> PAYMENTS["Payments"]
+    P & E --> PAYROLL["Payroll"]
+    R & E --> PURCHASING["Purchasing"]
+    E & AI --> MARKETING["Marketing"]
+    R & E --> PRODUCTION["Production"]
+
+    style P fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style D fill:#7B68EE,stroke:#5A4CB5,color:#fff
+    style E fill:#E8833A,stroke:#B8652D,color:#fff
+    style R fill:#50C878,stroke:#3A9458,color:#fff
+    style AI fill:#FF69B4,stroke:#CC5490,color:#fff
+    style CONTRACTS fill:#F0F0F0,stroke:#999
+    style PERMITS fill:#F0F0F0,stroke:#999
+    style CHECKLISTS fill:#F0F0F0,stroke:#999
+    style INVENTORY_MOD fill:#F0F0F0,stroke:#999
+    style PAYMENTS fill:#F0F0F0,stroke:#999
+    style PAYROLL fill:#F0F0F0,stroke:#999
+    style PURCHASING fill:#F0F0F0,stroke:#999
+    style MARKETING fill:#F0F0F0,stroke:#999
+    style PRODUCTION fill:#F0F0F0,stroke:#999
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Invoice Scanning and Cost Update Pipeline</h4>
+                <div class="diagram-wrapper">
+                    <pre class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant SYS as System
+    participant OCR as AI / OCR Engine
+    participant DB as Database
+
+    U->>SYS: Upload invoice photo
+    SYS->>DB: Create Document (type: supplier_invoice)
+    SYS->>OCR: Send image for extraction
+    OCR-->>SYS: Return supplier, products, quantities, unit prices
+
+    loop For each detected item
+        SYS->>DB: Find matching Resource
+        SYS->>DB: Update Resource.last_unit_cost
+        SYS->>DB: Create Inventory_Movement (entry, purchase)
+        SYS->>DB: Find Recipes using this Resource
+        loop For each affected Recipe
+            SYS->>DB: Recalculate Recipe.current_cost
+            SYS->>DB: Update Recipe.margin
+            alt Margin below threshold
+                SYS->>DB: Create Event (profitability_alert)
+                SYS->>U: Send WhatsApp/Push notification
+            end
+        end
+    end
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Recipe Cost Calculation and Profitability Flow</h4>
+                <div class="diagram-wrapper">
+                    <pre class="mermaid">
+flowchart TD
+    REC["Recipe\n(dish name, sale price)"] -->|contains| RI["Recipe_Items\n(resource + quantity + unit)"]
+    RI -->|references| RES["Resource\n(last_unit_cost)"]
+
+    RES -->|cost data| CALC["Cost Calculation\nsum of quantity x unit_cost"]
+    CALC -->|updates| COST["Recipe.current_cost"]
+
+    COST --> MARGIN{"Calculate Margin\n(sale_price - cost) / sale_price"}
+
+    MARGIN -->|above threshold| OK["Profitable\nNo action needed"]
+    MARGIN -->|below threshold| ALERT["Create Event\ntype: profitability_alert"]
+
+    ALERT --> NOTIF_SEND["Notify Owner\nvia WhatsApp / Push"]
+    NOTIF_SEND --> MSG["Dish X is no longer profitable\nCost: 22,000 - Price: 30,000\nMargin: 26%"]
+
+    style REC fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style RI fill:#7B68EE,stroke:#5A4CB5,color:#fff
+    style RES fill:#50C878,stroke:#3A9458,color:#fff
+    style CALC fill:#FFD700,stroke:#B8960A,color:#333
+    style COST fill:#FFD700,stroke:#B8960A,color:#333
+    style OK fill:#50C878,stroke:#3A9458,color:#fff
+    style ALERT fill:#FF6B6B,stroke:#CC5555,color:#fff
+    style NOTIF_SEND fill:#E8833A,stroke:#B8652D,color:#fff
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Inventory Movement Lifecycle</h4>
+                <div class="diagram-wrapper">
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Entry Sources
+        PUR["Purchase\n(from supplier invoice)"]
+        PROD_IN["Production\n(output)"]
+    end
+
+    subgraph Exit Sources
+        USE_OP["Usage\n(daily operations)"]
+        RECIPE_OUT["Recipe Production\n(ingredient consumption)"]
+        WASTE["Waste / Shrinkage\n(merma)"]
+    end
+
+    PUR -->|entry| STOCK["Resource\nstock_actual"]
+    PROD_IN -->|entry| STOCK
+
+    STOCK -->|exit| USE_OP
+    STOCK -->|exit| RECIPE_OUT
+    STOCK -->|exit| WASTE
+
+    STOCK -->|tracked via| IM_TRACK["Inventory_Movement\n(resource_id, type, qty,\nmotive, date, person_id)"]
+
+    IM_TRACK -->|feeds| PREDICT["Future Prediction\nand Analytics"]
+    IM_TRACK -->|below minimum| ALERT_LOW["Low Stock Alert\n(Event created)"]
+
+    style STOCK fill:#50C878,stroke:#3A9458,color:#fff
+    style IM_TRACK fill:#FFD700,stroke:#B8960A,color:#333
+    style PREDICT fill:#7B68EE,stroke:#5A4CB5,color:#fff
+    style ALERT_LOW fill:#FF6B6B,stroke:#CC5555,color:#fff
+                    </pre>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>This meeting summary was generated automatically. Please review for accuracy.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true});</script>
+
+</body>
+</html>
