@@ -458,3 +458,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with notification channel routing (email, WhatsApp, or both)
     - When extending the notification system with new channels
     - When troubleshooting email sending, stub mode, or email validation
+
+- app_docs/feature-3ad42112-recipe-data-model-crud.md
+  - Conditions:
+    - When working with the recipe table or Recipe/RecipeItem models in RestaurantOS
+    - When implementing RestaurantOS entities that reference recipe_id
+    - When working with recipe CRUD API endpoints, service, or repository
+    - When implementing cost calculation, margin computation, or profitability tracking
+    - When working with ingredient-to-recipe linking or RecipeItem management
+    - When building the recipe management frontend (Wave 6)
+    - When implementing automatic cost recalculation from resource price changes
