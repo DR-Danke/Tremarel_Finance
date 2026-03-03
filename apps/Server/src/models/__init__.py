@@ -1,5 +1,6 @@
 """Models layer - database models and entities."""
 
+from src.models.document import Document
 from src.models.entity import Entity
 from src.models.meeting_record import MeetingRecord
 from src.models.person import Person
@@ -24,4 +25,5 @@ __all__ = [
     "UserRestaurant",
     "Person",
     "Resource",
+    "Document",
 ]
