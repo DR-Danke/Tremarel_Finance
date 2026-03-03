@@ -356,3 +356,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with expiration tracking, expiration_status computation, or expiring document alerts
     - When working with person-document linking (person_id FK with ON DELETE SET NULL)
     - When working with restaurant-scoped document authorization
+
+- app_docs/feature-dc999a0b-event-entity-crud-backend.md
+  - Conditions:
+    - When working with the event table or Event model in RestaurantOS
+    - When implementing recurring events, tasks, deadlines, or scheduled alerts
+    - When working with event CRUD API endpoints, service, or repository
+    - When implementing automation flows that create events (stock alerts, expiry alerts, profitability alerts)
+    - When working with event types (tarea, vencimiento, pago, turno, checklist, alerta_stock, alerta_rentabilidad)
+    - When working with recurring instance generation or parent-child event relationships
+    - When working with restaurant-scoped event authorization or notification channels
