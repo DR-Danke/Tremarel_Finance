@@ -2,6 +2,7 @@
 
 from src.models.entity import Entity
 from src.models.meeting_record import MeetingRecord
+from src.models.person import Person
 from src.models.pipeline_stage import PipelineStage
 from src.models.prospect import Prospect
 from src.models.restaurant import Restaurant
@@ -20,4 +21,5 @@ __all__ = [
     "MeetingRecord",
     "Restaurant",
     "UserRestaurant",
+    "Person",
 ]

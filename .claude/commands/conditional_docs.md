@@ -329,3 +329,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with restaurant CRUD API endpoints, service, or repository
     - When working with user_restaurants junction table or per-restaurant roles
     - When adding new features to the RestaurantOS module
+
+- app_docs/feature-14633eae-person-entity-crud-backend.md
+  - Conditions:
+    - When working with the person table or Person model in RestaurantOS
+    - When implementing RestaurantOS entities that reference person_id (Documents, Events, Inventory Movements)
+    - When working with person CRUD API endpoints, service, or repository
+    - When adding employee, supplier, or owner management features
+    - When working with restaurant-scoped person authorization or PersonType enum
