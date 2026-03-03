@@ -492,3 +492,6 @@ export interface StageTransitionListResponse {
 
 // Restaurant types
 export type { Restaurant, CreateRestaurantData, UpdateRestaurantData } from './restaurant'
+
+// Person types
+export type { Person, PersonType, PersonCreate, PersonUpdate, PersonFilters } from './person'
