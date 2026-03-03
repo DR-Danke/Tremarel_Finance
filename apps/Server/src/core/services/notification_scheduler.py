@@ -1,6 +1,7 @@
 """Notification scheduler for automated task summary and alert sending."""
 
 from datetime import date
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -11,6 +12,7 @@ from src.adapter.whatsapp_adapter import whatsapp_adapter
 from src.core.services.event_service import event_service
 from src.core.services.notification_service import NotificationService
 from src.core.services.person_service import person_service
+from src.repository.document_repository import document_repository
 from src.repository.notification_log_repository import notification_log_repository
 
 # Create the notification service singleton here to avoid circular imports
@@ -287,4 +289,109 @@ async def send_morning_task_summaries(
         "sent_count": sent_count,
         "skipped_count": skipped_count,
         "results": results,
+    }
+
+
+async def process_document_expiration_alerts(
+    db: Session,
+    user_id: UUID,
+    restaurant_id: UUID,
+    target_date: Optional[date] = None,
+) -> dict:
+    """
+    Process due document expiration alert events and send notifications.
+
+    Fetches vencimiento events due on target_date, resolves the responsible
+    person, and dispatches notifications via the preferred channel.
+
+    Args:
+        db: Database session
+        user_id: User UUID for authorization
+        restaurant_id: Restaurant UUID
+        target_date: Date to check for due alerts (defaults to today)
+
+    Returns:
+        Dictionary with processed, sent, skipped, failed counts
+    """
+    if target_date is None:
+        target_date = date.today()
+
+    print(f"INFO [NotificationScheduler]: Processing expiration alerts for restaurant {restaurant_id} on {target_date}")
+
+    due_events = event_service.get_due_events(db, user_id, restaurant_id, target_date)
+    vencimiento_events = [
+        e for e in due_events
+        if e.type == "vencimiento" and e.related_document_id is not None
+    ]
+
+    print(f"INFO [NotificationScheduler]: Found {len(vencimiento_events)} vencimiento events due on {target_date}")
+
+    results = []
+    sent_count = 0
+    skipped_count = 0
+    failed_count = 0
+
+    for event in vencimiento_events:
+        document = document_repository.get_by_id(db, event.related_document_id)
+        if document is None:
+            print(f"WARNING [NotificationScheduler]: Document {event.related_document_id} not found for event {event.id}")
+            skipped_count += 1
+            continue
+
+        if event.responsible_id is None:
+            print(f"INFO [NotificationScheduler]: Skipping event {event.id} - no responsible person")
+            skipped_count += 1
+            continue
+
+        try:
+            person = person_service.get_person(db, user_id, event.responsible_id)
+        except (ValueError, PermissionError) as e:
+            print(f"ERROR [NotificationScheduler]: Could not fetch person {event.responsible_id}: {str(e)}")
+            skipped_count += 1
+            continue
+
+        channel = _determine_channel(person)
+        if channel == "none":
+            print(f"INFO [NotificationScheduler]: Skipping person {event.responsible_id} - no contact info")
+            skipped_count += 1
+            continue
+
+        days_remaining = (document.expiration_date - target_date).days
+        message = format_document_expiry_message(
+            document.type, str(document.expiration_date), days_remaining
+        )
+
+        person_sent = False
+
+        if channel in ("whatsapp", "both"):
+            whatsapp_number = getattr(person, "whatsapp", "")
+            sent = await _send_via_channel(
+                "whatsapp", whatsapp_number, message, db, restaurant_id,
+                event.responsible_id, getattr(person, "name", ""), results,
+            )
+            if sent:
+                person_sent = True
+
+        if channel in ("email", "both"):
+            email_address = getattr(person, "email", "")
+            sent = await _send_via_channel(
+                "email", email_address, message, db, restaurant_id,
+                event.responsible_id, getattr(person, "name", ""), results,
+            )
+            if sent:
+                person_sent = True
+
+        if person_sent:
+            sent_count += 1
+        else:
+            failed_count += 1
+
+    processed = len(vencimiento_events)
+    print(f"INFO [NotificationScheduler]: Processed {processed} expiration alerts for restaurant {restaurant_id}: sent={sent_count}, skipped={skipped_count}, failed={failed_count}")
+
+    return {
+        "processed": processed,
+        "sent": sent_count,
+        "skipped": skipped_count,
+        "failed": failed_count,
     }

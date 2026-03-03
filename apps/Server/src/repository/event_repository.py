@@ -218,6 +218,30 @@ class EventRepository:
         print(f"INFO [EventRepository]: Flagged {count} events as overdue")
         return count
 
+    def delete_by_related_document(self, db: Session, document_id: UUID) -> int:
+        """
+        Delete all vencimiento events linked to a specific document.
+
+        Args:
+            db: Database session
+            document_id: Document UUID
+
+        Returns:
+            Count of deleted events
+        """
+        print(f"INFO [EventRepository]: Deleting vencimiento events for document {document_id}")
+        count = (
+            db.query(Event)
+            .filter(
+                Event.related_document_id == document_id,
+                Event.type == "vencimiento",
+            )
+            .delete(synchronize_session="fetch")
+        )
+        db.commit()
+        print(f"INFO [EventRepository]: Deleted {count} vencimiento events for document {document_id}")
+        return count
+
     def bulk_create(self, db: Session, events_data: list[dict]) -> list[Event]:
         """
         Bulk insert events for recurring instance generation.

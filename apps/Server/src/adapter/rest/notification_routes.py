@@ -1,5 +1,6 @@
 """Notification endpoint routes."""
 
+from datetime import date
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
@@ -7,7 +8,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
-from src.core.services.notification_scheduler import send_morning_task_summaries
+from src.core.services.notification_scheduler import (
+    process_document_expiration_alerts,
+    send_morning_task_summaries,
+)
 from src.interface.notification_dto import (
     DailySummaryTriggerResponseDTO,
     NotificationLogResponseDTO,
@@ -102,4 +106,52 @@ async def list_notification_logs(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to query notification logs",
+        )
+
+
+@router.post("/process-expiration-alerts")
+async def trigger_expiration_alerts(
+    restaurant_id: UUID = Query(..., description="Restaurant UUID to process alerts for"),
+    target_date: Optional[date] = Query(None, description="Target date for alerts (defaults to today)"),
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> dict:
+    """
+    Process due document expiration alert events and send notifications.
+
+    Designed to be called manually or by an external cron job.
+
+    Args:
+        restaurant_id: Restaurant UUID
+        target_date: Optional target date (defaults to today)
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        Summary dict with processed, sent, skipped, failed counts
+    """
+    print(f"INFO [NotificationRoutes]: Processing expiration alerts for restaurant {restaurant_id}")
+
+    user_id = UUID(current_user["id"])
+    try:
+        result = await process_document_expiration_alerts(db, user_id, restaurant_id, target_date)
+        print(f"INFO [NotificationRoutes]: Expiration alerts processed: {result['processed']} processed, {result['sent']} sent")
+        return result
+    except PermissionError as e:
+        print(f"ERROR [NotificationRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        print(f"ERROR [NotificationRoutes]: Validation error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
+    except Exception as e:
+        print(f"ERROR [NotificationRoutes]: Unexpected error processing alerts: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to process expiration alerts",
         )
