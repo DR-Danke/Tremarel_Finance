@@ -411,3 +411,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When adding employee, supplier, or owner management UI features
     - When implementing frontend CRUD pages that follow the person management pattern
     - When troubleshooting person list, search, type filter, or dialog-based form issues
+
+- app_docs/feature-26972c6e-document-management-page.md
+  - Conditions:
+    - When working with the RestaurantOS document management frontend page
+    - When modifying RestaurantOSDocumentsPage, TRDocumentForm, useDocuments, or documentService
+    - When working with TRExpirationBadge or expiration status display
+    - When implementing file upload with drag-and-drop or multipart/form-data submissions
+    - When implementing frontend CRUD pages that follow the document management pattern
+    - When troubleshooting document filters, file upload, or expiration badge issues
