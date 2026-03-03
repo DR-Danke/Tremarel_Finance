@@ -1,6 +1,5 @@
 """Tests for notification API endpoints."""
 
-from datetime import date
 from typing import Generator
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
