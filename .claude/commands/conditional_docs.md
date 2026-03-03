@@ -429,3 +429,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with date-grouped tables or overdue event highlighting
     - When implementing frontend CRUD pages that follow the event management pattern
     - When troubleshooting event filters, conditional form validation, or status badge display
+
+- app_docs/feature-958fff68-resource-inventory-page.md
+  - Conditions:
+    - When working with the RestaurantOS resource & inventory management frontend page
+    - When modifying RestaurantOSResourcesPage, TRResourceForm, TRInventoryMovementForm, useResources, useInventoryMovements, resourceService, or inventoryMovementService
+    - When implementing stock level indicators, low-stock warnings, or inventory movement tracking in the UI
+    - When working with Resource or InventoryMovement TypeScript types and Spanish label constants
+    - When implementing frontend CRUD pages that follow the resource management pattern
+    - When troubleshooting resource filters, movement registration, or detail drawer issues
