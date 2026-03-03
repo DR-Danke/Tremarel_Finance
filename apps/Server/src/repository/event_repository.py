@@ -1,6 +1,6 @@
 """Event repository for database operations."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from typing import Optional
 from uuid import UUID
 
