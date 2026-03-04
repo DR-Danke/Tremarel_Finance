@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Lutec: Bank Reconciliation & Financial Operations Discovery</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; color: #2d3748; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .header .meta { font-size: 14px; opacity: 0.9; display: flex; gap: 20px; flex-wrap: wrap; }
+        .header .meta span { display: flex; align-items: center; gap: 6px; }
+        .content { background: white; padding: 0; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .section { padding: 30px 40px; border-bottom: 1px solid #e2e8f0; }
+        .section:last-child { border-bottom: none; }
+        .section h2 { font-size: 18px; font-weight: 700; color: #1a365d; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8; display: inline-block; }
+        .summary-text { font-size: 15px; color: #4a5568; background: #f7fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #2b6cb0; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .participant-card { background: #f7fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .participant-card .name { font-weight: 600; color: #1a365d; font-size: 14px; }
+        .participant-card .role { font-size: 13px; color: #718096; margin-top: 4px; }
+        .company-info { display: flex; gap: 30px; flex-wrap: wrap; }
+        .company-info .info-item { background: #ebf8ff; padding: 14px 20px; border-radius: 8px; flex: 1; min-width: 200px; }
+        .company-info .info-label { font-size: 12px; text-transform: uppercase; color: #2b6cb0; font-weight: 600; letter-spacing: 0.5px; }
+        .company-info .info-value { font-size: 15px; font-weight: 600; color: #1a365d; margin-top: 4px; }
+        .discussion-item { margin-bottom: 16px; padding: 16px; background: #f7fafc; border-radius: 8px; border-left: 3px solid #2b6cb0; }
+        .discussion-item .topic { font-weight: 700; color: #1a365d; font-size: 15px; margin-bottom: 6px; }
+        .discussion-item .desc { font-size: 14px; color: #4a5568; }
+        .action-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #fffaf0; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #dd6b20; }
+        .action-item .number { background: #dd6b20; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+        .action-item .details { flex: 1; }
+        .action-item .details .desc { font-size: 14px; color: #2d3748; font-weight: 500; }
+        .action-item .details .owner { font-size: 13px; color: #dd6b20; margin-top: 4px; font-weight: 600; }
+        .decision-list { list-style: none; }
+        .decision-list li { padding: 10px 14px; background: #f0fff4; border-radius: 6px; margin-bottom: 8px; font-size: 14px; border-left: 3px solid #38a169; position: relative; padding-left: 30px; }
+        .decision-list li::before { content: "\2713"; position: absolute; left: 10px; color: #38a169; font-weight: 700; }
+        .next-step-list { list-style: none; counter-reset: step; }
+        .next-step-list li { padding: 10px 14px; background: #ebf8ff; border-radius: 6px; margin-bottom: 8px; font-size: 14px; border-left: 3px solid #2b6cb0; position: relative; padding-left: 36px; counter-increment: step; }
+        .next-step-list li::before { content: counter(step); position: absolute; left: 8px; background: #2b6cb0; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+        .diagram-container { margin-bottom: 24px; }
+        .diagram-container h3 { font-size: 15px; font-weight: 600; color: #2b6cb0; margin-bottom: 12px; }
+        .diagram-container .mermaid { background: #f7fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #a0aec0; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lutec - Bank Reconciliation & Financial Operations Discovery</h1>
+            <div class="meta">
+                <span>March 4, 2026 - 2:25 PM</span>
+                <span>Duration: ~40 minutes</span>
+                <span>Discovery Meeting</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Company Info -->
+            <div class="section">
+                <h2>Company Information</h2>
+                <div class="company-info">
+                    <div class="info-item">
+                        <div class="info-label">Company</div>
+                        <div class="info-value">Lutec</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Primary Contact</div>
+                        <div class="info-value">Catalina Carranza</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Role</div>
+                        <div class="info-value">Financial Manager</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2>Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Daniel Cardona</div>
+                        <div class="role">Technology & Process Automation Consultant</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Catalina Carranza</div>
+                        <div class="role">Financial Manager - Lutec</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Jose</div>
+                        <div class="role">Inventory Manager - Lutec</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Daniel Giraldo</div>
+                        <div class="role">Business Development / Facilitator</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2>Executive Summary</h2>
+                <div class="summary-text">
+                    Discovery meeting at Lutec to map financial operations and identify automation opportunities. The financial team manages 5 bank accounts (2 savings, 1 checking, 2 trust/fiduciary) with entirely manual daily and monthly reconciliation using Excel VLOOKUP/CONCATENATE formulas. Key pain points include: complex fiduciary payment matching (single trust sends payments from multiple unnamed clients), manual DIAN/Radian invoice acceptance for 500+ monthly invoices via one-by-one XML upload, and a fragmented procure-to-pay chain spanning three departments (Logistics, Inventory, Accounting) across World Office ERP and Monday.com. Lutec is migrating to Uranit ERP for better budget control. The consultant will start by automating bank reconciliation using ~30 accounting rules, with February data from Davivienda and Bogota banks as proof of concept.
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2>Discussion Points</h2>
+
+                <div class="discussion-item">
+                    <div class="topic">1. Bank Reconciliation Process</div>
+                    <div class="desc">Treasury downloads daily bank movements (Excel for working, PDF for official records) from 5 accounts and cross-references with World Office accounting auxiliaries. Daily reconciliation tracks entries/exits for cash receipts and disbursements. Monthly full reconciliation uses CONCATENATE and VLOOKUP formulas in Excel. Payroll flat files add complexity as they show lump sums that must be broken down by employee. Monthly close takes ~1 week with reports delivered to management with a one-week delay.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">2. Procure-to-Pay Workflow</div>
+                    <div class="desc">Three departments handle each purchase: Logistics creates Purchase Orders (OC) in World Office and tracks in Monday.com; Inventory receives goods at 47 warehouses, validates against OC, and creates Supplier Receipt (RP) in World Office; Accounting validates the full chain (OC + RP + Invoice) before authorizing Treasury to pay. Missing OCs or RPs cause significant delays. The process also handles advances/prepayments which complicate tracking.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">3. DIAN/Radian Invoice Acceptance</div>
+                    <div class="desc">Over 500 monthly purchase invoices (95%+ domestic) require acceptance or rejection events filed with Colombia's DIAN tax authority through the Radian system. Currently done one-by-one via XML upload. The team recently tested a third-party service for bulk XML download and mass upload, which proved significantly faster. DIAN is the source of truth for received invoices, not email or the ERP.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">4. Fiduciary Payment Matching (Accounts Receivable)</div>
+                    <div class="desc">Many clients pay through trust/fiduciary entities, which send payments aggregating multiple clients without identifying which client paid what amount. The collections coordinator maintains a manual mapping of which trusts typically pay for which clients, but this only resolves ~80% of cases. Clients also apply variable withholding tax percentages inconsistently, adding further reconciliation complexity.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">5. Inventory Management</div>
+                    <div class="desc">47 warehouses across project sites. Inventory receives ~50 purchase orders daily during peak periods (first 1.5 weeks of month). Physical inventory managed by administrative staff with Excel Kardex as backup. Daily reports sent to coordination for World Office data entry. Warehouse staff send receipt documents via email for manual processing.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">6. ERP Migration: World Office to Uranit</div>
+                    <div class="desc">Lutec is migrating from World Office (current ERP) to Uranit (Chilean ERP). Key drivers: World Office cannot link purchase orders to receipts to invoices automatically, and Engineering department cannot control project budgets at APU (Analysis per Unit) detail level. Uranit promises automated document linking and budget alerts. Currently in training phase; full migration not yet started.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">7. Two Sales Models: Engineering vs Illumination</div>
+                    <div class="desc">Engineering sells projects as functional units (bundling labor, supplies, provisioning) and invoices the whole project without requiring inventory detail. Illumination sells products directly, requiring inventory tracking, purchase orders tied to quotes, and item-level invoicing. Both models share the same procurement chain but diverge at the sales/invoicing stage.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">8. Budget Control Gap</div>
+                    <div class="desc">Engineering uses APU (Average Per Unit) budgets for client proposals but World Office cannot track actual costs against these budgets at the required detail level. No alerts exist for over-purchasing or unauthorized cost overruns. Yearly purchase projections were introduced in 2025 and have been helpful but are still manual.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">9. Monthly Close Delays</div>
+                    <div class="desc">Monthly financial close takes approximately one week after month-end. Delays caused by: uncontabilized invoices, pending bank final statements (available after the 5th), and incomplete reconciliations. Weekly reports to management are delivered with a one-week lag and may still contain unreconciled items.</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2>Action Items</h2>
+
+                <div class="action-item">
+                    <div class="number">1</div>
+                    <div class="details">
+                        <div class="desc">Send 6 documents for February: Davivienda (bank statement PDF, bank movements Excel, World Office auxiliary) and Bogota (bank statement PDF, bank movements Excel, World Office auxiliary)</div>
+                        <div class="owner">Owner: Catalina Carranza</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="number">2</div>
+                    <div class="details">
+                        <div class="desc">Analyze February bank reconciliation data from Davivienda and Bogota to prototype automated matching using ~30 accounting rules</div>
+                        <div class="owner">Owner: Daniel Cardona</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="number">3</div>
+                    <div class="details">
+                        <div class="desc">Schedule discovery meeting with Oscar (budget department) to understand budget control processes</div>
+                        <div class="owner">Owner: Daniel Giraldo</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="number">4</div>
+                    <div class="details">
+                        <div class="desc">Sit with Catalina's team to map all reconciliation rules, cross-reference logic, and exception patterns</div>
+                        <div class="owner">Owner: Daniel Cardona</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decisions -->
+            <div class="section">
+                <h2>Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>Bank reconciliation will be the first automation focus area</li>
+                    <li>Davivienda and Bogota bank accounts will be used as initial proof-of-concept scope</li>
+                    <li>February 2026 data will be used for the pilot analysis</li>
+                    <li>ERP migration to Uranit is a confirmed strategic decision (already in training phase)</li>
+                    <li>Budget process (Oscar's area) identified as second priority automation opportunity</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Next Steps</h2>
+                <ul class="next-step-list">
+                    <li>Catalina sends 6 February bank documents to Daniel Cardona's email</li>
+                    <li>Daniel Cardona analyzes reconciliation data and prototypes automated matching</li>
+                    <li>Follow-up meeting with Oscar to discover budget control processes and pain points</li>
+                    <li>Working session with Catalina's team to document all ~30 accounting reconciliation rules</li>
+                    <li>Daniel Giraldo to identify other departments at Lutec that could benefit from process automation</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture -->
+            <div class="section">
+                <h2>Technical Architecture</h2>
+
+                <div class="diagram-container">
+                    <h3>Procure-to-Pay Process Flow</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A["Engineering / Illumination\nIdentifies Need"] --> B["Logistics\nCreates Purchase Order - OC\nin World Office"]
+    B --> C["OC tracked in\nMonday.com board"]
+    B --> D["OC sent to\nSupplier"]
+    D --> E{"Supplier\nAccepts?"}
+    E -->|Yes| F["Supplier Delivers\nto Warehouse"]
+    E -->|No| G["Negotiate\nTerms"]
+    G --> D
+    F --> H["Inventory validates:\nQuantities, References,\nColors, Brands vs OC"]
+    H --> I{"Everything\nMatches?"}
+    I -->|Yes| J["Inventory creates\nSupplier Receipt - RP\nin World Office"]
+    I -->|No| K["Flag Discrepancy\nContact Logistics"]
+    K --> H
+    J --> L["Supplier Sends\nInvoice"]
+    L --> M["Invoice appears\nin DIAN"]
+    M --> N["Accounting validates:\nOC + RP + Invoice\nall match"]
+    N --> O{"Full Chain\nComplete?"}
+    O -->|Yes| P["Accounting\nRecords Invoice"]
+    O -->|No| Q["Investigate:\nMissing OC? Missing RP?\nAmount Mismatch?"]
+    Q --> N
+    P --> R["Treasury\nProcesses Payment"]
+
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style H fill:#e8f5e9
+    style N fill:#fce4ec
+    style R fill:#f3e5f5
+                    </pre>
+                </div>
+
+                <div class="diagram-container">
+                    <h3>Bank Reconciliation Process</h3>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph Daily["Daily Process"]
+        A1["Download Bank\nMovements - Excel"] --> A2["Download Bank\nStatements - PDF\nas backup"]
+        A2 --> A3["Record Cash Receipts\nand Disbursements"]
+        A3 --> A4["Match entries with\nWorld Office records"]
+    end
+
+    subgraph Monthly["Monthly Close Process"]
+        B1["Download Final\nBank Statements\nafter 5th"]
+        B2["Download World Office\nAuxiliary per Bank"]
+        B1 --> B3["Full Bank\nReconciliation"]
+        B2 --> B3
+        B3 --> B4["CONCATENATE +\nVLOOKUP matching\nin Excel"]
+        B4 --> B5{"Items\nMatch?"}
+        B5 -->|Yes| B6["Mark as\nReconciled"]
+        B5 -->|No| B7["Manual Investigation:\nPayroll flat files,\nFiduciary payments"]
+        B7 --> B8["Identify source:\nClient? Employee?\nFinancial charges?"]
+        B8 --> B6
+    end
+
+    subgraph Banks["5 Bank Accounts"]
+        C1["Savings Account 1\nDavivienda"]
+        C2["Savings Account 2\nBogota"]
+        C3["Checking Account"]
+        C4["Trust - Fiduciary 1"]
+        C5["Trust - Fiduciary 2"]
+    end
+
+    Banks --> Daily
+    Daily --> Monthly
+    B6 --> D1["Generate Financial\nReports for Management\n~1 week delay"]
+
+    style Daily fill:#e8f5e9
+    style Monthly fill:#fff3e0
+    style Banks fill:#e3f2fd
+                    </pre>
+                </div>
+
+                <div class="diagram-container">
+                    <h3>Current System Architecture</h3>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph External["External Systems"]
+        BANK["Banks\nDavivienda, Bogota\nFiduciaries"]
+        DIAN["DIAN\nTax Authority"]
+        SUPP["Suppliers"]
+        CLIENT["Clients"]
+    end
+
+    subgraph Internal["Internal Systems"]
+        WO["World Office ERP\nAccounting, OC, RP,\nInventory, Invoicing"]
+        MON["Monday.com\nTask Board\nOC Tracking"]
+        EXC["Excel\nKardex Backup\nReconciliation\nVLOOKUP Matching"]
+        EMAIL["Email\nReceipt Documents\nInvoice Notifications"]
+    end
+
+    subgraph Future["Future State"]
+        URA["Uranit ERP\nChilean - In Training\nBudget Control\nDocument Linking"]
+    end
+
+    BANK -->|Statements PDF + Excel| EXC
+    DIAN -->|Invoice XML List| WO
+    SUPP -->|Invoices| DIAN
+    SUPP -->|Deliveries| EMAIL
+    CLIENT -->|Payments via Trust| BANK
+
+    WO -->|Auxiliaries| EXC
+    WO -->|OC Data| MON
+    MON -->|Delivery Schedule| WO
+    EMAIL -->|Receipt Docs| WO
+
+    WO -.->|Migration| URA
+
+    style External fill:#ffebee
+    style Internal fill:#e3f2fd
+    style Future fill:#e8f5e9
+                    </pre>
+                </div>
+
+                <div class="diagram-container">
+                    <h3>Sales Process: Engineering vs Illumination</h3>
+                    <pre class="mermaid">
+flowchart TD
+    START["Sales Need"] --> TYPE{"Business\nUnit?"}
+
+    TYPE -->|Engineering| ENG1["Project Scope\nDefined with APU\nBudget"]
+    ENG1 --> ENG2["Requisition - RQ\nfor Materials"]
+    ENG2 --> ENG3["Warehouse Exit\nin World Office"]
+    ENG3 --> ENG4["Materials Consumed\nin Project"]
+    ENG4 --> ENG5["Invoice Entire Project\nas Functional Unit\nNo inventory detail"]
+
+    TYPE -->|Illumination| ILL1["Client Quotation\nProduct-level"]
+    ILL1 --> ILL2["Order - Pedido\nCreated"]
+    ILL2 --> ILL3["Pull from Inventory\nin World Office"]
+    ILL3 --> ILL4["Invoice with\nItem-level Detail\nMust match Pedido"]
+
+    ENG5 --> FIN["Accounting Records\nSales Invoice"]
+    ILL4 --> FIN
+    FIN --> COL["Collections\nAccounts Receivable"]
+    COL --> REC{"Payment\nReceived?"}
+    REC -->|Direct| OK["Match to Invoice"]
+    REC -->|Via Trust| COMPLEX["Identify Client\nfrom Fiduciary\nPayment"]
+    COMPLEX --> OK
+
+    style ENG1 fill:#e3f2fd
+    style ENG5 fill:#e3f2fd
+    style ILL1 fill:#fff3e0
+    style ILL4 fill:#fff3e0
+    style COMPLEX fill:#ffcdd2
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &bull; Tremarel Finance &bull; March 4, 2026
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

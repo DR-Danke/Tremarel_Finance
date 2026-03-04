@@ -1,0 +1,107 @@
+{
+  "title": "Lutec - Bank Reconciliation & Financial Operations Discovery",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Daniel Cardona", "role": "Technology & Process Automation Consultant"},
+    {"name": "Catalina Carranza", "role": "Financial Manager (Gerente Financiera) - Lutec"},
+    {"name": "Jose", "role": "Inventory Manager - Lutec"},
+    {"name": "Daniel Giraldo", "role": "Business Development / Facilitator"}
+  ],
+  "company_name": "Lutec",
+  "contact_name": "Catalina Carranza",
+  "contact_email": null,
+  "summary": "Discovery meeting at Lutec to map financial operations and identify automation opportunities. The financial team manages 5 bank accounts (2 savings, 1 checking, 2 trust/fiduciary) with entirely manual daily and monthly reconciliation using Excel VLOOKUP/CONCATENATE formulas. Key pain points include: complex fiduciary payment matching (single trust sends payments from multiple unnamed clients), manual DIAN/Radian invoice acceptance for 500+ monthly invoices via one-by-one XML upload, and a fragmented procure-to-pay chain spanning three departments (Logistics, Inventory, Accounting) across World Office ERP and Monday.com. Lutec is migrating to Uranit ERP for better budget control. The consultant will start by automating bank reconciliation using ~30 accounting rules, with February data from Davivienda and Bogota banks as proof of concept.",
+  "discussion_points": [
+    {
+      "topic": "Bank Reconciliation Process",
+      "description": "Treasury downloads daily bank movements (Excel for working, PDF for official records) from 5 accounts and cross-references with World Office accounting auxiliaries. Daily reconciliation tracks entries/exits for cash receipts and disbursements. Monthly full reconciliation uses CONCATENATE and VLOOKUP formulas in Excel. Payroll flat files add complexity as they show lump sums that must be broken down by employee. Monthly close takes ~1 week with reports delivered to management with a one-week delay."
+    },
+    {
+      "topic": "Procure-to-Pay Workflow",
+      "description": "Three departments handle each purchase: Logistics creates Purchase Orders (OC) in World Office and tracks in Monday.com; Inventory receives goods at 47 warehouses, validates against OC, and creates Supplier Receipt (RP) in World Office; Accounting validates the full chain (OC + RP + Invoice) before authorizing Treasury to pay. Missing OCs or RPs cause significant delays. The process also handles advances/prepayments which complicate tracking."
+    },
+    {
+      "topic": "DIAN/Radian Invoice Acceptance",
+      "description": "Over 500 monthly purchase invoices (95%+ domestic) require acceptance or rejection events filed with Colombia's DIAN tax authority through the Radian system. Currently done one-by-one via XML upload. The team recently tested a third-party service for bulk XML download and mass upload, which proved significantly faster. DIAN is the source of truth for received invoices, not email or the ERP."
+    },
+    {
+      "topic": "Fiduciary Payment Matching (Accounts Receivable)",
+      "description": "Many clients pay through trust/fiduciary entities, which send payments aggregating multiple clients without identifying which client paid what amount. The collections coordinator maintains a manual mapping of which trusts typically pay for which clients, but this only resolves ~80% of cases. Clients also apply variable withholding tax percentages inconsistently, adding further reconciliation complexity."
+    },
+    {
+      "topic": "Inventory Management",
+      "description": "47 warehouses across project sites. Inventory receives ~50 purchase orders daily during peak periods (first 1.5 weeks of month). Physical inventory managed by administrative staff with Excel Kardex as backup. Daily reports sent to coordination for World Office data entry. Warehouse staff send receipt documents via email for manual processing."
+    },
+    {
+      "topic": "ERP Migration: World Office to Uranit",
+      "description": "Lutec is migrating from World Office (current ERP) to Uranit (Chilean ERP). Key drivers: World Office cannot link purchase orders to receipts to invoices automatically, and Engineering department cannot control project budgets at APU (Analysis per Unit) detail level. Uranit promises automated document linking and budget alerts. Currently in training phase; full migration not yet started."
+    },
+    {
+      "topic": "Two Sales Models: Engineering vs Illumination",
+      "description": "Engineering sells projects as functional units (bundling labor, supplies, provisioning) and invoices the whole project without requiring inventory detail. Illumination sells products directly, requiring inventory tracking, purchase orders tied to quotes, and item-level invoicing. Both models share the same procurement chain but diverge at the sales/invoicing stage."
+    },
+    {
+      "topic": "Budget Control Gap",
+      "description": "Engineering uses APU (Average Per Unit) budgets for client proposals but World Office cannot track actual costs against these budgets at the required detail level. No alerts exist for over-purchasing or unauthorized cost overruns. Yearly purchase projections were introduced in 2025 and have been helpful but are still manual. Variable project scope and new construction projects make forecasting inherently difficult."
+    },
+    {
+      "topic": "Monthly Close Delays",
+      "description": "Monthly financial close takes approximately one week after month-end. Delays caused by: uncontabilized invoices, pending bank final statements (available after the 5th), and incomplete reconciliations. Weekly reports to management are delivered with a one-week lag and may still contain unreconciled items."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send 6 documents for February: Davivienda (bank statement PDF, bank movements Excel, World Office auxiliary) and Bogota (bank statement PDF, bank movements Excel, World Office auxiliary)",
+      "owner": "Catalina Carranza",
+      "deadline": null
+    },
+    {
+      "description": "Analyze February bank reconciliation data from Davivienda and Bogota to prototype automated matching using ~30 accounting rules",
+      "owner": "Daniel Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Schedule discovery meeting with Oscar (budget department) to understand budget control processes",
+      "owner": "Daniel Giraldo",
+      "deadline": null
+    },
+    {
+      "description": "Sit with Catalina's team to map all reconciliation rules, cross-reference logic, and exception patterns",
+      "owner": "Daniel Cardona",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Bank reconciliation will be the first automation focus area",
+    "Davivienda and Bogota bank accounts will be used as initial proof-of-concept scope",
+    "February 2026 data will be used for the pilot analysis",
+    "ERP migration to Uranit is a confirmed strategic decision (already in training phase)",
+    "Budget process (Oscar's area) identified as second priority automation opportunity"
+  ],
+  "next_steps": [
+    "Catalina sends 6 February bank documents to Daniel Cardona's email",
+    "Daniel Cardona analyzes reconciliation data and prototypes automated matching",
+    "Follow-up meeting with Oscar to discover budget control processes and pain points",
+    "Working session with Catalina's team to document all ~30 accounting reconciliation rules",
+    "Daniel Giraldo to identify other departments at Lutec that could benefit from process automation"
+  ],
+  "diagrams": [
+    {
+      "title": "Procure-to-Pay Process Flow",
+      "mermaid_code": "flowchart TD\n    A[\"Engineering / Illumination\\nIdentifies Need\"] --> B[\"Logistics\\nCreates Purchase Order - OC\\nin World Office\"]\n    B --> C[\"OC tracked in\\nMonday.com board\"]\n    B --> D[\"OC sent to\\nSupplier\"]\n    D --> E{\"Supplier\\nAccepts?\"}\n    E -->|Yes| F[\"Supplier Delivers\\nto Warehouse\"]\n    E -->|No| G[\"Negotiate\\nTerms\"]\n    G --> D\n    F --> H[\"Inventory validates:\\nQuantities, References,\\nColors, Brands vs OC\"]\n    H --> I{\"Everything\\nMatches?\"}\n    I -->|Yes| J[\"Inventory creates\\nSupplier Receipt - RP\\nin World Office\"]\n    I -->|No| K[\"Flag Discrepancy\\nContact Logistics\"]\n    K --> H\n    J --> L[\"Supplier Sends\\nInvoice\"]\n    L --> M[\"Invoice appears\\nin DIAN\"]\n    M --> N[\"Accounting validates:\\nOC + RP + Invoice\\nall match\"]\n    N --> O{\"Full Chain\\nComplete?\"}\n    O -->|Yes| P[\"Accounting\\nRecords Invoice\"]\n    O -->|No| Q[\"Investigate:\\nMissing OC? Missing RP?\\nAmount Mismatch?\"]\n    Q --> N\n    P --> R[\"Treasury\\nProcesses Payment\"]\n\n    style A fill:#e3f2fd\n    style B fill:#fff3e0\n    style H fill:#e8f5e9\n    style N fill:#fce4ec\n    style R fill:#f3e5f5"
+    },
+    {
+      "title": "Bank Reconciliation Process",
+      "mermaid_code": "flowchart TD\n    subgraph Daily[\"Daily Process\"]\n        A1[\"Download Bank\\nMovements - Excel\"] --> A2[\"Download Bank\\nStatements - PDF\\nas backup\"]\n        A2 --> A3[\"Record Cash Receipts\\nand Disbursements\"]\n        A3 --> A4[\"Match entries with\\nWorld Office records\"]\n    end\n\n    subgraph Monthly[\"Monthly Close Process\"]\n        B1[\"Download Final\\nBank Statements\\nafter 5th\"]\n        B2[\"Download World Office\\nAuxiliary per Bank\"]\n        B1 --> B3[\"Full Bank\\nReconciliation\"]\n        B2 --> B3\n        B3 --> B4[\"CONCATENATE +\\nVLOOKUP matching\\nin Excel\"]\n        B4 --> B5{\"Items\\nMatch?\"}\n        B5 -->|Yes| B6[\"Mark as\\nReconciled\"]\n        B5 -->|No| B7[\"Manual Investigation:\\nPayroll flat files,\\nFiduciary payments\"]\n        B7 --> B8[\"Identify source:\\nClient? Employee?\\nFinancial charges?\"]\n        B8 --> B6\n    end\n\n    subgraph Banks[\"5 Bank Accounts\"]\n        C1[\"Savings Account 1\\nDavivienda\"]\n        C2[\"Savings Account 2\\nBogota\"]\n        C3[\"Checking Account\"]\n        C4[\"Trust/Fiduciary 1\"]\n        C5[\"Trust/Fiduciary 2\"]\n    end\n\n    Banks --> Daily\n    Daily --> Monthly\n    B6 --> D1[\"Generate Financial\\nReports for Management\\n~1 week delay\"]\n\n    style Daily fill:#e8f5e9\n    style Monthly fill:#fff3e0\n    style Banks fill:#e3f2fd"
+    },
+    {
+      "title": "Current System Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph External[\"External Systems\"]\n        BANK[\"Banks\\nDavivienda, Bogota\\nFiduciaries\"]\n        DIAN[\"DIAN\\nTax Authority\"]\n        SUPP[\"Suppliers\"]\n        CLIENT[\"Clients\"]\n    end\n\n    subgraph Internal[\"Internal Systems\"]\n        WO[\"World Office ERP\\nAccounting, OC, RP,\\nInventory, Invoicing\"]\n        MON[\"Monday.com\\nTask Board\\nOC Tracking\"]\n        EXC[\"Excel\\nKardex Backup\\nReconciliation\\nVLOOKUP Matching\"]\n        EMAIL[\"Email\\nReceipt Documents\\nInvoice Notifications\"]\n    end\n\n    subgraph Future[\"Future State\"]\n        URA[\"Uranit ERP\\nChilean - In Training\\nBudget Control\\nDocument Linking\"]\n    end\n\n    BANK -->|Statements PDF + Excel| EXC\n    DIAN -->|Invoice XML List| WO\n    SUPP -->|Invoices| DIAN\n    SUPP -->|Deliveries| EMAIL\n    CLIENT -->|Payments via Trust| BANK\n\n    WO -->|Auxiliaries| EXC\n    WO -->|OC Data| MON\n    MON -->|Delivery Schedule| WO\n    EMAIL -->|Receipt Docs| WO\n\n    WO -.->|Migration| URA\n\n    style External fill:#ffebee\n    style Internal fill:#e3f2fd\n    style Future fill:#e8f5e9"
+    },
+    {
+      "title": "Sales Process: Engineering vs Illumination",
+      "mermaid_code": "flowchart TD\n    START[\"Sales Need\"] --> TYPE{\"Business\\nUnit?\"}\n\n    TYPE -->|Engineering| ENG1[\"Project Scope\\nDefined with APU\\nBudget\"]\n    ENG1 --> ENG2[\"Requisition - RQ\\nfor Materials\"]\n    ENG2 --> ENG3[\"Warehouse Exit\\nin World Office\"]\n    ENG3 --> ENG4[\"Materials Consumed\\nin Project\"]\n    ENG4 --> ENG5[\"Invoice Entire Project\\nas Functional Unit\\nNo inventory detail\"]\n\n    TYPE -->|Illumination| ILL1[\"Client Quotation\\nProduct-level\"]\n    ILL1 --> ILL2[\"Order - Pedido\\nCreated\"]\n    ILL2 --> ILL3[\"Pull from Inventory\\nin World Office\"]\n    ILL3 --> ILL4[\"Invoice with\\nItem-level Detail\\nMust match Pedido\"]\n\n    ENG5 --> FIN[\"Accounting Records\\nSales Invoice\"]\n    ILL4 --> FIN\n    FIN --> COL[\"Collections /\\nAccounts Receivable\"]\n    COL --> REC{\"Payment\\nReceived?\"}\n    REC -->|Direct| OK[\"Match to Invoice\"]\n    REC -->|Via Trust| COMPLEX[\"Identify Client\\nfrom Fiduciary\\nPayment\"]\n    COMPLEX --> OK\n\n    style ENG1 fill:#e3f2fd\n    style ENG5 fill:#e3f2fd\n    style ILL1 fill:#fff3e0\n    style ILL4 fill:#fff3e0\n    style COMPLEX fill:#ffcdd2"
+    }
+  ],
+  "html_output": "meetings/summary.html"
+}
