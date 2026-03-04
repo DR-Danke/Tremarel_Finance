@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual de Usuario — Legal Desk</title>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #1565c0;
+      --primary-light: #e3f2fd;
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --text: #212121;
+      --text-secondary: #616161;
+      --border: #e0e0e0;
+      --accent-green: #2e7d32;
+      --accent-orange: #ef6c00;
+      --accent-red: #c62828;
+      --code-bg: #f5f5f5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--primary-dark);
+      border-bottom: 3px solid var(--primary);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.3rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    h4 {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p { margin-bottom: 0.75rem; }
+
+    .meta {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    nav.toc {
+      background: var(--primary-light);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    nav.toc h2 {
+      margin-top: 0;
+      border: none;
+      font-size: 1.15rem;
+      color: var(--primary-dark);
+    }
+
+    nav.toc ol {
+      padding-left: 1.25rem;
+    }
+
+    nav.toc li {
+      margin: 0.3rem 0;
+    }
+
+    nav.toc a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    nav.toc a:hover {
+      text-decoration: underline;
+    }
+
+    nav.toc ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) { background: #f9f9f9; }
+    tr:hover { background: #f0f4ff; }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    li { margin-bottom: 0.35rem; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .badge-blue { background: #1976d2; }
+    .badge-green { background: #2e7d32; }
+    .badge-orange { background: #ef6c00; }
+    .badge-red { background: #c62828; }
+    .badge-grey { background: #757575; }
+    .badge-purple { background: #7b1fa2; }
+
+    .callout {
+      border-left: 4px solid var(--primary);
+      background: var(--primary-light);
+      padding: 0.75rem 1rem;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+    }
+
+    .callout-tip {
+      border-left-color: var(--accent-green);
+      background: #e8f5e9;
+    }
+
+    .callout-warning {
+      border-left-color: var(--accent-orange);
+      background: #fff3e0;
+    }
+
+    .workflow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .step-list {
+      counter-reset: step;
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .step-list li {
+      counter-increment: step;
+      padding: 0.5rem 0 0.5rem 2.5rem;
+      position: relative;
+      margin-bottom: 0.3rem;
+    }
+
+    .step-list li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0.45rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .scoring-card {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .scoring-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+    }
+
+    .scoring-item .pts {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .scoring-item .label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    code {
+      background: var(--code-bg);
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.88rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      h1 { font-size: 1.5rem; }
+      h2 { font-size: 1.25rem; }
+      table { font-size: 0.82rem; }
+      th, td { padding: 0.4rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Manual de Usuario — Legal Desk</h1>
+  <p class="meta">
+    <strong>Versión:</strong> 1.0 &nbsp;|&nbsp;
+    <strong>Plataforma:</strong> Tremarel Finance — Módulo Legal Desk (POC) &nbsp;|&nbsp;
+    <strong>Fecha:</strong> Marzo 2026
+  </p>
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc">
+    <h2>Tabla de Contenidos</h2>
+    <ol>
+      <li><a href="#introduccion">Introducción</a></li>
+      <li><a href="#acceso">Acceso y Navegación</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#clientes">Gestión de Clientes</a></li>
+      <li><a href="#especialistas">Gestión de Especialistas</a></li>
+      <li>
+        <a href="#casos">Gestión de Casos</a>
+        <ul>
+          <li><a href="#crear-caso">Crear un Caso</a></li>
+          <li><a href="#lista-casos">Lista y Filtros de Casos</a></li>
+          <li><a href="#detalle-caso">Detalle del Caso</a></li>
+          <li><a href="#flujo-estados">Flujo de Estados del Caso</a></li>
+          <li><a href="#asignacion">Asignación de Especialistas</a></li>
+          <li><a href="#entregables">Entregables</a></li>
+          <li><a href="#precios">Negociación de Precios</a></li>
+          <li><a href="#mensajes">Mensajes</a></li>
+          <li><a href="#documentos">Documentos</a></li>
+        </ul>
+      </li>
+      <li><a href="#analytics">Analytics</a></li>
+      <li><a href="#referencia">Referencia Rápida</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1. INTRODUCCIÓN -->
+  <h2 id="introduccion">1. Introducción</h2>
+  <p>
+    Legal Desk es un módulo de gestión de casos legales diseñado para <strong>Faroo Legal</strong>, una plataforma global que conecta clientes con abogados especializados. El sistema reemplaza la gestión manual (WhatsApp, email, Notion) con un flujo estructurado que incluye:
+  </p>
+  <ul>
+    <li><strong>Registro de clientes</strong> (empresas e individuos)</li>
+    <li><strong>Directorio de especialistas legales</strong> con áreas de expertise y jurisdicciones</li>
+    <li><strong>Gestión completa del ciclo de vida de casos legales</strong> (11 estados)</li>
+    <li><strong>Motor de asignación inteligente</strong> que sugiere los mejores especialistas para cada caso</li>
+    <li><strong>Negociación de precios</strong> con historial completo</li>
+    <li><strong>Seguimiento de entregables</strong>, mensajes y documentos por caso</li>
+    <li><strong>Dashboard y Analytics</strong> con métricas en tiempo real</li>
+  </ul>
+
+  <!-- 2. ACCESO Y NAVEGACIÓN -->
+  <h2 id="acceso">2. Acceso y Navegación</h2>
+
+  <h3>Requisitos de acceso</h3>
+  <p>Legal Desk requiere autenticación. Inicie sesión con sus credenciales para acceder al módulo.</p>
+
+  <h3>Navegación por la barra lateral</h3>
+  <p>
+    En la barra lateral izquierda, busque la sección <strong>POCs</strong> y expándala. Dentro encontrará la subsección <strong>Legal Desk</strong> con las siguientes opciones:
+  </p>
+  <table>
+    <thead>
+      <tr><th>Opción</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Dashboard</strong></td><td>Panel principal con KPIs y gráficos</td></tr>
+      <tr><td><strong>Cases</strong></td><td>Lista y gestión de casos legales</td></tr>
+      <tr><td><strong>Specialists</strong></td><td>Directorio de especialistas legales</td></tr>
+      <tr><td><strong>Clients</strong></td><td>Registro de clientes</td></tr>
+      <tr><td><strong>Analytics</strong></td><td>Análisis detallado de datos</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-tip">
+    <strong>Consejo:</strong> La barra lateral se puede colapsar para mostrar solo iconos. El estado de las secciones expandidas/colapsadas se mantiene entre sesiones.
+  </div>
+
+  <!-- 3. DASHBOARD -->
+  <h2 id="dashboard">3. Dashboard</h2>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Dashboard</p>
+  <p>El Dashboard ofrece una visión general rápida de la operación con cuatro tarjetas de KPI y dos gráficos.</p>
+
+  <h3>Tarjetas de resumen</h3>
+  <table>
+    <thead>
+      <tr><th>Indicador</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Active Cases</strong></td><td>Cantidad de casos que no están cerrados ni archivados</td></tr>
+      <tr><td><strong>Total Cases</strong></td><td>Total histórico de casos creados</td></tr>
+      <tr><td><strong>Specialists Active</strong></td><td>Cantidad de especialistas activos en la plataforma</td></tr>
+      <tr><td><strong>Total Clients</strong></td><td>Total de clientes registrados</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Gráficos</h3>
+  <ul>
+    <li><strong>Cases by Status</strong> — Gráfico circular (pie chart) que muestra la distribución de casos por estado. Cada sector tiene un color diferente según el estado.</li>
+    <li><strong>Cases by Domain</strong> — Gráfico de barras que muestra la cantidad de casos por dominio legal.</li>
+  </ul>
+
+  <h3>Acciones disponibles</h3>
+  <p><strong>Botón Refresh:</strong> Actualiza los datos del dashboard en tiempo real.</p>
+
+  <!-- 4. CLIENTES -->
+  <h2 id="clientes">4. Gestión de Clientes</h2>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Clients</p>
+  <p>Esta sección permite registrar y consultar los clientes que solicitan servicios legales.</p>
+
+  <h3>Lista de clientes</h3>
+  <table>
+    <thead>
+      <tr><th>Columna</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Name</strong></td><td>Nombre del cliente o empresa</td></tr>
+      <tr><td><strong>Type</strong></td><td>Tipo: Company (Empresa) o Individual (Persona)</td></tr>
+      <tr><td><strong>Email</strong></td><td>Correo electrónico de contacto</td></tr>
+      <tr><td><strong>Country</strong></td><td>País de origen</td></tr>
+      <tr><td><strong>Industry</strong></td><td>Industria o sector</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Crear un nuevo cliente</h3>
+  <ol class="step-list">
+    <li>Haga clic en el botón <strong>"Add Client"</strong>.</li>
+    <li>Se abre un cuadro de diálogo con el formulario de registro.</li>
+    <li>Complete los campos requeridos (ver tabla a continuación).</li>
+    <li>Haga clic en <strong>"Create Client"</strong> para guardar.</li>
+  </ol>
+
+  <table>
+    <thead>
+      <tr><th>Campo</th><th>Obligatorio</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Name</strong></td><td>Sí</td><td>Nombre completo o razón social (máx. 255 caracteres)</td></tr>
+      <tr><td><strong>Client Type</strong></td><td>Sí</td><td>Company o Individual</td></tr>
+      <tr><td><strong>Contact Email</strong></td><td>No</td><td>Correo electrónico (se valida formato)</td></tr>
+      <tr><td><strong>Contact Phone</strong></td><td>No</td><td>Número de teléfono</td></tr>
+      <tr><td><strong>Country</strong></td><td>No</td><td>País</td></tr>
+      <tr><td><strong>Industry</strong></td><td>No</td><td>Industria o sector de actividad</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 5. ESPECIALISTAS -->
+  <h2 id="especialistas">5. Gestión de Especialistas</h2>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Specialists</p>
+  <p>Gestiona el directorio de abogados y especialistas legales disponibles para asignación a casos.</p>
+
+  <h3>Vista de especialistas</h3>
+  <p>Los especialistas se muestran como <strong>tarjetas</strong>, cada una con:</p>
+  <ul>
+    <li><strong>Nombre completo</strong> y correo electrónico</li>
+    <li><strong>Años de experiencia</strong></li>
+    <li><strong>Tarifa por hora</strong> con moneda</li>
+    <li><strong>Puntuación general</strong> — Estrellas (1-5) más valor numérico</li>
+    <li><strong>Indicador de carga de trabajo</strong> — Barra de progreso con código de colores:</li>
+  </ul>
+  <table>
+    <thead>
+      <tr><th>Color</th><th>Capacidad</th><th>Significado</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-red">Rojo</span></td><td>&ge; 80%</td><td>Capacidad casi completa</td></tr>
+      <tr><td><span class="badge badge-orange">Naranja</span></td><td>&ge; 50%</td><td>Capacidad moderada</td></tr>
+      <tr><td><span class="badge badge-blue">Azul</span></td><td>&lt; 50%</td><td>Buena disponibilidad</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Crear un nuevo especialista</h3>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Add Specialist"</strong>.</li>
+    <li>Complete los datos principales y las secciones dinámicas de expertise y jurisdicciones.</li>
+    <li>Haga clic en <strong>"Create Specialist"</strong> para guardar.</li>
+  </ol>
+
+  <h4>Datos principales</h4>
+  <table>
+    <thead>
+      <tr><th>Campo</th><th>Obligatorio</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Full Name</strong></td><td>Sí</td><td>Nombre completo (máx. 255 caracteres)</td></tr>
+      <tr><td><strong>Specialist Type</strong></td><td>No</td><td>Individual o Boutique Firm</td></tr>
+      <tr><td><strong>Email</strong></td><td>Sí</td><td>Correo electrónico (se valida formato)</td></tr>
+      <tr><td><strong>Phone</strong></td><td>No</td><td>Teléfono de contacto</td></tr>
+      <tr><td><strong>Country</strong></td><td>No</td><td>País de residencia</td></tr>
+      <tr><td><strong>Years of Experience</strong></td><td>No</td><td>Años de experiencia profesional</td></tr>
+      <tr><td><strong>Hourly Rate</strong></td><td>No</td><td>Tarifa por hora</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Áreas de expertise (dinámico)</h4>
+  <table>
+    <thead>
+      <tr><th>Campo</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Legal Domain</strong></td><td>Dominio legal (ver tabla de dominios)</td></tr>
+      <tr><td><strong>Proficiency Level</strong></td><td>Junior, Intermediate o Expert</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Jurisdicciones (dinámico)</h4>
+  <table>
+    <thead>
+      <tr><th>Campo</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Country</strong></td><td>País de la jurisdicción</td></tr>
+      <tr><td><strong>Region</strong></td><td>Región o estado</td></tr>
+      <tr><td><strong>Is Primary</strong></td><td>Marcar si es jurisdicción principal</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Dominios legales disponibles</h3>
+  <table>
+    <thead>
+      <tr><th>Dominio</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Corporate</td><td>Derecho Corporativo</td></tr>
+      <tr><td>IP</td><td>Propiedad Intelectual</td></tr>
+      <tr><td>Labor</td><td>Derecho Laboral</td></tr>
+      <tr><td>Tax</td><td>Derecho Fiscal</td></tr>
+      <tr><td>Litigation</td><td>Litigios</td></tr>
+      <tr><td>Real Estate</td><td>Derecho Inmobiliario</td></tr>
+      <tr><td>Immigration</td><td>Inmigración</td></tr>
+      <tr><td>Regulatory</td><td>Regulatorio</td></tr>
+      <tr><td>Data Privacy</td><td>Privacidad de Datos</td></tr>
+      <tr><td>Commercial</td><td>Derecho Comercial</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 6. CASOS -->
+  <h2 id="casos">6. Gestión de Casos</h2>
+
+  <h3 id="crear-caso">6.1 Crear un Caso</h3>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Cases &rarr; New Case</p>
+  <ol class="step-list">
+    <li>Desde la lista de casos, haga clic en <strong>"New Case"</strong>.</li>
+    <li>Complete el formulario (ver tabla a continuación).</li>
+    <li>Haga clic en <strong>"Create Case"</strong>.</li>
+    <li>Al crearse, será redirigido automáticamente al detalle del caso.</li>
+  </ol>
+
+  <table>
+    <thead>
+      <tr><th>Campo</th><th>Obligatorio</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Title</strong></td><td>Sí</td><td>Título descriptivo del caso (máx. 255 caracteres)</td></tr>
+      <tr><td><strong>Description</strong></td><td>No</td><td>Descripción detallada del caso</td></tr>
+      <tr><td><strong>Client</strong></td><td>Sí</td><td>Seleccione el cliente (búsqueda con autocompletado)</td></tr>
+      <tr><td><strong>Legal Domain</strong></td><td>Sí</td><td>Dominio legal del caso</td></tr>
+      <tr><td><strong>Case Type</strong></td><td>No</td><td>Advisory (Consultoría) o Litigation (Litigio)</td></tr>
+      <tr><td><strong>Complexity</strong></td><td>No</td><td>Low, Medium, High o Critical</td></tr>
+      <tr><td><strong>Priority</strong></td><td>No</td><td>Low, Medium, High o Urgent</td></tr>
+      <tr><td><strong>Client Budget</strong></td><td>No</td><td>Presupuesto estimado del cliente</td></tr>
+      <tr><td><strong>Deadline</strong></td><td>No</td><td>Fecha límite</td></tr>
+      <tr><td><strong>Jurisdiction</strong></td><td>No</td><td>Jurisdicción aplicable</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="lista-casos">6.2 Lista y Filtros de Casos</h3>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Cases</p>
+  <p>La lista muestra todos los casos en una tabla:</p>
+
+  <table>
+    <thead>
+      <tr><th>Columna</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Case #</strong></td><td>Número identificador del caso</td></tr>
+      <tr><td><strong>Title</strong></td><td>Título del caso</td></tr>
+      <tr><td><strong>Client</strong></td><td>Nombre del cliente</td></tr>
+      <tr><td><strong>Domain</strong></td><td>Dominio legal (badge con color)</td></tr>
+      <tr><td><strong>Status</strong></td><td>Estado actual (badge con color)</td></tr>
+      <tr><td><strong>Priority</strong></td><td>Prioridad (badge con color)</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Filtros disponibles</h4>
+  <ul>
+    <li><strong>Status</strong> — Filtrar por cualquiera de los 11 estados</li>
+    <li><strong>Domain</strong> — Filtrar por dominio legal</li>
+    <li><strong>Priority</strong> — Filtrar por prioridad (Low, Medium, High, Urgent)</li>
+  </ul>
+  <div class="callout callout-tip">
+    <strong>Consejo:</strong> Haga clic en cualquier fila de la tabla para ver el detalle completo del caso.
+  </div>
+
+  <h3 id="detalle-caso">6.3 Detalle del Caso</h3>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Cases &rarr; [caso seleccionado]</p>
+  <p>La vista de detalle es la pantalla más completa del módulo. El <strong>encabezado</strong> muestra el número de caso, título, y badges de estado, dominio y prioridad. Debajo se muestran botones para las transiciones de estado válidas.</p>
+
+  <p>El detalle se organiza en <strong>6 pestañas</strong>:</p>
+  <table>
+    <thead>
+      <tr><th>Pestaña</th><th>Contenido</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Overview</strong></td><td>Información general, financiera y del cliente</td></tr>
+      <tr><td><strong>Specialists</strong></td><td>Especialistas asignados y sugerencias inteligentes</td></tr>
+      <tr><td><strong>Deliverables</strong></td><td>Lista de entregables y su progreso</td></tr>
+      <tr><td><strong>Pricing</strong></td><td>Historial y negociación de precios</td></tr>
+      <tr><td><strong>Messages</strong></td><td>Hilo de comunicación del caso</td></tr>
+      <tr><td><strong>Documents</strong></td><td>Documentos adjuntos al caso</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Pestaña Overview</h4>
+  <p>Muestra la información completa del caso organizada en secciones:</p>
+  <ul>
+    <li><strong>Información general:</strong> Descripción, tipo de caso, complejidad</li>
+    <li><strong>Información financiera:</strong> Presupuesto del cliente, costo estimado, cotización final, porcentaje de margen</li>
+    <li><strong>Fecha límite</strong></li>
+    <li><strong>Información del cliente:</strong> Nombre, tipo, email de contacto</li>
+    <li><strong>Clasificación AI:</strong> Resultado de la clasificación automática (formato JSON)</li>
+  </ul>
+
+  <h3 id="flujo-estados">6.4 Flujo de Estados del Caso</h3>
+  <p>Cada caso pasa por un flujo de estados definido. Solo se permiten las transiciones válidas según el estado actual:</p>
+
+  <div class="workflow">New (Nuevo)
+    &darr;
+Classifying (Clasificando)
+    &darr;
+Open (Abierto)
+    &darr;
+Assigning (Asignando)
+    &darr;
+Active (Activo)
+    &darr;
+In Progress (En Progreso)
+    &darr;
+Review (En Revisión)
+    &darr;           &searr;
+Negotiating      Completed
+(Negociando)     (Completado)
+    &darr;               &darr;
+Completed        Closed
+(Completado)     (Cerrado)
+    &darr;               &darr;
+Closed           Archived
+(Cerrado)        (Archivado)
+    &darr;
+Archived
+(Archivado)</div>
+
+  <table>
+    <thead>
+      <tr><th>Estado</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-grey">New</span></td><td>Caso recién creado, pendiente de clasificación</td></tr>
+      <tr><td><span class="badge badge-blue">Classifying</span></td><td>El sistema está clasificando el caso (puede incluir IA)</td></tr>
+      <tr><td><span class="badge badge-blue">Open</span></td><td>Caso clasificado y listo para asignar especialistas</td></tr>
+      <tr><td><span class="badge badge-orange">Assigning</span></td><td>En proceso de búsqueda y asignación de especialistas</td></tr>
+      <tr><td><span class="badge badge-green">Active</span></td><td>Especialistas asignados, caso activo</td></tr>
+      <tr><td><span class="badge badge-green">In Progress</span></td><td>Trabajo en curso por parte de los especialistas</td></tr>
+      <tr><td><span class="badge badge-purple">Review</span></td><td>Entregables en revisión</td></tr>
+      <tr><td><span class="badge badge-orange">Negotiating</span></td><td>En fase de negociación de precios o términos</td></tr>
+      <tr><td><span class="badge badge-green">Completed</span></td><td>Caso completado exitosamente</td></tr>
+      <tr><td><span class="badge badge-grey">Closed</span></td><td>Caso cerrado formalmente</td></tr>
+      <tr><td><span class="badge badge-grey">Archived</span></td><td>Caso archivado para referencia histórica</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    Para avanzar el estado, haga clic en los <strong>botones de transición</strong> que aparecen debajo del título del caso en la vista de detalle.
+  </div>
+
+  <h3 id="asignacion">6.5 Asignación de Especialistas</h3>
+  <p><strong>Pestaña:</strong> Detalle del Caso &rarr; Specialists</p>
+
+  <h4>Especialistas asignados</h4>
+  <table>
+    <thead>
+      <tr><th>Columna</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Specialist ID</strong></td><td>Identificador del especialista</td></tr>
+      <tr><td><strong>Role</strong></td><td>Lead, Support, Reviewer o Consultant</td></tr>
+      <tr><td><strong>Status</strong></td><td>Proposed, Accepted, Rejected, Active o Completed</td></tr>
+      <tr><td><strong>Proposed Fee</strong></td><td>Tarifa propuesta</td></tr>
+      <tr><td><strong>Agreed Fee</strong></td><td>Tarifa acordada</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Motor de sugerencia inteligente</h4>
+  <ol class="step-list">
+    <li>Haga clic en <strong>"Suggest Specialists"</strong>.</li>
+    <li>El sistema evalúa a todos los especialistas usando 5 factores ponderados.</li>
+    <li>Se muestran los <strong>5 mejores candidatos</strong> con botón <strong>"Assign"</strong> para cada uno.</li>
+  </ol>
+
+  <div class="scoring-card">
+    <div class="scoring-item">
+      <div class="pts">30</div>
+      <div class="label">pts<br>Competencia</div>
+    </div>
+    <div class="scoring-item">
+      <div class="pts">25</div>
+      <div class="label">pts<br>Puntuación General</div>
+    </div>
+    <div class="scoring-item">
+      <div class="pts">20</div>
+      <div class="label">pts<br>Disponibilidad</div>
+    </div>
+    <div class="scoring-item">
+      <div class="pts">15</div>
+      <div class="label">pts<br>Jurisdicción</div>
+    </div>
+    <div class="scoring-item">
+      <div class="pts">10</div>
+      <div class="label">pts<br>Experiencia</div>
+    </div>
+  </div>
+
+  <h3 id="entregables">6.6 Entregables</h3>
+  <p><strong>Pestaña:</strong> Detalle del Caso &rarr; Deliverables</p>
+  <p>Los entregables son las tareas o hitos que deben completarse dentro del caso.</p>
+
+  <h4>Estados de entregables</h4>
+  <table>
+    <thead>
+      <tr><th>Estado</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-grey">Pending</span></td><td>Pendiente de inicio</td></tr>
+      <tr><td><span class="badge badge-blue">In Progress</span></td><td>En progreso</td></tr>
+      <tr><td><span class="badge badge-purple">Review</span></td><td>En revisión</td></tr>
+      <tr><td><span class="badge badge-green">Completed</span></td><td>Completado</td></tr>
+      <tr><td><span class="badge badge-red">Cancelled</span></td><td>Cancelado</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Agregar un entregable</h4>
+  <ol class="step-list">
+    <li>En la parte inferior de la pestaña, complete: <strong>Title</strong> (obligatorio), <strong>Description</strong> y <strong>Due Date</strong>.</li>
+    <li>Haga clic en <strong>"Add"</strong>.</li>
+  </ol>
+
+  <div class="callout callout-tip">
+    <strong>Consejo:</strong> Puede cambiar el estado de cualquier entregable directamente desde su selector desplegable en la lista, sin necesidad de abrir otra pantalla.
+  </div>
+
+  <h3 id="precios">6.7 Negociación de Precios</h3>
+  <p><strong>Pestaña:</strong> Detalle del Caso &rarr; Pricing</p>
+  <p>Gestiona el proceso de negociación de precios entre Faroo Legal y el cliente/especialista.</p>
+
+  <h4>Línea de tiempo de precios</h4>
+  <p>Se muestra un historial vertical cronológico (stepper) con cada acción:</p>
+  <ul>
+    <li>Tipo de acción (Propuesta, Contraoferta, Aceptación, Rechazo)</li>
+    <li>Fecha y hora</li>
+    <li>Monto anterior &rarr; monto nuevo</li>
+    <li>Persona que realizó el cambio</li>
+    <li>Notas adicionales</li>
+  </ul>
+
+  <h4>Acciones de precios</h4>
+  <table>
+    <thead>
+      <tr><th>Botón</th><th>Acción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Propose</strong></td><td>Crear una propuesta inicial de precio</td></tr>
+      <tr><td><strong>Counter</strong></td><td>Enviar una contraoferta</td></tr>
+      <tr><td><strong style="color: #2e7d32;">Accept</strong></td><td>Aceptar el precio actual</td></tr>
+      <tr><td><strong style="color: #c62828;">Reject</strong></td><td>Rechazar la propuesta actual</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Fórmula de margen:</strong><br>
+    <code>Margen % = ((Precio cliente - Costo especialista) / Precio cliente) &times; 100</code>
+  </div>
+
+  <h3 id="mensajes">6.8 Mensajes</h3>
+  <p><strong>Pestaña:</strong> Detalle del Caso &rarr; Messages</p>
+  <p>Hilo de comunicación asociado al caso para coordinar entre las partes.</p>
+
+  <h4>Visualización de mensajes</h4>
+  <ul>
+    <li>Los mensajes se muestran en orden cronológico en un panel scrollable.</li>
+    <li>Los <strong>mensajes internos</strong> (solo para el equipo Faroo) se identifican con un chip naranja <span class="badge badge-orange">Internal</span>.</li>
+    <li>Use el checkbox <strong>"Show Internal"</strong> para mostrar u ocultar mensajes internos.</li>
+  </ul>
+
+  <h4>Enviar un mensaje</h4>
+  <ol class="step-list">
+    <li>Complete: <strong>Sender Type</strong> (User, Specialist o System), <strong>Sender Name</strong> y <strong>Message</strong>.</li>
+    <li>Opcionalmente marque <strong>"Internal"</strong> si el mensaje es solo para uso interno.</li>
+    <li>Haga clic en <strong>"Send"</strong>.</li>
+  </ol>
+
+  <h3 id="documentos">6.9 Documentos</h3>
+  <p><strong>Pestaña:</strong> Detalle del Caso &rarr; Documents</p>
+  <p>Permite asociar documentos al caso (registra metadatos).</p>
+
+  <h4>Lista de documentos</h4>
+  <table>
+    <thead>
+      <tr><th>Columna</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>File Name</strong></td><td>Nombre del archivo</td></tr>
+      <tr><td><strong>Type</strong></td><td>Tipo de archivo</td></tr>
+      <tr><td><strong>Size (KB)</strong></td><td>Tamaño en kilobytes</td></tr>
+      <tr><td><strong>Uploaded By</strong></td><td>Persona que subió el documento</td></tr>
+      <tr><td><strong>Date</strong></td><td>Fecha de carga</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Agregar un documento</h4>
+  <ol class="step-list">
+    <li>Complete: <strong>File Name</strong> (obligatorio), <strong>File URL</strong> (obligatorio), <strong>File Type</strong> y <strong>Uploaded By</strong>.</li>
+    <li>Haga clic en <strong>"Add"</strong>.</li>
+  </ol>
+
+  <!-- 7. ANALYTICS -->
+  <h2 id="analytics">7. Analytics</h2>
+  <p><strong>Ruta:</strong> Legal Desk &rarr; Analytics</p>
+  <p>Ofrece un análisis más detallado de los datos operativos.</p>
+
+  <h3>Tarjetas de resumen</h3>
+  <table>
+    <thead>
+      <tr><th>Indicador</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Total Cases</strong></td><td>Número total de casos</td></tr>
+      <tr><td><strong>Active Cases</strong></td><td>Casos actualmente activos</td></tr>
+      <tr><td><strong>Total Specialists</strong></td><td>Total de especialistas registrados</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Gráfico: Casos por Dominio</h3>
+  <p>Gráfico de barras de ancho completo que muestra la distribución de casos por dominio legal. Cada barra tiene un color único asociado al dominio.</p>
+
+  <h3>Utilización de Especialistas</h3>
+  <p>Panel informativo (disponible próximamente — requiere datos de asignación de casos para calcular métricas de utilización).</p>
+
+  <!-- 8. REFERENCIA RÁPIDA -->
+  <h2 id="referencia">8. Referencia Rápida</h2>
+
+  <h3>Atajos de navegación</h3>
+  <table>
+    <thead>
+      <tr><th>Acción</th><th>Ruta</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Ir al Dashboard</td><td>Legal Desk &rarr; Dashboard</td></tr>
+      <tr><td>Ver todos los casos</td><td>Legal Desk &rarr; Cases</td></tr>
+      <tr><td>Crear un caso nuevo</td><td>Legal Desk &rarr; Cases &rarr; New Case</td></tr>
+      <tr><td>Ver especialistas</td><td>Legal Desk &rarr; Specialists</td></tr>
+      <tr><td>Ver clientes</td><td>Legal Desk &rarr; Clients</td></tr>
+      <tr><td>Ver analytics</td><td>Legal Desk &rarr; Analytics</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Roles de especialistas en un caso</h3>
+  <table>
+    <thead>
+      <tr><th>Rol</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Lead</strong></td><td>Abogado principal responsable del caso</td></tr>
+      <tr><td><strong>Support</strong></td><td>Abogado de apoyo</td></tr>
+      <tr><td><strong>Reviewer</strong></td><td>Revisor de entregables y documentación</td></tr>
+      <tr><td><strong>Consultant</strong></td><td>Consultor especializado en un tema puntual</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Prioridades de caso</h3>
+  <table>
+    <thead>
+      <tr><th>Prioridad</th><th>Uso recomendado</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="badge badge-blue">Low</span></td><td>Casos sin urgencia, plazos flexibles</td></tr>
+      <tr><td><span class="badge badge-orange">Medium</span></td><td>Casos con plazos definidos pero sin presión inmediata</td></tr>
+      <tr><td><span class="badge badge-red">High</span></td><td>Casos con plazos próximos o impacto significativo</td></tr>
+      <tr><td><span class="badge badge-red">Urgent</span></td><td>Casos que requieren atención inmediata</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Niveles de complejidad</h3>
+  <table>
+    <thead>
+      <tr><th>Nivel</th><th>Descripción</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Low</strong></td><td>Caso sencillo, procedimientos estándar</td></tr>
+      <tr><td><strong>Medium</strong></td><td>Complejidad moderada, requiere especialización</td></tr>
+      <tr><td><strong>High</strong></td><td>Alta complejidad, múltiples jurisdicciones o partes</td></tr>
+      <tr><td><strong>Critical</strong></td><td>Máxima complejidad, impacto estratégico o riesgo elevado</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    Manual generado para Tremarel Finance — Módulo Legal Desk (POC) v1.0 &mdash; Marzo 2026
+  </footer>
+
+</body>
+</html>
