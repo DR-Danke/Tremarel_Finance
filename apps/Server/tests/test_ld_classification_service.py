@@ -13,8 +13,8 @@ _mock_openai_module = ModuleType("openai")
 _mock_openai_module.OpenAI = MagicMock  # type: ignore[attr-defined]
 sys.modules.setdefault("openai", _mock_openai_module)
 
-from src.core.services.ld_classification_service import LdClassificationService
-from src.interface.legaldesk_dto import (
+from src.core.services.ld_classification_service import LdClassificationService  # noqa: E402
+from src.interface.legaldesk_dto import (  # noqa: E402
     CaseComplexity,
     CaseType,
     ClassificationResultDTO,
