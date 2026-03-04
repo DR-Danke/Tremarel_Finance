@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Box,
   Typography,
@@ -24,9 +25,17 @@ import { TRExpenseBreakdownChart } from '@/components/ui/TRExpenseBreakdownChart
  */
 export const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth()
-  const { currentEntity, entities } = useEntity()
+  const { currentEntity, entities, isLoading: entitiesLoading } = useEntity()
   const { stats, isLoading, error } = useDashboard(currentEntity?.id)
   const navigate = useNavigate()
+
+  // Redirect users without entities to RestaurantOS dashboard
+  React.useEffect(() => {
+    if (!entitiesLoading && entities.length === 0) {
+      console.log('INFO [DashboardPage]: No entities found, redirecting to RestaurantOS')
+      navigate('/poc/restaurant-os/dashboard', { replace: true })
+    }
+  }, [entitiesLoading, entities.length, navigate])
 
   const handleLogout = () => {
     console.log('INFO [DashboardPage]: User initiated logout')

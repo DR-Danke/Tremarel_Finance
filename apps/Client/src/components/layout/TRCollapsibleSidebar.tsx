@@ -53,46 +53,57 @@ interface NavSection {
   subsections?: NavSection[]
 }
 
-const navigationSections: NavSection[] = [
-  {
-    label: 'Finance',
-    collapsible: false,
-    items: [
-      { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
-      { label: 'Transactions', path: '/transactions', icon: <AccountBalanceWalletIcon /> },
-      { label: 'Recurring', path: '/recurring', icon: <RepeatIcon /> },
-      { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
-      { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
-      { label: 'Prospects', path: '/prospects', icon: <PeopleIcon /> },
-      { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },
-    ],
-  },
-  {
-    label: 'POCs',
-    collapsible: true,
-    defaultOpen: false,
-    items: [],
-    subsections: [
-      {
-        label: 'RestaurantOS',
-        items: [
-          { label: 'Dashboard', path: '/poc/restaurant-os/dashboard', icon: <RestaurantIcon /> },
-          { label: 'Personas', path: '/poc/restaurant-os/persons', icon: <PeopleIcon /> },
-          { label: 'Documentos', path: '/poc/restaurant-os/documents', icon: <DescriptionIcon /> },
-          { label: 'Eventos / Tareas', path: '/poc/restaurant-os/events', icon: <EventIcon /> },
-          { label: 'Recursos / Inventario', path: '/poc/restaurant-os/resources', icon: <InventoryIcon /> },
-          { label: 'Recetas', path: '/poc/restaurant-os/recipes', icon: <MenuBookIcon /> },
-        ],
-      },
-    ],
-  },
-  {
-    label: '',
-    items: [
-      { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
-    ],
-  },
-]
+const financeSection: NavSection = {
+  label: 'Finance',
+  collapsible: false,
+  items: [
+    { label: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
+    { label: 'Transactions', path: '/transactions', icon: <AccountBalanceWalletIcon /> },
+    { label: 'Recurring', path: '/recurring', icon: <RepeatIcon /> },
+    { label: 'Categories', path: '/categories', icon: <CategoryIcon /> },
+    { label: 'Budgets', path: '/budgets', icon: <SavingsIcon /> },
+    { label: 'Prospects', path: '/prospects', icon: <PeopleIcon /> },
+    { label: 'Reports', path: '/reports', icon: <AssessmentIcon /> },
+  ],
+}
+
+const pocSection: NavSection = {
+  label: 'POCs',
+  collapsible: true,
+  defaultOpen: false,
+  items: [],
+  subsections: [
+    {
+      label: 'RestaurantOS',
+      items: [
+        { label: 'Dashboard', path: '/poc/restaurant-os/dashboard', icon: <RestaurantIcon /> },
+        { label: 'Personas', path: '/poc/restaurant-os/persons', icon: <PeopleIcon /> },
+        { label: 'Documentos', path: '/poc/restaurant-os/documents', icon: <DescriptionIcon /> },
+        { label: 'Eventos / Tareas', path: '/poc/restaurant-os/events', icon: <EventIcon /> },
+        { label: 'Recursos / Inventario', path: '/poc/restaurant-os/resources', icon: <InventoryIcon /> },
+        { label: 'Recetas', path: '/poc/restaurant-os/recipes', icon: <MenuBookIcon /> },
+      ],
+    },
+  ],
+}
+
+const settingsSection: NavSection = {
+  label: '',
+  items: [
+    { label: 'Settings', path: '/settings', icon: <SettingsIcon /> },
+  ],
+}
+
+const buildNavigationSections = (hasEntities: boolean): NavSection[] => {
+  if (hasEntities) {
+    return [financeSection, pocSection, settingsSection]
+  }
+  // Users without entities only see RestaurantOS (non-collapsible) + Settings
+  return [
+    { ...pocSection, label: 'RestaurantOS', collapsible: false, subsections: undefined, items: pocSection.subsections?.[0]?.items ?? [] },
+    settingsSection,
+  ]
+}
 
 const SIDEBAR_SECTIONS_KEY = 'sidebarSectionState'
 
@@ -105,13 +116,8 @@ const getInitialSectionState = (): Record<string, boolean> => {
   } catch {
     // localStorage unavailable or corrupted — fall back to defaults
   }
-  const initial: Record<string, boolean> = {}
-  navigationSections.forEach((section) => {
-    if (section.label && section.collapsible !== false) {
-      initial[section.label] = section.defaultOpen ?? true
-    }
-  })
-  return initial
+  // Default collapsible section state
+  return { 'POCs': pocSection.defaultOpen ?? false }
 }
 
 interface TRCollapsibleSidebarProps {
@@ -124,6 +130,8 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
 }) => {
   const location = useLocation()
   const { currentEntity, entities, switchEntity } = useEntity()
+  const hasEntities = entities.length > 0
+  const navigationSections = buildNavigationSections(hasEntities)
   const [sectionState, setSectionState] = useState<Record<string, boolean>>(getInitialSectionState)
 
   const handleEntityChange = (event: SelectChangeEvent) => {
@@ -328,43 +336,47 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
 
       <Divider />
 
-      {/* Entity Switcher */}
-      {open && (
-        <Box sx={{ p: 2 }}>
-          <FormControl fullWidth size="small">
-            <InputLabel id="entity-select-label">Entity</InputLabel>
-            <Select
-              labelId="entity-select-label"
-              id="entity-select"
-              value={currentEntity?.id || ''}
-              label="Entity"
-              onChange={handleEntityChange}
+      {/* Entity Switcher — only visible when user has entities */}
+      {entities.length > 0 && (
+        <>
+          {open && (
+            <Box sx={{ p: 2 }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="entity-select-label">Entity</InputLabel>
+                <Select
+                  labelId="entity-select-label"
+                  id="entity-select"
+                  value={currentEntity?.id || ''}
+                  label="Entity"
+                  onChange={handleEntityChange}
+                >
+                  {entities.map((entity) => (
+                    <MenuItem key={entity.id} value={entity.id}>
+                      {entity.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+
+          {!open && currentEntity && (
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                py: 1,
+              }}
             >
-              {entities.map((entity) => (
-                <MenuItem key={entity.id} value={entity.id}>
-                  {entity.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      )}
+              <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                {currentEntity.name.charAt(0)}
+              </Typography>
+            </Box>
+          )}
 
-      {!open && currentEntity && (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            py: 1,
-          }}
-        >
-          <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
-            {currentEntity.name.charAt(0)}
-          </Typography>
-        </Box>
+          <Divider />
+        </>
       )}
-
-      <Divider />
 
       {/* Restaurant Selector — only visible on RestaurantOS routes */}
       {location.pathname.startsWith('/poc/restaurant-os') && (
