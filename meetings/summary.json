@@ -1,0 +1,45 @@
+{
+  "title": "Budget & Project Management Workflow",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Oscar", "role": "Supervisor / Project Reviewer"},
+    {"name": "Daniel Cardona", "role": "Project Manager"}
+  ],
+  "company_name": null,
+  "contact_name": null,
+  "contact_email": null,
+  "summary": "Oscar and Daniel Cardona discussed how incoming projects are managed using Monday.com for task assignment and tracking. Daniel explained the quoting process, including prioritization, established checklists for specialized equipment, and how the team distributes information and compiles project files. They reflected on how detailed design reviews were a key competitive advantage that attracted their first major clients, but acknowledged that the current volume of incoming projects has made it difficult to maintain that level of review.",
+  "discussion_points": [
+    {
+      "topic": "Design Review as Competitive Advantage",
+      "description": "The team historically differentiated themselves by providing detailed design reviews to clients, identifying norm non-compliance, incorrect quantities, and pricing errors. This generated significant perceived value and attracted their first major clients. Due to current workload volume, this practice has been discontinued."
+    },
+    {
+      "topic": "Project Assignment Workflow via Monday.com",
+      "description": "Each team member manages their own projects. When a new project arrives, it is assigned via Monday.com by creating a category entry and tagging the responsible person with a comment. Oscar reviews completed work afterward."
+    },
+    {
+      "topic": "Quoting and Budgeting Process",
+      "description": "The assigned person evaluates project priority and determines what needs to be quoted. For specialized equipment, a pre-established checklist guides the process. The team distributes information, compiles the project file, collects supplier quotes, and then reviews pricing."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Evaluate whether to reinstate the design review process (even partially) to recover the competitive advantage and client value perception",
+      "owner": "Oscar",
+      "deadline": null
+    }
+  ],
+  "decisions": [],
+  "next_steps": [],
+  "diagrams": [
+    {
+      "title": "Project Assignment & Management Workflow",
+      "mermaid_code": "flowchart TD\n  A[New Project Arrives] --> B[Assign in Monday.com]\n  B --> C[Create Category & Tag Owner]\n  C --> D[Owner Manages Project]\n  D --> E[Prioritize & Begin Quoting]\n  E --> F[Oscar Reviews Work]\n  F --> G{Review Passed?}\n  G -->|Yes| H[Project Proceeds]\n  G -->|No| D"
+    },
+    {
+      "title": "Quoting & Budgeting Process",
+      "mermaid_code": "flowchart TD\n  A[Receive Project Assignment] --> B[Evaluate Priority]\n  B --> C{Specialized Equipment?}\n  C -->|Yes| D[Follow Established Checklist]\n  C -->|No| E[Standard Quoting Process]\n  D --> F[Distribute Information to Team]\n  E --> F\n  F --> G[Compile Project File]\n  G --> H[Collect Supplier Quotes]\n  H --> I[Review Pricing]\n  I --> J{Design Review?}\n  J -->|Yes| K[Review Compliance & Quantities]\n  K --> L[Send Review Letter to Client]\n  L --> M[Finalize Budget]\n  J -->|No| M"
+    }
+  ]
+}
