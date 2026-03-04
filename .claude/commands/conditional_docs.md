@@ -603,6 +603,15 @@ This prompt helps you determine what documentation you should read based on the 
     - When building Legal Desk API endpoints that need repository method signatures or usage patterns
     - When troubleshooting Legal Desk data access queries or repository singleton imports
 
+- app_docs/feature-7febcc45-legaldesk-all-pages.md
+  - Conditions:
+    - When working with Legal Desk frontend pages (Dashboard, Cases, Specialists, Clients, Analytics)
+    - When modifying LegalDeskDashboardPage, LegalDeskCasesPage, LegalDeskCaseDetailPage, or other Legal Desk page components
+    - When working with TRCaseStatusBadge, TRLegalDomainBadge, TRCasePriorityBadge, TRDeliverableChecklist, or TRPricingTimeline components
+    - When working with TRLegalCaseForm, TRLegalSpecialistForm, or TRLegalClientForm
+    - When implementing Legal Desk routing or sidebar navigation (LD-016)
+    - When troubleshooting Legal Desk page rendering, tab switching, or status transitions
+
 - app_docs/feature-601d0350-legaldesk-supporting-repositories-wave2.md
   - Conditions:
     - When working with Legal Desk assignment, deliverable, message, or analytics repositories
