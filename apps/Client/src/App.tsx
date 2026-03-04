@@ -16,6 +16,13 @@ import { RestaurantOSDocumentsPage } from '@/pages/restaurantos/RestaurantOSDocu
 import { RestaurantOSEventsPage } from '@/pages/restaurantos/RestaurantOSEventsPage'
 import { RestaurantOSResourcesPage } from '@/pages/restaurantos/RestaurantOSResourcesPage'
 import { RestaurantOSRecipesPage } from '@/pages/restaurantos/RestaurantOSRecipesPage'
+import { LegalDeskDashboardPage } from '@/pages/legaldesk/LegalDeskDashboardPage'
+import { LegalDeskCasesPage } from '@/pages/legaldesk/LegalDeskCasesPage'
+import { LegalDeskNewCasePage } from '@/pages/legaldesk/LegalDeskNewCasePage'
+import { LegalDeskCaseDetailPage } from '@/pages/legaldesk/LegalDeskCaseDetailPage'
+import { LegalDeskSpecialistsPage } from '@/pages/legaldesk/LegalDeskSpecialistsPage'
+import { LegalDeskClientsPage } from '@/pages/legaldesk/LegalDeskClientsPage'
+import { LegalDeskAnalyticsPage } from '@/pages/legaldesk/LegalDeskAnalyticsPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -241,6 +248,81 @@ function App() {
           <ProtectedRoute>
             <TRMainLayout>
               <RestaurantOSRecipesPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      {/* Legal Desk routes */}
+      <Route
+        path="/poc/legal-desk"
+        element={<Navigate to="/poc/legal-desk/dashboard" replace />}
+      />
+      <Route
+        path="/poc/legal-desk/dashboard"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskDashboardPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/legal-desk/cases"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskCasesPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/legal-desk/cases/new"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskNewCasePage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/legal-desk/cases/:id"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskCaseDetailPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/legal-desk/specialists"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskSpecialistsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/legal-desk/clients"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskClientsPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/legal-desk/analytics"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <LegalDeskAnalyticsPage />
             </TRMainLayout>
           </ProtectedRoute>
         }
