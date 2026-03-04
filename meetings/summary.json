@@ -1,0 +1,137 @@
+{
+  "title": "Grupo G - AI Services Proposal Evaluation Call",
+  "meeting_date": "2026-03-03",
+  "participants": [
+    {"name": "Daniel", "role": "AI Services Provider - Growth Marketing & Strategy Lead"},
+    {"name": "Daniel Restrepo", "role": "AI Services Provider - Technical / Engineering Lead"},
+    {"name": "Raúl", "role": "Grupo G - Meeting Convener / Director"},
+    {"name": "Héctor", "role": "Grupo G - Director"},
+    {"name": "Miguel Ángel", "role": "AI Domain Expert / Family Associate"},
+    {"name": "Antonio", "role": "Grupo G - Attendee"},
+    {"name": "Héctor (2nd)", "role": "Grupo G - Attendee"}
+  ],
+  "company_name": "Grupo G",
+  "contact_name": "Raúl",
+  "contact_email": null,
+  "summary": "Grupo G, a Colombian logistics company (domestic transport, warehousing, and maquila services), evaluated an AI consulting proposal with two options: Plan A ($6K process mapping diagnostic) and Plan B (targeted solution development). The team demonstrated a quoting system (reduced 7-10 days to 15 minutes) and a bank reconciliation tool ($4K + $150/month). Key concerns raised were code ownership, hosting, NDA requirements, and database architecture. The group agreed to proceed with Plan A, potentially running a proof-of-concept in parallel, and requested an updated proposal with dual code-ownership pricing options.",
+  "discussion_points": [
+    {
+      "topic": "Billing & Invoicing Complexity",
+      "description": "Grupo G faces severe billing complexity: multiple service types per client (transport, warehousing, maquila), non-standardized processes per client, frequent errors causing invoice rejections and delayed collections. This was identified as a major pain point consuming excessive team time."
+    },
+    {
+      "topic": "Plan A vs Plan B Proposal Evaluation",
+      "description": "Plan A: Full organizational process mapping diagnostic ($6K) with WhatsApp interviews across key personnel, delivering flowcharts and opportunity assessment. Plan B: Targeted solution development for specific pain points ($8K-$10K for custom solutions). The group leans toward Plan A to identify the highest-impact opportunities ('low-hanging fruit')."
+    },
+    {
+      "topic": "Code Ownership & IP Structure",
+      "description": "Héctor raised critical concerns about who owns the source code and tools developed. Currently, the default model keeps source code with the development team. The prospect requested dual pricing: one where code stays with the vendor, another where Grupo G owns it outright. This must be clarified in the updated proposal."
+    },
+    {
+      "topic": "Quoting System Demo (Logistics Case Study)",
+      "description": "Live demonstration of a custom quoting tool built for a Colombian logistics company. Features include Excel-based route configuration, regulatory integration for minimum legal pricing, statistical market analysis, QR-code enabled client interaction (accept/reject), and email delivery. Built in 24 days (vs. 6-8 months traditionally), priced at $8K-$10K. Reduced quoting time from 7-10 days to 15 minutes."
+    },
+    {
+      "topic": "Bank Reconciliation Tool",
+      "description": "A semi-standardized product offered at $4K setup + $150/month recurring. Achieves ~90% automatic matching in 5 minutes vs. 2-3 days of manual work. Less customization needed compared to quoting solutions. Already supports Colombian bank formats."
+    },
+    {
+      "topic": "Database Architecture & Data Warehouse Strategy",
+      "description": "Héctor requested that the proposal include recommendations for structuring the company's database to identify core revenue-generating processes and reduce administrative overhead. Referenced a Bolivia multi-family office case where SAP Business One and Oracle data were consolidated into a data warehouse, eliminating $500K/year in reprocessing costs."
+    },
+    {
+      "topic": "Revenue Analytics & Client Health Monitoring",
+      "description": "Demonstration of a 3-4 month engagement with a US freight forwarder showing client health scoring: quote effectiveness rates, revenue trends by rep/department, churn analysis, hidden gem identification, payment risk signals, and strategic action plans. Showed how data-driven decisions can recover $375K+ from churn reduction alone."
+    },
+    {
+      "topic": "NDA & Confidentiality Requirements",
+      "description": "Héctor emphasized the need for an NDA to protect Grupo G's proprietary information, especially as the AI services team may work with competing logistics companies in the future."
+    },
+    {
+      "topic": "Hosting & Ongoing Relationship Model",
+      "description": "Solutions are cloud-hosted (can be vendor's or client's domain). Three cost components: implementation/development, subscription/maintenance, and per-use fees. Grupo G wants clarity on long-term contractual commitments to avoid heavy structural costs."
+    },
+    {
+      "topic": "Existing PwC Process Map",
+      "description": "PricewaterhouseCoopers created a comprehensive process map for the company ~10 years ago. It will serve as a baseline reference, but both parties agreed that current processes have likely diverged significantly and the diagnostic should capture the as-is state, not anchor to outdated documentation."
+    },
+    {
+      "topic": "Technology Team Assessment",
+      "description": "Grupo G's internal tech team is limited to IT support (infrastructure, networks) with no product development capability. This supports the outsourced development model and reinforces that code ownership is more symbolic than practical for the client."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send updated proposal including dual pricing for code ownership (vendor-owned vs client-owned source code)",
+      "owner": "Daniel / Daniel Restrepo",
+      "deadline": null
+    },
+    {
+      "description": "Send NDA to Grupo G for review and signature",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Include database architecture and structuring recommendations in the diagnostic proposal scope",
+      "owner": "Daniel / Daniel Restrepo",
+      "deadline": null
+    },
+    {
+      "description": "Clarify ongoing relationship structure, maintenance costs, and hosting options in the updated proposal",
+      "owner": "Daniel / Daniel Restrepo",
+      "deadline": null
+    },
+    {
+      "description": "Retrieve existing PwC process map from Pastor to use as baseline reference",
+      "owner": "Héctor / Grupo G",
+      "deadline": null
+    },
+    {
+      "description": "Define which process to target for initial proof-of-concept (billing or quoting)",
+      "owner": "Raúl / Héctor (Grupo G)",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Grupo G prefers Plan A (full process mapping diagnostic) over Plan B (targeted solution) as the starting point",
+    "Both plans can run in parallel: diagnostic alongside a proof-of-concept on a specific process",
+    "NDA will be provided by Daniel's team to Grupo G",
+    "The existing PwC process map (~10 years old) will be used as a reference baseline, not as the definitive source",
+    "The updated proposal must include dual pricing options for code ownership",
+    "Database architecture recommendations should be incorporated into the proposal scope"
+  ],
+  "next_steps": [
+    "Daniel's team sends updated diagnostic proposal with: deliverables, timeline, cost, code ownership options, database structuring scope",
+    "Daniel's team sends NDA for Grupo G's review",
+    "Grupo G retrieves existing PwC process map from Pastor",
+    "Grupo G selects priority process for proof-of-concept (billing vs. quoting)",
+    "Upon proposal acceptance: launch WhatsApp-based discovery interviews with key personnel (~35-45 min each)",
+    "Target timeline: first diagnostic reports within 1 month, functional POC prototype within 2 weeks of kickoff"
+  ],
+  "diagrams": [
+    {
+      "title": "Logistics Operations - Three Core Flows",
+      "mermaid_code": "flowchart TD\n    subgraph Documents[\"Document Flow\"]\n        D1[\"Client Request\"] --> D2[\"Quotation Created\"]\n        D2 --> D3[\"Price Negotiation\"]\n        D3 --> D4[\"Client Acceptance\"]\n        D4 --> D5[\"Service Documents\"]\n        D5 --> D6[\"Proof of Delivery\"]\n    end\n\n    subgraph Money[\"Money Flow\"]\n        M1[\"Pricing Defined\"] --> M2[\"Operator Payment\"]\n        M2 --> M3[\"Invoice Generation\"]\n        M3 --> M4[\"Client Billing\"]\n        M4 --> M5[\"Accounts Receivable\"]\n        M5 --> M6[\"Collection 30-60-90-120 days\"]\n    end\n\n    subgraph Goods[\"Merchandise Flow\"]\n        G1[\"Pickup at Origin\"] --> G2[\"Warehousing\"]\n        G2 --> G3[\"Maquila Processing\"]\n        G3 --> G4[\"Transport\"]\n        G4 --> G5[\"Delivery Confirmation\"]\n    end\n\n    D6 --> M3\n    G5 --> D6"
+    },
+    {
+      "title": "Quoting System Architecture (Demo)",
+      "mermaid_code": "flowchart LR\n    A[\"Excel Route Upload\"] --> B[\"Route Configuration\"]\n    B --> C{\"Pricing Engine\"}\n    C --> D[\"Regulatory API\\nMin Legal Prices\"]\n    C --> E[\"Statistical Analysis\\nMarket Rates\"]\n    D --> F[\"Cost Calculation\"]\n    E --> F\n    F --> G[\"Margin Application\\n15% Target\"]\n    G --> H[\"Quotation Generated\"]\n    H --> I[\"Email with QR Code\"]\n    I --> J[\"Client Portal\"]\n    J --> K{\"Client Decision\"}\n    K -->|Accept| L[\"Order Created\"]\n    K -->|Reject| M[\"Feedback Loop\"]"
+    },
+    {
+      "title": "Bank Reconciliation Process",
+      "mermaid_code": "flowchart TD\n    A[\"Bank Statement Upload\"] --> B[\"AI Parsing Engine\"]\n    C[\"Internal Records\\nAccounting System\"] --> B\n    B --> D{\"Automated Matching\\n~90% Match Rate\"}\n    D -->|Matched| E[\"Reconciled Transactions\"]\n    D -->|Unmatched ~10%| F[\"Manual Review Queue\"]\n    F --> G[\"Human Validation\"]\n    G --> E\n    E --> H[\"Reconciliation Report\"]\n\n    style D fill:#4CAF50,color:#fff\n    style F fill:#FF9800,color:#fff"
+    },
+    {
+      "title": "Proposed Data Warehouse Architecture",
+      "mermaid_code": "flowchart TD\n    subgraph Sources[\"Source Systems\"]\n        S1[\"TMS\\nTransport Mgmt\"]\n        S2[\"Accounting\\nSystem\"]\n        S3[\"Excel Files\\nPricing Tables\"]\n        S4[\"WhatsApp\\nEmail\"]\n        S5[\"Inventory\\nSystem\"]\n    end\n\n    subgraph ETL[\"Data Pipeline\"]\n        E1[\"Extract & Transform\"]\n    end\n\n    subgraph DW[\"Data Warehouse\"]\n        DW1[(\"Central Database\")]\n    end\n\n    subgraph Analytics[\"Analytics & Decisions\"]\n        A1[\"Revenue Dashboards\"]\n        A2[\"Client Health Scores\"]\n        A3[\"Billing Automation\"]\n        A4[\"Operational KPIs\"]\n    end\n\n    S1 --> E1\n    S2 --> E1\n    S3 --> E1\n    S4 --> E1\n    S5 --> E1\n    E1 --> DW1\n    DW1 --> A1\n    DW1 --> A2\n    DW1 --> A3\n    DW1 --> A4"
+    },
+    {
+      "title": "Billing Process - Current Pain Points",
+      "mermaid_code": "flowchart TD\n    A[\"Service Completed\"] --> B{\"Document Checklist\\nPer Client Config\"}\n    B -->|Missing Docs| C[\"Chase Documents\\nRemittance, Photos, POD\"]\n    C --> B\n    B -->|Complete| D[\"Calculate Charges\"]\n\n    subgraph Services[\"Multiple Charge Types\"]\n        D --> D1[\"Min Storage Fee\"]\n        D --> D2[\"Actual Storage Adjustment\"]\n        D --> D3[\"Maquila Charges\"]\n        D --> D4[\"Transport Charges\"]\n        D --> D5[\"Additional Services\"]\n    end\n\n    D1 --> E[\"Compile Invoice\"]\n    D2 --> E\n    D3 --> E\n    D4 --> E\n    D5 --> E\n    E --> F{\"Review & Validation\"}\n    F -->|Errors Found| G[\"Re-review & Correct\"]\n    G --> F\n    F -->|Approved| H[\"Send Invoice\"]\n    H --> I{\"Client Validates\"}\n    I -->|Rejected| J[\"Re-invoice\\nDays Lost\"]\n    J --> E\n    I -->|Accepted| K[\"Collection Begins\"]\n\n    style G fill:#f44336,color:#fff\n    style J fill:#f44336,color:#fff"
+    },
+    {
+      "title": "Engagement Model & Service Structure",
+      "mermaid_code": "flowchart LR\n    subgraph PhaseA[\"Phase A: Diagnostic\"]\n        A1[\"WhatsApp Interviews\\n35-45 min each\"] --> A2[\"Process Mapping\\nAs-Is State\"]\n        A2 --> A3[\"Opportunity Assessment\\nROI Analysis\"]\n        A3 --> A4[\"Diagnostic Report\\nwith Recommendations\"]\n    end\n\n    subgraph PhaseB[\"Phase B: POC Development\"]\n        B1[\"Discovery Call\"] --> B2[\"Sprint 1: Build\\n2 weeks\"]\n        B2 --> B3[\"User Testing\\n& Feedback\"]\n        B3 --> B4[\"Sprint 2: Iterate\\n2 weeks\"]\n        B4 --> B5[\"Production Ready\"]\n    end\n\n    subgraph Ongoing[\"Ongoing Relationship\"]\n        C1[\"Hosting & Maintenance\"]\n        C2[\"Per-Use Fees\"]\n        C3[\"Feature Iterations\"]\n    end\n\n    A4 --> PhaseB\n    B5 --> Ongoing"
+    }
+  ]
+}
