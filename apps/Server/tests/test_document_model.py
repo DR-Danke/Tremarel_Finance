@@ -189,6 +189,8 @@ def test_document_response_dto_from_attributes() -> None:
     mock_document.expiration_date = date(2028, 1, 1)
     mock_document.person_id = uuid4()
     mock_document.description = "Test contract"
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 
@@ -213,6 +215,8 @@ def test_document_response_dto_expiration_status_valid_no_date() -> None:
     mock_document.expiration_date = None
     mock_document.person_id = None
     mock_document.description = None
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 
@@ -232,6 +236,8 @@ def test_document_response_dto_expiration_status_valid_far_future() -> None:
     mock_document.expiration_date = date.today() + timedelta(days=60)
     mock_document.person_id = None
     mock_document.description = None
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 
@@ -251,6 +257,8 @@ def test_document_response_dto_expiration_status_expiring_soon() -> None:
     mock_document.expiration_date = date.today() + timedelta(days=15)
     mock_document.person_id = None
     mock_document.description = None
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 
@@ -270,6 +278,8 @@ def test_document_response_dto_expiration_status_expiring_soon_exactly_30() -> N
     mock_document.expiration_date = date.today() + timedelta(days=30)
     mock_document.person_id = None
     mock_document.description = None
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 
@@ -289,6 +299,8 @@ def test_document_response_dto_expiration_status_expiring_soon_today() -> None:
     mock_document.expiration_date = date.today()
     mock_document.person_id = None
     mock_document.description = None
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 
@@ -308,6 +320,8 @@ def test_document_response_dto_expiration_status_expired() -> None:
     mock_document.expiration_date = date.today() - timedelta(days=1)
     mock_document.person_id = None
     mock_document.description = None
+    mock_document.processing_status = None
+    mock_document.processing_result = None
     mock_document.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_document.updated_at = None
 

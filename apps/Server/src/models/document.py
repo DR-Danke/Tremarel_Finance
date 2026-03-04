@@ -6,6 +6,7 @@ from typing import Optional
 
 from sqlalchemy import Column, Date, DateTime, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.types import JSON
 
 from src.config.database import Base
 
@@ -35,6 +36,8 @@ class Document(Base):
         UUID(as_uuid=True), ForeignKey("person.id"), nullable=True
     )
     description: Optional[str] = Column(Text, nullable=True)
+    processing_status: Optional[str] = Column(String(20), nullable=True)
+    processing_result = Column(JSON, nullable=True)
     created_at: datetime = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Optional[datetime] = Column(DateTime(timezone=True), onupdate=datetime.utcnow)
 

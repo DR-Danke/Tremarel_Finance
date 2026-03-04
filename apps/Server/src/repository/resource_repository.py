@@ -4,6 +4,7 @@ from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from src.models.resource import Resource
@@ -137,6 +138,33 @@ class ResourceRepository:
             return True
         print(f"INFO [ResourceRepository]: Resource {resource_id} not found for deletion")
         return False
+
+    def find_by_name(self, db: Session, restaurant_id: UUID, name: str) -> Optional[Resource]:
+        """
+        Find a resource by name within a restaurant (case-insensitive).
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            name: Resource name to search for
+
+        Returns:
+            Resource object if found, None otherwise
+        """
+        print(f"INFO [ResourceRepository]: Looking up resource by name '{name}' in restaurant {restaurant_id}")
+        resource = (
+            db.query(Resource)
+            .filter(
+                Resource.restaurant_id == restaurant_id,
+                func.lower(Resource.name) == name.lower(),
+            )
+            .first()
+        )
+        if resource:
+            print(f"INFO [ResourceRepository]: Found resource '{resource.name}' (id={resource.id})")
+        else:
+            print(f"INFO [ResourceRepository]: No resource found with name '{name}'")
+        return resource
 
     def get_low_stock(self, db: Session, restaurant_id: UUID) -> list[Resource]:
         """

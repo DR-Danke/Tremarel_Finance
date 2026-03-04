@@ -477,3 +477,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying DEFAULT_ALERT_WINDOWS or alert scheduling logic in DocumentService
     - When troubleshooting automatic vencimiento event creation on document create/update/delete
     - When extending the notification scheduler with new alert processing functions
+
+- app_docs/feature-e879dca2-invoice-ocr-automatic-cost-update.md
+  - Conditions:
+    - When working with invoice OCR processing or supplier invoice automation
+    - When implementing or modifying OCRAdapter, OCRService, or InvoiceProcessor
+    - When working with document processing_status or processing_result fields
+    - When implementing a real OCR provider (Google Cloud Vision, AWS Textract, OpenAI Vision)
+    - When working with automatic resource cost updates from invoices
+    - When troubleshooting invoice processing endpoints or resource matching logic
+    - When extending the invoice pipeline with recipe cost recalculation
