@@ -1,0 +1,140 @@
+{
+  "title": "LUTEC — Discovery & Process Mapping (Consolidated Sessions)",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Daniel Giraldo", "role": "CEO / Project Sponsor — Grupo Lutec"},
+    {"name": "Catalina Carranza", "role": "CFO — Grupo Lutec"},
+    {"name": "Oscar Pinzón", "role": "Director of Budgeting — Grupo Lutec"},
+    {"name": "Wendy", "role": "Purchasing / Logistics — Grupo Lutec"},
+    {"name": "José", "role": "Inventory Coordinator — Grupo Lutec"},
+    {"name": "Marco", "role": "Head of Purchasing — Grupo Lutec (not present, referenced)"},
+    {"name": "Daniel Cardona", "role": "Consultant / Discovery Lead — KAI Partners"}
+  ],
+  "company_name": "Grupo Lutec S.A.S",
+  "contact_name": "Daniel Giraldo",
+  "contact_email": null,
+  "summary": "Seven discovery sessions (~92 minutes total) were held with Grupo Lutec S.A.S, a B2B construction/electrical-lighting company in Bogotá (~50-80 employees, 47 warehouses). The sessions mapped five operational areas — Accounting & Treasury, Inventory, Purchasing, Budgeting, and Executive Management — revealing critical pain points including manual APU coding (up to 3 days per project × 10-12 projects/week), manual bank reconciliation across 5 accounts, and fragmented document handling across 16 entry points. An estimated 1,000-1,400 person-hours/month are lost to manual processes. The CEO explicitly requested a proposal and confirmed strong buy-in: 'You have a client here.'",
+  "discussion_points": [
+    {
+      "topic": "Budget/APU Manual Coding — Largest Pain Point",
+      "description": "6-person team processes 10-12 budgets/week. Each budget requires up to 3 days of manual coding against an incomplete APU database in Excel. Items repeat across budgets but are re-coded manually. This blocks the team from performing technical plan reviews — a key competitive differentiator that won them major clients."
+    },
+    {
+      "topic": "Bank Reconciliation Process",
+      "description": "5 bank accounts (2 savings, 1 checking, 2 trust/fiduciary) reconciled daily and monthly. One full-time person dedicated to daily egress reconciliation. ~30 accounting rules applied manually in Excel using VLOOKUP/CONCATENATE. Trust (fiducia) payments arrive without third-party detail, making matching extremely difficult."
+    },
+    {
+      "topic": "Purchase-to-Pay Chain (OC → RP → Invoice)",
+      "description": "Critical gap in document support chain: suppliers don't always send supporting documents with invoices, job sites without warehouse staff can't certify receipt, and documents arrive across 16 fragmented channels (8 WhatsApp + 8 email accounts + invoicing email). Without complete supports, Accounting can't book entries — causing weekly report delays."
+    },
+    {
+      "topic": "Electronic Invoicing (RADIAN/DIAN)",
+      "description": "500+ purchase invoices/month processed one-by-one for DIAN acceptance/rejection via XML. Previously required 2 full-time people. Recently discovered external provider for bulk XML download (~$13,000 COP for ~500 invoices), reducing workload to 2 hours."
+    },
+    {
+      "topic": "Inventory Management",
+      "description": "47 warehouses (on-site and central), ~15,000 products. Manual Kardex in Excel backs up Word Office ERP. Warehouse staff report daily entries/exits via email (PDF). No historical analysis for procurement forecasting. Peak receiving: first 1.5 weeks of each month (~50 purchase orders/day)."
+    },
+    {
+      "topic": "Illumination/Direct Sales Channel Issues",
+      "description": "Sales team acts as both buyer and seller (conflict of interest), quoting suppliers and clients simultaneously. Prices fluctuate daily, making historical data useless. Sales commits delivery times without checking inventory or coordinating with Logistics."
+    },
+    {
+      "topic": "ERP Migration Strategy",
+      "description": "Migrating from Word Office to Auranet (Chilean ERP specialized in construction), started November 2025. Dual-accounting during transition. Migration driven by Word Office's inability to provide per-project budget control. Currently in training phase."
+    },
+    {
+      "topic": "Executive Vision and Growth Plans",
+      "description": "CEO does NOT want to reduce headcount — wants to free up capacity for new consortium contracts being signed. Areas still to be mapped: Engineering, OHS, HR, Public Projects. Requested a commercial proposal with automation phases."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send 6 bank reconciliation files (3 Davivienda + 3 Bogotá: movements, statements, Word Office auxiliaries for February) to hola@huevos.ai",
+      "owner": "Catalina Carranza",
+      "deadline": null
+    },
+    {
+      "description": "Send client quantity spreadsheet and APU database with codes",
+      "owner": "Oscar Pinzón",
+      "deadline": null
+    },
+    {
+      "description": "Share historical cost methods and purchase consolidation databases",
+      "owner": "Marco (Head of Purchasing)",
+      "deadline": null
+    },
+    {
+      "description": "Cross-reference reconciliation files and deliver results",
+      "owner": "Daniel Cardona (KAI Partners)",
+      "deadline": "2026-03-06"
+    },
+    {
+      "description": "Prepare commercial proposal with automation phases",
+      "owner": "Daniel Cardona (KAI Partners)",
+      "deadline": null
+    },
+    {
+      "description": "Schedule session with Marco (Purchasing) to understand historical cost data",
+      "owner": "Daniel Cardona (KAI Partners)",
+      "deadline": null
+    },
+    {
+      "description": "Evaluate integration with Auranet (ERP in migration)",
+      "owner": "Daniel Cardona (KAI Partners)",
+      "deadline": null
+    },
+    {
+      "description": "Define protocol for automatic rejection of invoices without supporting documents",
+      "owner": "Grupo Lutec (cross-functional)",
+      "deadline": null
+    },
+    {
+      "description": "Continue Auranet ERP training in parallel",
+      "owner": "Grupo Lutec",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Bank reconciliation automation identified as the quick-win priority (Phase 1, results expected in 1-2 months)",
+    "APU matching automation via semantic similarity identified as highest-impact core project (Phase 2)",
+    "CEO confirmed intent to proceed — requested formal proposal",
+    "No headcount reduction — goal is to free capacity for new consortium contracts",
+    "External provider for bulk DIAN XML download adopted (reduced 2 FTEs to 2 hours of work)",
+    "Three-phase automation roadmap agreed: Quick Wins (1-2 months), Core Value (2-4 months), Transformation (4-6 months)"
+  ],
+  "next_steps": [
+    "Lutec sends reconciliation files and APU/budget files to KAI Partners",
+    "KAI Partners delivers reconciliation cross-reference results within 1-2 days",
+    "KAI Partners prepares and presents commercial proposal with phased automation plan",
+    "Session with Marco (Purchasing) to be scheduled for historical cost analysis",
+    "Evaluate Auranet integration possibilities for Phase 3",
+    "Map remaining areas: Engineering, OHS, HR, Public Projects"
+  ],
+  "diagrams": [
+    {
+      "title": "Current Technology Stack & Integrations",
+      "mermaid_code": "flowchart LR\n  subgraph CurrentERP[\"Word Office ERP\"]\n    WO_OC[Purchase Orders]\n    WO_RP[Supplier Receipts]\n    WO_INV[Invoicing]\n    WO_KDX[Kardex / Inventory]\n    WO_AUX[Accounting Auxiliaries]\n  end\n\n  subgraph Tools[\"Operational Tools\"]\n    MONDAY[Monday.com\\nTask Management]\n    EXCEL[Excel\\nAPUs / Budgets / Reconciliation]\n    BIM[BIM\\n3D Plan Review]\n    DIAN[DIAN Platform\\nRADIAN Events]\n  end\n\n  subgraph Comms[\"Communication Channels\"]\n    EMAIL[8 Email Accounts]\n    WHATSAPP[8 WhatsApp Lines]\n    FACTEMAIL[Invoicing Email]\n  end\n\n  subgraph NewERP[\"Auranet ERP (In Migration)\"]\n    AU_BUDGET[Per-Project Budget Control]\n    AU_FLOW[OC-RP-Invoice Integration]\n  end\n\n  WO_OC -. \"manual download\" .-> MONDAY\n  EXCEL -. \"no integration\" .-> WO_OC\n  DIAN -. \"one-by-one XML\" .-> WO_INV\n  EMAIL --> WO_INV\n  WHATSAPP -. \"no traceability\" .-> WO_OC\n  CurrentERP -. \"migration\" .-> NewERP"
+    },
+    {
+      "title": "Purchase-to-Pay Flow (Engineering Projects)",
+      "mermaid_code": "flowchart TD\n  A[Engineering Requirement\\nvia Monday] --> B[Budgeting Team\\nCodes APUs manually]\n  B --> C[Quote sent to Client]\n  C --> D{Client Approves?}\n  D -- Yes --> E[Purchasing generates OC\\nin Word Office]\n  E --> F[OC uploaded to Monday]\n  F --> G[OC sent to Supplier]\n  G --> H[Supplier Delivers Goods]\n  H --> I{Site has Warehouse Staff?}\n  I -- Yes --> J[Warehouse validates\\nOC vs delivery]\n  J --> K[Creates RP in Word Office]\n  I -- No --> L[NO RECEIPT CERTIFICATION\\nInvoice stuck in limbo]\n  K --> M[Accounting crosses\\nOC + RP + DIAN Invoice]\n  M --> N{All documents complete?}\n  N -- Yes --> O[Entry Booked]\n  N -- No --> P[Returned to Purchasing\\nfor missing supports]\n  P --> M\n  O --> Q[Treasury Schedules Payment]\n  Q --> R[Payment Executed]\n  R --> S[Daily Bank Reconciliation\\n5 accounts]"
+    },
+    {
+      "title": "Direct Sales Flow (Illumination)",
+      "mermaid_code": "flowchart TD\n  A[Sales Rep quotes\\nSupplier + Client simultaneously] --> B[Client Approves]\n  B --> C[Sales uploads to Monday]\n  C --> D[Purchasing generates OC\\nto Supplier]\n  D --> E[Supplier Delivers]\n  E --> F[Warehouse creates RP]\n  F --> G[Dispatch to Client]\n  G --> H[Sales instructs Accounting\\nto invoice]\n  H --> I[Sales Invoice issued\\ncopy of order]\n\n  style A fill:#f9a825,stroke:#f57f17\n  style D fill:#ef5350,stroke:#c62828"
+    },
+    {
+      "title": "Bank Reconciliation Process",
+      "mermaid_code": "flowchart TD\n  subgraph Banks[\"5 Bank Accounts\"]\n    B1[Davivienda Savings]\n    B2[Bogota Savings]\n    B3[Checking Account]\n    B4[Trust Fund 1]\n    B5[Trust Fund 2]\n  end\n\n  Banks --> DL[Daily Download\\nExcel + PDF]\n  DL --> AUX[Download Auxiliaries\\nfrom Word Office\\n1 per bank]\n\n  AUX --> DAILY[Daily Reconciliation\\nEntries + Exits]\n\n  DAILY --> PROB{Known Issues}\n  PROB --> P1[Trust payments\\nwithout payer detail]\n  PROB --> P2[Payroll as\\nsingle lump sum]\n  PROB --> P3[Variable withholding\\nrates per client]\n\n  DAILY --> MONTHLY[Monthly Close\\nafter 5th of month]\n  MONTHLY --> REPORT[Weekly Report to CFO\\nTuesdays]\n  REPORT --> DELAY[7-10 business days\\ndelay in closing]"
+    },
+    {
+      "title": "APU Budgeting Process",
+      "mermaid_code": "flowchart TD\n  A[Client sends Excel\\nQuantity Spreadsheet\\neach client has own format] --> B[Oscar assigns via Monday]\n  B --> C[Budget Analyst takes\\nClient Excel]\n  C --> D[Manual coding:\\nSearch APU database\\nin Excel with filters]\n  D --> E{APU found?}\n  E -- Yes --> F[Copy inputs, quantities\\nyields manually]\n  E -- No --> G[Create APU from scratch]\n  G --> F\n  F --> H[Validate prices vs\\nSupplier database]\n  H --> I[Return completed Excel\\nto Client with prices]\n\n  J[BIM Specialist\\nreviews 3D plans] -.-> I\n\n  style D fill:#ef5350,stroke:#c62828\n  style G fill:#ef5350,stroke:#c62828"
+    },
+    {
+      "title": "Proposed 3-Phase Automation Architecture",
+      "mermaid_code": "flowchart LR\n  subgraph Phase1[\"Phase 1: Quick Wins\\n1-2 months\"]\n    QW1[Bank Reconciliation\\nEngine with 30 rules]\n    QW2[Bulk XML Download\\nDIAN/RADIAN]\n    QW3[Missing Document\\nAlert System]\n  end\n\n  subgraph Phase2[\"Phase 2: Core Value\\n2-4 months\"]\n    CV1[APU Semantic\\nMatching Engine]\n    CV2[OC-RP-Invoice\\nAutomated Workflow]\n    CV3[Consolidated\\nPrice Matrix]\n  end\n\n  subgraph Phase3[\"Phase 3: Transformation\\n4-6 months\"]\n    TR1[Auranet ERP\\nIntegration]\n    TR2[Real-time Budget\\nDashboard per Project]\n    TR3[Automated Technical\\nPlan Review]\n  end\n\n  Phase1 --> Phase2 --> Phase3\n\n  style Phase1 fill:#c8e6c9,stroke:#2e7d32\n  style Phase2 fill:#fff9c4,stroke:#f9a825\n  style Phase3 fill:#bbdefb,stroke:#1565c0"
+    }
+  ]
+}

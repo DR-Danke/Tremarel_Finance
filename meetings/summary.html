@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Summary — LUTEC Discovery &amp; Process Mapping</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: #f4f6f9; color: #2c3e50; line-height: 1.6; }
+    .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+
+    /* Header */
+    .header { background: linear-gradient(135deg, #1a237e 0%, #1565c0 100%); color: #fff; padding: 40px 36px; border-radius: 12px 12px 0 0; }
+    .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .header .subtitle { font-size: 14px; opacity: 0.85; }
+    .header .meta { display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap; }
+    .header .meta-item { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 6px; font-size: 13px; }
+
+    /* Main card */
+    .card { background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 36px; margin-bottom: 28px; }
+    .card + .card { border-radius: 12px; }
+
+    /* Section titles */
+    .section-title { font-size: 18px; font-weight: 700; color: #1565c0; border-bottom: 2px solid #e3f2fd; padding-bottom: 8px; margin-bottom: 16px; margin-top: 32px; }
+    .section-title:first-child { margin-top: 0; }
+
+    /* Summary box */
+    .summary-box { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; margin-bottom: 24px; }
+
+    /* Company info */
+    .company-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+    .company-info .info-item { display: flex; gap: 8px; }
+    .company-info .label { font-weight: 600; color: #546e7a; min-width: 110px; font-size: 13px; }
+    .company-info .value { font-size: 14px; }
+
+    /* Participants */
+    .participants-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .participant { background: #f5f7fa; padding: 10px 14px; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
+    .participant .avatar { width: 36px; height: 36px; border-radius: 50%; background: #1565c0; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+    .participant .name { font-weight: 600; font-size: 14px; }
+    .participant .role { font-size: 12px; color: #78909c; }
+
+    /* Discussion points */
+    .discussion-point { margin-bottom: 14px; padding: 14px 16px; background: #fafbfd; border-radius: 8px; border-left: 3px solid #1565c0; }
+    .discussion-point .dp-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: #1a237e; }
+    .discussion-point .dp-desc { font-size: 14px; color: #455a64; }
+
+    /* Action items */
+    .action-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eceff1; }
+    .action-item:last-child { border-bottom: none; }
+    .action-checkbox { width: 20px; height: 20px; border: 2px solid #90a4ae; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+    .action-content { flex: 1; }
+    .action-desc { font-size: 14px; font-weight: 500; }
+    .action-meta { font-size: 12px; color: #78909c; margin-top: 2px; }
+    .action-meta .owner { background: #e3f2fd; color: #1565c0; padding: 1px 8px; border-radius: 4px; font-weight: 600; }
+    .action-meta .deadline { background: #fff3e0; color: #e65100; padding: 1px 8px; border-radius: 4px; font-weight: 600; margin-left: 6px; }
+
+    /* Decisions */
+    .decision { padding: 8px 0; font-size: 14px; display: flex; align-items: flex-start; gap: 8px; }
+    .decision::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #2e7d32; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+
+    /* Next steps */
+    .next-step { padding: 8px 0; font-size: 14px; display: flex; align-items: flex-start; gap: 8px; }
+    .next-step::before { content: ''; display: inline-block; width: 0; height: 0; border-left: 6px solid #1565c0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; flex-shrink: 0; margin-top: 5px; }
+
+    /* Pain points */
+    .pain-section { margin-top: 12px; margin-bottom: 16px; }
+    .pain-header { font-size: 14px; font-weight: 700; margin-bottom: 8px; padding: 6px 12px; border-radius: 6px; }
+    .pain-critical { background: #ffebee; color: #c62828; }
+    .pain-important { background: #fff8e1; color: #e65100; }
+    .pain-opportunity { background: #e8f5e9; color: #2e7d32; }
+    .pain-item { font-size: 13px; padding: 6px 12px; margin-bottom: 4px; }
+    .pain-item strong { color: #37474f; }
+
+    /* Quotes */
+    .quote { background: #f5f5f5; border-left: 3px solid #90a4ae; padding: 12px 16px; margin-bottom: 10px; border-radius: 0 8px 8px 0; font-style: italic; font-size: 14px; }
+    .quote .attribution { font-style: normal; font-weight: 600; color: #1565c0; font-size: 13px; margin-top: 4px; }
+
+    /* Diagrams */
+    .diagram-container { margin-bottom: 24px; }
+    .diagram-title { font-size: 15px; font-weight: 600; color: #37474f; margin-bottom: 10px; padding: 8px 12px; background: #f5f7fa; border-radius: 6px; }
+    pre.mermaid { background: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; text-align: center; }
+
+    /* Impact table */
+    .impact-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+    .impact-table th { background: #1565c0; color: #fff; padding: 10px 12px; text-align: left; }
+    .impact-table td { padding: 8px 12px; border-bottom: 1px solid #eceff1; }
+    .impact-table tr:nth-child(even) td { background: #fafbfd; }
+    .impact-table tr:last-child td { font-weight: 700; background: #e3f2fd; }
+
+    /* Footer */
+    .footer { text-align: center; color: #90a4ae; font-size: 12px; padding: 20px 0; }
+
+    @media (max-width: 600px) {
+      .company-info, .participants-grid { grid-template-columns: 1fr; }
+      .header .meta { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>LUTEC &mdash; Discovery &amp; Process Mapping</h1>
+    <div class="subtitle">Consolidated Meeting Summary &mdash; 7 Sessions</div>
+    <div class="meta">
+      <div class="meta-item">Date: March 4, 2026</div>
+      <div class="meta-item">Duration: ~92 minutes</div>
+      <div class="meta-item">Stakeholders: 6</div>
+      <div class="meta-item">Consultant: Daniel Cardona &mdash; KAI Partners</div>
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card">
+
+    <!-- Executive Summary -->
+    <div class="section-title">Executive Summary</div>
+    <div class="summary-box">
+      Seven discovery sessions (~92 minutes total) were held with <strong>Grupo Lutec S.A.S</strong>, a B2B construction/electrical-lighting company in Bogot&aacute; (~50-80 employees, 47 warehouses). The sessions mapped five operational areas &mdash; Accounting &amp; Treasury, Inventory, Purchasing, Budgeting, and Executive Management &mdash; revealing critical pain points including manual APU coding (up to 3 days per project &times; 10-12 projects/week), manual bank reconciliation across 5 accounts, and fragmented document handling across 16 entry points. An estimated <strong>1,000-1,400 person-hours/month</strong> are lost to manual processes. The CEO explicitly requested a proposal and confirmed strong buy-in: <em>"You have a client here."</em>
+    </div>
+
+    <!-- Company Information -->
+    <div class="section-title">Company Information</div>
+    <div class="company-info">
+      <div class="info-item"><span class="label">Company:</span><span class="value">Grupo Lutec S.A.S</span></div>
+      <div class="info-item"><span class="label">Location:</span><span class="value">Bogot&aacute; D.C., Colombia</span></div>
+      <div class="info-item"><span class="label">Industry:</span><span class="value">Construction / Lighting / Electrical Engineering</span></div>
+      <div class="info-item"><span class="label">Business Model:</span><span class="value">B2B &mdash; Partner supplier for construction companies</span></div>
+      <div class="info-item"><span class="label">Size:</span><span class="value">~50-80 employees, 47 warehouses</span></div>
+      <div class="info-item"><span class="label">Current ERP:</span><span class="value">Word Office (migrating to Auranet)</span></div>
+      <div class="info-item"><span class="label">Primary Contact:</span><span class="value">Daniel Giraldo (CEO)</span></div>
+      <div class="info-item"><span class="label">Website:</span><span class="value">www.lutec.com.co</span></div>
+    </div>
+
+    <!-- Participants -->
+    <div class="section-title">Participants</div>
+    <div class="participants-grid">
+      <div class="participant">
+        <div class="avatar">DG</div>
+        <div><div class="name">Daniel Giraldo</div><div class="role">CEO / Project Sponsor</div></div>
+      </div>
+      <div class="participant">
+        <div class="avatar">CC</div>
+        <div><div class="name">Catalina Carranza</div><div class="role">CFO</div></div>
+      </div>
+      <div class="participant">
+        <div class="avatar">OP</div>
+        <div><div class="name">Oscar Pinz&oacute;n</div><div class="role">Director of Budgeting</div></div>
+      </div>
+      <div class="participant">
+        <div class="avatar">W</div>
+        <div><div class="name">Wendy</div><div class="role">Purchasing / Logistics</div></div>
+      </div>
+      <div class="participant">
+        <div class="avatar">J</div>
+        <div><div class="name">Jos&eacute;</div><div class="role">Inventory Coordinator</div></div>
+      </div>
+      <div class="participant">
+        <div class="avatar">DC</div>
+        <div><div class="name">Daniel Cardona</div><div class="role">Consultant &mdash; KAI Partners</div></div>
+      </div>
+    </div>
+
+    <!-- Discussion Points -->
+    <div class="section-title">Key Discussion Points</div>
+
+    <div class="discussion-point">
+      <div class="dp-title">1. Budget / APU Manual Coding &mdash; Largest Pain Point</div>
+      <div class="dp-desc">6-person team processes 10-12 budgets/week. Each budget requires up to 3 days of manual coding against an incomplete APU database in Excel. Items repeat across budgets but are re-coded manually. This blocks the team from performing technical plan reviews &mdash; a key competitive differentiator that won them major clients.</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">2. Bank Reconciliation Process</div>
+      <div class="dp-desc">5 bank accounts reconciled daily and monthly. One full-time person dedicated to daily egress reconciliation. ~30 accounting rules applied manually in Excel. Trust (fiducia) payments arrive without payer detail, making matching extremely difficult.</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">3. Purchase-to-Pay Chain (OC &rarr; RP &rarr; Invoice)</div>
+      <div class="dp-desc">Critical gap: suppliers don't always send supporting documents, job sites without warehouse staff can't certify receipt, documents arrive across 16 fragmented channels. Without complete supports, Accounting can't book entries &mdash; causing weekly report delays.</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">4. Electronic Invoicing (RADIAN/DIAN)</div>
+      <div class="dp-desc">500+ purchase invoices/month processed one-by-one for DIAN acceptance/rejection via XML. Previously required 2 full-time people. Recently discovered external provider for bulk XML download, reducing workload to 2 hours.</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">5. Inventory Management</div>
+      <div class="dp-desc">47 warehouses, ~15,000 products. Manual Kardex in Excel backs up Word Office. No historical analysis for procurement forecasting. Peak receiving: first 1.5 weeks of each month (~50 OC/day).</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">6. Illumination / Direct Sales Channel Issues</div>
+      <div class="dp-desc">Sales team acts as both buyer and seller (conflict of interest). Prices fluctuate daily making historical data useless. Sales commits delivery times without checking inventory or coordinating with Logistics.</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">7. ERP Migration Strategy</div>
+      <div class="dp-desc">Migrating from Word Office to Auranet (Chilean ERP, construction-specialized), started November 2025. Dual-accounting during transition. Currently in training phase.</div>
+    </div>
+
+    <div class="discussion-point">
+      <div class="dp-title">8. Executive Vision &amp; Growth Plans</div>
+      <div class="dp-desc">CEO wants to free capacity for new consortium contracts, not reduce headcount. Areas still to map: Engineering, OHS, HR, Public Projects.</div>
+    </div>
+
+    <!-- Pain Points -->
+    <div class="section-title">Pain Points &amp; Opportunities</div>
+
+    <div class="pain-section">
+      <div class="pain-header pain-critical">CRITICAL &mdash; High impact on operations and profitability</div>
+      <div class="pain-item"><strong>P1:</strong> Manual APU coding &mdash; up to 3 days/project &times; 10-12 projects/week = ~30-36 person-days/week</div>
+      <div class="pain-item"><strong>P2:</strong> RADIAN process one-by-one (500+ invoices/month) &mdash; previously 2 FTEs</div>
+      <div class="pain-item"><strong>P3:</strong> Missing supports in OC&rarr;RP&rarr;Invoice chain &mdash; delays accounting close by 1 week</div>
+      <div class="pain-item"><strong>P4:</strong> Manual bank reconciliation (5 accounts) &mdash; 1 person full-time daily</div>
+      <div class="pain-item"><strong>P5:</strong> Trust payments without payer detail &mdash; significant delay in payment matching</div>
+      <div class="pain-item"><strong>P6:</strong> Sales as judge and party (quotes both sides) &mdash; uncontrolled margins</div>
+    </div>
+
+    <div class="pain-section">
+      <div class="pain-header pain-important">IMPORTANT &mdash; Impact on efficiency and control</div>
+      <div class="pain-item"><strong>P7:</strong> No per-project budget control in Word Office</div>
+      <div class="pain-item"><strong>P8:</strong> No historical procurement analysis</div>
+      <div class="pain-item"><strong>P9:</strong> 16 document entry points (8 WhatsApp + 8 email + invoicing email)</div>
+      <div class="pain-item"><strong>P10:</strong> Job sites without warehouse staff = no receipt certification</div>
+      <div class="pain-item"><strong>P11:</strong> Illumination prices fluctuate daily &mdash; historical data useless</div>
+      <div class="pain-item"><strong>P12:</strong> APU database incomplete and under construction</div>
+      <div class="pain-item"><strong>P13:</strong> No longer delivering technical plan reviews to clients (lost differentiator)</div>
+    </div>
+
+    <div class="pain-section">
+      <div class="pain-header pain-opportunity">OPPORTUNITIES &mdash; Quick wins identified</div>
+      <div class="pain-item"><strong>O1:</strong> Bulk XML download (already tested) &mdash; 2 FTEs &rarr; 2 hours</div>
+      <div class="pain-item"><strong>O2:</strong> APU matching by semantic similarity &mdash; 3 days &rarr; hours per budget</div>
+      <div class="pain-item"><strong>O3:</strong> Auto-rejection of invoices without supports</div>
+      <div class="pain-item"><strong>O4:</strong> Automatic alerts for missing supports at unstaffed job sites</div>
+      <div class="pain-item"><strong>O5:</strong> Consolidated supplier price matrix</div>
+      <div class="pain-item"><strong>O6:</strong> Trust payment reconciliation rules (~80% of cases)</div>
+    </div>
+
+    <!-- Impact Quantification -->
+    <div class="section-title">Impact Quantification</div>
+    <table class="impact-table">
+      <thead>
+        <tr><th>Process</th><th>People</th><th>Est. Hours/Month</th><th>Opportunity Cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Manual APU Coding</td><td>6</td><td>480-720</td><td>Blocks budgets, delays quotes, loses differentiation</td></tr>
+        <tr><td>RADIAN Process (pre-fix)</td><td>2</td><td>320</td><td>Partially mitigated by external provider</td></tr>
+        <tr><td>Daily Bank Reconciliation</td><td>1</td><td>160</td><td>Delays close &rarr; delays reports &rarr; no visibility</td></tr>
+        <tr><td>Missing Document Follow-up</td><td>Cross-team</td><td>80-120</td><td>Round-trip cycles delay entire chain</td></tr>
+        <tr><td>Trust Payment Matching</td><td>1</td><td>40-80</td><td>Variable by payment volume</td></tr>
+        <tr><td>TOTAL ESTIMATED</td><td></td><td>1,000-1,400</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <!-- Decisions -->
+    <div class="section-title">Decisions Made</div>
+    <div class="decision"><span>Bank reconciliation automation identified as quick-win priority (Phase 1, results expected in 1-2 months)</span></div>
+    <div class="decision"><span>APU matching automation via semantic similarity identified as highest-impact core project (Phase 2)</span></div>
+    <div class="decision"><span>CEO confirmed intent to proceed &mdash; requested formal proposal</span></div>
+    <div class="decision"><span>No headcount reduction &mdash; goal is to free capacity for new consortium contracts</span></div>
+    <div class="decision"><span>External provider for bulk DIAN XML download adopted (reduced 2 FTEs to 2 hours)</span></div>
+    <div class="decision"><span>Three-phase automation roadmap agreed: Quick Wins (1-2 mo), Core Value (2-4 mo), Transformation (4-6 mo)</span></div>
+
+    <!-- Action Items -->
+    <div class="section-title">Action Items</div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Send 6 bank reconciliation files (3 Davivienda + 3 Bogot&aacute; for February) to hola@huevos.ai</div>
+        <div class="action-meta"><span class="owner">Catalina Carranza</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Send client quantity spreadsheet and APU database with codes</div>
+        <div class="action-meta"><span class="owner">Oscar Pinz&oacute;n</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Share historical cost methods and purchase consolidation databases</div>
+        <div class="action-meta"><span class="owner">Marco (Head of Purchasing)</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Cross-reference reconciliation files and deliver results</div>
+        <div class="action-meta"><span class="owner">Daniel Cardona (KAI Partners)</span> <span class="deadline">March 6, 2026</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Prepare commercial proposal with automation phases</div>
+        <div class="action-meta"><span class="owner">Daniel Cardona (KAI Partners)</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Schedule session with Marco (Purchasing) to understand historical cost data</div>
+        <div class="action-meta"><span class="owner">Daniel Cardona (KAI Partners)</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Evaluate integration with Auranet (ERP in migration)</div>
+        <div class="action-meta"><span class="owner">Daniel Cardona (KAI Partners)</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Define protocol for automatic rejection of invoices without supporting documents</div>
+        <div class="action-meta"><span class="owner">Grupo Lutec (cross-functional)</span></div>
+      </div>
+    </div>
+
+    <div class="action-item">
+      <div class="action-checkbox"></div>
+      <div class="action-content">
+        <div class="action-desc">Continue Auranet ERP training in parallel</div>
+        <div class="action-meta"><span class="owner">Grupo Lutec</span></div>
+      </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="section-title">Next Steps</div>
+    <div class="next-step"><span>Lutec sends reconciliation files and APU/budget files to KAI Partners</span></div>
+    <div class="next-step"><span>KAI Partners delivers reconciliation cross-reference results within 1-2 days</span></div>
+    <div class="next-step"><span>KAI Partners prepares and presents commercial proposal with phased automation plan</span></div>
+    <div class="next-step"><span>Session with Marco (Purchasing) to be scheduled for historical cost analysis</span></div>
+    <div class="next-step"><span>Evaluate Auranet integration possibilities for Phase 3</span></div>
+    <div class="next-step"><span>Map remaining areas: Engineering, OHS, HR, Public Projects</span></div>
+
+    <!-- Key Quotes -->
+    <div class="section-title">Key Quotes</div>
+    <div class="quote">
+      "That is exactly what I need, because I don't want to reduce the team. On the contrary, I need to free up the team because we need to organize things for other consortiums we are signing."
+      <div class="attribution">&mdash; Daniel Giraldo, CEO</div>
+    </div>
+    <div class="quote">
+      "80% of the headache [from trust payments] could be resolved with accounting rules from previous years."
+      <div class="attribution">&mdash; Catalina Carranza, CFO</div>
+    </div>
+    <div class="quote">
+      "That's where we lose all the time." &mdash; referring to manual coding vs. dedicating time to technical plan reviews.
+      <div class="attribution">&mdash; Oscar Pinz&oacute;n, Director of Budgeting</div>
+    </div>
+    <div class="quote">
+      "Send me the proposal. There is a lot, a lot to work on. You have a client here."
+      <div class="attribution">&mdash; Daniel Giraldo, CEO</div>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- Technical Architecture Card -->
+  <div class="card">
+    <div class="section-title" style="margin-top:0;">Technical Architecture &amp; Process Diagrams</div>
+
+    <div class="diagram-container">
+      <div class="diagram-title">Current Technology Stack &amp; Integrations</div>
+      <pre class="mermaid">
+flowchart LR
+  subgraph CurrentERP["Word Office ERP"]
+    WO_OC[Purchase Orders]
+    WO_RP[Supplier Receipts]
+    WO_INV[Invoicing]
+    WO_KDX[Kardex / Inventory]
+    WO_AUX[Accounting Auxiliaries]
+  end
+
+  subgraph Tools["Operational Tools"]
+    MONDAY["Monday.com\nTask Management"]
+    EXCEL["Excel\nAPUs / Budgets / Reconciliation"]
+    BIM["BIM\n3D Plan Review"]
+    DIAN["DIAN Platform\nRADIAN Events"]
+  end
+
+  subgraph Comms["Communication Channels"]
+    EMAIL[8 Email Accounts]
+    WHATSAPP[8 WhatsApp Lines]
+    FACTEMAIL[Invoicing Email]
+  end
+
+  subgraph NewERP["Auranet ERP (In Migration)"]
+    AU_BUDGET[Per-Project Budget Control]
+    AU_FLOW[OC-RP-Invoice Integration]
+  end
+
+  WO_OC -. "manual download" .-> MONDAY
+  EXCEL -. "no integration" .-> WO_OC
+  DIAN -. "one-by-one XML" .-> WO_INV
+  EMAIL --> WO_INV
+  WHATSAPP -. "no traceability" .-> WO_OC
+  CurrentERP -. "migration" .-> NewERP
+      </pre>
+    </div>
+
+    <div class="diagram-container">
+      <div class="diagram-title">Purchase-to-Pay Flow (Engineering Projects)</div>
+      <pre class="mermaid">
+flowchart TD
+  A["Engineering Requirement\nvia Monday"] --> B["Budgeting Team\nCodes APUs manually"]
+  B --> C[Quote sent to Client]
+  C --> D{Client Approves?}
+  D -- Yes --> E["Purchasing generates OC\nin Word Office"]
+  E --> F[OC uploaded to Monday]
+  F --> G[OC sent to Supplier]
+  G --> H[Supplier Delivers Goods]
+  H --> I{Site has Warehouse Staff?}
+  I -- Yes --> J["Warehouse validates\nOC vs delivery"]
+  J --> K[Creates RP in Word Office]
+  I -- No --> L["NO RECEIPT CERTIFICATION\nInvoice stuck in limbo"]
+  K --> M["Accounting crosses\nOC + RP + DIAN Invoice"]
+  M --> N{All documents complete?}
+  N -- Yes --> O[Entry Booked]
+  N -- No --> P["Returned to Purchasing\nfor missing supports"]
+  P --> M
+  O --> Q[Treasury Schedules Payment]
+  Q --> R[Payment Executed]
+  R --> S["Daily Bank Reconciliation\n5 accounts"]
+
+  style L fill:#ef5350,stroke:#c62828,color:#fff
+  style P fill:#fff3e0,stroke:#e65100
+      </pre>
+    </div>
+
+    <div class="diagram-container">
+      <div class="diagram-title">Direct Sales Flow (Illumination)</div>
+      <pre class="mermaid">
+flowchart TD
+  A["Sales Rep quotes\nSupplier + Client simultaneously"] --> B[Client Approves]
+  B --> C[Sales uploads to Monday]
+  C --> D["Purchasing generates OC\nto Supplier"]
+  D --> E[Supplier Delivers]
+  E --> F[Warehouse creates RP]
+  F --> G[Dispatch to Client]
+  G --> H["Sales instructs Accounting\nto invoice"]
+  H --> I["Sales Invoice issued\ncopy of order"]
+
+  style A fill:#f9a825,stroke:#f57f17
+  style D fill:#ef5350,stroke:#c62828,color:#fff
+      </pre>
+    </div>
+
+    <div class="diagram-container">
+      <div class="diagram-title">Bank Reconciliation Process</div>
+      <pre class="mermaid">
+flowchart TD
+  subgraph Banks["5 Bank Accounts"]
+    B1[Davivienda Savings]
+    B2[Bogota Savings]
+    B3[Checking Account]
+    B4[Trust Fund 1]
+    B5[Trust Fund 2]
+  end
+
+  Banks --> DL["Daily Download\nExcel + PDF"]
+  DL --> AUX["Download Auxiliaries\nfrom Word Office\n1 per bank"]
+  AUX --> DAILY["Daily Reconciliation\nEntries + Exits"]
+  DAILY --> PROB{Known Issues}
+  PROB --> P1["Trust payments\nwithout payer detail"]
+  PROB --> P2["Payroll as\nsingle lump sum"]
+  PROB --> P3["Variable withholding\nrates per client"]
+  DAILY --> MONTHLY["Monthly Close\nafter 5th of month"]
+  MONTHLY --> REPORT["Weekly Report to CFO\nTuesdays"]
+  REPORT --> DELAY["7-10 business days\ndelay in closing"]
+
+  style P1 fill:#ef5350,stroke:#c62828,color:#fff
+  style DELAY fill:#fff3e0,stroke:#e65100
+      </pre>
+    </div>
+
+    <div class="diagram-container">
+      <div class="diagram-title">APU Budgeting Process</div>
+      <pre class="mermaid">
+flowchart TD
+  A["Client sends Excel\nQuantity Spreadsheet\neach client has own format"] --> B[Oscar assigns via Monday]
+  B --> C["Budget Analyst takes\nClient Excel"]
+  C --> D["Manual coding:\nSearch APU database\nin Excel with filters"]
+  D --> E{APU found?}
+  E -- Yes --> F["Copy inputs, quantities\nyields manually"]
+  E -- No --> G[Create APU from scratch]
+  G --> F
+  F --> H["Validate prices vs\nSupplier database"]
+  H --> I["Return completed Excel\nto Client with prices"]
+  J["BIM Specialist\nreviews 3D plans"] -.-> I
+
+  style D fill:#ef5350,stroke:#c62828,color:#fff
+  style G fill:#ef5350,stroke:#c62828,color:#fff
+      </pre>
+    </div>
+
+    <div class="diagram-container">
+      <div class="diagram-title">Proposed 3-Phase Automation Architecture</div>
+      <pre class="mermaid">
+flowchart LR
+  subgraph Phase1["Phase 1: Quick Wins\n1-2 months"]
+    QW1["Bank Reconciliation\nEngine with 30 rules"]
+    QW2["Bulk XML Download\nDIAN/RADIAN"]
+    QW3["Missing Document\nAlert System"]
+  end
+
+  subgraph Phase2["Phase 2: Core Value\n2-4 months"]
+    CV1["APU Semantic\nMatching Engine"]
+    CV2["OC-RP-Invoice\nAutomated Workflow"]
+    CV3["Consolidated\nPrice Matrix"]
+  end
+
+  subgraph Phase3["Phase 3: Transformation\n4-6 months"]
+    TR1["Auranet ERP\nIntegration"]
+    TR2["Real-time Budget\nDashboard per Project"]
+    TR3["Automated Technical\nPlan Review"]
+  end
+
+  Phase1 --> Phase2 --> Phase3
+
+  style Phase1 fill:#c8e6c9,stroke:#2e7d32
+  style Phase2 fill:#fff9c4,stroke:#f9a825
+  style Phase3 fill:#bbdefb,stroke:#1565c0
+      </pre>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- Meeting Sessions Card -->
+  <div class="card">
+    <div class="section-title" style="margin-top:0;">Meeting Sessions</div>
+    <table class="impact-table">
+      <thead>
+        <tr><th>#</th><th>Title</th><th>Duration</th><th>Speakers</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Bank Reconciliation Process</td><td>40 min</td><td>D. Cardona, C. Carranza, D. Giraldo, Jos&eacute;</td></tr>
+        <tr><td>2</td><td>Invoicing &amp; Purchasing</td><td>28 min</td><td>D. Cardona, C. Carranza, Wendy</td></tr>
+        <tr><td>3</td><td>Budgeting</td><td>13 min</td><td>D. Cardona, O. Pinz&oacute;n</td></tr>
+        <tr><td>4</td><td>APUs &amp; Products</td><td>~1 min</td><td>O. Pinz&oacute;n</td></tr>
+        <tr><td>5</td><td>Monday &amp; Reviews</td><td>~1.5 min</td><td>O. Pinz&oacute;n, D. Cardona</td></tr>
+        <tr><td>6</td><td>Executive &mdash; Operations Summary</td><td>5 min</td><td>D. Cardona, D. Giraldo</td></tr>
+        <tr><td>7</td><td>Executive &mdash; ERP &amp; Strategy</td><td>3 min</td><td>D. Cardona, D. Giraldo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Generated by KAI Partners &mdash; Discovery Analysis &bull; March 4, 2026 &bull; Consultant: Daniel Cardona &bull; Client: Grupo Lutec S.A.S
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'default', securityLevel:'loose'});</script>
+
+</body>
+</html>
