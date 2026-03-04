@@ -50,3 +50,19 @@ class DailySummaryTriggerResponseDTO(BaseModel):
     results: List[NotificationResultDTO] = Field(
         default_factory=list, description="Detailed results per employee"
     )
+
+
+class EventDispatchResponseDTO(BaseModel):
+    """DTO for event dispatch endpoint response."""
+
+    processed: int = Field(..., description="Total events processed")
+    sent: int = Field(..., description="Number of notifications successfully sent")
+    skipped: int = Field(..., description="Number of events skipped")
+    failed: int = Field(..., description="Number of events that failed to send")
+
+
+class PendingEventsResponseDTO(BaseModel):
+    """DTO for pending events query response."""
+
+    pending_count: int = Field(..., description="Number of pending due events")
+    events: List[dict] = Field(default_factory=list, description="List of pending event summaries")

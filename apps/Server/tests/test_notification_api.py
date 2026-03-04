@@ -396,3 +396,157 @@ async def test_list_notification_logs_empty_results() -> None:
     data = response.json()
     assert data == []
     print("INFO [TestNotificationAPI]: test_list_notification_logs_empty_results - PASSED")
+
+
+# ============================================================================
+# Event Dispatch Endpoint Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_dispatch_due_events_endpoint() -> None:
+    """Test POST /api/notifications/dispatch returns dispatch results."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    dispatch_result = {
+        "processed": 3,
+        "sent": 2,
+        "skipped": 1,
+        "failed": 0,
+    }
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.adapter.rest.notification_routes.event_dispatcher"
+    ) as mock_dispatcher:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_dispatcher.process_due_events = AsyncMock(return_value=dispatch_result)
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/notifications/dispatch?restaurant_id={restaurant_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["processed"] == 3
+    assert data["sent"] == 2
+    assert data["skipped"] == 1
+    assert data["failed"] == 0
+    print("INFO [TestNotificationAPI]: test_dispatch_due_events_endpoint - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_dispatch_due_events_unauthorized() -> None:
+    """Test POST /api/notifications/dispatch requires authentication."""
+    restaurant_id = uuid4()
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            f"/api/notifications/dispatch?restaurant_id={restaurant_id}",
+        )
+
+    assert response.status_code == 401
+    print("INFO [TestNotificationAPI]: test_dispatch_due_events_unauthorized - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_get_pending_events_endpoint() -> None:
+    """Test GET /api/notifications/pending returns count and events."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+
+    mock_event = MagicMock()
+    mock_event.id = uuid4()
+    mock_event.type = "alerta_stock"
+    mock_event.description = "Stock bajo"
+    mock_event.date = MagicMock(__str__=lambda s: "2026-03-04")
+    mock_event.notification_channel = "whatsapp"
+    mock_event.status = "pending"
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.adapter.rest.notification_routes.event_service"
+    ) as mock_event_svc:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_event_svc.get_due_events.return_value = [mock_event]
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.get(
+                f"/api/notifications/pending?restaurant_id={restaurant_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["pending_count"] == 1
+    assert len(data["events"]) == 1
+    assert data["events"][0]["type"] == "alerta_stock"
+    print("INFO [TestNotificationAPI]: test_get_pending_events_endpoint - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_dispatch_all_endpoint() -> None:
+    """Test POST /api/notifications/dispatch-all iterates restaurants."""
+    mock_user = create_mock_user()
+
+    mock_restaurant = MagicMock()
+    mock_restaurant.id = uuid4()
+
+    dispatch_result = {
+        "processed": 1,
+        "sent": 1,
+        "skipped": 0,
+        "failed": 0,
+    }
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.adapter.rest.notification_routes.restaurant_repository"
+    ) as mock_rest_repo, patch(
+        "src.adapter.rest.notification_routes.event_dispatcher"
+    ) as mock_dispatcher:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_rest_repo.get_restaurants_by_user.return_value = [mock_restaurant]
+        mock_dispatcher.process_due_events = AsyncMock(return_value=dispatch_result)
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                "/api/notifications/dispatch-all",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data) == 1
+    assert data[0]["processed"] == 1
+    assert data[0]["sent"] == 1
+    print("INFO [TestNotificationAPI]: test_dispatch_all_endpoint - PASSED")

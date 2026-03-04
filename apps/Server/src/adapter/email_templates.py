@@ -162,6 +162,62 @@ def format_expiration_alert_html(document_name: str, expiry_date: str, days_unti
     )
 
 
+def format_profitability_alert_html(description: str) -> str:
+    """
+    Format a profitability alert as HTML email.
+
+    Args:
+        description: Alert description
+
+    Returns:
+        HTML string for the email body
+    """
+    return (
+        f'<div style="{BASE_STYLE}">'
+        f'<div style="{WARNING_HEADER_STYLE}">'
+        f"<h2>Alerta de Rentabilidad</h2>"
+        f"</div>"
+        f'<div style="{BODY_STYLE}">'
+        f'<p style="font-size: 16px;">{description}</p>'
+        f"<p>Por favor, revisa los indicadores financieros.</p>"
+        f"</div>"
+        f'<div style="{FOOTER_STYLE}">'
+        f"<p>Restaurant OS - Notificaciones</p>"
+        f"</div>"
+        f"</div>"
+    )
+
+
+def format_general_event_html(event_type: str, description: str) -> str:
+    """
+    Format a generic event notification as HTML email.
+
+    Fallback template for event types without a dedicated HTML template.
+
+    Args:
+        event_type: Event type string
+        description: Event description
+
+    Returns:
+        HTML string for the email body
+    """
+    return (
+        f'<div style="{BASE_STYLE}">'
+        f'<div style="{HEADER_STYLE}">'
+        f"<h2>Notificacion de Evento</h2>"
+        f"</div>"
+        f'<div style="{BODY_STYLE}">'
+        f"<p>Tipo: <strong>{event_type}</strong></p>"
+        f'<p style="font-size: 16px;">{description}</p>'
+        f"<p>Por favor, revisa este evento.</p>"
+        f"</div>"
+        f'<div style="{FOOTER_STYLE}">'
+        f"<p>Restaurant OS - Notificaciones</p>"
+        f"</div>"
+        f"</div>"
+    )
+
+
 def format_low_stock_alert_html(resource_name: str, current_stock: float, min_stock: float) -> str:
     """
     Format a low stock alert as HTML email.
