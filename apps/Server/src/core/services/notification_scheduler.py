@@ -115,6 +115,48 @@ def format_document_expiry_message(document_name: str, expiry_date: str, days_re
     )
 
 
+def format_profitability_alert_message(description: str) -> str:
+    """
+    Format a profitability alert message in Spanish.
+
+    Args:
+        description: Alert description
+
+    Returns:
+        Formatted alert message string in Spanish
+    """
+    return (
+        f"📊 *Alerta de Rentabilidad*\n"
+        f"\n"
+        f"{description}\n"
+        f"\n"
+        f"Por favor, revisa los indicadores financieros."
+    )
+
+
+def format_general_event_message(event_type: str, description: str) -> str:
+    """
+    Format a generic event notification message in Spanish.
+
+    Fallback formatter for event types without a dedicated template.
+
+    Args:
+        event_type: Event type string
+        description: Event description
+
+    Returns:
+        Formatted message string in Spanish
+    """
+    return (
+        f"🔔 *Notificacion de Evento*\n"
+        f"\n"
+        f"Tipo: *{event_type}*\n"
+        f"{description}\n"
+        f"\n"
+        f"Por favor, revisa este evento."
+    )
+
+
 def _determine_channel(person: object) -> str:
     """
     Determine notification channel based on person's available contact info.
@@ -146,6 +188,7 @@ async def _send_via_channel(
     person_id: UUID,
     person_name: str,
     results: list,
+    event_id: Optional[UUID] = None,
 ) -> bool:
     """
     Send a notification via a specific channel and log the result.
@@ -159,11 +202,12 @@ async def _send_via_channel(
         person_id: Person UUID
         person_name: Person display name
         results: Results list to append to
+        event_id: Optional event UUID for traceability in notification logs
 
     Returns:
         True if sent successfully, False otherwise
     """
-    print(f"INFO [NotificationScheduler]: Sending daily summary to {person_name} via {channel} ({recipient})")
+    print(f"INFO [NotificationScheduler]: Sending notification to {person_name} via {channel} ({recipient})")
 
     send_result = await notification_service.send_notification(channel, recipient, message)
     status = send_result.get("status", "failed")
@@ -177,6 +221,7 @@ async def _send_via_channel(
         message=message,
         status=status,
         error_message=error_message,
+        event_id=event_id,
     )
 
     results.append({
@@ -394,4 +439,37 @@ async def process_document_expiration_alerts(
         "sent": sent_count,
         "skipped": skipped_count,
         "failed": failed_count,
+    }
+
+
+async def run_scheduled_dispatch(
+    db: Session,
+    user_id: UUID,
+    restaurant_id: UUID,
+) -> dict:
+    """
+    Orchestrate all scheduled notification dispatches for a restaurant.
+
+    Runs morning task summaries and then general event dispatch in sequence.
+
+    Args:
+        db: Database session
+        user_id: User UUID for authorization
+        restaurant_id: Restaurant UUID
+
+    Returns:
+        Dictionary with morning_summaries and event_dispatch results
+    """
+    from src.core.services.event_dispatcher import event_dispatcher
+
+    print(f"INFO [NotificationScheduler]: Running scheduled dispatch for restaurant {restaurant_id}")
+
+    summaries_result = await send_morning_task_summaries(db, user_id, restaurant_id)
+    dispatch_result = await event_dispatcher.process_due_events(db, user_id, restaurant_id)
+
+    print(f"INFO [NotificationScheduler]: Scheduled dispatch complete for restaurant {restaurant_id}")
+
+    return {
+        "morning_summaries": summaries_result,
+        "event_dispatch": dispatch_result,
     }
