@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 
 from main import app
 from src.adapter.rest.dependencies import get_db
-from src.config.permit_presets import PERMIT_PRESETS
 from src.models.document import Document
 from src.models.event import Event
 from src.models.user import User
