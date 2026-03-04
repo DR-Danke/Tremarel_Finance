@@ -561,3 +561,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with cases, specialists, clients, or deliverables in the Legal Desk module
     - When troubleshooting Legal Desk foreign key constraints or table relationships
     - When implementing Wave 2+ of the Legal Desk module
+
+- app_docs/feature-cbc09752-legaldesk-pydantic-dtos-enums.md
+  - Conditions:
+    - When working with Legal Desk Pydantic DTOs, enums, or data validation
+    - When implementing Legal Desk API endpoints that accept or return case, specialist, client, or deliverable data
+    - When working with apps/Server/src/interface/legaldesk_dto.py
+    - When implementing Legal Desk services or repositories that need input/output models
+    - When working with case status transitions or workflow validation
+    - When building the assignment engine, AI classification, or analytics dashboard DTOs
