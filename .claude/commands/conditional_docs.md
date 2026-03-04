@@ -487,3 +487,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with automatic resource cost updates from invoices
     - When troubleshooting invoice processing endpoints or resource matching logic
     - When extending the invoice pipeline with recipe cost recalculation
+
+- app_docs/feature-4801f61f-recipe-inventory-deduction.md
+  - Conditions:
+    - When working with recipe production or recipe-based inventory deduction
+    - When implementing the POST /api/recipes/{recipe_id}/produce endpoint
+    - When working with atomic stock pre-checks before inventory movements
+    - When creating exit movements with reason=receta from recipe items
+    - When troubleshooting insufficient stock errors during recipe production
