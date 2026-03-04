@@ -1,0 +1,82 @@
+{
+  "title": "Gerencia - Process Automation & ERP Migration Review",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Daniel Girlado", "role": "Client / Construction Company Executive"},
+    {"name": "Daniel Cardona", "role": "Consultant / Service Provider"}
+  ],
+  "company_name": "Girlado Construction Company (uses Auranet ERP)",
+  "contact_name": "Daniel Girlado",
+  "contact_email": null,
+  "summary": "Daniel Cardona and Daniel Girlado discussed the company's ongoing ERP migration to Auranet (a construction-sector ERP implemented since November) and the critical need to automate accounting processes. The primary ROI focus is freeing up staff time currently consumed by DIAN compliance tasks and bank reconciliations, allowing reallocation to new consortium projects. Two key value drivers were identified: accelerating the quotation process (including RFI review that adds competitive value) and reducing bank reconciliation times, with expected results within 1.5-2 months.",
+  "discussion_points": [
+    {
+      "topic": "ROI & Team Liberation Strategy",
+      "description": "The highest-priority outcome is freeing up team members currently tied to DIAN compliance and bank reconciliations. Daniel Girlado emphasized he does not want to reduce headcount but rather redirect staff to support new consortium agreements being signed."
+    },
+    {
+      "topic": "ERP Migration to Auranet",
+      "description": "The company has been migrating to Auranet, a construction-sector ERP, since November. This will eventually lead to dual accounting requirements. Auranet was chosen over competitor 'Cinco' (used by most Colombian construction companies) because Cinco did not support their direct sales model."
+    },
+    {
+      "topic": "Quotation Process & Value Proposition Enhancement",
+      "description": "Oscar highlighted that reviewing construction plans and RFIs (Request for Information) before quoting adds significant value to the proposal — not just pricing, but advising where costs can be optimized. Accelerating this process is a key deliverable."
+    },
+    {
+      "topic": "Process Areas Requiring Automation",
+      "description": "Multiple departments need process improvements: engineering, SCT, human resources, and public projects. All areas have processes that could benefit from automation."
+    },
+    {
+      "topic": "File Format & Data Integration",
+      "description": "Daniel Cardona needs files from Tata in a more machine-readable format (CSV) rather than complex Excel formats that are difficult to parse programmatically."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Request files from Tata in CSV format instead of complex Excel formats for easier data processing",
+      "owner": "Daniel Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Map current DIAN compliance and bank reconciliation processes to identify automation opportunities",
+      "owner": "Daniel Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Define integration requirements between Auranet ERP and the proposed automation system",
+      "owner": "Daniel Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Identify staff members to be reallocated to new consortium projects once processes are automated",
+      "owner": "Daniel Girlado",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Auranet ERP has been selected and implemented since November 2025, replacing the previous system",
+    "Focus automation efforts on two main processes: quotation acceleration and bank reconciliation reduction",
+    "Team liberation (not reduction) is the primary goal — freed staff will support new consortium projects",
+    "Competitor ERP 'Cinco' was rejected due to lack of support for direct sales operations"
+  ],
+  "next_steps": [
+    "Obtain data files from Tata in CSV/machine-readable format for analysis",
+    "Target measurable results within 1.5-2 months on quotation and reconciliation processes",
+    "Plan integration approach between Auranet ERP and proposed automation tools",
+    "Prepare team reallocation plan for new consortium projects"
+  ],
+  "diagrams": [
+    {
+      "title": "Current vs Proposed Accounting Process Flow",
+      "mermaid_code": "flowchart TD\n    subgraph CURRENT[\"Current State\"]\n        A[Monthly Close Process] --> B[DIAN Compliance Tasks]\n        A --> C[Bank Reconciliations]\n        B --> D[2 Staff Members - Manual Daily Work]\n        C --> E[1 Staff Member - Manual Reconciliation]\n        D --> F[1 Month Close Cycle]\n        E --> F\n    end\n    subgraph PROPOSED[\"Proposed State\"]\n        G[Automated Close Process] --> H[Automated DIAN Compliance]\n        G --> I[Automated Bank Reconciliation]\n        H --> J[Staff Freed for Consortiums]\n        I --> J\n        J --> K[Results in 1.5-2 Months]\n    end\n    CURRENT -.->|Automation| PROPOSED\n    style CURRENT fill:#ffcccc,stroke:#cc0000\n    style PROPOSED fill:#ccffcc,stroke:#00cc00"
+    },
+    {
+      "title": "ERP Integration Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph INPUT[\"Data Sources\"]\n        A[Excel/CSV Files from Tata]\n        B[Auranet ERP]\n    end\n    subgraph PROCESSING[\"Automation Layer\"]\n        C[Data Ingestion & Parsing]\n        D[DIAN Compliance Engine]\n        E[Bank Reconciliation Module]\n        F[Quotation Accelerator]\n    end\n    subgraph OUTPUT[\"Outcomes\"]\n        G[Automated DIAN Reports]\n        H[Reconciled Bank Statements]\n        I[Accelerated Quotations with RFI Review]\n    end\n    A --> C\n    B --> C\n    C --> D\n    C --> E\n    C --> F\n    D --> G\n    E --> H\n    F --> I\n    style INPUT fill:#e6f2ff,stroke:#0066cc\n    style PROCESSING fill:#fff2e6,stroke:#cc6600\n    style OUTPUT fill:#e6ffe6,stroke:#006600"
+    },
+    {
+      "title": "Quotation Value Proposition Flow",
+      "mermaid_code": "flowchart TD\n    A[Constructor Sends RFI] --> B[Receive Construction Plans]\n    B --> C{Review Plans}\n    C -->|Plans Valid| D[Generate Quotation]\n    C -->|Issues Found| E[Flag Problems & Advise]\n    E --> F[Suggest Cost Optimization]\n    F --> D\n    D --> G[Enhanced Proposal with Value-Add]\n    G --> H[Competitive Advantage]\n    H --> I[Win More Projects]\n    style C fill:#ffffcc,stroke:#cccc00\n    style E fill:#ffcccc,stroke:#cc0000\n    style G fill:#ccffcc,stroke:#00cc00\n    style H fill:#ccccff,stroke:#0000cc"
+    }
+  ]
+}

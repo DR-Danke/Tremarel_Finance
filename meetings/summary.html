@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Gerencia: Process Automation & ERP Migration Review</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #2d3748; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .header .subtitle { font-size: 14px; opacity: 0.9; }
+        .header .meta { display: flex; gap: 24px; margin-top: 16px; font-size: 13px; opacity: 0.85; }
+        .header .meta span { display: flex; align-items: center; gap: 6px; }
+        .content { background: white; padding: 40px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1a365d; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; margin-bottom: 16px; }
+        .summary-box { background: #ebf8ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 14px; color: #2a4365; }
+        .participants { display: flex; flex-wrap: wrap; gap: 12px; }
+        .participant { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; font-size: 13px; }
+        .participant .name { font-weight: 600; color: #1a365d; }
+        .participant .role { color: #718096; font-size: 12px; }
+        .discussion-item { margin-bottom: 16px; padding: 12px 16px; background: #f7fafc; border-radius: 8px; border-left: 3px solid #4299e1; }
+        .discussion-item .topic { font-weight: 600; color: #2d3748; margin-bottom: 4px; }
+        .discussion-item .desc { font-size: 13px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .action-table th { background: #edf2f7; color: #1a365d; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 2px solid #cbd5e0; }
+        .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        .action-table tr:hover { background: #f7fafc; }
+        .owner-badge { display: inline-block; background: #ebf8ff; color: #2b6cb0; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .decision-list, .next-steps-list { list-style: none; padding: 0; }
+        .decision-list li, .next-steps-list li { padding: 8px 0 8px 24px; position: relative; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        .decision-list li:last-child, .next-steps-list li:last-child { border-bottom: none; }
+        .decision-list li::before { content: "\2713"; position: absolute; left: 0; color: #38a169; font-weight: 700; }
+        .next-steps-list li::before { content: "\25B6"; position: absolute; left: 0; color: #2b6cb0; font-size: 10px; top: 11px; }
+        .diagram-section { margin-top: 16px; }
+        .diagram-block { margin-bottom: 24px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+        .diagram-block h4 { font-size: 14px; font-weight: 600; color: #1a365d; margin-bottom: 12px; }
+        .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #a0aec0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gerencia - Process Automation & ERP Migration Review</h1>
+            <div class="subtitle">Management Meeting Summary</div>
+            <div class="meta">
+                <span>&#128197; March 4, 2026 &mdash; 4:00 PM</span>
+                <span>&#9202; Duration: ~3 minutes</span>
+                <span>&#128101; 2 Participants</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Executive Summary -->
+            <div class="section">
+                <div class="section-title">Executive Summary</div>
+                <div class="summary-box">
+                    Daniel Cardona and Daniel Girlado discussed the company's ongoing ERP migration to Auranet (a construction-sector ERP implemented since November) and the critical need to automate accounting processes. The primary ROI focus is freeing up staff time currently consumed by DIAN compliance tasks and bank reconciliations, allowing reallocation to new consortium projects. Two key value drivers were identified: accelerating the quotation process (including RFI review that adds competitive value) and reducing bank reconciliation times, with expected results within 1.5&ndash;2 months.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <div class="section-title">Participants</div>
+                <div class="participants">
+                    <div class="participant">
+                        <div class="name">Daniel Girlado</div>
+                        <div class="role">Client / Construction Company Executive</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">Daniel Cardona</div>
+                        <div class="role">Consultant / Service Provider</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Information -->
+            <div class="section">
+                <div class="section-title">Company / Prospect</div>
+                <div class="discussion-item" style="border-left-color: #805ad5;">
+                    <div class="topic">Girlado Construction Company</div>
+                    <div class="desc">Construction company currently migrating to Auranet ERP. Primary contact: Daniel Girlado. Previously evaluated competitor ERP "Cinco" but rejected it due to lack of direct sales support.</div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <div class="section-title">Discussion Points</div>
+
+                <div class="discussion-item">
+                    <div class="topic">1. ROI & Team Liberation Strategy</div>
+                    <div class="desc">The highest-priority outcome is freeing up team members currently tied to DIAN compliance and bank reconciliations. Daniel Girlado emphasized he does not want to reduce headcount but rather redirect staff to support new consortium agreements being signed.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">2. ERP Migration to Auranet</div>
+                    <div class="desc">The company has been migrating to Auranet, a construction-sector ERP, since November. This will eventually lead to dual accounting requirements. Auranet was chosen over competitor "Cinco" (used by most Colombian construction companies) because Cinco did not support their direct sales model.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">3. Quotation Process & Value Proposition Enhancement</div>
+                    <div class="desc">Oscar highlighted that reviewing construction plans and RFIs (Request for Information) before quoting adds significant value to the proposal &mdash; not just pricing, but advising where costs can be optimized. Accelerating this process is a key deliverable.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">4. Process Areas Requiring Automation</div>
+                    <div class="desc">Multiple departments need process improvements: engineering, SCT, human resources, and public projects. All areas have processes that could benefit from automation.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">5. File Format & Data Integration</div>
+                    <div class="desc">Daniel Cardona needs files from Tata in a more machine-readable format (CSV) rather than complex Excel formats that are difficult to parse programmatically.</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <div class="section-title">Action Items</div>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 55%;">Action</th>
+                            <th style="width: 25%;">Owner</th>
+                            <th style="width: 20%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Request files from Tata in CSV format instead of complex Excel formats for easier data processing</td>
+                            <td><span class="owner-badge">Daniel Cardona</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Map current DIAN compliance and bank reconciliation processes to identify automation opportunities</td>
+                            <td><span class="owner-badge">Daniel Cardona</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Define integration requirements between Auranet ERP and the proposed automation system</td>
+                            <td><span class="owner-badge">Daniel Cardona</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Identify staff members to be reallocated to new consortium projects once processes are automated</td>
+                            <td><span class="owner-badge">Daniel Girlado</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <div class="section-title">Decisions Made</div>
+                <ul class="decision-list">
+                    <li>Auranet ERP has been selected and implemented since November 2025, replacing the previous system</li>
+                    <li>Focus automation efforts on two main processes: quotation acceleration and bank reconciliation reduction</li>
+                    <li>Team liberation (not reduction) is the primary goal &mdash; freed staff will support new consortium projects</li>
+                    <li>Competitor ERP "Cinco" was rejected due to lack of support for direct sales operations</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <div class="section-title">Next Steps</div>
+                <ul class="next-steps-list">
+                    <li>Obtain data files from Tata in CSV/machine-readable format for analysis</li>
+                    <li>Target measurable results within 1.5&ndash;2 months on quotation and reconciliation processes</li>
+                    <li>Plan integration approach between Auranet ERP and proposed automation tools</li>
+                    <li>Prepare team reallocation plan for new consortium projects</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture -->
+            <div class="section">
+                <div class="section-title">Technical Architecture</div>
+
+                <div class="diagram-block">
+                    <h4>Current vs Proposed Accounting Process Flow</h4>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph CURRENT["Current State"]
+        A[Monthly Close Process] --> B[DIAN Compliance Tasks]
+        A --> C[Bank Reconciliations]
+        B --> D[2 Staff Members - Manual Daily Work]
+        C --> E[1 Staff Member - Manual Reconciliation]
+        D --> F[1 Month Close Cycle]
+        E --> F
+    end
+    subgraph PROPOSED["Proposed State"]
+        G[Automated Close Process] --> H[Automated DIAN Compliance]
+        G --> I[Automated Bank Reconciliation]
+        H --> J[Staff Freed for Consortiums]
+        I --> J
+        J --> K[Results in 1.5-2 Months]
+    end
+    CURRENT -.->|Automation| PROPOSED
+    style CURRENT fill:#ffcccc,stroke:#cc0000
+    style PROPOSED fill:#ccffcc,stroke:#00cc00
+                    </pre>
+                </div>
+
+                <div class="diagram-block">
+                    <h4>ERP Integration Architecture</h4>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph INPUT["Data Sources"]
+        A[Excel/CSV Files from Tata]
+        B[Auranet ERP]
+    end
+    subgraph PROCESSING["Automation Layer"]
+        C[Data Ingestion and Parsing]
+        D[DIAN Compliance Engine]
+        E[Bank Reconciliation Module]
+        F[Quotation Accelerator]
+    end
+    subgraph OUTPUT["Outcomes"]
+        G[Automated DIAN Reports]
+        H[Reconciled Bank Statements]
+        I[Accelerated Quotations with RFI Review]
+    end
+    A --> C
+    B --> C
+    C --> D
+    C --> E
+    C --> F
+    D --> G
+    E --> H
+    F --> I
+    style INPUT fill:#e6f2ff,stroke:#0066cc
+    style PROCESSING fill:#fff2e6,stroke:#cc6600
+    style OUTPUT fill:#e6ffe6,stroke:#006600
+                    </pre>
+                </div>
+
+                <div class="diagram-block">
+                    <h4>Quotation Value Proposition Flow</h4>
+                    <pre class="mermaid">
+flowchart TD
+    A[Constructor Sends RFI] --> B[Receive Construction Plans]
+    B --> C{Review Plans}
+    C -->|Plans Valid| D[Generate Quotation]
+    C -->|Issues Found| E[Flag Problems and Advise]
+    E --> F[Suggest Cost Optimization]
+    F --> D
+    D --> G[Enhanced Proposal with Value-Add]
+    G --> H[Competitive Advantage]
+    H --> I[Win More Projects]
+    style C fill:#ffffcc,stroke:#cccc00
+    style E fill:#ffcccc,stroke:#cc0000
+    style G fill:#ccffcc,stroke:#00cc00
+    style H fill:#ccccff,stroke:#0000cc
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &bull; March 4, 2026
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
