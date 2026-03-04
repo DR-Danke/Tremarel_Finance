@@ -669,6 +669,9 @@ class SpecialistCandidateDTO(BaseModel):
     jurisdiction_match: List[str] = Field(
         default_factory=list, description="Matching jurisdictions"
     )
+    match_reasons: List[str] = Field(
+        default_factory=list, description="Detailed scoring reasons"
+    )
 
 
 class SuggestionResponseDTO(BaseModel):
