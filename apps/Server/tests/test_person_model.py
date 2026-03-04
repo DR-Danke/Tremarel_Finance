@@ -259,6 +259,7 @@ def test_person_response_dto_from_attributes() -> None:
     mock_person.role = "chef"
     mock_person.email = "test@example.com"
     mock_person.whatsapp = "+52 555 123 4567"
+    mock_person.push_token = None
     mock_person.type = "employee"
     mock_person.created_at = datetime(2026, 1, 15, 10, 30, 0)
     mock_person.updated_at = None
@@ -270,6 +271,7 @@ def test_person_response_dto_from_attributes() -> None:
     assert dto.role == "chef"
     assert dto.email == "test@example.com"
     assert dto.whatsapp == "+52 555 123 4567"
+    assert dto.push_token is None
     assert dto.type == "employee"
     assert dto.updated_at is None
     print("INFO [TestPerson]: test_person_response_dto_from_attributes - PASSED")
@@ -284,6 +286,7 @@ def test_person_response_dto_no_optional_fields() -> None:
     mock_person.role = "mesero"
     mock_person.email = None
     mock_person.whatsapp = None
+    mock_person.push_token = None
     mock_person.type = "employee"
     mock_person.created_at = datetime(2026, 2, 1, 12, 0, 0)
     mock_person.updated_at = None
@@ -291,6 +294,7 @@ def test_person_response_dto_no_optional_fields() -> None:
     dto = PersonResponseDTO.model_validate(mock_person, from_attributes=True)
     assert dto.email is None
     assert dto.whatsapp is None
+    assert dto.push_token is None
     print("INFO [TestPerson]: test_person_response_dto_no_optional_fields - PASSED")
 
 

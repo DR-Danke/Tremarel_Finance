@@ -533,3 +533,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with notification channel routing for events (WhatsApp, Email)
     - When implementing scheduled or cron-based notification dispatch
     - When troubleshooting event-to-notification flow or event status updates after dispatch
+
+- app_docs/feature-877c0251-push-notification-channel.md
+  - Conditions:
+    - When working with push notifications or the PushNotificationAdapter
+    - When configuring FCM_SERVER_KEY or Firebase Cloud Messaging integration
+    - When working with the push_token field on the Person model or DTOs
+    - When extending the notification system with new channels
+    - When working with the firebase-messaging-sw.js service worker
+    - When modifying notification channel routing to include push
+    - When troubleshooting push notification sending, stub mode, or FCM API calls

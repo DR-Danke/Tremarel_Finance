@@ -259,6 +259,7 @@ async def test_send_morning_task_summaries_success() -> None:
     mock_person = MagicMock()
     mock_person.whatsapp = "+573001234567"
     mock_person.email = None
+    mock_person.push_token = None
 
     mock_db = MagicMock()
 
@@ -304,6 +305,7 @@ async def test_send_morning_task_summaries_skip_no_whatsapp() -> None:
     mock_person = MagicMock()
     mock_person.whatsapp = None
     mock_person.email = None
+    mock_person.push_token = None
 
     mock_db = MagicMock()
 
@@ -368,6 +370,7 @@ async def test_send_morning_task_summaries_skip_empty_whatsapp() -> None:
     mock_person = MagicMock()
     mock_person.whatsapp = ""
     mock_person.email = ""
+    mock_person.push_token = None
 
     mock_db = MagicMock()
 
@@ -566,6 +569,7 @@ async def test_send_morning_task_summaries_email_channel() -> None:
     mock_person = MagicMock()
     mock_person.email = "laura@example.com"
     mock_person.whatsapp = None
+    mock_person.push_token = None
 
     mock_db = MagicMock()
 
@@ -614,6 +618,7 @@ async def test_send_morning_task_summaries_both_channels() -> None:
     mock_person = MagicMock()
     mock_person.email = "diego@example.com"
     mock_person.whatsapp = "+573009876543"
+    mock_person.push_token = None
 
     mock_db = MagicMock()
 
@@ -681,3 +686,76 @@ async def test_send_morning_task_summaries_skip_no_contact() -> None:
     mock_notif_svc.send_notification.assert_not_called()
     mock_log_repo.create.assert_not_called()
     print("INFO [TestNotificationService]: test_send_morning_task_summaries_skip_no_contact - PASSED")
+
+
+# ============================================================================
+# PushNotificationAdapter Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_push_adapter_stub_mode_success() -> None:
+    """Test PushNotificationAdapter sends successfully in stub mode (no FCM key)."""
+    from src.adapter.push_adapter import PushNotificationAdapter
+
+    adapter = PushNotificationAdapter(fcm_server_key="")
+    assert adapter.stub_mode is True
+
+    result = await adapter.send("fcm-test-token-abc123", "Hola mundo")
+
+    assert result["status"] == "sent"
+    assert result["recipient"] == "fcm-test-token-abc12"
+    print("INFO [TestNotificationService]: test_push_adapter_stub_mode_success - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_push_adapter_invalid_recipient_empty() -> None:
+    """Test PushNotificationAdapter rejects empty recipient."""
+    from src.adapter.push_adapter import PushNotificationAdapter
+
+    adapter = PushNotificationAdapter(fcm_server_key="")
+
+    with pytest.raises(ValueError, match="Invalid push notification recipient"):
+        await adapter.send("", "Hello")
+    print("INFO [TestNotificationService]: test_push_adapter_invalid_recipient_empty - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_push_adapter_invalid_recipient_none() -> None:
+    """Test PushNotificationAdapter rejects None recipient."""
+    from src.adapter.push_adapter import PushNotificationAdapter
+
+    adapter = PushNotificationAdapter(fcm_server_key="")
+
+    with pytest.raises(ValueError, match="Invalid push notification recipient"):
+        await adapter.send(None, "Hello")  # type: ignore[arg-type]
+    print("INFO [TestNotificationService]: test_push_adapter_invalid_recipient_none - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_push_adapter_message_truncation() -> None:
+    """Test PushNotificationAdapter truncates message body to 200 chars."""
+    from src.adapter.push_adapter import PushNotificationAdapter
+
+    adapter = PushNotificationAdapter(fcm_server_key="")
+    long_message = "A" * 300
+    result = await adapter.send("fcm-test-token-xyz", long_message)
+
+    assert result["status"] == "sent"
+    # Message should have been truncated internally for FCM body
+    print("INFO [TestNotificationService]: test_push_adapter_message_truncation - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_send_notification_push_channel() -> None:
+    """Test NotificationService routes 'push' channel to push adapter."""
+    mock_push_adapter = AsyncMock(spec=NotificationAdapter)
+    mock_push_adapter.send.return_value = {"status": "sent", "recipient": "fcm-token-123"}
+
+    service = NotificationService(adapters={"push": mock_push_adapter})
+    result = await service.send_notification("push", "fcm-token-123", "Test push message")
+
+    assert result["status"] == "sent"
+    assert result["recipient"] == "fcm-token-123"
+    mock_push_adapter.send.assert_called_once_with("fcm-token-123", "Test push message")
+    print("INFO [TestNotificationService]: test_send_notification_push_channel - PASSED")

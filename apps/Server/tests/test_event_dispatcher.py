@@ -104,6 +104,7 @@ def _make_mock_person(name="Ana Lopez", whatsapp="+573001234567", email=None):
     person.name = name
     person.whatsapp = whatsapp
     person.email = email
+    person.push_token = None
     person.type = "employee"
     return person
 

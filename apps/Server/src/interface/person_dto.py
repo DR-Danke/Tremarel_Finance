@@ -24,6 +24,7 @@ class PersonCreateDTO(BaseModel):
     role: str = Field(..., min_length=1, max_length=100, description="Person role (e.g., chef, mesero)")
     email: Optional[EmailStr] = Field(None, description="Person email address")
     whatsapp: Optional[str] = Field(None, max_length=50, description="WhatsApp number (international format)")
+    push_token: Optional[str] = Field(None, max_length=500, description="FCM push notification device token")
     type: PersonType = Field(PersonType.EMPLOYEE, description="Person type: employee, supplier, or owner")
 
 
@@ -34,6 +35,7 @@ class PersonUpdateDTO(BaseModel):
     role: Optional[str] = Field(None, min_length=1, max_length=100, description="Person role")
     email: Optional[EmailStr] = Field(None, description="Person email address")
     whatsapp: Optional[str] = Field(None, max_length=50, description="WhatsApp number")
+    push_token: Optional[str] = Field(None, max_length=500, description="FCM push notification device token")
     type: Optional[PersonType] = Field(None, description="Person type")
 
 
@@ -46,6 +48,7 @@ class PersonResponseDTO(BaseModel):
     role: str = Field(..., description="Person role")
     email: Optional[str] = Field(None, description="Person email address")
     whatsapp: Optional[str] = Field(None, description="WhatsApp number")
+    push_token: Optional[str] = Field(None, description="FCM push notification device token")
     type: str = Field(..., description="Person type")
     created_at: datetime = Field(..., description="Person creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Person last update timestamp")

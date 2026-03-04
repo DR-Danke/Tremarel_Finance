@@ -23,7 +23,7 @@ import {
   IconButton,
   CircularProgress,
 } from '@mui/material'
-import { Add, Edit, Delete } from '@mui/icons-material'
+import { Add, Edit, Delete, Check } from '@mui/icons-material'
 import { useRestaurant } from '@/hooks/useRestaurant'
 import { usePersons } from '@/hooks/usePersons'
 import { TRPersonForm } from '@/components/forms/TRPersonForm'
@@ -232,6 +232,7 @@ export const RestaurantOSPersonsPage: React.FC = () => {
                 <TableCell>Tipo</TableCell>
                 <TableCell>Correo Electrónico</TableCell>
                 <TableCell>WhatsApp</TableCell>
+                <TableCell>Push</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHead>
@@ -243,6 +244,7 @@ export const RestaurantOSPersonsPage: React.FC = () => {
                   <TableCell>{PERSON_TYPE_LABELS[person.type] || person.type}</TableCell>
                   <TableCell>{person.email || '—'}</TableCell>
                   <TableCell>{person.whatsapp || '—'}</TableCell>
+                  <TableCell>{person.push_token ? <Check fontSize="small" color="success" /> : '—'}</TableCell>
                   <TableCell>
                     <IconButton
                       size="small"
