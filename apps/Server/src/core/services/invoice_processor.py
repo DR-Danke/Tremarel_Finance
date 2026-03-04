@@ -1,7 +1,6 @@
 """Invoice processor service: OCR extraction, resource matching, cost update, and inventory movement creation."""
 
 import asyncio
-from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy.orm import Session
