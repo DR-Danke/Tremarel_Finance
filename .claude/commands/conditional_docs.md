@@ -594,3 +594,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When using Legal Desk label or color constant maps for status badges, priority chips, or domain labels
     - When implementing Legal Desk CRUD forms or API payloads (LdCaseCreate, LdClientUpdate, etc.)
     - When adding new Legal Desk types or extending existing Legal Desk interfaces
+
+- app_docs/feature-444abca2-legaldesk-core-repositories.md
+  - Conditions:
+    - When working with Legal Desk repository classes (LdCaseRepository, LdSpecialistRepository, LdClientRepository)
+    - When implementing Legal Desk services that consume case, specialist, or client data access methods
+    - When working with case number generation, specialist availability filtering, or client name search
+    - When building Legal Desk API endpoints that need repository method signatures or usage patterns
+    - When troubleshooting Legal Desk data access queries or repository singleton imports
