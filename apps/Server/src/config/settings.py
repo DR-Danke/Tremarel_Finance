@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     # Firebase Cloud Messaging (Push Notifications)
     FCM_SERVER_KEY: str = ""
 
+    # AI Classification (OpenAI)
+    OPENAI_API_KEY: str = ""
+
     # Application
     APP_NAME: str = "Finance Tracker API"
     APP_VERSION: str = "1.0.0"
