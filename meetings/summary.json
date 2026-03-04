@@ -1,0 +1,200 @@
+{
+  "title": "Tendery System - First Delivery Feedback Session",
+  "meeting_date": "2026-03-03",
+  "participants": [
+    {"name": "Manuel", "role": "Software Developer / Technical Lead"},
+    {"name": "Kelly", "role": "Commercial Team"},
+    {"name": "Daniel", "role": "System Presenter / Developer"},
+    {"name": "Carlos Cardona", "role": "Commercial Manager / Decision Maker"},
+    {"name": "Paola (Pau)", "role": "Commercial Team"},
+    {"name": "Marcela (Marce)", "role": "Operations / Commercial"},
+    {"name": "Juan David", "role": "Operations Manager"},
+    {"name": "Speaker 8", "role": "Operations / Stakeholder"}
+  ],
+  "company_name": "Hay Huevos (temporary name - AI software company)",
+  "contact_name": "Carlos Cardona",
+  "contact_email": null,
+  "summary": "First delivery review of the Tendery quotation system for a logistics/transportation company. The team demoed the full quotation workflow including client selection from Odoo CRM, route configuration, pricing engine (CICETAC + RNDC + historical data), profitability/utility validation, PDF generation, email delivery, QR-based client approval, and quotation cloning. Key feedback centered on changing the pricing UI so users edit the final client price instead of margins, adding default minimum profitability per vehicle type, classifying routes as urban/national/container-return, and implementing an amendment feature for approved quotations. A 2-week user acceptance testing phase was agreed upon with a follow-up meeting in 8 days.",
+  "discussion_points": [
+    {
+      "topic": "Pricing Engine & Margin Validation Logic",
+      "description": "Extensive discussion on how profitability (%) and utility (absolute value) interact. Current system takes the nominally higher of the two, but both must be met or the quotation goes to approval. Team agreed to change UX: user should edit the final client price, and the system should auto-calculate and validate both margin checks (utility and profitability). If both pass, proceed; if either fails, require approval."
+    },
+    {
+      "topic": "Vehicle Type Configuration",
+      "description": "Vehicle types need corrections: remove weight labels to avoid confusion between sub-types (Minimula S2/S3, Tractomula variants). Missing vehicle type 'Poderosa' (intermediate between Minimula and Tractomula). Weight capacities need correction (NHR: 2t not 3.5t, Turbo: 4.5t, Sencillo: 5-8.5t). The invalid 'MULA' type in the Excel template needs to be fixed."
+    },
+    {
+      "topic": "Route Classification (Urban/National/Container Return)",
+      "description": "System needs a route type field to distinguish between urban, national, and container return operations. Urban routes don't have CICETAC regulation. This classification affects which cost sources are available and which profitability policies apply per vehicle type."
+    },
+    {
+      "topic": "Cost Data Sources & Update Frequency",
+      "description": "Three cost sources: CICETAC (regulated floor), RNDC (market data via statistical analysis/Gaussian curve), and Historical data. RNDC currently uses month-old data from January Excel. Goal is daily updates. Buenaventura route (80% of quotations) is most volatile and may need manual handling initially. Debate on using first standard deviation above vs. below the mean (85th percentile of dispatch volume recommended)."
+    },
+    {
+      "topic": "Quotation Amendment Functionality",
+      "description": "Most structurally significant change requested. Need ability to modify accepted quotations when operational conditions change (e.g., container return location changes from express to consolidated). Amendments should be permission-controlled. Applies especially to spot quotations where client instructions change after approval."
+    },
+    {
+      "topic": "Client Approval Workflow",
+      "description": "Quotations sent via email with PDF attachment and QR code. Client can accept, reject, or request advisor. Discussion on needing WhatsApp delivery and email-based one-click approval buttons since clients often approve informally via WhatsApp. Internal approval queue managed by Carlos and Juan David."
+    },
+    {
+      "topic": "Multi-Delivery & Container Return Scenarios",
+      "description": "Complex scenarios like Buenaventura-Bogota with container return to Tocancipa or port consolidation. Resolved via SAT (additional services) for extra deliveries/returns. Container returns for different shipping lines (Evergreen, CMA) have different costs. ITR operations handled as SATs, not routes."
+    },
+    {
+      "topic": "Price Rounding to Superior Multiples",
+      "description": "Client-facing prices must be rounded up to the next multiple of 10,000 COP. Currently not implemented - system shows exact calculated values instead of commercially rounded figures."
+    },
+    {
+      "topic": "Integration with Postar (TMS) - Phase 2",
+      "description": "Future phase: approved quotations and tariffs should sync to Postar TMS so operations can create service orders and manifests directly. Currently, the quotation module operates independently. Service order creation from approved quotations is the next development phase."
+    },
+    {
+      "topic": "Quotation Cloning Feature",
+      "description": "Demonstrated ability to clone existing quotations for new clients. Clone brings routes but missing some configuration details. Need to fix clone button to carry full configuration. Useful for repeat quotations (e.g., same routes for different clients)."
+    },
+    {
+      "topic": "Quotation Vigency/Validity Period",
+      "description": "Current default is 15 days. Discussion on appropriate validity periods - weekly for volatile routes (Buenaventura) vs. annual for established tariff clients (like Textiles). Vigency periods should be configurable per quotation."
+    },
+    {
+      "topic": "Email Domain & Branding",
+      "description": "Current emails sent from 'huevos' domain which is unprofessional for client-facing communications. Need to configure proper company domain. Also need letterhead/branding on PDF quotations and user-specific email signatures."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Change pricing UI: user edits final client price, system auto-calculates and validates both profitability (%) and utility (absolute value) with visual check indicators",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before next meeting (within 8 days)"
+    },
+    {
+      "description": "Add default minimum profitability and utility values per vehicle type that auto-populate but remain editable",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before next meeting (within 8 days)"
+    },
+    {
+      "description": "Remove weight labels from vehicle type selector to avoid confusion between sub-types",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before next meeting (within 8 days)"
+    },
+    {
+      "description": "Add route classification field: urban, national, container return",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before next meeting (within 8 days)"
+    },
+    {
+      "description": "Implement price rounding to next superior multiple of 10,000 COP",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before next meeting (within 8 days)"
+    },
+    {
+      "description": "Re-enable profitability policy alerts per vehicle type (temporarily disabled)",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before next meeting (within 8 days)"
+    },
+    {
+      "description": "Send SAT (additional services) list with costs to development team",
+      "owner": "Carlos Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Implement quotation amendment/modification functionality for approved quotations with permission control",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    },
+    {
+      "description": "Change email sending domain from temporary 'huevos' domain to proper company domain",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    },
+    {
+      "description": "Add mobile-friendly approval via email link (one-click approve button in email)",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    },
+    {
+      "description": "Fix quotation cloning to carry full route configuration",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    },
+    {
+      "description": "Configure approval users: Carlos Cardona and Juan David as quotation approvers",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": "Before testing phase begins"
+    },
+    {
+      "description": "Enable Excel upload for historical cost data until automated integration is available",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    },
+    {
+      "description": "Contact Ministry for updated RNDC data feed",
+      "owner": "Carlos Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Commercial team to test the Tendery system during 2-week UAT phase and document observations",
+      "owner": "Kelly / Paola / Marcela (Commercial team)",
+      "deadline": "2 weeks from meeting date"
+    },
+    {
+      "description": "Add letterhead/branding to PDF quotation documents",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    },
+    {
+      "description": "Add user-specific email signature to outgoing quotation emails",
+      "owner": "Manuel / Daniel (Development team)",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Follow-up meeting scheduled in 8 days (March 11, 2026) at the same time",
+    "2-week User Acceptance Testing (UAT) phase starts immediately - all commercial team members will test the system",
+    "Carlos Cardona and Juan David will be configured as quotation approvers",
+    "Pricing UI will be redesigned: user edits final client price, system validates both profitability and utility checks",
+    "Multi-delivery and container return scenarios will be handled via SAT (additional services), not as separate routes",
+    "Buenaventura route pricing will be managed manually initially until automated data feed is established",
+    "RNDC historical data will be updated monthly via Excel upload as baseline, with daily updates as the goal",
+    "Route classification (urban/national/container return) will be added as a field in route configuration",
+    "Default minimum margins should auto-populate per vehicle type but remain editable by commercial users",
+    "Quotation validity periods should be configurable (not fixed at 15 days) to support both spot and annual tariff clients",
+    "Amendment functionality for approved quotations is approved as a feature requirement (most structural change)",
+    "Phase 1 focuses on quotation module only; Phase 2 will integrate with Postar TMS for service orders"
+  ],
+  "next_steps": [
+    "Development team applies immediate UI adjustments (pricing input change, vehicle weights, route classification, rounding) before next meeting",
+    "Carlos sends SAT list with costs and contacts Ministry for RNDC data",
+    "Commercial team (Kelly, Paola, Marcela) begins testing the Tendery system this week",
+    "All approvals routed to Carlos Cardona during testing phase",
+    "Team reconvenes in 8 days with compiled observations and change requests",
+    "After quotation module is validated, begin Phase 2 planning: Postar TMS integration and service order creation"
+  ],
+  "diagrams": [
+    {
+      "title": "Tendery Quotation Workflow",
+      "mermaid_code": "flowchart TD\n    A[Select Client from Odoo CRM] --> B[Configure Routes]\n    B --> B1{Few routes?}\n    B1 -->|Yes| B2[Manual Entry via UI]\n    B1 -->|No| B3[Upload Excel Template]\n    B2 --> C[Pricing Engine]\n    B3 --> C\n    C --> C1[Compare Cost Sources]\n    C1 --> C2[CICETAC Floor]\n    C1 --> C3[RNDC Statistical Analysis]\n    C1 --> C4[Historical Data]\n    C2 --> C5[Take Highest Cost Floor]\n    C3 --> C5\n    C4 --> C5\n    C5 --> D[Apply Margin]\n    D --> D1[User Sets Final Client Price]\n    D1 --> D2{Both Checks Pass?}\n    D2 -->|Utility OK AND Profitability OK| E[Add Additional Services - SAT]\n    D2 -->|Either Fails| F[Route to Approval Queue]\n    F --> F1[Approver Reviews]\n    F1 -->|Approved| E\n    F1 -->|Rejected| D1\n    E --> G[Generate PDF Quotation]\n    G --> H[Send to Client via Email]\n    H --> I[Client Reviews via QR Code]\n    I --> I1{Client Decision}\n    I1 -->|Accept| J[Quotation Approved]\n    I1 -->|Reject| K[Quotation Rejected]\n    I1 -->|Request Advisor| L[Commercial Follow-up]\n    L --> D1\n    J --> M[Create Service Order - Phase 2]"
+    },
+    {
+      "title": "Pricing Engine - Cost Source Comparison",
+      "mermaid_code": "flowchart LR\n    subgraph Sources[Cost Sources]\n        CICETAC[CICETAC\\nRegulated Floor Price]\n        RNDC[RNDC Optimal\\nStatistical Analysis\\nGaussian Curve]\n        HIST[Historical Data\\nFrom Postar TMS]\n    end\n    subgraph Analysis[Statistical Processing]\n        RNDC --> GAUSS[Gaussian Distribution]\n        GAUSS --> P85[85th Percentile\\nof Dispatch Volume]\n        P85 --> OPTIMAL[Optimal RNDC Value]\n    end\n    subgraph Comparison[Price Comparison]\n        CICETAC --> MAX[Take Highest\\nCost Floor]\n        OPTIMAL --> MAX\n        HIST --> MAX\n    end\n    subgraph Margin[Margin Application]\n        MAX --> COST[Base Cost]\n        COST --> FINAL[Final Client Price]\n        FINAL --> CHECK1{Utility Check\\nAbsolute Value}\n        FINAL --> CHECK2{Profitability Check\\nPercentage}\n        CHECK1 -->|Pass| OK[Both Must Pass]\n        CHECK2 -->|Pass| OK\n        CHECK1 -->|Fail| APPROVAL[Approval Required]\n        CHECK2 -->|Fail| APPROVAL\n        OK --> ROUND[Round to Next\\n10000 COP Multiple]\n    end"
+    },
+    {
+      "title": "System Integration Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph External[External Systems]\n        ODOO[Odoo CRM\\nClient Database]\n        CICETAC_SYS[CICETAC\\nMinistry Regulation]\n        RNDC_SYS[RNDC\\nMarket Data]\n        POSTAR[Postar TMS\\nTransport Management]\n    end\n    subgraph Tendery[Tendery System - Phase 1]\n        CLI[Client Selection] --> ROUTE[Route Configuration]\n        ROUTE --> PRICING[Pricing Engine]\n        PRICING --> QUOTE[Quotation Generator]\n        QUOTE --> PDF[PDF Generator]\n        QUOTE --> APPROVE[Approval Queue]\n        QUOTE --> CLONE[Clone Quotation]\n        PDF --> EMAIL[Email Service]\n        EMAIL --> QR[QR Code Portal\\nClient Accept/Reject]\n    end\n    subgraph Phase2[Phase 2 - Future]\n        SS[Service Order\\nCreation]\n        MANIFEST[Manifest Generation]\n        BILLING[Billing Integration]\n    end\n    ODOO -->|Client Data| CLI\n    CICETAC_SYS -->|Floor Prices| PRICING\n    RNDC_SYS -->|Market Prices\\nExcel Monthly| PRICING\n    POSTAR -->|Historical Costs| PRICING\n    QUOTE -->|Approved Tariffs| SS\n    SS --> POSTAR\n    SS --> MANIFEST\n    MANIFEST --> BILLING"
+    },
+    {
+      "title": "Quotation Approval and Client Interaction Flow",
+      "mermaid_code": "sequenceDiagram\n    participant COM as Commercial User\n    participant TEN as Tendery System\n    participant APR as Approver (Carlos/Juan David)\n    participant CLI as Client\n    \n    COM->>TEN: Create Quotation with Routes\n    TEN->>TEN: Calculate Pricing (CICETAC + RNDC + Historical)\n    COM->>TEN: Set Final Client Price per Route\n    TEN->>TEN: Validate Utility & Profitability\n    \n    alt Both Checks Pass\n        TEN->>TEN: Mark as Ready to Send\n    else Either Check Fails\n        TEN->>APR: Send to Approval Queue\n        APR->>TEN: Approve or Reject\n    end\n    \n    TEN->>TEN: Generate PDF with Tariff Annex\n    COM->>TEN: Send Quotation to Client\n    TEN->>CLI: Email with PDF + QR Code\n    \n    alt Client Accepts\n        CLI->>TEN: Accept via QR Portal\n        TEN->>COM: Notification - Accepted\n        Note over COM,TEN: Phase 2: Create Service Order\n    else Client Rejects\n        CLI->>TEN: Reject with Comments\n        TEN->>COM: Notification - Rejected\n        COM->>TEN: Clone and Modify Quotation\n    else Client Requests Advisor\n        CLI->>TEN: Request Advisor\n        TEN->>COM: Notification - Advisor Requested\n        COM->>CLI: Direct Contact\n    end"
+    },
+    {
+      "title": "Route Types and Cost Source Applicability",
+      "mermaid_code": "flowchart TD\n    ROUTE[Route Configuration] --> TYPE{Route Type}\n    TYPE -->|Urban| URB[Urban Route]\n    TYPE -->|National| NAT[National Route]\n    TYPE -->|Container Return| CR[Container Return]\n    \n    URB --> URB_COST[Cost Sources]\n    URB_COST --> URB_H[Historical Data Only]\n    URB_COST --> URB_R[RNDC if Available]\n    URB --> URB_NOTE[No CICETAC\\nNo Cargo Manifest Required]\n    \n    NAT --> NAT_COST[Cost Sources]\n    NAT_COST --> NAT_C[CICETAC Floor]\n    NAT_COST --> NAT_R[RNDC Statistical]\n    NAT_COST --> NAT_H[Historical Data]\n    NAT --> NAT_NOTE[Full Manifest Required]\n    \n    CR --> CR_COST[Cost Sources]\n    CR_COST --> CR_H[Historical Data]\n    CR --> CR_TYPES{Return Type}\n    CR_TYPES --> EXP[Express Return]\n    CR_TYPES --> CONS[Consolidated Return]\n    CR_TYPES --> PORT[Port Return]\n    \n    subgraph SAT[Additional Services - SAT]\n        ITR[ITR - Inspection]\n        EXTRA[Extra Delivery]\n        STANDBY[Standby Charges]\n        DEVOL[Container Return Service]\n    end"
+    }
+  ],
+  "html_output": "see meetings/summary.html"
+}

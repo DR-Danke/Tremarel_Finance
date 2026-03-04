@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Tendery System First Delivery Feedback</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #2c3e50; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px 30px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+        .header .meta { font-size: 14px; opacity: 0.85; display: flex; gap: 20px; flex-wrap: wrap; }
+        .header .meta span { display: inline-flex; align-items: center; gap: 6px; }
+        .body-content { background: white; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section h2 { font-size: 18px; font-weight: 700; color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 8px; margin-bottom: 16px; }
+        .summary-box { background: #ebf8ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #2a4365; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+        .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; }
+        .participant-card .name { font-weight: 600; color: #2d3748; font-size: 14px; }
+        .participant-card .role { font-size: 12px; color: #718096; margin-top: 2px; }
+        .discussion-item { margin-bottom: 16px; padding: 14px 18px; background: #f7fafc; border-radius: 8px; border-left: 3px solid #4299e1; }
+        .discussion-item h3 { font-size: 15px; font-weight: 600; color: #2d3748; margin-bottom: 6px; }
+        .discussion-item p { font-size: 14px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-table thead { background: #edf2f7; }
+        .action-table th { text-align: left; padding: 10px 14px; font-weight: 600; color: #2d3748; border-bottom: 2px solid #cbd5e0; }
+        .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        .action-table tr:hover { background: #f7fafc; }
+        .owner-badge { display: inline-block; background: #bee3f8; color: #2a4365; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .deadline-badge { display: inline-block; background: #fefcbf; color: #744210; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .decision-list, .nextstep-list { list-style: none; }
+        .decision-list li, .nextstep-list li { position: relative; padding: 8px 0 8px 28px; font-size: 14px; color: #4a5568; border-bottom: 1px solid #f0f0f0; }
+        .decision-list li:last-child, .nextstep-list li:last-child { border-bottom: none; }
+        .decision-list li::before { content: "✓"; position: absolute; left: 0; top: 8px; color: #38a169; font-weight: 700; font-size: 16px; }
+        .nextstep-list li::before { content: "→"; position: absolute; left: 0; top: 8px; color: #2b6cb0; font-weight: 700; font-size: 16px; }
+        .diagram-section { margin-bottom: 24px; }
+        .diagram-section h3 { font-size: 15px; font-weight: 600; color: #2d3748; margin-bottom: 12px; padding: 8px 14px; background: #edf2f7; border-radius: 6px; }
+        .mermaid { background: #fafbfc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; overflow-x: auto; }
+        .priority-high { border-left-color: #e53e3e; }
+        .priority-medium { border-left-color: #dd6b20; }
+        .footer { text-align: center; padding: 20px; color: #a0aec0; font-size: 12px; margin-top: 20px; }
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .header { padding: 24px 18px; }
+            .header h1 { font-size: 20px; }
+            .body-content { padding: 18px; }
+            .participants-grid { grid-template-columns: 1fr; }
+            .action-table { font-size: 12px; }
+            .action-table th, .action-table td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tendery System — First Delivery Feedback Session</h1>
+            <div class="meta">
+                <span>&#128197; March 3, 2026 — 7:45 PM</span>
+                <span>&#9201; Duration: ~1 hour 15 minutes</span>
+                <span>&#128101; 8 Participants</span>
+            </div>
+        </div>
+
+        <div class="body-content">
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2>Executive Summary</h2>
+                <div class="summary-box">
+                    First delivery review of the <strong>Tendery quotation system</strong> for the logistics/transportation company. The team demoed the full quotation workflow: client selection from Odoo CRM, route configuration (manual + Excel upload), pricing engine integrating CICETAC, RNDC, and historical cost data, profitability/utility validation with approval workflows, PDF generation, email delivery, QR-based client approval, and quotation cloning. Key feedback centered on <strong>changing the pricing UI</strong> so users edit the final client price instead of margins, <strong>adding default minimum profitability per vehicle type</strong>, <strong>classifying routes</strong> as urban/national/container-return, and <strong>implementing an amendment feature</strong> for approved quotations. A 2-week user acceptance testing phase was agreed upon with a follow-up meeting in 8 days.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2>Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Manuel</div>
+                        <div class="role">Software Developer / Technical Lead</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Kelly</div>
+                        <div class="role">Commercial Team</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Daniel</div>
+                        <div class="role">System Presenter / Developer</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Carlos Cardona</div>
+                        <div class="role">Commercial Manager / Decision Maker</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Paola (Pau)</div>
+                        <div class="role">Commercial Team</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Marcela (Marce)</div>
+                        <div class="role">Operations / Commercial</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Juan David</div>
+                        <div class="role">Operations Manager</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Speaker 8</div>
+                        <div class="role">Operations / Stakeholder</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2>Discussion Points</h2>
+
+                <div class="discussion-item priority-high">
+                    <h3>1. Pricing Engine &amp; Margin Validation Logic</h3>
+                    <p>Extensive discussion on how profitability (%) and utility (absolute value) interact. Current system takes the nominally higher of the two, but both must be met or the quotation goes to approval. <strong>Key decision:</strong> Change UX so the user edits the final client price, and the system auto-calculates and validates both margin checks. If both pass, proceed; if either fails, require approval.</p>
+                </div>
+
+                <div class="discussion-item priority-high">
+                    <h3>2. Vehicle Type Configuration</h3>
+                    <p>Vehicle types need corrections: remove weight labels to avoid confusion between sub-types (Minimula S2/S3, Tractomula variants). Missing vehicle type <strong>"Poderosa"</strong> (intermediate between Minimula and Tractomula). Weight capacities need correction (NHR: 2t, Turbo: 4.5t, Sencillo: 5–8.5t). Invalid "MULA" type in Excel template must be fixed.</p>
+                </div>
+
+                <div class="discussion-item priority-high">
+                    <h3>3. Route Classification (Urban / National / Container Return)</h3>
+                    <p>System needs a route type field to distinguish between urban, national, and container return operations. Urban routes don't have CICETAC regulation. This classification affects which cost sources are available and which profitability policies apply per vehicle type.</p>
+                </div>
+
+                <div class="discussion-item priority-medium">
+                    <h3>4. Cost Data Sources &amp; Update Frequency</h3>
+                    <p>Three cost sources: CICETAC (regulated floor), RNDC (market data via Gaussian statistical analysis), and Historical data. RNDC currently uses month-old data. Goal is daily updates. Buenaventura route (~80% of quotations) is most volatile and may need manual handling initially. Recommended: use the 85th percentile of dispatch volume for optimal pricing.</p>
+                </div>
+
+                <div class="discussion-item priority-high">
+                    <h3>5. Quotation Amendment Functionality</h3>
+                    <p>Most structurally significant change requested. Need ability to modify accepted quotations when operational conditions change (e.g., container return location changes). Amendments should be permission-controlled. Especially important for spot quotations where client instructions change after approval.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>6. Client Approval Workflow</h3>
+                    <p>Quotations sent via email with PDF attachment and QR code. Client can accept, reject, or request advisor. Need WhatsApp delivery and email-based one-click approval buttons since clients often approve informally. Internal approval queue managed by Carlos and Juan David.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>7. Multi-Delivery &amp; Container Return Scenarios</h3>
+                    <p>Complex scenarios (e.g., Buenaventura–Bogota with container return to Tocancipa) resolved via SAT (additional services). Container returns for different shipping lines (Evergreen, CMA) have different costs. ITR operations handled as SATs, not routes.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>8. Price Rounding</h3>
+                    <p>Client-facing prices must be rounded up to the next multiple of 10,000 COP. Currently not implemented — system shows exact calculated values.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>9. Postar TMS Integration (Phase 2)</h3>
+                    <p>Future phase: approved quotations and tariffs should sync to Postar TMS for service orders and manifests. Currently operates independently. Service order creation is the next development phase.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>10. Quotation Cloning &amp; Validity Periods</h3>
+                    <p>Clone feature works but needs to carry full configuration. Validity defaults to 15 days but should be configurable (weekly for volatile routes, annual for established clients).</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>11. Email Domain &amp; Branding</h3>
+                    <p>Current emails from temporary "huevos" domain — unprofessional for client communications. Need proper company domain, letterhead on PDFs, and user-specific email signatures.</p>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2>Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width:5%">#</th>
+                            <th style="width:55%">Action</th>
+                            <th style="width:22%">Owner</th>
+                            <th style="width:18%">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Change pricing UI: user edits final client price; system auto-calculates and validates both profitability (%) and utility (absolute) with visual check indicators</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Within 8 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Add default minimum profitability and utility values per vehicle type (auto-populate, editable)</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Within 8 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Remove weight labels from vehicle type selector to avoid sub-type confusion</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Within 8 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Add route classification field: urban, national, container return</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Within 8 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Implement price rounding to next superior multiple of 10,000 COP</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Within 8 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Re-enable profitability policy alerts per vehicle type (temporarily disabled)</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Within 8 days</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Send SAT (additional services) list with costs to development team</td>
+                            <td><span class="owner-badge">Carlos Cardona</span></td>
+                            <td><span class="deadline-badge">This week</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Implement quotation amendment/modification functionality for approved quotations with permission control</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Change email domain from temporary "huevos" to proper company domain</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Add mobile-friendly approval via email link (one-click approve button)</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>Fix quotation cloning to carry full route configuration</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>Configure Carlos Cardona and Juan David as quotation approvers</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td><span class="deadline-badge">Before UAT</span></td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td>Enable Excel upload for historical cost data until automated integration</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td>Contact Ministry for updated RNDC data feed</td>
+                            <td><span class="owner-badge">Carlos Cardona</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td>Commercial team to test Tendery during 2-week UAT and document observations</td>
+                            <td><span class="owner-badge">Kelly / Paola / Marcela</span></td>
+                            <td><span class="deadline-badge">2 weeks</span></td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td>Add letterhead/branding to PDF quotation documents</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td>Add user-specific email signature to outgoing quotation emails</td>
+                            <td><span class="owner-badge">Dev Team</span></td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2>Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>Follow-up meeting scheduled in 8 days (March 11, 2026) at the same time</li>
+                    <li>2-week User Acceptance Testing (UAT) phase starts immediately — all commercial team members will test the system</li>
+                    <li>Carlos Cardona and Juan David will be configured as quotation approvers</li>
+                    <li>Pricing UI will be redesigned: user edits final client price, system validates both profitability and utility checks</li>
+                    <li>Multi-delivery and container return scenarios will be handled via SAT (additional services), not as separate routes</li>
+                    <li>Buenaventura route pricing will be managed manually initially until automated data feed is established</li>
+                    <li>RNDC historical data will be updated monthly via Excel upload as baseline, with daily updates as the goal</li>
+                    <li>Route classification (urban/national/container return) will be added as a field in route configuration</li>
+                    <li>Default minimum margins should auto-populate per vehicle type but remain editable by commercial users</li>
+                    <li>Quotation validity periods should be configurable (not fixed at 15 days)</li>
+                    <li>Amendment functionality for approved quotations approved as a feature requirement (most structural change)</li>
+                    <li>Phase 1 focuses on quotation module only; Phase 2 will integrate with Postar TMS for service orders</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Next Steps</h2>
+                <ul class="nextstep-list">
+                    <li>Development team applies immediate UI adjustments (pricing input change, vehicle weights, route classification, rounding) before next meeting</li>
+                    <li>Carlos sends SAT list with costs and contacts Ministry for RNDC data</li>
+                    <li>Commercial team (Kelly, Paola, Marcela) begins testing the Tendery system this week</li>
+                    <li>All approvals routed to Carlos Cardona during testing phase</li>
+                    <li>Team reconvenes in 8 days with compiled observations and change requests</li>
+                    <li>After quotation module is validated, begin Phase 2 planning: Postar TMS integration and service order creation</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <h2>Technical Architecture</h2>
+
+                <div class="diagram-section">
+                    <h3>Tendery Quotation Workflow</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A[Select Client from Odoo CRM] --> B[Configure Routes]
+    B --> B1{Few routes?}
+    B1 -->|Yes| B2[Manual Entry via UI]
+    B1 -->|No| B3[Upload Excel Template]
+    B2 --> C[Pricing Engine]
+    B3 --> C
+    C --> C1[Compare Cost Sources]
+    C1 --> C2[CICETAC Floor]
+    C1 --> C3[RNDC Statistical Analysis]
+    C1 --> C4[Historical Data]
+    C2 --> C5[Take Highest Cost Floor]
+    C3 --> C5
+    C4 --> C5
+    C5 --> D[Apply Margin]
+    D --> D1[User Sets Final Client Price]
+    D1 --> D2{Both Checks Pass?}
+    D2 -->|Utility OK AND Profitability OK| E[Add Additional Services - SAT]
+    D2 -->|Either Fails| F[Route to Approval Queue]
+    F --> F1[Approver Reviews]
+    F1 -->|Approved| E
+    F1 -->|Rejected| D1
+    E --> G[Generate PDF Quotation]
+    G --> H[Send to Client via Email]
+    H --> I[Client Reviews via QR Code]
+    I --> I1{Client Decision}
+    I1 -->|Accept| J[Quotation Approved]
+    I1 -->|Reject| K[Quotation Rejected]
+    I1 -->|Request Advisor| L[Commercial Follow-up]
+    L --> D1
+    J --> M[Create Service Order - Phase 2]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Pricing Engine — Cost Source Comparison</h3>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Sources[Cost Sources]
+        CICETAC[CICETAC - Regulated Floor Price]
+        RNDC[RNDC Optimal - Statistical Analysis - Gaussian Curve]
+        HIST[Historical Data - From Postar TMS]
+    end
+    subgraph Analysis[Statistical Processing]
+        RNDC --> GAUSS[Gaussian Distribution]
+        GAUSS --> P85[85th Percentile of Dispatch Volume]
+        P85 --> OPTIMAL[Optimal RNDC Value]
+    end
+    subgraph Comparison[Price Comparison]
+        CICETAC --> MAX[Take Highest Cost Floor]
+        OPTIMAL --> MAX
+        HIST --> MAX
+    end
+    subgraph Margin[Margin Application]
+        MAX --> COST[Base Cost]
+        COST --> FINAL[Final Client Price]
+        FINAL --> CHECK1{Utility Check - Absolute Value}
+        FINAL --> CHECK2{Profitability Check - Percentage}
+        CHECK1 -->|Pass| OK[Both Must Pass]
+        CHECK2 -->|Pass| OK
+        CHECK1 -->|Fail| APPROVAL[Approval Required]
+        CHECK2 -->|Fail| APPROVAL
+        OK --> ROUND[Round to Next 10000 COP Multiple]
+    end
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>System Integration Architecture</h3>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph External[External Systems]
+        ODOO[Odoo CRM - Client Database]
+        CICETAC_SYS[CICETAC - Ministry Regulation]
+        RNDC_SYS[RNDC - Market Data]
+        POSTAR[Postar TMS - Transport Mgmt]
+    end
+    subgraph Tendery[Tendery System - Phase 1]
+        CLI[Client Selection] --> ROUTE[Route Configuration]
+        ROUTE --> PRICING[Pricing Engine]
+        PRICING --> QUOTE[Quotation Generator]
+        QUOTE --> PDF[PDF Generator]
+        QUOTE --> APPROVE[Approval Queue]
+        QUOTE --> CLONE[Clone Quotation]
+        PDF --> EMAIL[Email Service]
+        EMAIL --> QR[QR Code Portal - Accept or Reject]
+    end
+    subgraph Phase2[Phase 2 - Future]
+        SS[Service Order Creation]
+        MANIFEST[Manifest Generation]
+        BILLING[Billing Integration]
+    end
+    ODOO -->|Client Data| CLI
+    CICETAC_SYS -->|Floor Prices| PRICING
+    RNDC_SYS -->|Market Prices - Excel Monthly| PRICING
+    POSTAR -->|Historical Costs| PRICING
+    QUOTE -->|Approved Tariffs| SS
+    SS --> POSTAR
+    SS --> MANIFEST
+    MANIFEST --> BILLING
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Quotation Approval &amp; Client Interaction Flow</h3>
+                    <pre class="mermaid">
+sequenceDiagram
+    participant COM as Commercial User
+    participant TEN as Tendery System
+    participant APR as Approver - Carlos or Juan David
+    participant CLI as Client
+
+    COM->>TEN: Create Quotation with Routes
+    TEN->>TEN: Calculate Pricing CICETAC + RNDC + Historical
+    COM->>TEN: Set Final Client Price per Route
+    TEN->>TEN: Validate Utility and Profitability
+
+    alt Both Checks Pass
+        TEN->>TEN: Mark as Ready to Send
+    else Either Check Fails
+        TEN->>APR: Send to Approval Queue
+        APR->>TEN: Approve or Reject
+    end
+
+    TEN->>TEN: Generate PDF with Tariff Annex
+    COM->>TEN: Send Quotation to Client
+    TEN->>CLI: Email with PDF and QR Code
+
+    alt Client Accepts
+        CLI->>TEN: Accept via QR Portal
+        TEN->>COM: Notification - Accepted
+        Note over COM,TEN: Phase 2 - Create Service Order
+    else Client Rejects
+        CLI->>TEN: Reject with Comments
+        TEN->>COM: Notification - Rejected
+        COM->>TEN: Clone and Modify Quotation
+    else Client Requests Advisor
+        CLI->>TEN: Request Advisor
+        TEN->>COM: Notification - Advisor Requested
+        COM->>CLI: Direct Contact
+    end
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Route Types &amp; Cost Source Applicability</h3>
+                    <pre class="mermaid">
+flowchart TD
+    ROUTE[Route Configuration] --> TYPE{Route Type}
+    TYPE -->|Urban| URB[Urban Route]
+    TYPE -->|National| NAT[National Route]
+    TYPE -->|Container Return| CR[Container Return]
+
+    URB --> URB_COST[Cost Sources Available]
+    URB_COST --> URB_H[Historical Data Only]
+    URB_COST --> URB_R[RNDC if Available]
+    URB --> URB_NOTE[No CICETAC - No Cargo Manifest Required]
+
+    NAT --> NAT_COST[Cost Sources Available]
+    NAT_COST --> NAT_C[CICETAC Floor]
+    NAT_COST --> NAT_R[RNDC Statistical]
+    NAT_COST --> NAT_H[Historical Data]
+    NAT --> NAT_NOTE[Full Manifest Required]
+
+    CR --> CR_COST[Cost Sources Available]
+    CR_COST --> CR_H[Historical Data]
+    CR --> CR_TYPES{Return Type}
+    CR_TYPES --> EXP[Express Return]
+    CR_TYPES --> CONS[Consolidated Return]
+    CR_TYPES --> PORT[Port Return]
+
+    subgraph SAT[Additional Services - SAT]
+        ITR[ITR - Inspection]
+        EXTRA[Extra Delivery]
+        STANDBY[Standby Charges]
+        DEVOL[Container Return Service]
+    end
+                    </pre>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &mdash; March 3, 2026 &mdash; Tendery Feedback Session
+        </div>
+    </div>
+
+    <script>mermaid.initialize({startOnLoad:true, theme:'default', securityLevel:'loose'});</script>
+</body>
+</html>
