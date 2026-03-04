@@ -67,6 +67,8 @@ def create_mock_document(
     document.expiration_date = expiration_date
     document.person_id = person_id
     document.description = description
+    document.processing_status = None
+    document.processing_result = None
     document.created_at = MagicMock()
     document.updated_at = None
     return document

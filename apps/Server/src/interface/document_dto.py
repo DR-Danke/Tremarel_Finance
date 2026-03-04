@@ -48,6 +48,8 @@ class DocumentResponseDTO(BaseModel):
     person_id: Optional[UUID] = Field(None, description="Person UUID linked to this document")
     description: Optional[str] = Field(None, description="Document description or notes")
     expiration_status: str = Field("valid", description="Computed expiration status: valid, expiring_soon, expired")
+    processing_status: Optional[str] = Field(None, description="OCR processing status: pending, processing, completed, failed")
+    processing_result: Optional[dict] = Field(None, description="OCR processing result with matched/unmatched items")
     created_at: datetime = Field(..., description="Document creation timestamp")
     updated_at: Optional[datetime] = Field(None, description="Document last update timestamp")
 
@@ -82,6 +84,8 @@ class DocumentResponseDTO(BaseModel):
                 "person_id": getattr(data, "person_id", None),
                 "description": getattr(data, "description", None),
                 "expiration_status": status,
+                "processing_status": getattr(data, "processing_status", None),
+                "processing_result": getattr(data, "processing_result", None),
                 "created_at": data.created_at,
                 "updated_at": getattr(data, "updated_at", None),
             }

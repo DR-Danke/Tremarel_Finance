@@ -1,7 +1,7 @@
 """Document repository for database operations."""
 
 from datetime import date, timedelta
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -137,6 +137,37 @@ class DocumentRepository:
             return True
         print(f"INFO [DocumentRepository]: Document {document_id} not found for deletion")
         return False
+
+    def update_processing_status(
+        self,
+        db: Session,
+        document_id: UUID,
+        status: str,
+        result: Optional[dict[str, Any]] = None,
+    ) -> Optional[Document]:
+        """
+        Update the processing_status and processing_result fields on a document.
+
+        Args:
+            db: Database session
+            document_id: Document UUID
+            status: Processing status (pending, processing, completed, failed)
+            result: Optional processing result dict
+
+        Returns:
+            Updated Document object, or None if not found
+        """
+        print(f"INFO [DocumentRepository]: Updating processing status to '{status}' for document {document_id}")
+        document = db.query(Document).filter(Document.id == document_id).first()
+        if document is None:
+            print(f"INFO [DocumentRepository]: Document {document_id} not found for processing status update")
+            return None
+        document.processing_status = status
+        document.processing_result = result
+        db.commit()
+        db.refresh(document)
+        print(f"INFO [DocumentRepository]: Processing status updated to '{status}' for document {document_id}")
+        return document
 
     def get_expiring(self, db: Session, restaurant_id: UUID, days_ahead: int = 30) -> list[Document]:
         """

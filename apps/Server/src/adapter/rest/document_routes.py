@@ -9,11 +9,13 @@ from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
 from src.core.services.document_service import document_service
+from src.core.services.invoice_processor import invoice_processor
 from src.interface.document_dto import (
     DocumentCreateDTO,
     DocumentResponseDTO,
     DocumentUpdateDTO,
 )
+from src.interface.invoice_dto import InvoiceProcessingResultDTO
 
 router = APIRouter(prefix="/api/documents", tags=["Documents"])
 
@@ -149,6 +151,96 @@ async def list_documents(
         print(f"ERROR [DocumentRoutes]: Access denied: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+
+
+@router.post("/{document_id}/process-invoice", response_model=InvoiceProcessingResultDTO)
+async def process_invoice(
+    document_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> InvoiceProcessingResultDTO:
+    """
+    Trigger OCR processing on a supplier invoice document.
+
+    Extracts line items via OCR, matches to existing resources, updates costs,
+    and creates inventory movements.
+
+    Args:
+        document_id: Document UUID to process
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        InvoiceProcessingResultDTO: Processing results with matched/unmatched items
+    """
+    print(f"INFO [DocumentRoutes]: Process invoice request for document {document_id} from user {current_user['email']}")
+
+    user_id = UUID(current_user["id"])
+    try:
+        result = invoice_processor.process_invoice_document(db, user_id, document_id)
+        print(f"INFO [DocumentRoutes]: Invoice processing completed for document {document_id}")
+        return InvoiceProcessingResultDTO(**result)
+    except PermissionError as e:
+        print(f"ERROR [DocumentRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+            print(f"ERROR [DocumentRoutes]: Document not found: {error_msg}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=error_msg,
+            )
+        print(f"ERROR [DocumentRoutes]: Invalid request: {error_msg}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_msg,
+        )
+
+
+@router.get("/{document_id}/processing-result")
+async def get_processing_result(
+    document_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """
+    Retrieve the OCR processing result for a document.
+
+    Args:
+        document_id: Document UUID
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        Dict with processing_status and processing_result
+    """
+    print(f"INFO [DocumentRoutes]: Get processing result for document {document_id} from user {current_user['email']}")
+
+    user_id = UUID(current_user["id"])
+    try:
+        document = document_service.get_document(db, user_id, document_id)
+        print(f"INFO [DocumentRoutes]: Returning processing result for document {document_id}")
+        return {
+            "document_id": str(document.id),
+            "processing_status": document.processing_status,
+            "processing_result": document.processing_result,
+        }
+    except PermissionError as e:
+        print(f"ERROR [DocumentRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        print(f"ERROR [DocumentRoutes]: Document not found: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
         )
 
