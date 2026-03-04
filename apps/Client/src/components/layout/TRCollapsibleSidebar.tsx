@@ -30,6 +30,7 @@ import RestaurantIcon from '@mui/icons-material/Restaurant'
 import DescriptionIcon from '@mui/icons-material/Description'
 import EventIcon from '@mui/icons-material/Event'
 import InventoryIcon from '@mui/icons-material/Inventory'
+import MenuBookIcon from '@mui/icons-material/MenuBook'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { useEntity } from '@/hooks/useEntity'
@@ -80,6 +81,7 @@ const navigationSections: NavSection[] = [
           { label: 'Documentos', path: '/poc/restaurant-os/documents', icon: <DescriptionIcon /> },
           { label: 'Eventos / Tareas', path: '/poc/restaurant-os/events', icon: <EventIcon /> },
           { label: 'Recursos / Inventario', path: '/poc/restaurant-os/resources', icon: <InventoryIcon /> },
+          { label: 'Recetas', path: '/poc/restaurant-os/recipes', icon: <MenuBookIcon /> },
         ],
       },
     ],
