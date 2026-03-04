@@ -561,3 +561,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with cases, specialists, clients, or deliverables in the Legal Desk module
     - When troubleshooting Legal Desk foreign key constraints or table relationships
     - When implementing Wave 2+ of the Legal Desk module
+
+- app_docs/feature-40f52fef-legaldesk-sqlalchemy-orm-models.md
+  - Conditions:
+    - When working with Legal Desk SQLAlchemy ORM models (LdClient, LdSpecialist, LdCase, etc.)
+    - When implementing Legal Desk repositories that query ld_ tables
+    - When navigating Legal Desk model relationships or backrefs
+    - When adding new Legal Desk models or modifying existing ld_ model columns
+    - When troubleshooting Legal Desk model imports, JSONB columns, or unique constraints
