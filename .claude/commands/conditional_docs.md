@@ -612,3 +612,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with case message threads or internal/external message filtering
     - When building the Legal Desk analytics dashboard or aggregation queries
     - When troubleshooting Legal Desk repository imports or singleton instances
+
+- app_docs/feature-83119edc-legaldesk-routes-sidebar-navigation.md
+  - Conditions:
+    - When adding or modifying Legal Desk routes in App.tsx
+    - When adding Legal Desk navigation items to the sidebar
+    - When creating or modifying Legal Desk page components in pages/legaldesk/
+    - When troubleshooting Legal Desk route registration or sidebar rendering
+    - When adding a new Legal Desk page and need to wire it into routing and navigation
