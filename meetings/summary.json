@@ -1,0 +1,119 @@
+{
+  "title": "Cialne - Initial Sales Call: AI Automation & Bank Reconciliation",
+  "meeting_date": "2026-03-03",
+  "participants": [
+    {"name": "Ignacio Guerra", "role": "Consultant / Co-founder (ex-VP Product at Fincargo)"},
+    {"name": "Ignacio (Cialne)", "role": "CFO / Financial Director at Cialne"},
+    {"name": "Daniel", "role": "Consultant / Co-founder (Growth & Marketing, ex-Fincargo)"}
+  ],
+  "company_name": "Cialne (Grupo Carnero)",
+  "contact_name": "Ignacio (Cialne)",
+  "contact_email": null,
+  "summary": "Introductory sales call with Cialne, a Brazilian poultry company (anchor company of the Carnero family group). The team presented their three-phase AI implementation methodology (Augment, Automate, Agentize) and demonstrated a bank reconciliation solution that reduces 2-3 day manual processes to minutes. Cialne expressed interest in starting with bank reconciliation as a quick-win pilot ($4,000 implementation + $200/month), and also discussed future opportunities in legal contract management with role-based access and SAP security governance. Next steps include sending a formal presentation and reconciliation proposal while Cialne validates the need internally with their accounting team.",
+  "discussion_points": [
+    {
+      "topic": "Bank Reconciliation Automation",
+      "description": "Live demo of the reconciliation platform showing how 5,800+ bank records are matched against ERP accounting entries using ~35 progressive rules (exact match first, then fuzzy matching on dates/amounts). Achieves ~90% automatic match rate, reducing a 2-3 day manual process to minutes. Output delivered as Excel initially, with platform-based workflow available as a next step."
+    },
+    {
+      "topic": "Three-Phase AI Implementation Methodology",
+      "description": "Presented the Augment-Automate-Agentize framework: (1) Augment gives existing teams tools to do more with point automations, (2) Automate connects full processes via API integrations eliminating manual Excel transfers, (3) Agentize deploys autonomous AI agents that run processes end-to-end with humans as supervisors instead of operators."
+    },
+    {
+      "topic": "Cialne Organizational Structure & IT Governance",
+      "description": "Cialne is the anchor company of the Carnero family group (also includes a dairy company and a family office). The CFO oversees Finance, IT (~15 people), Legal, and Facilities. IT projects are prioritized annually via an IT committee where each business director presents technology needs. When internal capacity is insufficient, they outsource with IT acting as PMO."
+    },
+    {
+      "topic": "Organizational Diagnostics Offering",
+      "description": "Presented the diagnostic process that maps organizational processes through WhatsApp interviews, identifies bottlenecks, assesses digital maturity per department, documents knowledge gaps, analyzes system integrations and technical debt, and produces ROI-driven recommendations for prioritized investments."
+    },
+    {
+      "topic": "Legal Hub & RAG-Based Document Access",
+      "description": "Discussed a contract management system where users fill templates, legal department approves, and contracts become queryable in a centralized database. Introduced the RAG (Retrieval-Augmented Generation) concept for role-based information access across departments (legal, HR, clients, vendors) - aligning with Cialne's legal team's desire for a WhatsApp-based contract query system with granular access control."
+    },
+    {
+      "topic": "SAP Security & Access Governance",
+      "description": "Cialne recently upgraded to SAP S/4HANA but lacks access governance processes. Currently ~1,000 users with ad-hoc access grants. They need profile definition by process/user type, access review routines, and activity measurement. Asked for vendor recommendations from Colombia to compare with Brazilian providers."
+    },
+    {
+      "topic": "Pricing & Commercial Terms",
+      "description": "Bank reconciliation: $4,000 one-time implementation fee + $200/month recurring for maintenance (new rules, scenarios, accounts). Services exported from Colombia are VAT-exempt, so quoted prices are final. Independent of number of bank accounts."
+    },
+    {
+      "topic": "Competitive Landscape",
+      "description": "Cialne mentioned speaking with Celonis earlier that day for similar automation and AI agent services. They are evaluating multiple providers to find the best fit for each specific need in terms of quality, cost, and delivery speed."
+    },
+    {
+      "topic": "Proof of Concept Approach",
+      "description": "Proposed a PoC workflow: sign NDA, receive bank statement and accounting detail for one account, and build a working demo. Implementation timeline is 1-2 weeks from kickoff, with initial feedback possible within one week."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send a brief company presentation with service offerings overview",
+      "owner": "Daniel / Ignacio Guerra (Tremarel team)",
+      "deadline": null
+    },
+    {
+      "description": "Send a specific proposal for bank reconciliation implementation",
+      "owner": "Daniel / Ignacio Guerra (Tremarel team)",
+      "deadline": null
+    },
+    {
+      "description": "Validate internally with the accounting team whether bank reconciliation is a real pain point and gather process details",
+      "owner": "Ignacio (Cialne CFO)",
+      "deadline": null
+    },
+    {
+      "description": "Connect Cialne's accounting team directly with the Tremarel team for detailed process discussion (in Portuguese)",
+      "owner": "Ignacio (Cialne CFO)",
+      "deadline": null
+    },
+    {
+      "description": "Research and provide SAP security/access governance vendor recommendations from Colombia",
+      "owner": "Daniel / Ignacio Guerra (Tremarel team)",
+      "deadline": null
+    },
+    {
+      "description": "Save Ignacio Cialne's contact: +55 85 9810 4282 0",
+      "owner": "Daniel / Ignacio Guerra (Tremarel team)",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Bank reconciliation will be the first pilot project if Cialne validates the need internally",
+    "Cialne's accounting team will be connected directly with Tremarel for detailed technical discussions",
+    "Communication will proceed in Portuguese/Spanish as both sides can understand each other",
+    "Proof of concept approach will be used: NDA first, then share sample data for a demo build"
+  ],
+  "next_steps": [
+    "Tremarel sends company presentation and bank reconciliation proposal to Ignacio (Cialne)",
+    "Ignacio (Cialne) discusses with accounting team to validate reconciliation pain points",
+    "If validated, Cialne connects their accounting staff with Tremarel for a detailed process walkthrough",
+    "If there is a match, schedule a follow-up meeting to discuss next steps and potentially start a PoC",
+    "Tremarel researches SAP security/access governance vendors in Colombia for Cialne"
+  ],
+  "diagrams": [
+    {
+      "title": "AI Implementation Methodology: Augment-Automate-Agentize",
+      "mermaid_code": "flowchart LR\n  subgraph Phase1[\"Phase 1: Augment\"]\n    A1[\"Manual Excel Processes\"] --> A2[\"Point Automations\"]\n    A2 --> A3[\"Team Does 10x More\"]\n  end\n  subgraph Phase2[\"Phase 2: Automate\"]\n    B1[\"Disconnected Systems\"] --> B2[\"API Integrations\"]\n    B2 --> B3[\"End-to-End Connected Flow\"]\n  end\n  subgraph Phase3[\"Phase 3: Agentize\"]\n    C1[\"Operator Clicking\"] --> C2[\"AI Agents Run Process\"]\n    C2 --> C3[\"Human Supervises Only\"]\n  end\n  Phase1 --> Phase2 --> Phase3"
+    },
+    {
+      "title": "Bank Reconciliation System Architecture",
+      "mermaid_code": "flowchart TD\n  A[\"Bank Statement Upload\\n5,800+ records\"] --> B[\"Reconciliation Engine\"]\n  C[\"ERP Accounting Ledger\\nAuxiliary Records\"] --> B\n  B --> D{\"Rule-Based Matching\\n~35 Progressive Rules\"}\n  D --> E[\"Exact Match\\nID + Amount + Date\"]\n  D --> F[\"Fuzzy Match\\nDate +/- 1-2 days\"]\n  D --> G[\"Fuzzy Match\\nDate +/- 5 days\"]\n  D --> H[\"Amount Tolerance\\nSmall Differences\"]\n  E --> I[\"Matched Records\\n~90% Auto-Match\"]\n  F --> I\n  G --> I\n  H --> I\n  D --> J[\"Exceptions\\n~10% Manual Review\"]\n  I --> K[\"Excel Export\"]\n  I --> L[\"Platform View\\nManual Pairing\"]\n  J --> L"
+    },
+    {
+      "title": "Cialne IT Governance & Project Flow",
+      "mermaid_code": "sequenceDiagram\n  participant BD as Business Directors\n  participant IC as IT Committee\n  participant IT as IT Team (15 people)\n  participant VP as External Vendor\n  participant CFO as CFO (Ignacio)\n  BD->>IC: Present annual business plans with tech needs\n  IC->>IT: Prioritize and allocate internal resources\n  IT->>IT: Execute prioritized projects (annual plan)\n  Note over BD,IT: When new needs arise mid-year\n  BD->>IC: New requirement surfaces\n  IC->>IC: Evaluate: change priorities or outsource?\n  alt Outsource\n    IT->>VP: Evaluate and select vendor\n    BD->>VP: Fund with department budget\n    IT->>VP: Act as PMO\n    VP->>BD: Deliver solution\n  else Reprioritize\n    IC->>IT: Adjust annual plan\n    IT->>BD: Deliver internally\n  end"
+    },
+    {
+      "title": "Legal Hub & RAG Document Access System",
+      "mermaid_code": "flowchart TD\n  subgraph Input[\"Document Creation\"]\n    U[\"User\"] --> T[\"Contract Templates\"]\n    T --> F[\"Fill Contract Info\"]\n    F --> N[\"Notification to Legal\"]\n    N --> AP[\"Legal Approval\"]\n    AP --> DB[(\"Contract Database\")]\n  end\n  subgraph RAG[\"RAG Query System\"]\n    WA[\"WhatsApp / Chat Interface\"] --> AUTH{\"Role-Based\\nAccess Control\"}\n    AUTH -->|\"Admin\"| FULL[\"Full Contract Details\\nAmount + Terms + Dates\"]\n    AUTH -->|\"Standard User\"| PARTIAL[\"Limited Info\\nTerms + Dates Only\"]\n    AUTH -->|\"Unauthorized\"| DENY[\"Access Denied\"]\n    FULL --> DB\n    PARTIAL --> DB\n  end\n  subgraph Departments[\"Multi-Department Access\"]\n    LEG[\"Legal Docs\"]\n    HR[\"HR / Payroll\"]\n    CL[\"Client Data\"]\n    SUP[\"Supplier Data\"]\n  end\n  DB --> RAG\n  LEG --> DB\n  HR --> DB\n  CL --> DB\n  SUP --> DB"
+    },
+    {
+      "title": "Proposed Cialne Integration Roadmap",
+      "mermaid_code": "flowchart LR\n  subgraph QuickWin[\"Quick Win - Week 1-2\"]\n    QW1[\"Bank Reconciliation\"]\n  end\n  subgraph Medium[\"Medium Term\"]\n    MT1[\"General Account\\nReconciliations\"]\n    MT2[\"WhatsApp Invoice\\nProcessing\"]\n  end\n  subgraph Future[\"Future Opportunities\"]\n    FT1[\"Legal Contract Hub\\nwith RAG\"]\n    FT2[\"SAP Access\\nGovernance\"]\n    FT3[\"Organizational\\nDiagnostic\"]\n  end\n  QuickWin --> Medium --> Future"
+    }
+  ],
+  "html_output": "see meetings/summary.html"
+}

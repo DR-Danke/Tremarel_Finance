@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Summary - Cialne Initial Sales Call</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #2d3748; line-height: 1.6; }
+    .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+    .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px 36px; border-radius: 12px 12px 0 0; }
+    .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .header .meta { font-size: 14px; opacity: 0.85; display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
+    .header .meta span { display: flex; align-items: center; gap: 6px; }
+    .body-content { background: white; padding: 36px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .section { margin-bottom: 32px; }
+    .section:last-child { margin-bottom: 0; }
+    .section h2 { font-size: 18px; font-weight: 700; color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px; }
+    .summary-box { background: #ebf8ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #2a4365; }
+    .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+    .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; }
+    .participant-card .name { font-weight: 600; color: #1a365d; font-size: 15px; }
+    .participant-card .role { font-size: 13px; color: #718096; margin-top: 2px; }
+    .company-info { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 8px; padding: 16px 20px; }
+    .company-info .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #718096; font-weight: 600; }
+    .company-info .value { font-size: 15px; font-weight: 600; color: #22543d; margin-top: 2px; }
+    .topic-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+    .topic-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .topic-title { font-weight: 600; color: #2b6cb0; font-size: 15px; margin-bottom: 4px; }
+    .topic-desc { font-size: 14px; color: #4a5568; }
+    .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .action-table th { background: #edf2f7; color: #1a365d; font-weight: 600; text-align: left; padding: 10px 14px; border-bottom: 2px solid #cbd5e0; }
+    .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+    .action-table tr:hover { background: #f7fafc; }
+    .badge { display: inline-block; background: #bee3f8; color: #2a4365; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+    .badge-pending { background: #fefcbf; color: #744210; }
+    ul.clean-list { list-style: none; padding: 0; }
+    ul.clean-list li { position: relative; padding: 8px 0 8px 24px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+    ul.clean-list li:last-child { border-bottom: none; }
+    ul.clean-list li::before { content: ""; position: absolute; left: 0; top: 14px; width: 10px; height: 10px; background: #2b6cb0; border-radius: 50%; }
+    .decision-list li::before { background: #38a169; }
+    .next-list li::before { background: #d69e2e; }
+    .diagram-section { margin-top: 20px; }
+    .diagram-block { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    .diagram-block h3 { font-size: 15px; font-weight: 600; color: #2b6cb0; margin-bottom: 12px; }
+    .diagram-block .mermaid { display: flex; justify-content: center; }
+    .pricing-box { background: #fffaf0; border: 1px solid #feebc8; border-radius: 8px; padding: 16px 20px; margin-top: 12px; }
+    .pricing-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+    .pricing-row .label { color: #744210; }
+    .pricing-row .value { font-weight: 700; color: #c05621; }
+    .footer { text-align: center; padding: 24px; font-size: 12px; color: #a0aec0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>Cialne - Initial Sales Call: AI Automation & Bank Reconciliation</h1>
+      <div class="meta">
+        <span>March 3, 2026</span>
+        <span>~41 minutes</span>
+        <span>3 Participants</span>
+      </div>
+    </div>
+
+    <div class="body-content">
+
+      <!-- EXECUTIVE SUMMARY -->
+      <div class="section">
+        <h2>Executive Summary</h2>
+        <div class="summary-box">
+          Introductory sales call with Cialne, a Brazilian poultry company and anchor company of the Carnero family group. The team presented their three-phase AI implementation methodology (Augment, Automate, Agentize) and demonstrated a bank reconciliation solution that reduces 2-3 day manual processes to minutes. Cialne expressed interest in starting with bank reconciliation as a quick-win pilot ($4,000 implementation + $200/month), and also discussed future opportunities in legal contract management with role-based access and SAP security governance. Next steps include sending a formal presentation and reconciliation proposal while Cialne validates the need internally with their accounting team.
+        </div>
+      </div>
+
+      <!-- COMPANY INFO -->
+      <div class="section">
+        <h2>Prospect Information</h2>
+        <div class="company-info">
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div>
+              <div class="label">Company</div>
+              <div class="value">Cialne (Grupo Carnero)</div>
+            </div>
+            <div>
+              <div class="label">Primary Contact</div>
+              <div class="value">Ignacio (CFO)</div>
+            </div>
+            <div>
+              <div class="label">Industry</div>
+              <div class="value">Poultry / Agribusiness (Brazil)</div>
+            </div>
+          </div>
+          <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div>
+              <div class="label">IT Team Size</div>
+              <div class="value">~15 people</div>
+            </div>
+            <div>
+              <div class="label">ERP</div>
+              <div class="value">SAP S/4HANA</div>
+            </div>
+            <div>
+              <div class="label">Referred By</div>
+              <div class="value">Ludmila / Tomas</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARTICIPANTS -->
+      <div class="section">
+        <h2>Participants</h2>
+        <div class="participants-grid">
+          <div class="participant-card">
+            <div class="name">Ignacio Guerra</div>
+            <div class="role">Consultant / Co-founder (ex-VP Product at Fincargo)</div>
+          </div>
+          <div class="participant-card">
+            <div class="name">Ignacio (Cialne)</div>
+            <div class="role">CFO / Financial Director at Cialne</div>
+          </div>
+          <div class="participant-card">
+            <div class="name">Daniel</div>
+            <div class="role">Consultant / Co-founder (Growth & Marketing)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCUSSION POINTS -->
+      <div class="section">
+        <h2>Discussion Points</h2>
+
+        <div class="topic-item">
+          <div class="topic-title">1. Bank Reconciliation Automation</div>
+          <div class="topic-desc">Live demo of the reconciliation platform showing how 5,800+ bank records are matched against ERP accounting entries using ~35 progressive rules (exact match first, then fuzzy matching on dates/amounts). Achieves ~90% automatic match rate, reducing a 2-3 day manual process to minutes. Output delivered as Excel initially, with platform-based workflow available as a next step.</div>
+        </div>
+
+        <div class="topic-item">
+          <div class="topic-title">2. Three-Phase AI Implementation Methodology</div>
+          <div class="topic-desc">Presented the Augment-Automate-Agentize framework: (1) Augment gives existing teams tools to do more with point automations, (2) Automate connects full processes via API integrations eliminating manual Excel transfers, (3) Agentize deploys autonomous AI agents that run processes end-to-end with humans as supervisors instead of operators.</div>
+        </div>
+
+        <div class="topic-item">
+          <div class="topic-title">3. Cialne Organizational Structure & IT Governance</div>
+          <div class="topic-desc">Cialne is the anchor company of the Carnero family group (also includes a dairy company and a family office). The CFO oversees Finance, IT (~15 people), Legal, and Facilities. IT projects are prioritized annually via an IT committee where each business director presents technology needs. When internal capacity is insufficient, they outsource with IT acting as PMO.</div>
+        </div>
+
+        <div class="topic-item">
+          <div class="topic-title">4. Organizational Diagnostics Offering</div>
+          <div class="topic-desc">Presented the diagnostic process that maps organizational processes through WhatsApp interviews, identifies bottlenecks, assesses digital maturity per department, documents knowledge gaps, analyzes system integrations and technical debt, and produces ROI-driven recommendations for prioritized investments.</div>
+        </div>
+
+        <div class="topic-item">
+          <div class="topic-title">5. Legal Hub & RAG-Based Document Access</div>
+          <div class="topic-desc">Discussed a contract management system where users fill templates, legal department approves, and contracts become queryable in a centralized database. Introduced the RAG concept for role-based information access across departments (legal, HR, clients, vendors) - aligning with Cialne's legal team's desire for a WhatsApp-based contract query system with granular access control.</div>
+        </div>
+
+        <div class="topic-item">
+          <div class="topic-title">6. SAP Security & Access Governance</div>
+          <div class="topic-desc">Cialne recently upgraded to SAP S/4HANA but lacks access governance processes. Currently ~1,000 users with ad-hoc access grants. They need profile definition by process/user type, access review routines, and activity measurement. Asked for vendor recommendations from Colombia to compare with Brazilian providers.</div>
+        </div>
+
+        <div class="topic-item">
+          <div class="topic-title">7. Competitive Landscape</div>
+          <div class="topic-desc">Cialne mentioned speaking with Celonis earlier that day for similar automation and AI agent services. They are evaluating multiple providers to find the best fit for each specific need in terms of quality, cost, and delivery speed.</div>
+        </div>
+      </div>
+
+      <!-- PRICING -->
+      <div class="section">
+        <h2>Pricing Discussed</h2>
+        <div class="pricing-box">
+          <div style="font-weight: 600; color: #c05621; margin-bottom: 8px; font-size: 15px;">Bank Reconciliation Solution</div>
+          <div class="pricing-row">
+            <span class="label">One-time Implementation Fee</span>
+            <span class="value">$4,000 USD</span>
+          </div>
+          <div class="pricing-row">
+            <span class="label">Monthly Recurring (Maintenance)</span>
+            <span class="value">$200 USD/month</span>
+          </div>
+          <div class="pricing-row">
+            <span class="label">Bank Account Limit</span>
+            <span class="value">Unlimited</span>
+          </div>
+          <div class="pricing-row">
+            <span class="label">Tax/VAT</span>
+            <span class="value">Exempt (exported services)</span>
+          </div>
+          <div class="pricing-row">
+            <span class="label">Implementation Timeline</span>
+            <span class="value">1-2 weeks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION ITEMS -->
+      <div class="section">
+        <h2>Action Items</h2>
+        <table class="action-table">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Action</th>
+              <th style="width: 30%;">Owner</th>
+              <th style="width: 20%;">Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Send company presentation with service offerings overview</td>
+              <td><span class="badge">Tremarel Team</span></td>
+              <td><span class="badge badge-pending">TBD</span></td>
+            </tr>
+            <tr>
+              <td>Send specific proposal for bank reconciliation implementation</td>
+              <td><span class="badge">Tremarel Team</span></td>
+              <td><span class="badge badge-pending">TBD</span></td>
+            </tr>
+            <tr>
+              <td>Validate internally with accounting team whether bank reconciliation is a real pain point</td>
+              <td><span class="badge">Ignacio (Cialne)</span></td>
+              <td><span class="badge badge-pending">TBD</span></td>
+            </tr>
+            <tr>
+              <td>Connect Cialne's accounting team directly with Tremarel for detailed process discussion</td>
+              <td><span class="badge">Ignacio (Cialne)</span></td>
+              <td><span class="badge badge-pending">TBD</span></td>
+            </tr>
+            <tr>
+              <td>Research and provide SAP security/access governance vendor recommendations from Colombia</td>
+              <td><span class="badge">Tremarel Team</span></td>
+              <td><span class="badge badge-pending">TBD</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DECISIONS -->
+      <div class="section">
+        <h2>Decisions Made</h2>
+        <ul class="clean-list decision-list">
+          <li>Bank reconciliation will be the first pilot project if Cialne validates the need internally</li>
+          <li>Cialne's accounting team will be connected directly with Tremarel for detailed technical discussions</li>
+          <li>Communication will proceed in Portuguese/Spanish as both sides can understand each other</li>
+          <li>Proof of concept approach will be used: NDA first, then share sample data for a demo build</li>
+        </ul>
+      </div>
+
+      <!-- NEXT STEPS -->
+      <div class="section">
+        <h2>Next Steps</h2>
+        <ul class="clean-list next-list">
+          <li>Tremarel sends company presentation and bank reconciliation proposal to Ignacio (Cialne)</li>
+          <li>Ignacio (Cialne) discusses with accounting team to validate reconciliation pain points</li>
+          <li>If validated, Cialne connects their accounting staff with Tremarel for a detailed process walkthrough</li>
+          <li>If there is a match, schedule a follow-up meeting to discuss next steps and potentially start a PoC</li>
+          <li>Tremarel researches SAP security/access governance vendors in Colombia for Cialne</li>
+        </ul>
+      </div>
+
+      <!-- TECHNICAL ARCHITECTURE DIAGRAMS -->
+      <div class="section">
+        <h2>Technical Architecture</h2>
+
+        <div class="diagram-block">
+          <h3>AI Implementation Methodology: Augment-Automate-Agentize</h3>
+          <pre class="mermaid">
+flowchart LR
+  subgraph Phase1["Phase 1: Augment"]
+    A1["Manual Excel Processes"] --> A2["Point Automations"]
+    A2 --> A3["Team Does 10x More"]
+  end
+  subgraph Phase2["Phase 2: Automate"]
+    B1["Disconnected Systems"] --> B2["API Integrations"]
+    B2 --> B3["End-to-End Connected Flow"]
+  end
+  subgraph Phase3["Phase 3: Agentize"]
+    C1["Operator Clicking"] --> C2["AI Agents Run Process"]
+    C2 --> C3["Human Supervises Only"]
+  end
+  Phase1 --> Phase2 --> Phase3
+          </pre>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Bank Reconciliation System Architecture</h3>
+          <pre class="mermaid">
+flowchart TD
+  A["Bank Statement Upload\n5,800+ records"] --> B["Reconciliation Engine"]
+  C["ERP Accounting Ledger\nAuxiliary Records"] --> B
+  B --> D{"Rule-Based Matching\n~35 Progressive Rules"}
+  D --> E["Exact Match\nID + Amount + Date"]
+  D --> F["Fuzzy Match\nDate +/- 1-2 days"]
+  D --> G["Fuzzy Match\nDate +/- 5 days"]
+  D --> H["Amount Tolerance\nSmall Differences"]
+  E --> I["Matched Records\n~90% Auto-Match"]
+  F --> I
+  G --> I
+  H --> I
+  D --> J["Exceptions\n~10% Manual Review"]
+  I --> K["Excel Export"]
+  I --> L["Platform View\nManual Pairing"]
+  J --> L
+          </pre>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Cialne IT Governance & Project Flow</h3>
+          <pre class="mermaid">
+sequenceDiagram
+  participant BD as Business Directors
+  participant IC as IT Committee
+  participant IT as IT Team (15 people)
+  participant VP as External Vendor
+  participant CFO as CFO (Ignacio)
+  BD->>IC: Present annual business plans with tech needs
+  IC->>IT: Prioritize and allocate internal resources
+  IT->>IT: Execute prioritized projects (annual plan)
+  Note over BD,IT: When new needs arise mid-year
+  BD->>IC: New requirement surfaces
+  IC->>IC: Evaluate: change priorities or outsource?
+  alt Outsource
+    IT->>VP: Evaluate and select vendor
+    BD->>VP: Fund with department budget
+    IT->>VP: Act as PMO
+    VP->>BD: Deliver solution
+  else Reprioritize
+    IC->>IT: Adjust annual plan
+    IT->>BD: Deliver internally
+  end
+          </pre>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Legal Hub & RAG Document Access System</h3>
+          <pre class="mermaid">
+flowchart TD
+  subgraph Input["Document Creation"]
+    U["User"] --> T["Contract Templates"]
+    T --> F["Fill Contract Info"]
+    F --> N["Notification to Legal"]
+    N --> AP["Legal Approval"]
+    AP --> DB[("Contract Database")]
+  end
+  subgraph RAG["RAG Query System"]
+    WA["WhatsApp / Chat Interface"] --> AUTH{"Role-Based\nAccess Control"}
+    AUTH -->|"Admin"| FULL["Full Contract Details\nAmount + Terms + Dates"]
+    AUTH -->|"Standard User"| PARTIAL["Limited Info\nTerms + Dates Only"]
+    AUTH -->|"Unauthorized"| DENY["Access Denied"]
+  end
+  DB --> RAG
+  subgraph Departments["Multi-Department Data Sources"]
+    LEG["Legal Docs"]
+    HR["HR / Payroll"]
+    CL["Client Data"]
+    SUP["Supplier Data"]
+  end
+  LEG --> DB
+  HR --> DB
+  CL --> DB
+  SUP --> DB
+          </pre>
+        </div>
+
+        <div class="diagram-block">
+          <h3>Proposed Cialne Integration Roadmap</h3>
+          <pre class="mermaid">
+flowchart LR
+  subgraph QuickWin["Quick Win - Week 1-2"]
+    QW1["Bank Reconciliation"]
+  end
+  subgraph Medium["Medium Term"]
+    MT1["General Account\nReconciliations"]
+    MT2["WhatsApp Invoice\nProcessing"]
+  end
+  subgraph Future["Future Opportunities"]
+    FT1["Legal Contract Hub\nwith RAG"]
+    FT2["SAP Access\nGovernance"]
+    FT3["Organizational\nDiagnostic"]
+  end
+  QuickWin --> Medium --> Future
+          </pre>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Meeting Summary generated on March 3, 2026 &bull; Confidential
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
