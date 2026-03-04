@@ -47,6 +47,21 @@ class RecipeUpdateDTO(BaseModel):
     items: Optional[list[RecipeItemCreateDTO]] = Field(None, min_length=1, description="Recipe ingredients")
 
 
+class RecipeProduceRequestDTO(BaseModel):
+    """DTO for recipe production request."""
+
+    quantity: int = Field(default=1, ge=1, description="Number of recipe units to produce")
+
+
+class RecipeProduceResponseDTO(BaseModel):
+    """DTO for recipe production response."""
+
+    recipe_id: UUID
+    recipe_name: str
+    quantity: int
+    movements_created: int
+
+
 class RecipeResponseDTO(BaseModel):
     """DTO for recipe information in responses."""
 
