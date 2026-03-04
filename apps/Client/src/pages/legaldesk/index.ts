@@ -1,0 +1,7 @@
+export { LegalDeskDashboardPage } from './LegalDeskDashboardPage'
+export { LegalDeskCasesPage } from './LegalDeskCasesPage'
+export { LegalDeskNewCasePage } from './LegalDeskNewCasePage'
+export { LegalDeskCaseDetailPage } from './LegalDeskCaseDetailPage'
+export { LegalDeskSpecialistsPage } from './LegalDeskSpecialistsPage'
+export { LegalDeskClientsPage } from './LegalDeskClientsPage'
+export { LegalDeskAnalyticsPage } from './LegalDeskAnalyticsPage'
