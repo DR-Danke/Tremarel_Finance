@@ -15,6 +15,7 @@ import { RestaurantOSPersonsPage } from '@/pages/restaurantos/RestaurantOSPerson
 import { RestaurantOSDocumentsPage } from '@/pages/restaurantos/RestaurantOSDocumentsPage'
 import { RestaurantOSEventsPage } from '@/pages/restaurantos/RestaurantOSEventsPage'
 import { RestaurantOSResourcesPage } from '@/pages/restaurantos/RestaurantOSResourcesPage'
+import { RestaurantOSRecipesPage } from '@/pages/restaurantos/RestaurantOSRecipesPage'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { TRMainLayout } from '@/components/layout'
 
@@ -230,6 +231,16 @@ function App() {
           <ProtectedRoute>
             <TRMainLayout>
               <RestaurantOSResourcesPage />
+            </TRMainLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/poc/restaurant-os/recipes"
+        element={
+          <ProtectedRoute>
+            <TRMainLayout>
+              <RestaurantOSRecipesPage />
             </TRMainLayout>
           </ProtectedRoute>
         }
