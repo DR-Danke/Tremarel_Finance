@@ -24,6 +24,7 @@ class EventRepository:
         notification_channel: str = "email",
         related_document_id: Optional[UUID] = None,
         parent_event_id: Optional[UUID] = None,
+        related_resource_id: Optional[UUID] = None,
     ) -> Event:
         """
         Create a new event in a restaurant.
@@ -39,6 +40,7 @@ class EventRepository:
             notification_channel: Notification channel preference
             related_document_id: Related document UUID
             parent_event_id: Parent event UUID for recurring instances
+            related_resource_id: Related resource UUID for stock alerts
 
         Returns:
             Created Event object
@@ -54,6 +56,7 @@ class EventRepository:
             notification_channel=notification_channel,
             related_document_id=related_document_id,
             parent_event_id=parent_event_id,
+            related_resource_id=related_resource_id,
         )
         db.add(event)
         db.commit()
@@ -240,6 +243,66 @@ class EventRepository:
         )
         db.commit()
         print(f"INFO [EventRepository]: Deleted {count} vencimiento events for document {document_id}")
+        return count
+
+    def get_pending_alerts_by_resource(
+        self, db: Session, restaurant_id: UUID, resource_id: UUID
+    ) -> list[Event]:
+        """
+        Get pending alerta_stock events for a specific resource.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            resource_id: Resource UUID
+
+        Returns:
+            List of pending alerta_stock Event objects
+        """
+        print(f"INFO [EventRepository]: Getting pending stock alerts for resource {resource_id}")
+        events = (
+            db.query(Event)
+            .filter(
+                Event.restaurant_id == restaurant_id,
+                Event.type == "alerta_stock",
+                Event.status == "pending",
+                Event.related_resource_id == resource_id,
+            )
+            .all()
+        )
+        print(f"INFO [EventRepository]: Found {len(events)} pending stock alerts for resource {resource_id}")
+        return events
+
+    def resolve_alerts_by_resource(
+        self, db: Session, restaurant_id: UUID, resource_id: UUID
+    ) -> int:
+        """
+        Resolve all pending alerta_stock events for a resource.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            resource_id: Resource UUID
+
+        Returns:
+            Count of resolved events
+        """
+        print(f"INFO [EventRepository]: Resolving stock alerts for resource {resource_id}")
+        count = (
+            db.query(Event)
+            .filter(
+                Event.restaurant_id == restaurant_id,
+                Event.type == "alerta_stock",
+                Event.status == "pending",
+                Event.related_resource_id == resource_id,
+            )
+            .update(
+                {"status": "completed", "completed_at": datetime.utcnow()},
+                synchronize_session="fetch",
+            )
+        )
+        db.commit()
+        print(f"INFO [EventRepository]: Resolved {count} stock alerts for resource {resource_id}")
         return count
 
     def bulk_create(self, db: Session, events_data: list[dict]) -> list[Event]:

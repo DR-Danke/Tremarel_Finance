@@ -37,6 +37,9 @@ class Event(Base):
     notification_channel: str = Column(String(50), default="email")
     status: str = Column(String(50), default="pending")
     related_document_id: Optional[uuid.UUID] = Column(UUID(as_uuid=True), nullable=True)
+    related_resource_id: Optional[uuid.UUID] = Column(
+        UUID(as_uuid=True), ForeignKey("resource.id", ondelete="SET NULL"), nullable=True
+    )
     parent_event_id: Optional[uuid.UUID] = Column(
         UUID(as_uuid=True), ForeignKey("event.id", ondelete="CASCADE"), nullable=True
     )

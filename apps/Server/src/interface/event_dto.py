@@ -50,6 +50,7 @@ class EventCreateDTO(BaseModel):
     responsible_id: Optional[UUID] = Field(None, description="Person UUID responsible for this event")
     notification_channel: str = Field("email", description="Notification channel (email, push, whatsapp)")
     related_document_id: Optional[UUID] = Field(None, description="Related document UUID for audit linking")
+    related_resource_id: Optional[UUID] = Field(None, description="Related resource UUID for stock alerts")
 
 
 class EventUpdateDTO(BaseModel):
@@ -62,6 +63,7 @@ class EventUpdateDTO(BaseModel):
     responsible_id: Optional[UUID] = Field(None, description="Person UUID responsible for this event")
     notification_channel: Optional[str] = Field(None, description="Notification channel")
     related_document_id: Optional[UUID] = Field(None, description="Related document UUID")
+    related_resource_id: Optional[UUID] = Field(None, description="Related resource UUID for stock alerts")
 
 
 class EventStatusUpdateDTO(BaseModel):
@@ -94,6 +96,7 @@ class EventResponseDTO(BaseModel):
     notification_channel: str = Field(..., description="Notification channel")
     status: str = Field(..., description="Event status")
     related_document_id: Optional[UUID] = Field(None, description="Related document UUID")
+    related_resource_id: Optional[UUID] = Field(None, description="Related resource UUID for stock alerts")
     parent_event_id: Optional[UUID] = Field(None, description="Parent event UUID for recurring instances")
     completed_at: Optional[datetime] = Field(None, description="Timestamp when task was completed")
     is_overdue: bool = Field(False, description="Computed: whether event is overdue")
@@ -125,6 +128,7 @@ class EventResponseDTO(BaseModel):
                 "notification_channel": getattr(data, "notification_channel", "email"),
                 "status": event_status,
                 "related_document_id": getattr(data, "related_document_id", None),
+                "related_resource_id": getattr(data, "related_resource_id", None),
                 "parent_event_id": getattr(data, "parent_event_id", None),
                 "completed_at": getattr(data, "completed_at", None),
                 "is_overdue": is_overdue,

@@ -70,6 +70,7 @@ class EventService:
             responsible_id=data.responsible_id,
             notification_channel=data.notification_channel,
             related_document_id=data.related_document_id,
+            related_resource_id=data.related_resource_id,
         )
 
         if data.frequency.value != "none":
@@ -195,6 +196,8 @@ class EventService:
             event.notification_channel = data.notification_channel
         if data.related_document_id is not None:
             event.related_document_id = data.related_document_id
+        if data.related_resource_id is not None:
+            event.related_resource_id = data.related_resource_id
 
         updated_event = event_repository.update(db, event)
 
@@ -356,6 +359,7 @@ class EventService:
                 "notification_channel": parent.notification_channel,
                 "status": "pending",
                 "related_document_id": parent.related_document_id,
+                "related_resource_id": parent.related_resource_id,
                 "parent_event_id": parent.id,
             })
 

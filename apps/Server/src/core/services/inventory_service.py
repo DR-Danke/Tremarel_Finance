@@ -6,8 +6,10 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from src.interface.event_dto import EventCreateDTO, EventFrequency, EventType
 from src.interface.inventory_movement_dto import InventoryMovementCreateDTO, MovementType
 from src.models.inventory_movement import InventoryMovement
+from src.repository.event_repository import event_repository
 from src.repository.inventory_movement_repository import inventory_movement_repository
 from src.repository.resource_repository import resource_repository
 from src.repository.restaurant_repository import restaurant_repository
@@ -93,9 +95,68 @@ class InventoryService:
 
         if resource.current_stock < resource.minimum_stock:
             print(f"WARNING [InventoryService]: Resource '{resource.name}' is below minimum stock (current: {resource.current_stock}, minimum: {resource.minimum_stock})")
+            self._create_low_stock_alert(db, user_id, resource, data.restaurant_id)
+        elif resource.current_stock >= resource.minimum_stock:
+            self._resolve_low_stock_alerts(db, resource.id, data.restaurant_id)
 
         print(f"INFO [InventoryService]: Movement created with id {movement.id}, resource stock updated to {resource.current_stock}")
         return movement
+
+    def _create_low_stock_alert(
+        self,
+        db: Session,
+        user_id: UUID,
+        resource: object,
+        restaurant_id: UUID,
+    ) -> None:
+        """
+        Create an alerta_stock event if no pending alert exists for this resource.
+
+        Args:
+            db: Database session
+            user_id: User UUID (for event creation authorization)
+            resource: Resource object with current_stock, minimum_stock, name, unit
+            restaurant_id: Restaurant UUID
+        """
+        existing_alerts = event_repository.get_pending_alerts_by_resource(
+            db, restaurant_id, resource.id
+        )
+        if existing_alerts:
+            print(f"INFO [InventoryService]: Pending stock alert already exists for resource '{resource.name}', skipping duplicate")
+            return
+
+        event_data = EventCreateDTO(
+            restaurant_id=restaurant_id,
+            type=EventType.ALERTA_STOCK,
+            description=f"Stock bajo: {resource.name} - Actual: {resource.current_stock} {resource.unit}, Mínimo: {resource.minimum_stock} {resource.unit}",
+            date=datetime.utcnow(),
+            frequency=EventFrequency.NONE,
+            notification_channel="whatsapp",
+            related_resource_id=resource.id,
+        )
+
+        from src.core.services.event_service import event_service
+
+        event_service.create_event(db, user_id, event_data)
+        print(f"WARNING [InventoryService]: Low stock alert created for resource '{resource.name}' (current: {resource.current_stock}, minimum: {resource.minimum_stock})")
+
+    def _resolve_low_stock_alerts(
+        self,
+        db: Session,
+        resource_id: UUID,
+        restaurant_id: UUID,
+    ) -> None:
+        """
+        Resolve pending alerta_stock events when stock recovers above minimum.
+
+        Args:
+            db: Database session
+            resource_id: Resource UUID
+            restaurant_id: Restaurant UUID
+        """
+        count = event_repository.resolve_alerts_by_resource(db, restaurant_id, resource_id)
+        if count > 0:
+            print(f"INFO [InventoryService]: Resolved {count} low stock alert(s) for resource {resource_id}")
 
     def get_movements_by_resource(
         self,
