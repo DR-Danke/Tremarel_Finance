@@ -594,3 +594,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When using Legal Desk label or color constant maps for status badges, priority chips, or domain labels
     - When implementing Legal Desk CRUD forms or API payloads (LdCaseCreate, LdClientUpdate, etc.)
     - When adding new Legal Desk types or extending existing Legal Desk interfaces
+
+- app_docs/feature-601d0350-legaldesk-supporting-repositories-wave2.md
+  - Conditions:
+    - When working with Legal Desk assignment, deliverable, message, or analytics repositories
+    - When implementing Legal Desk services that consume Wave 2 repository methods
+    - When working with case-specialist assignment fee negotiation or status tracking
+    - When working with deliverable milestone tracking or status transitions
+    - When working with case message threads or internal/external message filtering
+    - When building the Legal Desk analytics dashboard or aggregation queries
+    - When troubleshooting Legal Desk repository imports or singleton instances
