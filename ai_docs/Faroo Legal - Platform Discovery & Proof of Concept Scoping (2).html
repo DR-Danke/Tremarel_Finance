@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Summary — Faroo Legal POC Discovery</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f9; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#1e293b; line-height:1.6;">
+<div style="max-width:800px; margin:0 auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.08); margin-top:24px; margin-bottom:24px;">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#1e3a5f,#2563eb); padding:32px 40px; color:#ffffff;">
+    <h1 style="margin:0 0 8px 0; font-size:24px; font-weight:700; letter-spacing:-0.3px;">Meeting Summary</h1>
+    <p style="margin:0; font-size:16px; opacity:0.9;">Faroo Legal — Platform Discovery &amp; Proof of Concept Scoping</p>
+    <p style="margin:8px 0 0 0; font-size:14px; opacity:0.75;">February 24, 2026 &middot; ~39 minutes</p>
+  </div>
+
+  <div style="padding:32px 40px;">
+
+    <!-- Participants -->
+    <div style="margin-bottom:28px;">
+      <h2 style="font-size:16px; color:#2563eb; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 12px 0; border-bottom:2px solid #e2e8f0; padding-bottom:6px;">Participants</h2>
+      <table style="width:100%; border-collapse:collapse; font-size:14px;">
+        <tr style="background:#f8fafc;">
+          <td style="padding:8px 12px; font-weight:600;">Carlos</td>
+          <td style="padding:8px 12px; color:#64748b;">Founder &amp; Consigliere, Faroo Legal</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px; font-weight:600;">Daniel Restrepo</td>
+          <td style="padding:8px 12px; color:#64748b;">Tremarel — Marketing &amp; Commercial Strategy</td>
+        </tr>
+        <tr style="background:#f8fafc;">
+          <td style="padding:8px 12px; font-weight:600;">Daniel Cardona</td>
+          <td style="padding:8px 12px; color:#64748b;">Tremarel — Technical Architecture &amp; Systems</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Executive Summary -->
+    <div style="margin-bottom:28px; background:#eff6ff; border-left:4px solid #2563eb; padding:16px 20px; border-radius:0 6px 6px 0;">
+      <h2 style="font-size:16px; color:#2563eb; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 8px 0;">Executive Summary</h2>
+      <p style="margin:0; font-size:14px; color:#334155;">Carlos, founder of Faroo Legal, presented his vision for a global legal services platform — an <strong>&ldquo;Uber for Legal&rdquo;</strong> — that connects clients with a curated ecosystem of <strong>400&ndash;500 specialist lawyers</strong> across multiple geographies and legal domains. The team identified the core bottleneck as the <strong>manual assignment and operations workflow</strong> (currently run via WhatsApp, email, and Notion) and agreed to build a <strong>phased proof of concept</strong> starting with the specialist assignment engine and pricing engine. A follow-up meeting was scheduled for <strong>Friday, February 28, 2026 at 4:00 PM</strong>.</p>
+    </div>
+
+    <!-- Discussion Points -->
+    <div style="margin-bottom:28px;">
+      <h2 style="font-size:16px; color:#2563eb; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 12px 0; border-bottom:2px solid #e2e8f0; padding-bottom:6px;">Key Discussion Points</h2>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">1. Faroo Legal Business Model</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">Faroo Legal acts as a &ldquo;Consigliere&rdquo; — orchestrating the right specialists for each client need across countries and legal specialties. The platform addresses the fragmentation problem where clients must independently coordinate lawyers across jurisdictions.</p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">2. Specialist Assignment &amp; Routing Engine</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">The primary bottleneck is manual specialist assignment. An intelligent routing engine should process client requirements, match against the specialist database (skills, score, workload), and propose candidates for approval. <strong>Top priority for the POC.</strong></p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">3. Pricing Engine</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">A pricing motor determines specialist cost vs. client billing rate. After pre-selection, there is a negotiation phase, then Faroo adds its margin and presents a unified quote. Historical data should inform suggested price ranges.</p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">4. Operations Pipeline &amp; Case Management</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">Once a client accepts, operational tickets are created per case — tracking specialists, tasks, deliverables, deadlines, billing, and documents. Automated deadline alerts and overdue notifications are critical needs.</p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">5. Commercial Funnel &amp; CRM</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">Multi-channel leads flow through discovery calls to proposals. Go High Level recommended as CRM for the commercial funnel, with backend integrations to avoid dual-database management with Notion.</p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">6. Specialist Database &amp; Scoring</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">400&ndash;500 members including individuals and boutique firms, each with 8+ years of experience. A performance score based on quality, teamwork, delivery, and client satisfaction drives assignment priority.</p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#1e293b; margin:0 0 4px 0;">7. Automatable Products vs. Complex Projects</h3>
+        <p style="margin:0; font-size:14px; color:#475569;">Standardized products (e.g., trademark registration) should be nearly fully automated, while complex projects require deep specialist involvement. Small cases consume disproportionate management energy.</p>
+      </div>
+    </div>
+
+    <!-- Action Items -->
+    <div style="margin-bottom:28px;">
+      <h2 style="font-size:16px; color:#2563eb; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 12px 0; border-bottom:2px solid #e2e8f0; padding-bottom:6px;">Action Items</h2>
+      <table style="width:100%; border-collapse:collapse; font-size:14px;">
+        <tr style="background:#1e3a5f; color:#ffffff;">
+          <th style="padding:10px 12px; text-align:left; font-weight:600;">Action</th>
+          <th style="padding:10px 12px; text-align:left; font-weight:600; width:140px;">Owner</th>
+          <th style="padding:10px 12px; text-align:left; font-weight:600; width:120px;">Deadline</th>
+        </tr>
+        <tr style="background:#f8fafc;">
+          <td style="padding:10px 12px;">Design &amp; build POC for assignment engine and pricing engine (pilot: trademark registration + one other case, 3&ndash;4 specialists)</td>
+          <td style="padding:10px 12px; font-weight:600;">Daniel Cardona</td>
+          <td style="padding:10px 12px;">Initial design by Feb 28</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;">Document specialist assignment heuristics and criteria</td>
+          <td style="padding:10px 12px; font-weight:600;">Carlos</td>
+          <td style="padding:10px 12px;">Before Feb 28</td>
+        </tr>
+        <tr style="background:#f8fafc;">
+          <td style="padding:10px 12px;">Update and send revised commercial proposal</td>
+          <td style="padding:10px 12px; font-weight:600;">Carlos</td>
+          <td style="padding:10px 12px;">Same day (Feb 24)</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;">Provide Notion licensing cost information</td>
+          <td style="padding:10px 12px; font-weight:600;">Carlos</td>
+          <td style="padding:10px 12px;">TBD</td>
+        </tr>
+        <tr style="background:#f8fafc;">
+          <td style="padding:10px 12px;">Consolidate specialist database for pilot scope</td>
+          <td style="padding:10px 12px; font-weight:600;">Carlos + Tremarel</td>
+          <td style="padding:10px 12px;">TBD</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 12px;">Send calendar invite for Friday follow-up at 4:00 PM</td>
+          <td style="padding:10px 12px; font-weight:600;">Daniel Cardona</td>
+          <td style="padding:10px 12px;">Feb 24</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Decisions -->
+    <div style="margin-bottom:28px;">
+      <h2 style="font-size:16px; color:#2563eb; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 12px 0; border-bottom:2px solid #e2e8f0; padding-bottom:6px;">Decisions Made</h2>
+      <ul style="margin:0; padding-left:20px; font-size:14px; color:#334155;">
+        <li style="margin-bottom:8px;">Pursue a <strong>phased approach</strong> — start with a proof of concept before building the full platform</li>
+        <li style="margin-bottom:8px;">POC will focus on the <strong>specialist assignment engine</strong> and <strong>pricing engine</strong> as the two core components</li>
+        <li style="margin-bottom:8px;">Pilot will use <strong>specific case types</strong> (trademark registration + one other) with <strong>3&ndash;4 specialists</strong></li>
+        <li style="margin-bottom:8px;">Keep <strong>Go High Level</strong> for the commercial CRM funnel; integrate with the operations platform</li>
+        <li style="margin-bottom:8px;">Carlos offered to <strong>support Tremarel with investor-facing materials</strong> if needed</li>
+      </ul>
+    </div>
+
+    <!-- Next Steps -->
+    <div style="margin-bottom:28px; background:#f0fdf4; border-left:4px solid #16a34a; padding:16px 20px; border-radius:0 6px 6px 0;">
+      <h2 style="font-size:16px; color:#16a34a; text-transform:uppercase; letter-spacing:0.8px; margin:0 0 12px 0;">Next Steps</h2>
+      <ol style="margin:0; padding-left:20px; font-size:14px; color:#334155;">
+        <li style="margin-bottom:6px;"><strong>Follow-up meeting:</strong> Friday, February 28, 2026 at 4:00 PM — review POC design and updated proposal</li>
+        <li style="margin-bottom:6px;"><strong>Carlos:</strong> Send updated commercial proposal immediately</li>
+        <li style="margin-bottom:6px;"><strong>Tremarel:</strong> Process meeting input and design the POC architecture</li>
+        <li style="margin-bottom:6px;"><strong>Carlos:</strong> Document assignment criteria and prepare specialist data for the pilot</li>
+        <li style="margin-bottom:6px;"><strong>Carlos:</strong> Confirm Notion licensing costs with partner</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="background:#f1f5f9; padding:16px 40px; text-align:center; font-size:12px; color:#94a3b8; border-top:1px solid #e2e8f0;">
+    <p style="margin:0;">This summary was generated from the meeting recording of February 24, 2026.</p>
+    <p style="margin:4px 0 0 0;">Tremarel &middot; AI-Powered Business Solutions</p>
+  </div>
+
+</div>
+
+<div style="margin-top:32px;"><h2 style="color:#1565C0;border-bottom:2px solid #1565C0;padding-bottom:8px;">Technical Architecture</h2>
+<h3 style="color:#333;margin-top:24px;">Faroo Legal — Platform Architecture Overview</h3>
+<pre class="mermaid">
+flowchart LR
+  subgraph Acquisition["Commercial Acquisition"]
+    Leads[Multi-Channel Leads]
+    GHL[Go High Level CRM]
+    DC[Discovery Call / AI Extraction]
+  end
+  subgraph Origination["Case Origination"]
+    CH1[Direct Client Case]
+    CH2[Specialist Referral Case]
+  end
+  subgraph Core["Core Platform"]
+    AE[Specialist Assignment Engine]
+    SDB[(Specialist Database
+400-500 Members)]
+    SC[Scoring System]
+    PE[Pricing Engine]
+    CM[Case Management]
+  end
+  subgraph Storage["Storage & Docs"]
+    GD[Google Drive]
+    Notion[Notion / Docs]
+  end
+  subgraph Specialists["Specialist Ecosystem"]
+    IND[Individual Lawyers]
+    FIRM[Law Firms / Boutiques]
+    AI[AI Agents - Future]
+  end
+
+  Leads --> GHL
+  GHL --> DC
+  DC --> CH1
+  CH2 -->|Member brings outside case| CH1
+  CH1 --> AE
+  AE <--> SDB
+  SDB <--> SC
+  AE --> PE
+  PE --> CM
+  CM --> GD
+  CM --> Notion
+  IND --> SDB
+  FIRM --> SDB
+  AI -.->|Future evolution| SDB
+</pre>
+<h3 style="color:#333;margin-top:24px;">Specialist Assignment & Routing Engine</h3>
+<pre class="mermaid">
+flowchart TD
+  A[Client Requirement Input] --> B[AI Extraction from Discovery Call]
+  B --> C[Structured Requirement Profile
+Geography · Legal Domain · Complexity]
+  C --> D[Query Specialist Database]
+  D --> E[Filter: Skills & Certifications Match]
+  E --> F[Filter: Min 8 Years Experience]
+  F --> G[Filter: Current Workload & Availability]
+  G --> H[Rank by Performance Score
+Quality · Satisfaction · Timeliness · Recurrence]
+  H --> I[Generate Candidate Shortlist]
+  I --> J{Human Review & Approval
+Faroo Ops}
+  J -->|Approve| K[Assignment Confirmed]
+  J -->|Revise| I
+  K --> L[Notify Specialist]
+  K --> M[Trigger Pricing Engine]
+  K --> N[Create Operational Ticket]
+</pre>
+<h3 style="color:#333;margin-top:24px;">Pricing Engine — Negotiation & Quote Flow</h3>
+<pre class="mermaid">
+sequenceDiagram
+  participant C as Client
+  participant F as Faroo Ops
+  participant PE as Pricing Engine
+  participant S as Specialist(s)
+
+  F->>PE: Submit approved specialist shortlist
+  PE->>PE: Retrieve historical pricing data
+  PE-->>F: Suggested fee ranges per specialist
+  F->>S: Initiate fee negotiation
+  S-->>F: Propose specialist fee
+  F->>PE: Input agreed specialist cost
+  PE->>PE: Apply Faroo margin
+  PE-->>F: Generate unified client quote
+  F->>C: Present unified quote
+  C-->>F: Negotiate or Accept
+  C->>F: Accept offer
+  F->>F: Lock pricing & create case ticket
+  F->>S: Confirm assignment & agreed terms
+</pre>
+<h3 style="color:#333;margin-top:24px;">Case Lifecycle & Operations Pipeline</h3>
+<pre class="mermaid">
+flowchart TD
+  subgraph Origination["Case Origination"]
+    CH1[Direct Client via Commercial Funnel
+Faroo invoices client]
+    CH2[Specialist Referral
+Member becomes client for this case]
+  end
+
+  subgraph Classification["Case Type Classification"]
+    CT{Case Type?}
+    SP[Standardized Product
+e.g. Trademark Registration]
+    CX[Complex Project
+e.g. Corporate Restructuring
+Transfer Pricing]
+  end
+
+  subgraph Operations["Operational Pipeline"]
+    TK[Operational Ticket Created]
+    TS[Specialists Assigned]
+    TD[Task & Deliverable Tracking]
+    DD[Deadline Monitoring]
+    AL[Automated Alerts
+Upcoming · Overdue]
+    DOC[Document Uploads
+Google Drive]
+    BL[Billing & Invoicing]
+  end
+
+  CH1 --> CT
+  CH2 --> CT
+  CT -->|High Automation| SP
+  CT -->|Consigliere Methodology| CX
+  SP --> TK
+  CX --> TK
+  TK --> TS
+  TS --> TD
+  TD --> DD
+  DD --> AL
+  TD --> DOC
+  TD --> BL
+  BL --> CL[Case Closure & Specialist Scoring Update]
+</pre>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
