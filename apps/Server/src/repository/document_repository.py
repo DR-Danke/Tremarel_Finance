@@ -196,6 +196,35 @@ class DocumentRepository:
         print(f"INFO [DocumentRepository]: Found {len(documents)} expiring documents")
         return documents
 
+    def count_active(self, db: Session, restaurant_id: UUID) -> int:
+        """
+        Count documents where expiration_date is NULL or >= today.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            Count of active documents
+        """
+        print(f"INFO [DocumentRepository]: Counting active documents for restaurant {restaurant_id}")
+        today = date.today()
+        from sqlalchemy import or_
+
+        count = (
+            db.query(Document)
+            .filter(
+                Document.restaurant_id == restaurant_id,
+                or_(
+                    Document.expiration_date.is_(None),
+                    Document.expiration_date >= today,
+                ),
+            )
+            .count()
+        )
+        print(f"INFO [DocumentRepository]: Found {count} active documents")
+        return count
+
 
 # Singleton instance
 document_repository = DocumentRepository()

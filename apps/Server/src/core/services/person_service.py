@@ -246,5 +246,34 @@ class PersonService:
         return person_repository.search(db, restaurant_id, query)
 
 
+    def count_by_type(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        person_type: str,
+    ) -> int:
+        """
+        Count persons by type within a restaurant.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+            person_type: Person type (e.g., 'employee')
+
+        Returns:
+            Count of persons
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [PersonService]: Counting persons of type '{person_type}' for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return person_repository.count_by_type(db, restaurant_id, person_type)
+
+
 # Singleton instance
 person_service = PersonService()

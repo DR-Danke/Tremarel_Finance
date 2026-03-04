@@ -543,3 +543,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with the firebase-messaging-sw.js service worker
     - When modifying notification channel routing to include push
     - When troubleshooting push notification sending, stub mode, or FCM API calls
+
+- app_docs/feature-28ba0bbb-restaurant-ops-dashboard.md
+  - Conditions:
+    - When working with the RestaurantOS operations dashboard or RestaurantOSDashboardPage
+    - When modifying TRStatCard (generic mode), TRAlertsList, or useDashboardOverview
+    - When working with the restaurant_dashboard_routes or RestaurantDashboardService
+    - When implementing dashboard-style aggregation pages that pull from multiple entity services
+    - When working with expiring document queries, low-stock queries, or daily task summaries
+    - When troubleshooting the dashboard overview endpoint or dashboard data loading

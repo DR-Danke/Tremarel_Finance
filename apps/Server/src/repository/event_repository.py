@@ -329,5 +329,87 @@ class EventRepository:
         return events
 
 
+    def get_tasks_by_date(self, db: Session, restaurant_id: UUID, target_date: date) -> list[Event]:
+        """
+        Get task events for a specific date.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            target_date: Target date
+
+        Returns:
+            List of task Event objects
+        """
+        print(f"INFO [EventRepository]: Getting tasks for restaurant {restaurant_id} on {target_date}")
+        start_of_day = datetime.combine(target_date, datetime.min.time())
+        end_of_day = datetime.combine(target_date, datetime.max.time())
+        events = (
+            db.query(Event)
+            .filter(
+                Event.restaurant_id == restaurant_id,
+                Event.type == "tarea",
+                Event.date >= start_of_day,
+                Event.date <= end_of_day,
+            )
+            .all()
+        )
+        print(f"INFO [EventRepository]: Found {len(events)} tasks for {target_date}")
+        return events
+
+    def get_pending_alerts(self, db: Session, restaurant_id: UUID) -> list[Event]:
+        """
+        Get pending alert events (vencimiento, alerta_stock, alerta_rentabilidad).
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            List of pending alert Event objects
+        """
+        print(f"INFO [EventRepository]: Getting pending alerts for restaurant {restaurant_id}")
+        events = (
+            db.query(Event)
+            .filter(
+                Event.restaurant_id == restaurant_id,
+                Event.type.in_(["vencimiento", "alerta_stock", "alerta_rentabilidad"]),
+                Event.status == "pending",
+            )
+            .all()
+        )
+        print(f"INFO [EventRepository]: Found {len(events)} pending alerts")
+        return events
+
+    def count_completed_tasks(self, db: Session, restaurant_id: UUID, target_date: date) -> int:
+        """
+        Count tasks completed on a specific date.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            target_date: Target date
+
+        Returns:
+            Count of completed tasks
+        """
+        print(f"INFO [EventRepository]: Counting completed tasks for restaurant {restaurant_id} on {target_date}")
+        start_of_day = datetime.combine(target_date, datetime.min.time())
+        end_of_day = datetime.combine(target_date, datetime.max.time())
+        count = (
+            db.query(Event)
+            .filter(
+                Event.restaurant_id == restaurant_id,
+                Event.type == "tarea",
+                Event.status == "completed",
+                Event.completed_at >= start_of_day,
+                Event.completed_at <= end_of_day,
+            )
+            .count()
+        )
+        print(f"INFO [EventRepository]: Found {count} completed tasks")
+        return count
+
+
 # Singleton instance
 event_repository = EventRepository()

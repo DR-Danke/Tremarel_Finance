@@ -227,5 +227,34 @@ class InventoryService:
         return inventory_movement_repository.get_by_restaurant(db, restaurant_id, date_from, date_to, reason)
 
 
+    def get_recent_movements(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        limit: int = 10,
+    ) -> list[InventoryMovement]:
+        """
+        Get recent inventory movements for a restaurant.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+            limit: Maximum number of movements to return
+
+        Returns:
+            List of recent InventoryMovement objects
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [InventoryService]: Getting recent {limit} movements for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return inventory_movement_repository.get_recent(db, restaurant_id, limit)
+
+
 # Singleton instance
 inventory_service = InventoryService()
