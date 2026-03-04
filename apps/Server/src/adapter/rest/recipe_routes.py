@@ -11,6 +11,8 @@ from src.core.services.recipe_service import recipe_service
 from src.interface.recipe_dto import (
     RecipeCreateDTO,
     RecipeItemResponseDTO,
+    RecipeProduceRequestDTO,
+    RecipeProduceResponseDTO,
     RecipeResponseDTO,
     RecipeUpdateDTO,
 )
@@ -213,6 +215,53 @@ async def delete_recipe(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e),
+        )
+
+
+@router.post("/{recipe_id}/produce", response_model=RecipeProduceResponseDTO, status_code=status.HTTP_201_CREATED)
+async def produce_recipe(
+    recipe_id: UUID,
+    data: RecipeProduceRequestDTO,
+    db: Session = Depends(get_db),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> RecipeProduceResponseDTO:
+    """
+    Produce a recipe: deduct all ingredient quantities from inventory.
+
+    Args:
+        recipe_id: Recipe UUID
+        data: Production request with quantity
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        RecipeProduceResponseDTO: Production summary
+    """
+    print(f"INFO [RecipeRoutes]: Produce recipe {recipe_id} request from user {current_user['email']}")
+
+    user_id = UUID(current_user["id"])
+    try:
+        result = recipe_service.produce_recipe(db, user_id, recipe_id, data.quantity)
+        print(f"INFO [RecipeRoutes]: Recipe {recipe_id} produced x{data.quantity}")
+        return RecipeProduceResponseDTO(**result)
+    except PermissionError as e:
+        print(f"ERROR [RecipeRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+            print(f"ERROR [RecipeRoutes]: Not found: {error_msg}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=error_msg,
+            )
+        print(f"ERROR [RecipeRoutes]: Bad request: {error_msg}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_msg,
         )
 
 

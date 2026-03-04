@@ -5,6 +5,12 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from src.core.services.inventory_service import inventory_service
+from src.interface.inventory_movement_dto import (
+    InventoryMovementCreateDTO,
+    MovementReason,
+    MovementType,
+)
 from src.interface.recipe_dto import RecipeCreateDTO, RecipeUpdateDTO
 from src.models.recipe import Recipe, RecipeItem
 from src.repository.recipe_repository import recipe_repository
@@ -235,6 +241,81 @@ class RecipeService:
 
         print(f"INFO [RecipeService]: Recipe {recipe_id} deleted successfully")
         return True
+
+    def produce_recipe(
+        self,
+        db: Session,
+        user_id: UUID,
+        recipe_id: UUID,
+        quantity: int = 1,
+    ) -> dict:
+        """
+        Produce a recipe: pre-check all ingredient stocks, then create exit movements.
+
+        This is an atomic all-or-nothing operation. If any ingredient has
+        insufficient stock, no deductions occur.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            recipe_id: Recipe UUID
+            quantity: Number of recipe units to produce
+
+        Returns:
+            Dict with recipe_id, recipe_name, quantity, movements_created
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+            ValueError: If recipe not found or insufficient stock
+        """
+        print(f"INFO [RecipeService]: Producing recipe {recipe_id} x{quantity} by user {user_id}")
+
+        recipe = recipe_repository.get_by_id(db, recipe_id)
+        if recipe is None:
+            print(f"ERROR [RecipeService]: Recipe {recipe_id} not found")
+            raise ValueError("Recipe not found")
+
+        self._check_restaurant_access(db, user_id, recipe.restaurant_id)
+
+        items = recipe_repository.get_items(db, recipe_id)
+
+        # Pre-check all ingredients for sufficient stock
+        for item in items:
+            resource = resource_repository.get_by_id(db, item.resource_id)
+            if resource is None:
+                print(f"ERROR [RecipeService]: Resource {item.resource_id} not found for recipe item")
+                raise ValueError(f"Resource not found for recipe item {item.resource_id}")
+            required = item.quantity * quantity
+            if resource.current_stock < required:
+                print(f"ERROR [RecipeService]: Insufficient stock for {resource.name}: need {required}, have {resource.current_stock}")
+                raise ValueError(
+                    f"Stock insuficiente para {resource.name}: necesita {required} {item.unit}, disponible {resource.current_stock}"
+                )
+
+        # Create exit movements for each ingredient
+        movements = []
+        for item in items:
+            movement = inventory_service.create_movement(
+                db,
+                user_id,
+                InventoryMovementCreateDTO(
+                    resource_id=item.resource_id,
+                    type=MovementType.EXIT,
+                    quantity=item.quantity * quantity,
+                    reason=MovementReason.RECETA,
+                    restaurant_id=recipe.restaurant_id,
+                    notes=f"Producción: {recipe.name} x{quantity}",
+                ),
+            )
+            movements.append(movement)
+
+        print(f"INFO [RecipeService]: Recipe '{recipe.name}' produced x{quantity}, {len(movements)} movements created")
+        return {
+            "recipe_id": recipe.id,
+            "recipe_name": recipe.name,
+            "quantity": quantity,
+            "movements_created": len(movements),
+        }
 
     def calculate_cost(self, db: Session, recipe_id: UUID) -> dict:
         """

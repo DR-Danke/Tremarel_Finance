@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from main import app
 from src.adapter.rest.dependencies import get_db
+from src.models.inventory_movement import InventoryMovement
 from src.models.recipe import Recipe, RecipeItem
 from src.models.resource import Resource
 from src.models.user import User
@@ -839,3 +840,278 @@ async def test_recalculate_cost_not_found() -> None:
 
         assert response.status_code == 404
         print("INFO [TestRecipeAPI]: test_recalculate_cost_not_found - PASSED")
+
+
+# ============================================================================
+# Recipe Production Tests
+# ============================================================================
+
+
+def create_mock_movement(
+    resource_id=None,
+    restaurant_id=None,
+) -> InventoryMovement:
+    """Create a mock InventoryMovement object."""
+    movement = MagicMock(spec=InventoryMovement)
+    movement.id = uuid4()
+    movement.resource_id = resource_id or uuid4()
+    movement.type = "exit"
+    movement.quantity = Decimal("2.0")
+    movement.reason = "receta"
+    movement.restaurant_id = restaurant_id or uuid4()
+    movement.notes = "Producción: Test Recipe x1"
+    movement.created_at = MagicMock()
+    return movement
+
+
+@pytest.mark.asyncio
+async def test_produce_recipe_success() -> None:
+    """Test that producing a recipe with sufficient stock returns 201."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    resource_id_1 = uuid4()
+    resource_id_2 = uuid4()
+    mock_recipe = create_mock_recipe(name="Pasta Carbonara", restaurant_id=restaurant_id)
+    mock_item_1 = create_mock_recipe_item(recipe_id=mock_recipe.id, resource_id=resource_id_1, quantity=Decimal("0.5"), unit="kg")
+    mock_item_2 = create_mock_recipe_item(recipe_id=mock_recipe.id, resource_id=resource_id_2, quantity=Decimal("2.0"), unit="unidad")
+
+    mock_resource_1 = create_mock_resource(name="Pasta")
+    mock_resource_1.id = resource_id_1
+    mock_resource_1.current_stock = Decimal("10.0")
+
+    mock_resource_2 = create_mock_resource(name="Huevos")
+    mock_resource_2.id = resource_id_2
+    mock_resource_2.current_stock = Decimal("20.0")
+
+    mock_movement_1 = create_mock_movement(resource_id=resource_id_1, restaurant_id=restaurant_id)
+    mock_movement_2 = create_mock_movement(resource_id=resource_id_2, restaurant_id=restaurant_id)
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.recipe_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo, patch(
+        "src.core.services.recipe_service.resource_repository"
+    ) as mock_resource_repo, patch(
+        "src.core.services.recipe_service.inventory_service"
+    ) as mock_inventory_svc:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_recipe_repo.get_by_id.return_value = mock_recipe
+        mock_recipe_repo.get_items.return_value = [mock_item_1, mock_item_2]
+        mock_resource_repo.get_by_id.side_effect = [mock_resource_1, mock_resource_2]
+        mock_inventory_svc.create_movement.side_effect = [mock_movement_1, mock_movement_2]
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/recipes/{mock_recipe.id}/produce",
+                json={"quantity": 1},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 201
+        data = response.json()
+        assert data["recipe_id"] == str(mock_recipe.id)
+        assert data["recipe_name"] == "Pasta Carbonara"
+        assert data["quantity"] == 1
+        assert data["movements_created"] == 2
+        assert mock_inventory_svc.create_movement.call_count == 2
+        print("INFO [TestRecipeAPI]: test_produce_recipe_success - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_produce_recipe_with_quantity() -> None:
+    """Test that producing with quantity=3 multiplies ingredient amounts."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    resource_id = uuid4()
+    mock_recipe = create_mock_recipe(name="Ensalada", restaurant_id=restaurant_id)
+    mock_item = create_mock_recipe_item(recipe_id=mock_recipe.id, resource_id=resource_id, quantity=Decimal("0.5"), unit="kg")
+
+    mock_resource = create_mock_resource(name="Lechuga")
+    mock_resource.id = resource_id
+    mock_resource.current_stock = Decimal("10.0")
+
+    mock_movement = create_mock_movement(resource_id=resource_id, restaurant_id=restaurant_id)
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.recipe_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo, patch(
+        "src.core.services.recipe_service.resource_repository"
+    ) as mock_resource_repo, patch(
+        "src.core.services.recipe_service.inventory_service"
+    ) as mock_inventory_svc:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_recipe_repo.get_by_id.return_value = mock_recipe
+        mock_recipe_repo.get_items.return_value = [mock_item]
+        mock_resource_repo.get_by_id.return_value = mock_resource
+        mock_inventory_svc.create_movement.return_value = mock_movement
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/recipes/{mock_recipe.id}/produce",
+                json={"quantity": 3},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 201
+        data = response.json()
+        assert data["quantity"] == 3
+        assert data["movements_created"] == 1
+
+        # Verify the movement was created with quantity * 3
+        call_args = mock_inventory_svc.create_movement.call_args
+        movement_dto = call_args[0][2]
+        assert movement_dto.quantity == Decimal("1.5")  # 0.5 * 3
+        print("INFO [TestRecipeAPI]: test_produce_recipe_with_quantity - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_produce_recipe_not_found() -> None:
+    """Test that producing a nonexistent recipe returns 404."""
+    mock_user = create_mock_user()
+    recipe_id = uuid4()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_recipe_repo.get_by_id.return_value = None
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/recipes/{recipe_id}/produce",
+                json={"quantity": 1},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 404
+        print("INFO [TestRecipeAPI]: test_produce_recipe_not_found - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_produce_recipe_no_access() -> None:
+    """Test that user without restaurant access gets 403."""
+    mock_user = create_mock_user()
+    mock_recipe = create_mock_recipe()
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.recipe_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_recipe_repo.get_by_id.return_value = mock_recipe
+        mock_restaurant_repo.get_user_restaurant_role.return_value = None
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/recipes/{mock_recipe.id}/produce",
+                json={"quantity": 1},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 403
+        print("INFO [TestRecipeAPI]: test_produce_recipe_no_access - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_produce_recipe_insufficient_stock() -> None:
+    """Test that insufficient stock returns 400 with Spanish error message."""
+    mock_user = create_mock_user()
+    restaurant_id = uuid4()
+    resource_id = uuid4()
+    mock_recipe = create_mock_recipe(name="Pasta", restaurant_id=restaurant_id)
+    mock_item = create_mock_recipe_item(recipe_id=mock_recipe.id, resource_id=resource_id, quantity=Decimal("5.0"), unit="kg")
+
+    mock_resource = create_mock_resource(name="Harina")
+    mock_resource.id = resource_id
+    mock_resource.current_stock = Decimal("3.0")
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.recipe_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo, patch(
+        "src.core.services.recipe_service.resource_repository"
+    ) as mock_resource_repo:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_recipe_repo.get_by_id.return_value = mock_recipe
+        mock_recipe_repo.get_items.return_value = [mock_item]
+        mock_resource_repo.get_by_id.return_value = mock_resource
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.post(
+                f"/api/recipes/{mock_recipe.id}/produce",
+                json={"quantity": 1},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 400
+        assert "Stock insuficiente" in response.json()["detail"]
+        assert "Harina" in response.json()["detail"]
+        print("INFO [TestRecipeAPI]: test_produce_recipe_insufficient_stock - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_produce_recipe_unauthenticated() -> None:
+    """Test that unauthenticated produce request returns 401."""
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.post(
+            f"/api/recipes/{uuid4()}/produce",
+            json={"quantity": 1},
+        )
+
+    assert response.status_code == 401
+    print("INFO [TestRecipeAPI]: test_produce_recipe_unauthenticated - PASSED")
