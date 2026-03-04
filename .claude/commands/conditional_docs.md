@@ -602,3 +602,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with case number generation, specialist availability filtering, or client name search
     - When building Legal Desk API endpoints that need repository method signatures or usage patterns
     - When troubleshooting Legal Desk data access queries or repository singleton imports
+
+- app_docs/feature-601d0350-legaldesk-supporting-repositories-wave2.md
+  - Conditions:
+    - When working with Legal Desk assignment, deliverable, message, or analytics repositories
+    - When implementing Legal Desk services that consume Wave 2 repository methods
+    - When working with case-specialist assignment fee negotiation or status tracking
+    - When working with deliverable milestone tracking or status transitions
+    - When working with case message threads or internal/external message filtering
+    - When building the Legal Desk analytics dashboard or aggregation queries
+    - When troubleshooting Legal Desk repository imports or singleton instances
