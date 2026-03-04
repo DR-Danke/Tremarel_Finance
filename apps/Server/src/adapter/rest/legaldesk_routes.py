@@ -39,7 +39,6 @@ from src.interface.legaldesk_dto import (
     DashboardStatsDTO,
     DeliverableCreateDTO,
     DeliverableResponseDTO,
-    DeliverableStatus,
     DeliverableUpdateDTO,
     DocumentCreateDTO,
     DocumentResponseDTO,
@@ -509,7 +508,7 @@ async def list_specialists(
     db: Session = Depends(get_db),
 ) -> List[SpecialistResponseDTO]:
     """List all specialists with optional filters."""
-    print(f"INFO [LegalDeskRoutes]: List specialists")
+    print("INFO [LegalDeskRoutes]: List specialists")
     filters: Optional[dict] = None
     filter_params = {
         "legal_domain": legal_domain,
@@ -628,7 +627,7 @@ async def list_clients(
     db: Session = Depends(get_db),
 ) -> List[ClientResponseDTO]:
     """List all clients."""
-    print(f"INFO [LegalDeskRoutes]: List clients")
+    print("INFO [LegalDeskRoutes]: List clients")
     clients = ld_client_service.list_all(db)
     return [ClientResponseDTO.model_validate(c) for c in clients]
 
@@ -685,5 +684,5 @@ async def get_dashboard_stats(
     db: Session = Depends(get_db),
 ) -> DashboardStatsDTO:
     """Get dashboard analytics statistics."""
-    print(f"INFO [LegalDeskRoutes]: Get dashboard stats")
+    print("INFO [LegalDeskRoutes]: Get dashboard stats")
     return ld_analytics_service.get_dashboard_stats(db)
