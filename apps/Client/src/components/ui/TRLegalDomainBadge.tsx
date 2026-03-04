@@ -4,9 +4,10 @@ import { LEGAL_DOMAIN_LABELS, LEGAL_DOMAIN_COLORS } from '@/types/legaldesk'
 
 interface TRLegalDomainBadgeProps {
   domain: LegalDomain
+  size?: 'small' | 'medium'
 }
 
-export const TRLegalDomainBadge: React.FC<TRLegalDomainBadgeProps> = ({ domain }) => {
+export const TRLegalDomainBadge: React.FC<TRLegalDomainBadgeProps> = ({ domain, size = 'small' }) => {
   console.log('INFO [TRLegalDomainBadge]: Rendering domain:', domain)
 
   const label = LEGAL_DOMAIN_LABELS[domain] || domain
@@ -15,7 +16,7 @@ export const TRLegalDomainBadge: React.FC<TRLegalDomainBadgeProps> = ({ domain }
   return (
     <Chip
       label={label}
-      size="small"
+      size={size}
       sx={{ backgroundColor, color: '#fff', fontWeight: 500 }}
     />
   )

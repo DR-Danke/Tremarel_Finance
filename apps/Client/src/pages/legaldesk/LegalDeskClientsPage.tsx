@@ -22,7 +22,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { useLegaldeskClients } from '@/hooks/useLegaldeskClients'
 import { TRLegalClientForm } from '@/components/forms/TRLegalClientForm'
 import { CLIENT_TYPE_LABELS } from '@/types/legaldesk'
-import type { LdClientCreate } from '@/types/legaldesk'
+import type { LdClientCreate, LdClientUpdate } from '@/types/legaldesk'
 
 export const LegalDeskClientsPage: React.FC = () => {
   const { clients, loading, error, createClient, refreshClients } = useLegaldeskClients()
@@ -32,10 +32,11 @@ export const LegalDeskClientsPage: React.FC = () => {
 
   console.log('INFO [LegalDeskClientsPage]: Rendering clients page')
 
-  const handleCreateClient = async (data: LdClientCreate) => {
+  const handleCreateClient = async (data: LdClientCreate | LdClientUpdate) => {
+    // Form always submits LdClientCreate in create mode
     setSubmitting(true)
     try {
-      await createClient(data)
+      await createClient(data as LdClientCreate)
       setDialogOpen(false)
       setSnackbar('Client created successfully')
       console.log('INFO [LegalDeskClientsPage]: Client created')
@@ -120,7 +121,7 @@ export const LegalDeskClientsPage: React.FC = () => {
         <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Add Client</DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
-            <TRLegalClientForm onSubmit={handleCreateClient} loading={submitting} />
+            <TRLegalClientForm onSubmit={handleCreateClient} onCancel={() => setDialogOpen(false)} isSubmitting={submitting} />
           </DialogContent>
         </Dialog>
 

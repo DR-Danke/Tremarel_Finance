@@ -20,7 +20,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { useLegaldeskSpecialists } from '@/hooks/useLegaldeskSpecialists'
 import { TRLegalSpecialistForm } from '@/components/forms/TRLegalSpecialistForm'
 import { TRSpecialistScoreDisplay } from '@/components/ui/TRSpecialistScoreDisplay'
-import type { LdSpecialistCreate } from '@/types/legaldesk'
+import type { LdSpecialistCreate, LdSpecialistUpdate } from '@/types/legaldesk'
 
 export const LegalDeskSpecialistsPage: React.FC = () => {
   const { specialists, loading, error, createSpecialist, refreshSpecialists } =
@@ -31,10 +31,11 @@ export const LegalDeskSpecialistsPage: React.FC = () => {
 
   console.log('INFO [LegalDeskSpecialistsPage]: Rendering specialists page')
 
-  const handleCreateSpecialist = async (data: LdSpecialistCreate) => {
+  const handleCreateSpecialist = async (data: LdSpecialistCreate | LdSpecialistUpdate) => {
+    // Form always submits LdSpecialistCreate in create mode
     setSubmitting(true)
     try {
-      await createSpecialist(data)
+      await createSpecialist(data as LdSpecialistCreate)
       setDialogOpen(false)
       setSnackbar('Specialist created successfully')
       console.log('INFO [LegalDeskSpecialistsPage]: Specialist created')
@@ -140,7 +141,7 @@ export const LegalDeskSpecialistsPage: React.FC = () => {
         <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Add Specialist</DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
-            <TRLegalSpecialistForm onSubmit={handleCreateSpecialist} loading={submitting} />
+            <TRLegalSpecialistForm onSubmit={handleCreateSpecialist} onCancel={() => setDialogOpen(false)} isSubmitting={submitting} />
           </DialogContent>
         </Dialog>
 

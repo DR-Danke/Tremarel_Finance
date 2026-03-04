@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import { useLegaldeskCases } from '@/hooks/useLegaldeskCases'
 import { useLegaldeskClients } from '@/hooks/useLegaldeskClients'
 import { TRLegalCaseForm } from '@/components/forms/TRLegalCaseForm'
-import type { LdCaseCreate } from '@/types/legaldesk'
+import type { LdCaseCreate, LdCaseUpdate } from '@/types/legaldesk'
 
 export const LegalDeskNewCasePage: React.FC = () => {
   const { createCase } = useLegaldeskCases()
@@ -24,11 +24,12 @@ export const LegalDeskNewCasePage: React.FC = () => {
 
   console.log('INFO [LegalDeskNewCasePage]: Rendering new case page')
 
-  const handleSubmit = async (data: LdCaseCreate) => {
+  const handleSubmit = async (data: LdCaseCreate | LdCaseUpdate) => {
+    // Form always submits LdCaseCreate in create mode
     setSubmitting(true)
     setSubmitError(null)
     try {
-      const newCase = await createCase(data)
+      const newCase = await createCase(data as LdCaseCreate)
       console.log('INFO [LegalDeskNewCasePage]: Case created:', newCase.id)
       navigate(`/poc/legal-desk/cases/${newCase.id}`)
     } catch {
@@ -74,7 +75,8 @@ export const LegalDeskNewCasePage: React.FC = () => {
           <TRLegalCaseForm
             onSubmit={handleSubmit}
             clients={clients}
-            loading={submitting}
+            onCancel={() => navigate('/poc/legal-desk/cases')}
+            isSubmitting={submitting}
           />
         </Paper>
       </Box>

@@ -4,9 +4,10 @@ import { CASE_PRIORITY_LABELS, CASE_PRIORITY_COLORS } from '@/types/legaldesk'
 
 interface TRCasePriorityBadgeProps {
   priority: CasePriority
+  size?: 'small' | 'medium'
 }
 
-export const TRCasePriorityBadge: React.FC<TRCasePriorityBadgeProps> = ({ priority }) => {
+export const TRCasePriorityBadge: React.FC<TRCasePriorityBadgeProps> = ({ priority, size = 'small' }) => {
   console.log('INFO [TRCasePriorityBadge]: Rendering priority:', priority)
 
   const label = CASE_PRIORITY_LABELS[priority] || priority
@@ -15,7 +16,7 @@ export const TRCasePriorityBadge: React.FC<TRCasePriorityBadgeProps> = ({ priori
   return (
     <Chip
       label={label}
-      size="small"
+      size={size}
       sx={{ backgroundColor, color: '#fff', fontWeight: 500 }}
     />
   )
