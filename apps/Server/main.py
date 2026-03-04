@@ -35,6 +35,7 @@ from src.adapter.rest.inventory_movement_routes import router as inventory_movem
 from src.adapter.rest.notification_routes import router as notification_router
 from src.adapter.rest.recipe_routes import router as recipe_router
 from src.adapter.rest.restaurant_dashboard_routes import router as restaurant_dashboard_router
+from src.adapter.rest.legaldesk_routes import router as legaldesk_router
 from src.config.settings import get_settings
 
 settings = get_settings()
@@ -167,6 +168,7 @@ app.include_router(inventory_movement_router)
 app.include_router(notification_router)
 app.include_router(recipe_router)
 app.include_router(restaurant_dashboard_router)
+app.include_router(legaldesk_router)
 
 print("INFO [Main]: Auth router registered")
 print("INFO [Main]: Entity router registered")
@@ -188,6 +190,7 @@ print("INFO [Main]: Inventory Movement router registered")
 print("INFO [Main]: Notification router registered")
 print("INFO [Main]: Recipe router registered")
 print("INFO [Main]: Restaurant Dashboard router registered")
+print("INFO [Main]: Legal Desk router registered")
 print(f"INFO [Main]: {settings.APP_NAME} initialized")
 
 
