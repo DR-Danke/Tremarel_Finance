@@ -122,5 +122,29 @@ class InventoryMovementRepository:
         return movements
 
 
+    def get_recent(self, db: Session, restaurant_id: UUID, limit: int = 10) -> list[InventoryMovement]:
+        """
+        Get the most recent movements for a restaurant.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            limit: Maximum number of movements to return
+
+        Returns:
+            List of InventoryMovement objects ordered by date descending
+        """
+        print(f"INFO [InventoryMovementRepository]: Getting recent {limit} movements for restaurant {restaurant_id}")
+        movements = (
+            db.query(InventoryMovement)
+            .filter(InventoryMovement.restaurant_id == restaurant_id)
+            .order_by(InventoryMovement.date.desc())
+            .limit(limit)
+            .all()
+        )
+        print(f"INFO [InventoryMovementRepository]: Found {len(movements)} recent movements")
+        return movements
+
+
 # Singleton instance
 inventory_movement_repository = InventoryMovementRepository()

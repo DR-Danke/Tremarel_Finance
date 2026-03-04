@@ -1,14 +1,28 @@
+import React from 'react'
 import { Paper, Typography, Box } from '@mui/material'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance'
 
-interface TRStatCardProps {
+interface TRStatCardFinancialProps {
   title: string
   value: number
   subtitle?: string
   variant: 'income' | 'expense' | 'balance'
+  icon?: never
+  color?: never
 }
+
+interface TRStatCardGenericProps {
+  title: string
+  value: number | string
+  subtitle?: string
+  variant?: never
+  icon: React.ReactNode
+  color: string
+}
+
+type TRStatCardProps = TRStatCardFinancialProps | TRStatCardGenericProps
 
 const formatCurrency = (value: number): string => {
   const absValue = Math.abs(value)
@@ -22,33 +36,51 @@ const formatCurrency = (value: number): string => {
 }
 
 /**
- * TRStatCard displays a financial statistic with icon and color coding.
+ * TRStatCard displays a statistic with icon and color coding.
+ * Supports financial variants (income/expense/balance) and generic mode (custom icon + color).
  */
-export const TRStatCard: React.FC<TRStatCardProps> = ({ title, value, subtitle, variant }) => {
-  const getVariantConfig = () => {
-    switch (variant) {
+export const TRStatCard: React.FC<TRStatCardProps> = (props) => {
+  const { title, value, subtitle } = props
+
+  const isGeneric = 'icon' in props && props.icon !== undefined
+
+  const getConfig = () => {
+    if (isGeneric) {
+      return {
+        icon: props.icon,
+        color: props.color,
+        bgColor: `${props.color}22`,
+        displayValue: String(value),
+      }
+    }
+
+    const financialProps = props as TRStatCardFinancialProps
+    switch (financialProps.variant) {
       case 'income':
         return {
           icon: <TrendingUpIcon sx={{ fontSize: 40 }} />,
           color: 'success.main',
           bgColor: 'success.light',
+          displayValue: formatCurrency(value as number),
         }
       case 'expense':
         return {
           icon: <TrendingDownIcon sx={{ fontSize: 40 }} />,
           color: 'error.main',
           bgColor: 'error.light',
+          displayValue: formatCurrency(value as number),
         }
       case 'balance':
         return {
           icon: <AccountBalanceIcon sx={{ fontSize: 40 }} />,
-          color: value >= 0 ? 'primary.main' : 'error.main',
-          bgColor: value >= 0 ? 'primary.light' : 'error.light',
+          color: (value as number) >= 0 ? 'primary.main' : 'error.main',
+          bgColor: (value as number) >= 0 ? 'primary.light' : 'error.light',
+          displayValue: formatCurrency(value as number),
         }
     }
   }
 
-  const config = getVariantConfig()
+  const config = getConfig()
 
   return (
     <Paper
@@ -73,7 +105,7 @@ export const TRStatCard: React.FC<TRStatCardProps> = ({ title, value, subtitle, 
               color: config.color,
             }}
           >
-            {formatCurrency(value)}
+            {config.displayValue}
           </Typography>
           {subtitle && (
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>

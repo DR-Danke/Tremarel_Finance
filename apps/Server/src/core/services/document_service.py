@@ -396,6 +396,32 @@ class DocumentService:
 
         return document_repository.get_expiring(db, restaurant_id, days_ahead)
 
+    def count_active(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+    ) -> int:
+        """
+        Count active (non-expired) documents for a restaurant.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            Count of active documents
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [DocumentService]: Counting active documents for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return document_repository.count_active(db, restaurant_id)
+
     def save_upload_file(self, file: UploadFile) -> str:
         """
         Save an uploaded file to the uploads/documents/ directory.

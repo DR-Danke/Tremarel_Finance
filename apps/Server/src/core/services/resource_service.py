@@ -260,5 +260,32 @@ class ResourceService:
         return resource_repository.get_low_stock(db, restaurant_id)
 
 
+    def count_resources(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+    ) -> int:
+        """
+        Count all resources for a restaurant.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            Count of resources
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [ResourceService]: Counting resources for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return resource_repository.count(db, restaurant_id)
+
+
 # Singleton instance
 resource_service = ResourceService()

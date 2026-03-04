@@ -181,5 +181,30 @@ class PersonRepository:
         return persons
 
 
+    def count_by_type(self, db: Session, restaurant_id: UUID, person_type: str) -> int:
+        """
+        Count persons by type within a restaurant.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+            person_type: Person type to filter by (e.g., 'employee')
+
+        Returns:
+            Count of persons
+        """
+        print(f"INFO [PersonRepository]: Counting persons of type '{person_type}' for restaurant {restaurant_id}")
+        count = (
+            db.query(Person)
+            .filter(
+                Person.restaurant_id == restaurant_id,
+                Person.type == person_type,
+            )
+            .count()
+        )
+        print(f"INFO [PersonRepository]: Found {count} persons of type '{person_type}'")
+        return count
+
+
 # Singleton instance
 person_repository = PersonRepository()

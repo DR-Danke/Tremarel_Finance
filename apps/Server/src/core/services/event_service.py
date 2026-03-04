@@ -668,5 +668,88 @@ class EventService:
         return summaries
 
 
+    def get_tasks_by_date(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        target_date: date,
+    ) -> list[Event]:
+        """
+        Get tasks for a specific date.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+            target_date: Target date
+
+        Returns:
+            List of task Event objects
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [EventService]: Getting tasks for restaurant {restaurant_id} on {target_date} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return event_repository.get_tasks_by_date(db, restaurant_id, target_date)
+
+    def get_pending_alerts(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+    ) -> list[Event]:
+        """
+        Get pending alert events for a restaurant.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            List of pending alert Event objects
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [EventService]: Getting pending alerts for restaurant {restaurant_id} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return event_repository.get_pending_alerts(db, restaurant_id)
+
+    def count_completed_tasks(
+        self,
+        db: Session,
+        user_id: UUID,
+        restaurant_id: UUID,
+        target_date: date,
+    ) -> int:
+        """
+        Count tasks completed on a specific date.
+
+        Args:
+            db: Database session
+            user_id: User UUID
+            restaurant_id: Restaurant UUID
+            target_date: Target date
+
+        Returns:
+            Count of completed tasks
+
+        Raises:
+            PermissionError: If user doesn't have access to the restaurant
+        """
+        print(f"INFO [EventService]: Counting completed tasks for restaurant {restaurant_id} on {target_date} by user {user_id}")
+
+        self._check_restaurant_access(db, user_id, restaurant_id)
+
+        return event_repository.count_completed_tasks(db, restaurant_id, target_date)
+
+
 # Singleton instance
 event_service = EventService()

@@ -190,5 +190,26 @@ class ResourceRepository:
         return resources
 
 
+    def count(self, db: Session, restaurant_id: UUID) -> int:
+        """
+        Count all resources for a restaurant.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            Count of resources
+        """
+        print(f"INFO [ResourceRepository]: Counting resources for restaurant {restaurant_id}")
+        count = (
+            db.query(Resource)
+            .filter(Resource.restaurant_id == restaurant_id)
+            .count()
+        )
+        print(f"INFO [ResourceRepository]: Found {count} resources")
+        return count
+
+
 # Singleton instance
 resource_repository = ResourceRepository()
