@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary — Lutec Budget Process Automation Discovery</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            color: #1a2332;
+            background: #f0f4f8;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            color: #ffffff;
+            padding: 40px 48px;
+            border-radius: 12px 12px 0 0;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #bee3f8;
+        }
+        .header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .body-content {
+            background: #ffffff;
+            padding: 40px 48px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+        .section {
+            margin-bottom: 36px;
+        }
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .summary-text {
+            font-size: 15px;
+            color: #2d3748;
+            background: #f7fafc;
+            padding: 20px 24px;
+            border-radius: 8px;
+            border-left: 4px solid #2c5282;
+        }
+        .participants-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .participant-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px 20px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .participant-name {
+            font-weight: 600;
+            color: #1a2332;
+            font-size: 15px;
+        }
+        .participant-role {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .company-badge {
+            display: inline-block;
+            background: #ebf8ff;
+            color: #2c5282;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: 1px solid #bee3f8;
+        }
+        .discussion-item {
+            margin-bottom: 16px;
+            padding: 16px 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 3px solid #4299e1;
+        }
+        .discussion-item:last-child {
+            margin-bottom: 0;
+        }
+        .discussion-topic {
+            font-weight: 600;
+            color: #1e3a5f;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+        .discussion-desc {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .action-table thead th {
+            background: #1e3a5f;
+            color: #ffffff;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        .action-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        .action-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #2d3748;
+        }
+        .action-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .action-table tbody tr:nth-child(even) {
+            background: #f7fafc;
+        }
+        .owner-badge {
+            display: inline-block;
+            background: #ebf8ff;
+            color: #2c5282;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .decision-list, .nextstep-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decision-list li, .nextstep-list li {
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            background: #f7fafc;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2d3748;
+            position: relative;
+            padding-left: 36px;
+        }
+        .decision-list li::before {
+            content: "\2713";
+            position: absolute;
+            left: 12px;
+            color: #38a169;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .nextstep-list li::before {
+            content: "\25B6";
+            position: absolute;
+            left: 12px;
+            color: #4299e1;
+            font-size: 11px;
+            top: 13px;
+        }
+        .diagram-section {
+            margin-bottom: 24px;
+        }
+        .diagram-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 12px;
+        }
+        .mermaid {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lutec — Budget Process Automation Discovery</h1>
+            <div class="header-meta">
+                <span>&#128197; March 4, 2026 — 3:38 PM</span>
+                <span>&#9201; ~13 minutes</span>
+                <span>&#127970; Lutec</span>
+            </div>
+        </div>
+
+        <div class="body-content">
+
+            <!-- Participants -->
+            <div class="section">
+                <h2 class="section-title">Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="participant-name">Daniel Cardona</div>
+                        <div class="participant-role">Automation Consultant</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="participant-name">Oscar Pinz&oacute;n</div>
+                        <div class="participant-role">Budget Director — Lutec</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company -->
+            <div class="section">
+                <h2 class="section-title">Company / Prospect</h2>
+                <p><span class="company-badge">Lutec</span></p>
+                <p style="margin-top: 8px; font-size: 14px; color: #4a5568;">Primary Contact: Oscar Pinz&oacute;n</p>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2 class="section-title">Executive Summary</h2>
+                <div class="summary-text">
+                    Discovery meeting to explore automation opportunities in Lutec's construction budgeting process. Lutec is an electrical construction subcontractor with a 6-person team producing 10–12 budgets per week. The main bottleneck is manually matching client-provided Excel activity lists against their internal APU (Unit Price Analysis) database of materials, labor, and suppliers. The proposed automation would use similarity matching to automatically suggest the closest APU codes for each client activity, freeing the team to focus on higher-value work like BIM analysis, anomaly detection, and cost projection.
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2 class="section-title">Discussion Points</h2>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">1. Core Pain Point: Manual APU Matching Process</div>
+                    <div class="discussion-desc">The budgeting team spends excessive time manually searching their internal APU (Unit Price Analysis) database to match client-requested construction activities. Each activity must be coded with the correct APU containing materials, labor, and supplier information. This manual process can take up to 3 days per budget and is highly repetitive.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">2. Client Excel Format Constraints</div>
+                    <div class="discussion-desc">Each construction client sends their own custom Excel spreadsheet with a quantity sheet. Lutec cannot modify the client's file format. Different clients have different structures and levels of specification detail, adding complexity to the matching process.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">3. APU Database Structure and Categorization</div>
+                    <div class="discussion-desc">Lutec maintains an internal database of APUs organized by product families (tubing, cables, boxes, plates, etc.) with sub-categories for type, installation method, diameter, and number of ducts. Each APU contains required materials with quantities, labor costs, waste percentages, and supplier mappings.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">4. Proposed Automation: Similarity-Based Code Matching</div>
+                    <div class="discussion-desc">The proposed solution would automatically analyze client Excel items and match them against Lutec's APU database using similarity analysis. The system would suggest the closest matching APU for each activity, and Oscar's team would only need to review, validate, and handle exceptions for unmatched items.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">5. BIM Integration for Specification Verification</div>
+                    <div class="discussion-desc">Lutec has a dedicated BIM specialist who reviews 3D construction models to verify specifications, quantities, and identify anomalies (e.g., unknown installation heights for luminaires). BIM analysis is critical for accurate costing but is deprioritized due to time spent on manual Excel work.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">6. End-to-End Budget Workflow</div>
+                    <div class="discussion-desc">The full workflow spans: receiving client Excel, matching activities to APU codes, associating materials/labor, identifying missing products, sourcing suppliers, passing info to Purchasing for negotiation, applying margin/profitability calculations, and returning the completed quotation in the client's original Excel format.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">7. Post-Quotation Cost Control</div>
+                    <div class="discussion-desc">After quotation approval, Lutec generates a consolidated supply list for the project. This becomes the cost control baseline, where deviations impact margin and profitability.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="discussion-topic">8. Team Size and Volume</div>
+                    <div class="discussion-desc">The budgeting department has 6 people working full-time, producing 10–12 budgets per week. One team member is dedicated exclusively to BIM analysis.</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2 class="section-title">Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 55%;">Action</th>
+                            <th style="width: 25%;">Owner</th>
+                            <th style="width: 20%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Send sample client Excel files (quantity sheets from different clients) for analysis</td>
+                            <td><span class="owner-badge">Oscar Pinz&oacute;n</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Send the internal APU database with codes, materials, and supplier mappings</td>
+                            <td><span class="owner-badge">Oscar Pinz&oacute;n</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Send the APU template with formulas (material/labor separation, waste percentage calculations)</td>
+                            <td><span class="owner-badge">Oscar Pinz&oacute;n</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Analyze received files and propose an automation solution for APU matching</td>
+                            <td><span class="owner-badge">Daniel Cardona</span></td>
+                            <td style="color: #a0aec0;">TBD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2 class="section-title">Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>The primary automation target is the APU code matching process — automatically suggesting the closest matching APU for client-requested activities using similarity analysis</li>
+                    <li>Oscar will send sample client Excel files and the internal APU database to Daniel for analysis</li>
+                    <li>The quotation must always be returned in the client's original Excel format — no format modifications allowed</li>
+                    <li>The automation should handle the lookup/matching while humans focus on review, BIM analysis, and exception handling</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2 class="section-title">Next Steps</h2>
+                <ul class="nextstep-list">
+                    <li>Oscar sends sample client Excel files (from multiple clients) to Daniel</li>
+                    <li>Oscar sends the internal APU database/codes with associated materials and supplier data</li>
+                    <li>Oscar sends the APU template with formulas for material/labor separation and calculations</li>
+                    <li>Daniel analyzes the data to design the automated matching solution</li>
+                    <li>Follow-up meeting once Daniel has reviewed the files and has a proposed approach</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture -->
+            <div class="section">
+                <h2 class="section-title">Technical Architecture</h2>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Current Manual Budget Workflow</div>
+                    <pre class="mermaid">
+flowchart TD
+    A["Client sends Excel
+    (Quantity Sheet)"] --> B["Budget Team receives
+    custom Excel"]
+    B --> C{"Activity recognized?"}
+    C -->|Yes| D["Search APU Database
+    (Manual Excel lookup)"]
+    C -->|No| E["Review BIM models
+    and construction plans"]
+    E --> D
+    D --> F["Copy-paste APU codes
+    into client Excel"]
+    F --> G["Associate materials,
+    labor & supplies"]
+    G --> H{"All items
+    available?"}
+    H -->|Yes| I["Calculate margins
+    & profitability"]
+    H -->|No| J["Source new suppliers
+    & get base pricing"]
+    J --> K["Send to Purchasing
+    for negotiation"]
+    K --> I
+    I --> L["Return completed quotation
+    in client Excel format"]
+    L --> M["Generate supply bag
+    (bolsa de insumos)"]
+    M --> N["Cost control
+    & project tracking"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Proposed Automated APU Matching System</div>
+                    <pre class="mermaid">
+flowchart LR
+    A["Client Excel
+    Ingestion"] --> B["Activity Item
+    Extractor"]
+    B --> C["Similarity Matching
+    Engine"]
+    D[("APU Database
+    Materials, Labor,
+    Suppliers")] --> C
+    C --> E{"Match
+    confidence?"}
+    E -->|High| F["Auto-assign APU code
+    with materials & labor"]
+    E -->|Medium| G["Suggest top matches
+    for human review"]
+    E -->|No match| H["Flag for manual
+    coding by team"]
+    F --> I["Budget Review
+    Dashboard"]
+    G --> I
+    H --> I
+    I --> J["Oscar reviews
+    & validates"]
+    J --> K["Generate quotation
+    in client Excel format"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">APU Data Structure</div>
+                    <pre class="mermaid">
+flowchart TD
+    A["APU Database"] --> B["Product Families"]
+    B --> C["Tubing"]
+    B --> D["Cables"]
+    B --> E["Boxes"]
+    B --> F["Plates"]
+    B --> G["Other..."]
+    C --> H["Type
+    (EMT, PVC, etc.)"]
+    H --> I["Installation Method
+    (Suspended, Embedded, etc.)"]
+    I --> J["Diameter
+    (1/2, 3/4, 1 inch, etc.)"]
+    J --> K["Number of Ducts
+    (3, 4, 5, etc.)"]
+    K --> L["APU Code"]
+    L --> M["Materials list
+    with quantities"]
+    L --> N["Labor requirements
+    with time estimates"]
+    L --> O["Supplier mapping
+    with base prices"]
+    L --> P["Waste percentage
+    calculations"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Client-to-Quotation Data Flow</div>
+                    <pre class="mermaid">
+sequenceDiagram
+    participant Client as Constructor Client
+    participant Budget as Budget Team (Oscar)
+    participant APU as APU Database
+    participant BIM as BIM Specialist
+    participant Purch as Purchasing Dept
+
+    Client->>Budget: Send custom Excel (quantity sheet)
+    Client->>BIM: Send construction plans & BIM models
+    Budget->>APU: Search for matching APU codes
+    APU-->>Budget: Return materials, labor & supplier data
+    Budget->>BIM: Request verification of specifications
+    BIM-->>Budget: Confirm specs, flag anomalies
+    Budget->>Budget: Code all activities with APU references
+    alt Missing products
+        Budget->>Budget: Source alternative suppliers
+        Budget->>Purch: Send supplier & base price info
+        Purch-->>Budget: Confirm negotiated prices
+    end
+    Budget->>Budget: Apply margins & profitability formulas
+    Budget->>Client: Return completed quotation (same Excel)
+    Budget->>Budget: Generate supply bag for cost control
+                    </pre>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>Meeting summary generated automatically &mdash; March 4, 2026</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad: true});</script>
+</body>
+</html>
