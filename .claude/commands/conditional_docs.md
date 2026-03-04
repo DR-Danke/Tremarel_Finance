@@ -561,3 +561,36 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with cases, specialists, clients, or deliverables in the Legal Desk module
     - When troubleshooting Legal Desk foreign key constraints or table relationships
     - When implementing Wave 2+ of the Legal Desk module
+
+- app_docs/feature-7950ad87-legaldesk-seed-data.md
+  - Conditions:
+    - When working with Legal Desk seed data or test data setup
+    - When running or modifying apps/Server/database/seed_legaldesk_data.sql
+    - When setting up a development database for the Legal Desk module
+    - When testing the specialist assignment engine with sample data
+    - When adding new seed data records to Legal Desk tables
+
+- app_docs/feature-40f52fef-legaldesk-sqlalchemy-orm-models.md
+  - Conditions:
+    - When working with Legal Desk SQLAlchemy ORM models (LdClient, LdSpecialist, LdCase, etc.)
+    - When implementing Legal Desk repositories that query ld_ tables
+    - When navigating Legal Desk model relationships or backrefs
+    - When adding new Legal Desk models or modifying existing ld_ model columns
+    - When troubleshooting Legal Desk model imports, JSONB columns, or unique constraints
+
+- app_docs/feature-cbc09752-legaldesk-pydantic-dtos-enums.md
+  - Conditions:
+    - When working with Legal Desk Pydantic DTOs, enums, or data validation
+    - When implementing Legal Desk API endpoints that accept or return case, specialist, client, or deliverable data
+    - When working with apps/Server/src/interface/legaldesk_dto.py
+    - When implementing Legal Desk services or repositories that need input/output models
+    - When working with case status transitions or workflow validation
+    - When building the assignment engine, AI classification, or analytics dashboard DTOs
+
+- app_docs/feature-e9ee37e2-legaldesk-frontend-typescript-types.md
+  - Conditions:
+    - When working with Legal Desk frontend TypeScript types, interfaces, or union types
+    - When building Legal Desk UI components, services, or hooks that consume Ld-prefixed types
+    - When using Legal Desk label or color constant maps for status badges, priority chips, or domain labels
+    - When implementing Legal Desk CRUD forms or API payloads (LdCaseCreate, LdClientUpdate, etc.)
+    - When adding new Legal Desk types or extending existing Legal Desk interfaces
