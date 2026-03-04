@@ -523,3 +523,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing or troubleshooting duplicate alert prevention for resources
     - When working with auto-resolution of stock alerts on inventory entry movements
     - When extending the inventory-to-event automation pipeline
+
+- app_docs/feature-c57bcb02-event-notification-dispatcher.md
+  - Conditions:
+    - When working with the general event notification dispatcher or event-driven notifications
+    - When implementing or modifying EventNotificationDispatcher or process_due_events
+    - When working with the dispatch, pending, or dispatch-all notification API endpoints
+    - When adding new event types that need automatic notification delivery
+    - When working with notification channel routing for events (WhatsApp, Email)
+    - When implementing scheduled or cron-based notification dispatch
+    - When troubleshooting event-to-notification flow or event status updates after dispatch
