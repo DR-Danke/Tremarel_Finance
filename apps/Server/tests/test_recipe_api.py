@@ -1115,3 +1115,142 @@ async def test_produce_recipe_unauthenticated() -> None:
 
     assert response.status_code == 401
     print("INFO [TestRecipeAPI]: test_produce_recipe_unauthenticated - PASSED")
+
+
+# ============================================================================
+# RecipeService.recalculate_by_resource Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_recalculate_by_resource_finds_and_updates_recipes() -> None:
+    """Test that recalculate_by_resource recalculates all affected recipes."""
+    from src.core.services.recipe_service import recipe_service
+
+    restaurant_id = uuid4()
+    resource_id = uuid4()
+    mock_recipe_1 = create_mock_recipe(name="Recipe A", restaurant_id=restaurant_id)
+    mock_recipe_2 = create_mock_recipe(name="Recipe B", restaurant_id=restaurant_id)
+    mock_item_1 = create_mock_recipe_item(recipe_id=mock_recipe_1.id, resource_id=resource_id)
+    mock_item_2 = create_mock_recipe_item(recipe_id=mock_recipe_2.id, resource_id=resource_id)
+    mock_res = create_mock_resource(last_unit_cost=Decimal("4.00"))
+
+    with patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo, patch(
+        "src.core.services.recipe_service.resource_repository"
+    ) as mock_resource_repo:
+        mock_recipe_repo.get_by_resource.return_value = [mock_recipe_1, mock_recipe_2]
+        mock_recipe_repo.get_by_id.side_effect = lambda db, rid: (
+            mock_recipe_1 if rid == mock_recipe_1.id else mock_recipe_2
+        )
+        mock_recipe_repo.get_items.side_effect = lambda db, rid: (
+            [mock_item_1] if rid == mock_recipe_1.id else [mock_item_2]
+        )
+        mock_resource_repo.get_by_id.return_value = mock_res
+
+        db = MagicMock(spec=Session)
+        results = recipe_service.recalculate_by_resource(db, resource_id)
+
+    assert len(results) == 2
+    assert mock_recipe_repo.update_cost.call_count == 2
+    print("INFO [TestRecipeAPI]: test_recalculate_by_resource_finds_and_updates_recipes - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_recalculate_by_resource_creates_alert_on_profitability_transition() -> None:
+    """Test that alert is created when recipe transitions from profitable to unprofitable."""
+    from src.core.services.recipe_service import recipe_service
+
+    restaurant_id = uuid4()
+    resource_id = uuid4()
+    mock_recipe = create_mock_recipe(
+        name="Expensive Recipe",
+        sale_price=Decimal("10.00"),
+        is_profitable=True,
+        restaurant_id=restaurant_id,
+    )
+    mock_item = create_mock_recipe_item(recipe_id=mock_recipe.id, resource_id=resource_id, quantity=Decimal("5.0"))
+    mock_res = create_mock_resource(last_unit_cost=Decimal("8.00"))
+
+    with patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo, patch(
+        "src.core.services.recipe_service.resource_repository"
+    ) as mock_resource_repo, patch(
+        "src.core.services.recipe_service.event_repository"
+    ) as mock_event_repo, patch(
+        "src.core.services.recipe_service.person_repository"
+    ) as mock_person_repo:
+        mock_recipe_repo.get_by_resource.return_value = [mock_recipe]
+        mock_recipe_repo.get_by_id.return_value = mock_recipe
+        mock_recipe_repo.get_items.return_value = [mock_item]
+        mock_resource_repo.get_by_id.return_value = mock_res
+        mock_person_repo.find_owner.return_value = None
+
+        db = MagicMock(spec=Session)
+        results = recipe_service.recalculate_by_resource(db, resource_id)
+
+    assert len(results) == 1
+    assert results[0]["is_profitable"] is False
+    mock_event_repo.create.assert_called_once()
+    call_kwargs = mock_event_repo.create.call_args
+    assert call_kwargs.kwargs["event_type"] == "alerta_rentabilidad"
+    assert call_kwargs.kwargs["notification_channel"] == "whatsapp"
+    assert "Alerta de rentabilidad" in call_kwargs.kwargs["description"]
+    print("INFO [TestRecipeAPI]: test_recalculate_by_resource_creates_alert_on_profitability_transition - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_recalculate_by_resource_no_alert_when_already_unprofitable() -> None:
+    """Test that no alert is created when recipe was already unprofitable."""
+    from src.core.services.recipe_service import recipe_service
+
+    restaurant_id = uuid4()
+    resource_id = uuid4()
+    mock_recipe = create_mock_recipe(
+        name="Already Unprofitable",
+        sale_price=Decimal("10.00"),
+        is_profitable=False,
+        restaurant_id=restaurant_id,
+    )
+    mock_item = create_mock_recipe_item(recipe_id=mock_recipe.id, resource_id=resource_id, quantity=Decimal("5.0"))
+    mock_res = create_mock_resource(last_unit_cost=Decimal("8.00"))
+
+    with patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo, patch(
+        "src.core.services.recipe_service.resource_repository"
+    ) as mock_resource_repo, patch(
+        "src.core.services.recipe_service.event_repository"
+    ) as mock_event_repo:
+        mock_recipe_repo.get_by_resource.return_value = [mock_recipe]
+        mock_recipe_repo.get_by_id.return_value = mock_recipe
+        mock_recipe_repo.get_items.return_value = [mock_item]
+        mock_resource_repo.get_by_id.return_value = mock_res
+
+        db = MagicMock(spec=Session)
+        results = recipe_service.recalculate_by_resource(db, resource_id)
+
+    assert len(results) == 1
+    mock_event_repo.create.assert_not_called()
+    print("INFO [TestRecipeAPI]: test_recalculate_by_resource_no_alert_when_already_unprofitable - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_recalculate_by_resource_no_recipes_affected() -> None:
+    """Test graceful handling when no recipes use the resource."""
+    from src.core.services.recipe_service import recipe_service
+
+    resource_id = uuid4()
+
+    with patch(
+        "src.core.services.recipe_service.recipe_repository"
+    ) as mock_recipe_repo:
+        mock_recipe_repo.get_by_resource.return_value = []
+
+        db = MagicMock(spec=Session)
+        results = recipe_service.recalculate_by_resource(db, resource_id)
+
+    assert len(results) == 0
+    print("INFO [TestRecipeAPI]: test_recalculate_by_resource_no_recipes_affected - PASSED")

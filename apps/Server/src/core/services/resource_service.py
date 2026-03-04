@@ -5,6 +5,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
+from src.core.services.recipe_service import recipe_service
 from src.interface.resource_dto import ResourceCreateDTO, ResourceUpdateDTO
 from src.models.resource import Resource
 from src.repository.resource_repository import resource_repository
@@ -164,6 +165,9 @@ class ResourceService:
 
         self._check_restaurant_access(db, user_id, resource.restaurant_id)
 
+        # Capture old cost before update for change detection
+        old_last_unit_cost = resource.last_unit_cost
+
         # Update fields if provided
         if data.type is not None:
             resource.type = data.type.value
@@ -179,6 +183,11 @@ class ResourceService:
             resource.last_unit_cost = data.last_unit_cost
 
         updated_resource = resource_repository.update(db, resource)
+
+        # Trigger recipe recalculation if cost changed
+        if data.last_unit_cost is not None and data.last_unit_cost != old_last_unit_cost:
+            print(f"INFO [ResourceService]: Cost changed for resource {resource_id}: {old_last_unit_cost} → {data.last_unit_cost}, triggering recipe recalculation")
+            recipe_service.recalculate_by_resource(db, resource_id)
 
         if updated_resource.current_stock < updated_resource.minimum_stock:
             print(f"WARNING [ResourceService]: Resource '{updated_resource.name}' stock dropped below minimum ({updated_resource.current_stock} < {updated_resource.minimum_stock})")

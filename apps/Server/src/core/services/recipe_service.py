@@ -1,5 +1,7 @@
 """Recipe service for business logic operations."""
 
+import os
+from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
@@ -13,9 +15,13 @@ from src.interface.inventory_movement_dto import (
 )
 from src.interface.recipe_dto import RecipeCreateDTO, RecipeUpdateDTO
 from src.models.recipe import Recipe, RecipeItem
+from src.repository.event_repository import event_repository
+from src.repository.person_repository import person_repository
 from src.repository.recipe_repository import recipe_repository
 from src.repository.resource_repository import resource_repository
 from src.repository.restaurant_repository import restaurant_repository
+
+PROFITABILITY_THRESHOLD = Decimal(os.getenv("PROFITABILITY_THRESHOLD", "60"))
 
 
 class RecipeService:
@@ -355,7 +361,7 @@ class RecipeService:
         else:
             margin_percent = Decimal("0")
 
-        is_profitable = margin_percent >= Decimal("60")
+        is_profitable = margin_percent >= PROFITABILITY_THRESHOLD
 
         recipe_repository.update_cost(db, recipe_id, total_cost, margin_percent, is_profitable)
 
@@ -397,6 +403,60 @@ class RecipeService:
         self._check_restaurant_access(db, user_id, recipe.restaurant_id)
 
         return self.calculate_cost(db, recipe_id)
+
+    def recalculate_by_resource(self, db: Session, resource_id: UUID) -> list[dict]:
+        """
+        Recalculate cost for all recipes that use a specific resource.
+
+        Detects profitability transitions and creates alerts when a recipe
+        transitions from profitable to unprofitable.
+
+        Args:
+            db: Database session
+            resource_id: Resource UUID whose cost changed
+
+        Returns:
+            List of cost result dicts for each affected recipe
+        """
+        recipes = recipe_repository.get_by_resource(db, resource_id)
+        print(f"INFO [RecipeService]: Recalculating {len(recipes)} recipes affected by resource {resource_id}")
+
+        results = []
+        for recipe in recipes:
+            was_profitable = recipe.is_profitable
+            result = self.calculate_cost(db, recipe.id)
+            if was_profitable and not result["is_profitable"]:
+                self._create_profitability_alert(db, recipe, result)
+            results.append(result)
+
+        return results
+
+    def _create_profitability_alert(self, db: Session, recipe: Recipe, cost_result: dict) -> None:
+        """
+        Create an alerta_rentabilidad event when a recipe becomes unprofitable.
+
+        Args:
+            db: Database session
+            recipe: Recipe that became unprofitable
+            cost_result: Dict with current_cost, margin_percent, is_profitable
+        """
+        owner = person_repository.find_owner(db, recipe.restaurant_id)
+        event_repository.create(
+            db=db,
+            restaurant_id=recipe.restaurant_id,
+            event_type="alerta_rentabilidad",
+            description=(
+                f"Alerta de rentabilidad: {recipe.name} - "
+                f"Costo: ${cost_result['current_cost']}, "
+                f"Precio venta: ${recipe.sale_price}, "
+                f"Margen: {cost_result['margin_percent']:.1f}%"
+            ),
+            event_date=datetime.utcnow(),
+            frequency="none",
+            responsible_id=owner.id if owner else None,
+            notification_channel="whatsapp",
+        )
+        print(f"INFO [RecipeService]: Profitability alert created for recipe '{recipe.name}'")
 
 
 # Singleton instance
