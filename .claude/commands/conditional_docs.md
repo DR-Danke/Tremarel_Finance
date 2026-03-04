@@ -630,3 +630,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing Legal Desk pages that consume these UI components or forms
     - When working with dynamic form arrays (expertise, jurisdictions) in the specialist form
     - When troubleshooting Legal Desk component rendering, form validation, or create/edit mode behavior
+
+- app_docs/feature-83119edc-legaldesk-routes-sidebar-navigation.md
+  - Conditions:
+    - When adding or modifying Legal Desk routes in App.tsx
+    - When adding Legal Desk navigation items to the sidebar
+    - When creating or modifying Legal Desk page components in pages/legaldesk/
+    - When troubleshooting Legal Desk route registration or sidebar rendering
+    - When adding a new Legal Desk page and need to wire it into routing and navigation

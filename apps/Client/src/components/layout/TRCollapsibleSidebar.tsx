@@ -31,6 +31,11 @@ import DescriptionIcon from '@mui/icons-material/Description'
 import EventIcon from '@mui/icons-material/Event'
 import InventoryIcon from '@mui/icons-material/Inventory'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import GavelIcon from '@mui/icons-material/Gavel'
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter'
+import PersonSearchIcon from '@mui/icons-material/PersonSearch'
+import GroupsIcon from '@mui/icons-material/Groups'
+import AnalyticsIcon from '@mui/icons-material/Analytics'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { useEntity } from '@/hooks/useEntity'
@@ -82,6 +87,16 @@ const pocSection: NavSection = {
         { label: 'Eventos / Tareas', path: '/poc/restaurant-os/events', icon: <EventIcon /> },
         { label: 'Recursos / Inventario', path: '/poc/restaurant-os/resources', icon: <InventoryIcon /> },
         { label: 'Recetas', path: '/poc/restaurant-os/recipes', icon: <MenuBookIcon /> },
+      ],
+    },
+    {
+      label: 'Legal Desk',
+      items: [
+        { label: 'Dashboard', path: '/poc/legal-desk/dashboard', icon: <GavelIcon /> },
+        { label: 'Cases', path: '/poc/legal-desk/cases', icon: <BusinessCenterIcon /> },
+        { label: 'Specialists', path: '/poc/legal-desk/specialists', icon: <PersonSearchIcon /> },
+        { label: 'Clients', path: '/poc/legal-desk/clients', icon: <GroupsIcon /> },
+        { label: 'Analytics', path: '/poc/legal-desk/analytics', icon: <AnalyticsIcon /> },
       ],
     },
   ],
