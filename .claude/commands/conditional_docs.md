@@ -552,3 +552,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When implementing dashboard-style aggregation pages that pull from multiple entity services
     - When working with expiring document queries, low-stock queries, or daily task summaries
     - When troubleshooting the dashboard overview endpoint or dashboard data loading
+
+- app_docs/feature-de0cefbe-legaldesk-database-schema.md
+  - Conditions:
+    - When working with Legal Desk database tables or the ld_ schema prefix
+    - When implementing Legal Desk repositories, services, or API endpoints
+    - When working with apps/Server/database/create_legaldesk_tables.sql
+    - When working with cases, specialists, clients, or deliverables in the Legal Desk module
+    - When troubleshooting Legal Desk foreign key constraints or table relationships
+    - When implementing Wave 2+ of the Legal Desk module
