@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     SMTP_FROM_EMAIL: str = "noreply@restaurant-os.com"
 
+    # Firebase Cloud Messaging (Push Notifications)
+    FCM_SERVER_KEY: str = ""
+
     # Application
     APP_NAME: str = "Finance Tracker API"
     APP_VERSION: str = "1.0.0"

@@ -20,6 +20,7 @@ class PersonRepository:
         email: Optional[str],
         whatsapp: Optional[str],
         person_type: str,
+        push_token: Optional[str] = None,
     ) -> Person:
         """
         Create a new person in a restaurant.
@@ -32,6 +33,7 @@ class PersonRepository:
             email: Person email (optional)
             whatsapp: WhatsApp number (optional)
             person_type: Person type (employee, supplier, owner)
+            push_token: FCM push notification device token (optional)
 
         Returns:
             Created Person object
@@ -43,6 +45,7 @@ class PersonRepository:
             role=role,
             email=email,
             whatsapp=whatsapp,
+            push_token=push_token,
             type=person_type,
         )
         db.add(person)

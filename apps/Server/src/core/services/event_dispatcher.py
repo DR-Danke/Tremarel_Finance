@@ -1,7 +1,7 @@
 """General event notification dispatcher service.
 
 Processes ALL due events and dispatches notifications through the appropriate
-channel (WhatsApp, Email). Handles all event types with type-specific message
+channel (WhatsApp, Email, Push). Handles all event types with type-specific message
 templates and a generic fallback for unknown types.
 """
 
@@ -203,8 +203,17 @@ class EventNotificationDispatcher:
                 continue
 
             channel = _determine_channel(person)
-            if channel == "none":
+            has_push_token = bool(getattr(person, "push_token", None) and getattr(person, "push_token", "").strip())
+
+            # Skip if person has no contact info and no push token
+            if channel == "none" and not has_push_token:
                 print(f"INFO [EventDispatcher]: Skipping event {event.id} - person has no contact info")
+                skipped_count += 1
+                continue
+
+            # If notification_channel is "push" but person has no push_token, skip
+            if notification_channel == "push" and not has_push_token:
+                print(f"INFO [EventDispatcher]: Skipping event {event.id} - person has no push_token")
                 skipped_count += 1
                 continue
 
@@ -213,25 +222,37 @@ class EventNotificationDispatcher:
             event_sent = False
 
             try:
-                if channel in ("whatsapp", "both"):
-                    whatsapp_number = getattr(person, "whatsapp", "")
-                    wa_message = self._build_whatsapp_message(event, db)
+                if notification_channel == "push":
+                    # Push-only channel: send via push
+                    push_token = getattr(person, "push_token", "")
+                    push_message = self._build_whatsapp_message(event, db)
                     sent = await _send_via_channel(
-                        "whatsapp", whatsapp_number, wa_message, db, restaurant_id,
+                        "push", push_token, push_message, db, restaurant_id,
                         person_id, person_name, results, event_id=event.id,
                     )
                     if sent:
                         event_sent = True
+                else:
+                    # Email/WhatsApp channels
+                    if channel in ("whatsapp", "both"):
+                        whatsapp_number = getattr(person, "whatsapp", "")
+                        wa_message = self._build_whatsapp_message(event, db)
+                        sent = await _send_via_channel(
+                            "whatsapp", whatsapp_number, wa_message, db, restaurant_id,
+                            person_id, person_name, results, event_id=event.id,
+                        )
+                        if sent:
+                            event_sent = True
 
-                if channel in ("email", "both"):
-                    email_address = getattr(person, "email", "")
-                    html_message = self._build_email_message(event, db)
-                    sent = await _send_via_channel(
-                        "email", email_address, html_message, db, restaurant_id,
-                        person_id, person_name, results, event_id=event.id,
-                    )
-                    if sent:
-                        event_sent = True
+                    if channel in ("email", "both"):
+                        email_address = getattr(person, "email", "")
+                        html_message = self._build_email_message(event, db)
+                        sent = await _send_via_channel(
+                            "email", email_address, html_message, db, restaurant_id,
+                            person_id, person_name, results, event_id=event.id,
+                        )
+                        if sent:
+                            event_sent = True
 
                 if event_sent:
                     sent_count += 1

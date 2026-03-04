@@ -1665,6 +1665,7 @@ def create_mock_person(
     person.role = role
     person.email = email
     person.whatsapp = whatsapp
+    person.push_token = None
     person.type = person_type
     person.created_at = MagicMock()
     person.updated_at = None

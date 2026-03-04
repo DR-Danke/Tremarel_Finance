@@ -63,6 +63,7 @@ class PersonService:
             email=data.email,
             whatsapp=data.whatsapp,
             person_type=data.type.value,
+            push_token=data.push_token,
         )
 
         print(f"INFO [PersonService]: Person '{person.name}' created with id {person.id}")
@@ -169,6 +170,8 @@ class PersonService:
             person.email = data.email
         if data.whatsapp is not None:
             person.whatsapp = data.whatsapp
+        if data.push_token is not None:
+            person.push_token = data.push_token
         if data.type is not None:
             person.type = data.type.value
 

@@ -29,6 +29,7 @@ class Person(Base):
     role: str = Column(String(100), nullable=False)
     email: Optional[str] = Column(String(255), nullable=True)
     whatsapp: Optional[str] = Column(String(50), nullable=True)
+    push_token: Optional[str] = Column(String(500), nullable=True)
     type: str = Column(String(50), nullable=False, default="employee")
     created_at: datetime = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Optional[datetime] = Column(DateTime(timezone=True), onupdate=datetime.utcnow)

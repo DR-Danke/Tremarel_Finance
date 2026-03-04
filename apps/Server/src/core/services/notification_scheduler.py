@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from src.adapter.email_adapter import email_adapter
 from src.adapter.email_templates import format_daily_tasks_html
+from src.adapter.push_adapter import push_adapter
 from src.adapter.whatsapp_adapter import whatsapp_adapter
 from src.core.services.event_service import event_service
 from src.core.services.notification_service import NotificationService
@@ -21,6 +22,7 @@ notification_service = NotificationService(
     adapters={
         "whatsapp": whatsapp_adapter,
         "email": email_adapter,
+        "push": push_adapter,
     }
 )
 
@@ -323,6 +325,16 @@ async def send_morning_task_summaries(
             if sent:
                 person_sent = True
 
+        # Push notification: send if person has a push_token
+        push_token = getattr(person, "push_token", None)
+        if push_token and push_token.strip():
+            push_message = format_daily_tasks_message(summary)
+            sent = await _send_via_channel(
+                "push", push_token, push_message, db, restaurant_id, person_id, person_name, results
+            )
+            if sent:
+                person_sent = True
+
         if person_sent:
             sent_count += 1
 
@@ -421,6 +433,16 @@ async def process_document_expiration_alerts(
             email_address = getattr(person, "email", "")
             sent = await _send_via_channel(
                 "email", email_address, message, db, restaurant_id,
+                event.responsible_id, getattr(person, "name", ""), results,
+            )
+            if sent:
+                person_sent = True
+
+        # Push notification: send if person has a push_token
+        push_token = getattr(person, "push_token", None)
+        if push_token and push_token.strip():
+            sent = await _send_via_channel(
+                "push", push_token, message, db, restaurant_id,
                 event.responsible_id, getattr(person, "name", ""), results,
             )
             if sent:

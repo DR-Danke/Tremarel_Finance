@@ -12,6 +12,7 @@ export interface Person {
   role: string
   email: string | null
   whatsapp: string | null
+  push_token: string | null
   type: PersonType
   created_at: string
   updated_at: string | null
@@ -23,6 +24,7 @@ export interface PersonCreate {
   role: string
   email?: string
   whatsapp?: string
+  push_token?: string
   type?: PersonType
 }
 
@@ -31,6 +33,7 @@ export interface PersonUpdate {
   role?: string
   email?: string
   whatsapp?: string
+  push_token?: string
   type?: PersonType
 }
 
