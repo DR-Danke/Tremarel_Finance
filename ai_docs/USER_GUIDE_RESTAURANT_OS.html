@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RestaurantOS - User Manual</title>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #1565c0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --warning: #ed6c02;
+      --warning-light: #fff3e0;
+      --error: #d32f2f;
+      --error-light: #fbe9e7;
+      --gray-50: #fafafa;
+      --gray-100: #f5f5f5;
+      --gray-200: #eeeeee;
+      --gray-300: #e0e0e0;
+      --gray-600: #757575;
+      --gray-700: #616161;
+      --gray-800: #424242;
+      --gray-900: #212121;
+      --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--gray-900);
+      background: var(--gray-100);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 32px 0 28px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .top-bar h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .top-bar p {
+      margin-top: 6px;
+      font-size: 14px;
+      opacity: 0.85;
+      font-weight: 400;
+    }
+
+    /* Layout */
+    .layout {
+      display: flex;
+      max-width: 1280px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    /* Sidebar TOC */
+    .sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      align-self: flex-start;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding: 24px 0 24px 16px;
+    }
+    .sidebar nav {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 20px 0;
+    }
+    .sidebar nav h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--gray-600);
+      padding: 0 20px 12px;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 8px;
+    }
+    .sidebar nav a {
+      display: block;
+      padding: 7px 20px;
+      color: var(--gray-700);
+      text-decoration: none;
+      font-size: 13.5px;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .sidebar nav a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-left-color: var(--primary);
+    }
+    .sidebar nav a .toc-num {
+      display: inline-block;
+      width: 22px;
+      color: var(--gray-600);
+      font-size: 12px;
+    }
+
+    /* Main Content */
+    .content {
+      flex: 1;
+      min-width: 0;
+      padding: 24px 24px 80px 24px;
+    }
+
+    /* Sections */
+    section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 36px 40px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--primary-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin: 28px 0 12px;
+    }
+    h3:first-of-type { margin-top: 20px; }
+
+    h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin: 20px 0 8px;
+    }
+
+    p { margin-bottom: 12px; }
+
+    .path-label {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 20px;
+      font-size: 14px;
+    }
+    thead th {
+      background: var(--gray-100);
+      text-align: left;
+      padding: 10px 14px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--gray-700);
+      border-bottom: 2px solid var(--gray-300);
+    }
+    tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--gray-50); }
+
+    /* Lists */
+    ul, ol {
+      margin: 8px 0 16px 24px;
+    }
+    li { margin-bottom: 5px; }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+    .badge-green  { background: var(--success-light); color: var(--success); }
+    .badge-yellow { background: var(--warning-light); color: var(--warning); }
+    .badge-red    { background: var(--error-light);   color: var(--error);   }
+    .badge-blue   { background: var(--primary-light); color: var(--primary); }
+    .badge-gray   { background: var(--gray-200);      color: var(--gray-700);}
+
+    /* Callout boxes */
+    .callout {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .callout-info {
+      background: var(--primary-light);
+      border-left: 4px solid var(--primary);
+    }
+    .callout-success {
+      background: var(--success-light);
+      border-left: 4px solid var(--success);
+    }
+    .callout-warning {
+      background: var(--warning-light);
+      border-left: 4px solid var(--warning);
+    }
+
+    /* Intro block */
+    .intro {
+      background: linear-gradient(135deg, var(--primary-light) 0%, #f0f7ff 100%);
+      border-radius: 12px;
+      padding: 28px 36px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .intro p {
+      font-size: 15.5px;
+      color: var(--gray-800);
+      margin: 0;
+    }
+
+    /* Steps */
+    .steps { counter-reset: step; list-style: none; margin-left: 0; padding-left: 0; }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding-left: 36px;
+      margin-bottom: 10px;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    strong { font-weight: 600; }
+    code {
+      background: var(--gray-100);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .content { padding: 16px 12px 60px; }
+      section { padding: 24px 20px; }
+    }
+
+    @media print {
+      .top-bar { position: static; }
+      .sidebar { display: none; }
+      section { box-shadow: none; border: 1px solid var(--gray-300); break-inside: avoid; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>RestaurantOS &mdash; User Manual</h1>
+  <p>Comprehensive restaurant operations management &bull; Finance Tracker PoC</p>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <nav>
+      <h3>Contents</h3>
+      <a href="#getting-started"><span class="toc-num">1.</span> Getting Started</a>
+      <a href="#restaurant-selector"><span class="toc-num">2.</span> Restaurant Selector</a>
+      <a href="#dashboard"><span class="toc-num">3.</span> Operational Dashboard</a>
+      <a href="#personas"><span class="toc-num">4.</span> Personas</a>
+      <a href="#documentos"><span class="toc-num">5.</span> Documentos</a>
+      <a href="#eventos"><span class="toc-num">6.</span> Eventos / Tareas</a>
+      <a href="#recursos"><span class="toc-num">7.</span> Recursos / Inventario</a>
+      <a href="#recetas"><span class="toc-num">8.</span> Recetas</a>
+      <a href="#notifications"><span class="toc-num">9.</span> Notifications</a>
+      <a href="#alerts"><span class="toc-num">10.</span> Alerts</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+
+    <div class="intro">
+      <p>RestaurantOS is a comprehensive restaurant operations management module within the Finance Tracker application. It provides tools for managing employees, inventory, recipes, documents, events/tasks, notifications, and operational dashboards across one or more restaurants.</p>
+    </div>
+
+    <!-- 1. Getting Started -->
+    <section id="getting-started">
+      <h2><span class="section-num">1</span> Getting Started</h2>
+
+      <h3>Accessing RestaurantOS</h3>
+      <ol class="steps">
+        <li>Log in to the Finance Tracker application</li>
+        <li>In the left sidebar, expand the <strong>POCs</strong> section</li>
+        <li>Click any item under the <strong>RestaurantOS</strong> subsection</li>
+      </ol>
+
+      <h3>Navigation</h3>
+      <p>The RestaurantOS section appears in the sidebar with six pages:</p>
+      <table>
+        <thead><tr><th>Menu Item</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Dashboard</strong></td><td>Operational overview with stats and alerts</td></tr>
+          <tr><td><strong>Personas</strong></td><td>Manage employees, suppliers, and owners</td></tr>
+          <tr><td><strong>Documentos</strong></td><td>Track documents, permits, and licenses</td></tr>
+          <tr><td><strong>Eventos / Tareas</strong></td><td>Manage tasks, deadlines, and scheduled events</td></tr>
+          <tr><td><strong>Recursos / Inventario</strong></td><td>Track inventory items and stock movements</td></tr>
+          <tr><td><strong>Recetas</strong></td><td>Manage recipes with ingredient costing</td></tr>
+        </tbody>
+      </table>
+
+      <h3>First-Time Setup</h3>
+      <p>If no restaurants exist, a prompt will ask you to create your first restaurant. Click <strong>"Crear Restaurante"</strong> and enter:</p>
+      <ul>
+        <li><strong>Name</strong> (required): The restaurant name</li>
+        <li><strong>Address</strong> (optional): Physical address</li>
+      </ul>
+    </section>
+
+    <!-- 2. Restaurant Selector -->
+    <section id="restaurant-selector">
+      <h2><span class="section-num">2</span> Restaurant Selector</h2>
+      <p>The restaurant selector appears at the top of the sidebar when navigating any RestaurantOS page.</p>
+
+      <h3>Switching Restaurants</h3>
+      <ul>
+        <li><strong>Expanded sidebar</strong>: Click the dropdown and select a restaurant from the list</li>
+        <li><strong>Collapsed sidebar</strong>: Shows the first letter of the current restaurant name</li>
+      </ul>
+      <p>All data displayed on RestaurantOS pages is scoped to the currently selected restaurant. Switching restaurants refreshes all data automatically.</p>
+
+      <h3>Managing Restaurants</h3>
+      <p>You can create, rename, or delete restaurants from the selector. Your selection is remembered across sessions.</p>
+    </section>
+
+    <!-- 3. Dashboard -->
+    <section id="dashboard">
+      <h2><span class="section-num">3</span> Operational Dashboard</h2>
+      <span class="path-label">RestaurantOS &rsaquo; Dashboard</span>
+      <p>The dashboard provides a real-time operational overview of the current restaurant.</p>
+
+      <h3>Stat Cards</h3>
+      <p>Four summary cards at the top:</p>
+      <table>
+        <thead><tr><th>Card</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Empleados</strong></td><td>Total number of employees</td></tr>
+          <tr><td><strong>Recursos</strong></td><td>Total inventory items tracked</td></tr>
+          <tr><td><strong>Documentos Activos</strong></td><td>Number of active documents</td></tr>
+          <tr><td><strong>Tareas Completadas Hoy</strong></td><td>Tasks marked as completed today</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Today's Tasks</h3>
+      <p>The left panel lists all tasks and events scheduled for today, grouped by the responsible person. Each task shows:</p>
+      <ul>
+        <li>Description</li>
+        <li>Scheduled time</li>
+        <li>Status badge (<span class="badge badge-blue">Pendiente</span>, <span class="badge badge-green">Completado</span>, or <span class="badge badge-red">Vencido</span>)</li>
+      </ul>
+
+      <h3>Alerts Panel</h3>
+      <p>The right panel shows active alerts in three categories:</p>
+      <ul>
+        <li><strong>Document Expirations</strong>: Documents expiring soon with days remaining</li>
+        <li><strong>Low Stock Items</strong>: Resources below their minimum stock level, showing current vs. minimum quantities</li>
+        <li><strong>Pending Alerts</strong>: Stock alerts, profitability alerts, and expiration alerts that haven't been addressed</li>
+      </ul>
+
+      <h3>Recent Inventory Movements</h3>
+      <p>A table at the bottom shows the most recent inventory entries and exits with:</p>
+      <ul>
+        <li>Date and time</li>
+        <li>Movement type (<span class="badge badge-green">Entrada</span> / <span class="badge badge-red">Salida</span>)</li>
+        <li>Quantity</li>
+        <li>Reason (Compra, Uso, Produccion, Merma, Receta, Ajuste)</li>
+        <li>Notes</li>
+      </ul>
+    </section>
+
+    <!-- 4. Personas -->
+    <section id="personas">
+      <h2><span class="section-num">4</span> Personas (People Management)</h2>
+      <span class="path-label">RestaurantOS &rsaquo; Personas</span>
+      <p>Manage all people associated with your restaurant: employees, suppliers, and owners.</p>
+
+      <h3>Viewing People</h3>
+      <p>The page displays a searchable, filterable table with columns:</p>
+      <ul>
+        <li><strong>Name</strong></li>
+        <li><strong>Role</strong> (job title)</li>
+        <li><strong>Type</strong> (Empleado, Proveedor, Due&ntilde;o)</li>
+        <li><strong>Email</strong></li>
+        <li><strong>WhatsApp</strong></li>
+        <li><strong>Push</strong> (indicates if push notifications are configured)</li>
+        <li><strong>Actions</strong> (Edit, Delete)</li>
+      </ul>
+
+      <h3>Filtering</h3>
+      <ul>
+        <li><strong>Search</strong>: Type a name in the search field to filter results</li>
+        <li><strong>Type filter</strong>: Select from Todos, Empleado, Proveedor, or Due&ntilde;o</li>
+      </ul>
+
+      <h3>Adding a Person</h3>
+      <ol class="steps">
+        <li>Click the <strong>add button</strong> (+ icon) in the page header</li>
+        <li>Fill in the form:
+          <ul>
+            <li><strong>Nombre</strong> (required): Full name</li>
+            <li><strong>Rol</strong>: Job title or role description</li>
+            <li><strong>Tipo</strong>: Select Empleado, Proveedor, or Due&ntilde;o</li>
+            <li><strong>Email</strong>: Email address (used for email notifications)</li>
+            <li><strong>WhatsApp</strong>: Phone number with country code (used for WhatsApp notifications)</li>
+            <li><strong>Push Token</strong>: Device token for push notifications</li>
+          </ul>
+        </li>
+        <li>Click <strong>"Agregar Persona"</strong> to save</li>
+      </ol>
+
+      <h3>Editing a Person</h3>
+      <ol class="steps">
+        <li>Click the <strong>pencil icon</strong> on the person's row</li>
+        <li>Modify any fields in the pre-populated form</li>
+        <li>Click <strong>"Actualizar Persona"</strong> to save</li>
+      </ol>
+
+      <h3>Deleting a Person</h3>
+      <ol class="steps">
+        <li>Click the <strong>trash icon</strong> on the person's row</li>
+        <li>Confirm the deletion in the dialog</li>
+      </ol>
+
+      <h3>Person Types</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Spanish Label</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>employee</td><td>Empleado</td><td>Restaurant staff member</td></tr>
+          <tr><td>supplier</td><td>Proveedor</td><td>External supplier or vendor</td></tr>
+          <tr><td>owner</td><td>Due&ntilde;o</td><td>Restaurant owner</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 5. Documentos -->
+    <section id="documentos">
+      <h2><span class="section-num">5</span> Documentos (Document Management)</h2>
+      <span class="path-label">RestaurantOS &rsaquo; Documentos</span>
+      <p>Track permits, licenses, contracts, invoices, and other documents with automatic expiration monitoring.</p>
+
+      <h3>Viewing Documents</h3>
+      <p>The table shows all documents with columns:</p>
+      <ul>
+        <li><strong>Type</strong>: Document category</li>
+        <li><strong>Description</strong>: Brief description</li>
+        <li><strong>Person</strong>: Associated person (if any)</li>
+        <li><strong>Issue Date</strong>: When the document was issued</li>
+        <li><strong>Expiration Date</strong>: When the document expires</li>
+        <li><strong>Status</strong>: Expiration status badge</li>
+        <li><strong>Actions</strong>: Edit, Delete</li>
+      </ul>
+
+      <h3>Expiration Status Badges</h3>
+      <table>
+        <thead><tr><th>Badge</th><th>Color</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-green">Vigente</span></td><td>Green</td><td>Valid, not expiring soon</td></tr>
+          <tr><td><span class="badge badge-yellow">Por Vencer</span></td><td>Yellow</td><td>Expiring within 30 days</td></tr>
+          <tr><td><span class="badge badge-red">Vencido</span></td><td>Red</td><td>Already expired</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Filtering</h3>
+      <ul>
+        <li><strong>Type filter</strong>: Filter by document type (Contrato, Permiso, Factura, etc.)</li>
+        <li><strong>Status filter</strong>: Filter by Todos, Vigente, Por Vencer, or Vencido</li>
+      </ul>
+
+      <h3>Adding a Document</h3>
+      <ol class="steps">
+        <li>Click <strong>"Agregar Documento"</strong></li>
+        <li>Fill in the form:
+          <ul>
+            <li><strong>Tipo</strong> (required): Select document type</li>
+            <li><strong>Descripci&oacute;n</strong>: Description text</li>
+            <li><strong>Fecha de Emisi&oacute;n</strong>: Issue date</li>
+            <li><strong>Fecha de Vencimiento</strong>: Expiration date</li>
+            <li><strong>Persona</strong>: Associated person (select from dropdown)</li>
+            <li><strong>File</strong>: Upload a document file (optional)</li>
+          </ul>
+        </li>
+        <li>Click <strong>"Agregar Documento"</strong> to save</li>
+      </ol>
+
+      <h3>Document Types</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Spanish Label</th></tr></thead>
+        <tbody>
+          <tr><td>contrato</td><td>Contrato</td></tr>
+          <tr><td>permiso</td><td>Permiso</td></tr>
+          <tr><td>factura</td><td>Factura</td></tr>
+          <tr><td>licencia</td><td>Licencia</td></tr>
+          <tr><td>factura_proveedor</td><td>Factura Proveedor</td></tr>
+          <tr><td>certificado</td><td>Certificado</td></tr>
+          <tr><td>manipulacion_alimentos</td><td>Cert. Manipulaci&oacute;n de Alimentos</td></tr>
+          <tr><td>bomberos</td><td>Permiso de Bomberos</td></tr>
+          <tr><td>camara_comercio</td><td>Reg. C&aacute;mara de Comercio</td></tr>
+          <tr><td>extintor</td><td>Servicio de Extintores</td></tr>
+          <tr><td>sanidad</td><td>Cert. Inspecci&oacute;n Sanitaria</td></tr>
+          <tr><td>otro</td><td>Otro</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Permit Presets</h3>
+      <p>When adding permit-type documents, you can select from pre-configured presets that automatically set alert schedules. For example, a health inspection certificate might auto-configure alerts at 45 days and 15 days before expiration.</p>
+    </section>
+
+    <!-- 6. Eventos / Tareas -->
+    <section id="eventos">
+      <h2><span class="section-num">6</span> Eventos / Tareas (Events &amp; Tasks)</h2>
+      <span class="path-label">RestaurantOS &rsaquo; Eventos / Tareas</span>
+      <p>Create and manage tasks, deadlines, payments, shifts, and checklists with optional recurrence and notification channels.</p>
+
+      <h3>Viewing Events</h3>
+      <p>Events are displayed in a table grouped by date, with columns:</p>
+      <ul>
+        <li><strong>Time</strong>: Scheduled time</li>
+        <li><strong>Type</strong>: Event category</li>
+        <li><strong>Description</strong>: Event details</li>
+        <li><strong>Responsible</strong>: Assigned person</li>
+        <li><strong>Status</strong>: Status badge</li>
+        <li><strong>Actions</strong>: Quick-complete, Edit, Delete</li>
+      </ul>
+      <div class="callout callout-warning">Overdue events are highlighted with a red background for easy identification.</div>
+
+      <h3>Status Badges</h3>
+      <table>
+        <thead><tr><th>Badge</th><th>Color</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span class="badge badge-blue">Pendiente</span></td><td>Blue</td><td>Pending, not yet completed</td></tr>
+          <tr><td><span class="badge badge-green">Completado</span></td><td>Green</td><td>Marked as completed</td></tr>
+          <tr><td><span class="badge badge-red">Vencido</span></td><td>Red</td><td>Past due date, not completed</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Filtering</h3>
+      <ul>
+        <li><strong>Type filter</strong>: Tarea, Vencimiento, Pago, Turno, Checklist</li>
+        <li><strong>Status filter</strong>: Todos, Pendiente, Completado, Vencido</li>
+        <li><strong>Responsible filter</strong>: Filter by assigned person</li>
+        <li><strong>Date range</strong>: From date (Desde) and To date (Hasta)</li>
+      </ul>
+
+      <h3>Adding an Event</h3>
+      <ol class="steps">
+        <li>Click <strong>"Agregar Evento"</strong></li>
+        <li>Fill in the form:
+          <ul>
+            <li><strong>Tipo</strong> (required): Select event type</li>
+            <li><strong>Descripci&oacute;n</strong>: Description text</li>
+            <li><strong>Fecha</strong> (required): Date and time</li>
+            <li><strong>Frecuencia</strong>: Recurrence pattern</li>
+            <li><strong>Responsable</strong>: Assigned person (required for Tarea type)</li>
+            <li><strong>Canal de Notificaci&oacute;n</strong>: Email, WhatsApp, or Push</li>
+          </ul>
+        </li>
+        <li>Click <strong>"Agregar Evento"</strong> to save</li>
+      </ol>
+
+      <h3>Event Types</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Spanish Label</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>tarea</td><td>Tarea</td><td>Task assigned to a person</td></tr>
+          <tr><td>vencimiento</td><td>Vencimiento</td><td>Expiration deadline</td></tr>
+          <tr><td>pago</td><td>Pago</td><td>Payment due date</td></tr>
+          <tr><td>turno</td><td>Turno</td><td>Work shift</td></tr>
+          <tr><td>checklist</td><td>Checklist</td><td>Checklist item</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-info">
+        <strong>System-generated types</strong> (not shown in the create form):<br>
+        &bull; <strong>alerta_stock</strong> &mdash; Low stock alert (auto-created when stock drops below minimum)<br>
+        &bull; <strong>alerta_rentabilidad</strong> &mdash; Profitability alert (auto-created when recipe margin is low)
+      </div>
+
+      <h3>Recurrence</h3>
+      <table>
+        <thead><tr><th>Frequency</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Sin repetici&oacute;n</td><td>One-time event</td></tr>
+          <tr><td>Diario</td><td>Repeats daily</td></tr>
+          <tr><td>Semanal</td><td>Repeats weekly</td></tr>
+          <tr><td>Mensual</td><td>Repeats monthly</td></tr>
+          <tr><td>Anual</td><td>Repeats yearly</td></tr>
+        </tbody>
+      </table>
+      <p>Recurring events create a parent event that generates child instances on scheduled dates. Each child has independent status tracking.</p>
+
+      <h3>Quick-Complete</h3>
+      <p>Click the <strong>checkmark icon</strong> on any pending event to immediately mark it as completed without opening the edit form.</p>
+
+      <h3>Editing an Event</h3>
+      <ol class="steps">
+        <li>Click the <strong>pencil icon</strong> on the event's row</li>
+        <li>Modify fields in the pre-populated form (title shows "Editar Evento")</li>
+        <li>Click <strong>"Actualizar Evento"</strong> to save</li>
+      </ol>
+
+      <h3>Deleting an Event</h3>
+      <ol class="steps">
+        <li>Click the <strong>trash icon</strong> on the event's row</li>
+        <li>Confirm with <strong>"Eliminar"</strong> in the confirmation dialog</li>
+      </ol>
+    </section>
+
+    <!-- 7. Recursos / Inventario -->
+    <section id="recursos">
+      <h2><span class="section-num">7</span> Recursos / Inventario (Resources &amp; Inventory)</h2>
+      <span class="path-label">RestaurantOS &rsaquo; Recursos / Inventario</span>
+      <p>Track all inventory items, monitor stock levels, and record all movements (entries and exits).</p>
+
+      <h3>Viewing Resources</h3>
+      <p>The table shows all resources with columns:</p>
+      <ul>
+        <li><strong>Name</strong>: Resource name</li>
+        <li><strong>Type</strong>: Product, Asset, or Service</li>
+        <li><strong>Unit</strong>: Measurement unit (kg, L, units, etc.)</li>
+        <li><strong>Current Stock</strong>: Current quantity on hand</li>
+        <li><strong>Min Stock</strong>: Minimum stock threshold</li>
+        <li><strong>Last Cost</strong>: Last known unit cost (COP)</li>
+        <li><strong>Status</strong>: Stock level indicator</li>
+        <li><strong>Actions</strong>: View, Edit, Delete</li>
+      </ul>
+      <p>Low stock items show a <span class="badge badge-red">Stock Bajo</span> badge. Items at or above minimum show a <span class="badge badge-green">OK</span> badge.</p>
+
+      <h3>Filtering</h3>
+      <ul>
+        <li><strong>Search</strong>: Filter by resource name</li>
+        <li><strong>Type filter</strong>: Todos, Producto, Activo, Servicio</li>
+      </ul>
+
+      <h3>Resource Types</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Spanish Label</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>producto</td><td>Producto</td><td>Consumable ingredient or supply</td></tr>
+          <tr><td>activo</td><td>Activo</td><td>Equipment or fixed asset</td></tr>
+          <tr><td>servicio</td><td>Servicio</td><td>External service</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Adding a Resource</h3>
+      <ol class="steps">
+        <li>Click <strong>"Agregar Recurso"</strong></li>
+        <li>Fill in the form:
+          <ul>
+            <li><strong>Nombre</strong> (required): Resource name</li>
+            <li><strong>Tipo</strong>: Select Producto, Activo, or Servicio</li>
+            <li><strong>Unidad</strong>: Measurement unit (e.g., kg, L, und)</li>
+            <li><strong>Stock Actual</strong>: Current quantity on hand</li>
+            <li><strong>Stock M&iacute;nimo</strong>: Threshold for low stock alerts</li>
+            <li><strong>&Uacute;ltimo Costo Unitario</strong>: Last purchase price per unit (COP)</li>
+          </ul>
+        </li>
+        <li>Click to save</li>
+      </ol>
+
+      <h3>Resource Detail Drawer</h3>
+      <p>Click any resource row to open a detail drawer showing:</p>
+      <ul>
+        <li>Full resource information (name, type, unit, stock levels, cost)</li>
+        <li>Stock status badge</li>
+        <li><strong>Movement History Table</strong>: Complete history of all inventory entries and exits for this resource, with date, type, quantity, reason, person, and notes</li>
+      </ul>
+
+      <h3>Registering an Inventory Movement</h3>
+      <ol class="steps">
+        <li>Click <strong>"Registrar Movimiento"</strong> in the page header</li>
+        <li>Fill in the movement form:
+          <ul>
+            <li><strong>Recurso</strong> (required): Select the resource</li>
+            <li><strong>Tipo</strong> (required): Entrada (entry) or Salida (exit)</li>
+            <li><strong>Cantidad</strong> (required): Quantity moved</li>
+            <li><strong>Raz&oacute;n</strong>: Reason for movement</li>
+            <li><strong>Fecha</strong>: Date of movement (defaults to now)</li>
+            <li><strong>Persona</strong>: Person responsible</li>
+            <li><strong>Notas</strong>: Additional notes</li>
+          </ul>
+        </li>
+        <li>Submit to record the movement</li>
+      </ol>
+      <div class="callout callout-success">The resource's current stock updates automatically when a movement is recorded.</div>
+
+      <h3>Movement Types</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Spanish Label</th><th>Color</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>entry</td><td><span class="badge badge-green">Entrada</span></td><td>Green</td><td>Increases stock</td></tr>
+          <tr><td>exit</td><td><span class="badge badge-red">Salida</span></td><td>Red</td><td>Decreases stock</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Movement Reasons</h3>
+      <table>
+        <thead><tr><th>Reason</th><th>Spanish Label</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>compra</td><td>Compra</td><td>Purchase from supplier</td></tr>
+          <tr><td>uso</td><td>Uso</td><td>Used in daily operations</td></tr>
+          <tr><td>produccion</td><td>Producci&oacute;n</td><td>Used for production</td></tr>
+          <tr><td>merma</td><td>Merma</td><td>Waste, spoilage, or loss</td></tr>
+          <tr><td>receta</td><td>Receta</td><td>Used in recipe production</td></tr>
+          <tr><td>ajuste</td><td>Ajuste</td><td>Manual stock adjustment</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 8. Recetas -->
+    <section id="recetas">
+      <h2><span class="section-num">8</span> Recetas (Recipe Management)</h2>
+      <span class="path-label">RestaurantOS &rsaquo; Recetas</span>
+      <p>Define recipes with ingredients, track food costs, calculate profit margins, and produce portions that automatically deduct inventory.</p>
+
+      <h3>Viewing Recipes</h3>
+      <p>The table shows all recipes with columns:</p>
+      <ul>
+        <li><strong>Name</strong>: Recipe name</li>
+        <li><strong>Sale Price</strong>: Selling price (COP)</li>
+        <li><strong>Current Cost</strong>: Calculated ingredient cost (COP)</li>
+        <li><strong>Margin %</strong>: Profit margin percentage</li>
+        <li><strong>Profitability</strong>: <span class="badge badge-green">Rentable</span> or <span class="badge badge-red">No Rentable</span> badge with margin %</li>
+        <li><strong>Status</strong>: <span class="badge badge-green">Activa</span> or <span class="badge badge-gray">Inactiva</span></li>
+        <li><strong>Actions</strong>: Edit, Delete, Produce</li>
+      </ul>
+      <div class="callout callout-warning">Non-profitable recipes (margin below 60%) are highlighted with a red background.</div>
+
+      <h3>Searching</h3>
+      <p>Type a recipe name in the search field to filter results.</p>
+
+      <h3>Adding a Recipe</h3>
+      <ol class="steps">
+        <li>Click <strong>"Agregar Receta"</strong></li>
+        <li>Fill in the form:
+          <ul>
+            <li><strong>Nombre</strong> (required): Recipe name</li>
+            <li><strong>Precio de Venta</strong>: Sale price in COP</li>
+            <li><strong>Activa</strong>: Toggle active/inactive status</li>
+            <li><strong>Ingredientes</strong>: Add ingredient items &mdash; select a resource, enter quantity per portion, specify the unit, and click add to include more</li>
+          </ul>
+        </li>
+        <li>Save to create the recipe</li>
+      </ol>
+
+      <h3>Automatic Cost Calculations</h3>
+      <p>The system automatically calculates:</p>
+      <table>
+        <thead><tr><th>Field</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Current Cost</strong></td><td>Sum of (ingredient quantity &times; resource's last unit cost) for all ingredients</td></tr>
+          <tr><td><strong>Margin %</strong></td><td>((Sale Price &minus; Current Cost) &divide; Sale Price) &times; 100</td></tr>
+          <tr><td><strong>Is Profitable</strong></td><td>True if margin &ge; 60%</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Recipe Detail Drawer</h3>
+      <p>Click any recipe row to open a detail drawer showing:</p>
+      <ul>
+        <li>Recipe name, sale price, current cost, margin percentage</li>
+        <li>Profitability badge</li>
+        <li><strong>Ingredients Table</strong>: All resources used in the recipe with quantity, unit, and unit cost</li>
+      </ul>
+
+      <h3>Producing Portions</h3>
+      <p>The produce feature deducts ingredients from inventory based on recipe quantities:</p>
+      <ol class="steps">
+        <li>Click the <strong>play icon</strong> on a recipe row</li>
+        <li>Enter the number of portions to produce (minimum 1)</li>
+        <li>Confirm production</li>
+      </ol>
+      <div class="callout callout-info">
+        <strong>What happens during production:</strong><br>
+        &bull; For each ingredient, the system creates an exit movement with reason "receta"<br>
+        &bull; Quantities deducted = ingredient quantity &times; number of portions<br>
+        &bull; Resource stock levels update automatically<br>
+        &bull; If any ingredient stock drops below minimum, a low stock alert is generated
+      </div>
+
+      <h3>Cost Recalculation</h3>
+      <p>Recipe costs update automatically when ingredient prices change. The system recalculates current cost, margin percentage, and profitability status.</p>
+      <p>If a recipe transitions from profitable to non-profitable (or vice versa), a profitability alert event is automatically created.</p>
+    </section>
+
+    <!-- 9. Notifications -->
+    <section id="notifications">
+      <h2><span class="section-num">9</span> Notifications</h2>
+      <p>RestaurantOS supports three notification channels for event reminders, alerts, and daily summaries.</p>
+
+      <h3>Notification Channels</h3>
+      <table>
+        <thead><tr><th>Channel</th><th>Setup</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Email</strong></td><td>Add email to person's profile</td><td>Sends HTML-formatted notifications</td></tr>
+          <tr><td><strong>WhatsApp</strong></td><td>Add WhatsApp number with country code (e.g., +57300...)</td><td>Sends text messages via WhatsApp</td></tr>
+          <tr><td><strong>Push</strong></td><td>Configure push token in person's profile</td><td>Sends mobile push notifications via FCM</td></tr>
+        </tbody>
+      </table>
+
+      <h3>How Notifications Work</h3>
+      <ol class="steps">
+        <li>When creating an event, select a <strong>Canal de Notificaci&oacute;n</strong> (notification channel)</li>
+        <li>The system sends notifications to the responsible person via the selected channel</li>
+        <li>Notifications are logged in the notification log for audit purposes</li>
+      </ol>
+
+      <h3>Daily Task Summaries</h3>
+      <p>The system can send daily summaries to all employees with pending or overdue tasks. Each summary includes:</p>
+      <ul>
+        <li>Count of pending tasks</li>
+        <li>Count of overdue tasks</li>
+        <li>List of tasks with descriptions and times</li>
+      </ul>
+
+      <h3>Notification Log</h3>
+      <p>All notification attempts (successful or failed) are recorded with:</p>
+      <ul>
+        <li>Channel used</li>
+        <li>Recipient</li>
+        <li>Message content</li>
+        <li>Status (sent/failed)</li>
+        <li>Error message (if failed)</li>
+        <li>Timestamp</li>
+      </ul>
+    </section>
+
+    <!-- 10. Alerts -->
+    <section id="alerts">
+      <h2><span class="section-num">10</span> Alerts</h2>
+      <p>RestaurantOS automatically generates alerts for critical operational events.</p>
+
+      <h3>Alert Types</h3>
+
+      <h4>Document Expiration Alerts</h4>
+      <ul>
+        <li>Triggered when documents approach their expiration date</li>
+        <li>Configurable alert windows (e.g., 45 days, 15 days, 1 day before)</li>
+        <li>Appear on the dashboard and as events of type "vencimiento"</li>
+      </ul>
+
+      <h4>Low Stock Alerts</h4>
+      <ul>
+        <li>Automatically generated when a resource's current stock drops below minimum stock</li>
+        <li>Created as events of type <span class="badge badge-red">alerta_stock</span></li>
+        <li>Show on the dashboard with current vs. minimum quantities</li>
+        <li>Linked to the specific resource for quick navigation</li>
+      </ul>
+
+      <h4>Profitability Alerts</h4>
+      <ul>
+        <li>Generated when a recipe's margin drops below 60%</li>
+        <li>Created as events of type <span class="badge badge-yellow">alerta_rentabilidad</span></li>
+        <li>Include the recipe name and current margin in the description</li>
+        <li>Triggered when ingredient costs change and recipe is recalculated</li>
+      </ul>
+
+      <h3>Viewing Alerts</h3>
+      <p>Alerts appear in three places:</p>
+      <ol class="steps">
+        <li><strong>Dashboard Alerts Panel</strong>: Shows all active alerts organized by category</li>
+        <li><strong>Events / Tareas page</strong>: Alert events can be filtered and managed like regular events</li>
+        <li><strong>Resource detail drawer</strong>: Low stock status shown per resource</li>
+      </ol>
+
+      <h3>Resolving Alerts</h3>
+      <ul>
+        <li>Stock alerts resolve when inventory is replenished above minimum levels</li>
+        <li>Expiration alerts can be dismissed by renewing documents and updating expiration dates</li>
+        <li>Profitability alerts resolve when recipe prices are adjusted or ingredient costs decrease</li>
+        <li>All alert events can be marked as completed via quick-complete</li>
+      </ul>
+    </section>
+
+    <!-- Tips -->
+    <section>
+      <h2><span class="section-num">&bull;</span> Tips &amp; Navigation</h2>
+      <ul>
+        <li>The sidebar is <strong>collapsible</strong>: click the collapse button to switch between full and icon-only modes</li>
+        <li>Sidebar section expansion state is <strong>remembered</strong> between sessions</li>
+        <li>The selected restaurant is <strong>persisted</strong> across sessions</li>
+        <li>Click any <strong>table row</strong> (on Resources or Recipes pages) to open a detail drawer</li>
+        <li>Use <strong>filters and search</strong> to quickly find specific items in large datasets</li>
+        <li>Status badges are color-coded consistently across all pages:
+          <span class="badge badge-green">green = good</span>
+          <span class="badge badge-yellow">yellow = warning</span>
+          <span class="badge badge-red">red = critical</span>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>
