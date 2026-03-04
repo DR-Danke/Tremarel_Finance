@@ -134,6 +134,28 @@ class PersonRepository:
         print(f"INFO [PersonRepository]: Person {person_id} not found for deletion")
         return False
 
+    def find_owner(self, db: Session, restaurant_id: UUID) -> Optional[Person]:
+        """
+        Find the owner person for a restaurant.
+
+        Args:
+            db: Database session
+            restaurant_id: Restaurant UUID
+
+        Returns:
+            Person object if owner found, None otherwise
+        """
+        print(f"INFO [PersonRepository]: Finding owner for restaurant {restaurant_id}")
+        owner = db.query(Person).filter(
+            Person.restaurant_id == restaurant_id,
+            Person.type == "owner",
+        ).first()
+        if owner:
+            print(f"INFO [PersonRepository]: Found owner '{owner.name}' for restaurant {restaurant_id}")
+        else:
+            print(f"INFO [PersonRepository]: No owner found for restaurant {restaurant_id}")
+        return owner
+
     def search(self, db: Session, restaurant_id: UUID, query: str) -> list[Person]:
         """
         Search persons by name within a restaurant using ILIKE.

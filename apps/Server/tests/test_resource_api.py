@@ -716,3 +716,87 @@ async def test_get_low_stock_resources_empty() -> None:
         data = response.json()
         assert len(data) == 0
         print("INFO [TestResourceAPI]: test_get_low_stock_resources_empty - PASSED")
+
+
+# ============================================================================
+# Resource Cost Change → Recipe Recalculation Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_update_resource_triggers_recipe_recalculation() -> None:
+    """Test that updating last_unit_cost triggers recipe recalculation."""
+    mock_user = create_mock_user()
+    mock_resource = create_mock_resource(last_unit_cost=Decimal("2.50"))
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.resource_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.resource_service.resource_repository"
+    ) as mock_resource_repo, patch(
+        "src.core.services.resource_service.recipe_service"
+    ) as mock_recipe_svc:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_resource_repo.get_by_id.return_value = mock_resource
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_resource_repo.update.return_value = mock_resource
+        mock_recipe_svc.recalculate_by_resource.return_value = []
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.put(
+                f"/api/resources/{mock_resource.id}",
+                json={"last_unit_cost": "5.00"},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        mock_recipe_svc.recalculate_by_resource.assert_called_once()
+        print("INFO [TestResourceAPI]: test_update_resource_triggers_recipe_recalculation - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_update_resource_no_recalculation_when_cost_unchanged() -> None:
+    """Test that no recalculation occurs when last_unit_cost is not changed."""
+    mock_user = create_mock_user()
+    mock_resource = create_mock_resource(last_unit_cost=Decimal("2.50"))
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_auth_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt, patch(
+        "src.core.services.resource_service.restaurant_repository"
+    ) as mock_restaurant_repo, patch(
+        "src.core.services.resource_service.resource_repository"
+    ) as mock_resource_repo, patch(
+        "src.core.services.resource_service.recipe_service"
+    ) as mock_recipe_svc:
+        mock_auth_repo.get_user_by_email.return_value = mock_user
+        mock_auth_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+        mock_resource_repo.get_by_id.return_value = mock_resource
+        mock_restaurant_repo.get_user_restaurant_role.return_value = "admin"
+        mock_resource_repo.update.return_value = mock_resource
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            token = await get_auth_token(client, mock_user)
+            response = await client.put(
+                f"/api/resources/{mock_resource.id}",
+                json={"name": "Updated Name"},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        mock_recipe_svc.recalculate_by_resource.assert_not_called()
+        print("INFO [TestResourceAPI]: test_update_resource_no_recalculation_when_cost_unchanged - PASSED")

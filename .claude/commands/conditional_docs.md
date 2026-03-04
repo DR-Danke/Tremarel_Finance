@@ -495,3 +495,13 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with atomic stock pre-checks before inventory movements
     - When creating exit movements with reason=receta from recipe items
     - When troubleshooting insufficient stock errors during recipe production
+
+- app_docs/feature-c332e58b-auto-recipe-cost-recalculation.md
+  - Conditions:
+    - When working with automatic recipe cost recalculation from resource price changes
+    - When modifying ResourceService.update_resource() or cost-change detection logic
+    - When working with RecipeService.recalculate_by_resource() or profitability alerts
+    - When implementing or modifying alerta_rentabilidad event creation
+    - When working with the PROFITABILITY_THRESHOLD configuration
+    - When troubleshooting recipe cost propagation from resource updates
+    - When extending the cost intelligence loop (Invoice -> OCR -> Cost -> Recipe -> Alert)
