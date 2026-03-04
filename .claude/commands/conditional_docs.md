@@ -612,3 +612,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with case message threads or internal/external message filtering
     - When building the Legal Desk analytics dashboard or aggregation queries
     - When troubleshooting Legal Desk repository imports or singleton instances
+
+- app_docs/feature-e846c4b4-legaldesk-ui-components-forms.md
+  - Conditions:
+    - When working with Legal Desk UI badge components (TRCaseStatusBadge, TRCasePriorityBadge, TRLegalDomainBadge)
+    - When working with TRSpecialistScoreDisplay, TRPricingTimeline, or TRDeliverableChecklist
+    - When building Legal Desk forms (TRLegalCaseForm, TRLegalClientForm, TRLegalSpecialistForm)
+    - When implementing Legal Desk pages that consume these UI components or forms
+    - When working with dynamic form arrays (expertise, jurisdictions) in the specialist form
+    - When troubleshooting Legal Desk component rendering, form validation, or create/edit mode behavior
