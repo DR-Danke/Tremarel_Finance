@@ -74,6 +74,7 @@ def create_mock_event(
     event.notification_channel = notification_channel
     event.status = status
     event.related_document_id = related_document_id
+    event.related_resource_id = None
     event.parent_event_id = parent_event_id
     event.completed_at = None
     event.created_at = MagicMock()

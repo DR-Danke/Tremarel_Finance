@@ -514,3 +514,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying alert window resolution logic in DocumentService.create_expiration_alerts()
     - When working with preset-aware event descriptions or notification channel selection
     - When troubleshooting permit preset API endpoint or preset-based alert creation
+
+- app_docs/feature-8035b22e-low-stock-alert-automation.md
+  - Conditions:
+    - When working with low-stock alerts or alerta_stock events
+    - When modifying InventoryService.create_movement() or stock-triggered automation
+    - When working with related_resource_id on the Event model or DTOs
+    - When implementing or troubleshooting duplicate alert prevention for resources
+    - When working with auto-resolution of stock alerts on inventory entry movements
+    - When extending the inventory-to-event automation pipeline

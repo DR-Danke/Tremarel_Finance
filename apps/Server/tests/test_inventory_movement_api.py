@@ -150,7 +150,9 @@ async def test_create_entry_movement_success() -> None:
         "src.core.services.inventory_service.resource_repository"
     ) as mock_resource_repo, patch(
         "src.core.services.inventory_service.inventory_movement_repository"
-    ) as mock_movement_repo:
+    ) as mock_movement_repo, patch(
+        "src.core.services.inventory_service.event_repository"
+    ) as mock_event_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
         mock_bcrypt.checkpw.return_value = True
@@ -158,6 +160,7 @@ async def test_create_entry_movement_success() -> None:
         mock_resource_repo.get_by_id.return_value = mock_resource
         mock_resource_repo.update.return_value = mock_resource
         mock_movement_repo.create.return_value = mock_movement
+        mock_event_repo.resolve_alerts_by_resource.return_value = 0
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"
@@ -210,7 +213,9 @@ async def test_create_exit_movement_success() -> None:
         "src.core.services.inventory_service.resource_repository"
     ) as mock_resource_repo, patch(
         "src.core.services.inventory_service.inventory_movement_repository"
-    ) as mock_movement_repo:
+    ) as mock_movement_repo, patch(
+        "src.core.services.inventory_service.event_repository"
+    ) as mock_event_repo:
         mock_auth_repo.get_user_by_email.return_value = mock_user
         mock_auth_repo.get_user_by_id.return_value = mock_user
         mock_bcrypt.checkpw.return_value = True
@@ -218,6 +223,7 @@ async def test_create_exit_movement_success() -> None:
         mock_resource_repo.get_by_id.return_value = mock_resource
         mock_resource_repo.update.return_value = mock_resource
         mock_movement_repo.create.return_value = mock_movement
+        mock_event_repo.resolve_alerts_by_resource.return_value = 0
 
         async with AsyncClient(
             transport=ASGITransport(app=app), base_url="http://test"

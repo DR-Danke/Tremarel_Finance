@@ -93,6 +93,7 @@ def create_mock_event(
     event.notification_channel = "whatsapp"
     event.status = "pending"
     event.related_document_id = related_document_id
+    event.related_resource_id = None
     event.parent_event_id = None
     event.completed_at = None
     event.created_at = MagicMock()
