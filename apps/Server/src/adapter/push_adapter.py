@@ -49,7 +49,7 @@ class PushNotificationAdapter(NotificationAdapter):
         print(f"INFO [PushAdapter]: Sending push notification to {recipient[:20] if recipient else 'None'}...")
 
         if not recipient or not recipient.strip():
-            print(f"ERROR [PushAdapter]: Invalid recipient: empty or None")
+            print("ERROR [PushAdapter]: Invalid recipient: empty or None")
             raise ValueError("Invalid push notification recipient: token is empty or None.")
 
         # Truncate message for notification body
