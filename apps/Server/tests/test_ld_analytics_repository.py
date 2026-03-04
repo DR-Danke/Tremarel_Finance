@@ -2,12 +2,10 @@
 
 from datetime import datetime, timedelta
 from decimal import Decimal
-from unittest.mock import MagicMock, PropertyMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
-from src.models.ld_case import LdCase
-from src.models.ld_specialist import LdSpecialist
 from src.repository.ld_analytics_repository import LdAnalyticsRepository
 
 
