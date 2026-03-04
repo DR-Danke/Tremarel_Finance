@@ -561,3 +561,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with cases, specialists, clients, or deliverables in the Legal Desk module
     - When troubleshooting Legal Desk foreign key constraints or table relationships
     - When implementing Wave 2+ of the Legal Desk module
+
+- app_docs/feature-e9ee37e2-legaldesk-frontend-typescript-types.md
+  - Conditions:
+    - When working with Legal Desk frontend TypeScript types, interfaces, or union types
+    - When building Legal Desk UI components, services, or hooks that consume Ld-prefixed types
+    - When using Legal Desk label or color constant maps for status badges, priority chips, or domain labels
+    - When implementing Legal Desk CRUD forms or API payloads (LdCaseCreate, LdClientUpdate, etc.)
+    - When adding new Legal Desk types or extending existing Legal Desk interfaces
