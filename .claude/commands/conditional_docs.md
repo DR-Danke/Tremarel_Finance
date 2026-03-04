@@ -505,3 +505,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with the PROFITABILITY_THRESHOLD configuration
     - When troubleshooting recipe cost propagation from resource updates
     - When extending the cost intelligence loop (Invoice -> OCR -> Cost -> Recipe -> Alert)
+
+- app_docs/feature-367a82ca-permit-type-presets-alert-schedules.md
+  - Conditions:
+    - When working with permit type presets or pre-configured alert schedules
+    - When modifying PERMIT_PRESETS configuration or adding new permit types
+    - When working with custom_alert_windows on document creation
+    - When modifying alert window resolution logic in DocumentService.create_expiration_alerts()
+    - When working with preset-aware event descriptions or notification channel selection
+    - When troubleshooting permit preset API endpoint or preset-based alert creation
