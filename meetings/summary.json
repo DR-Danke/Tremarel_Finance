@@ -1,0 +1,60 @@
+{
+  "title": "Budget & Product Catalog Codification",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Oscar", "role": null},
+    {"name": "Speaker 2", "role": "Product/Inventory Manager"}
+  ],
+  "company_name": null,
+  "contact_name": "Oscar",
+  "contact_email": null,
+  "summary": "Oscar and a product/inventory manager discussed the codification of APUs (Unit Price Analyses) and the challenge of managing approximately 15,000 products in the database. The key insight is that products can be duplicated because quality tiers vary by client, meaning the same product type (e.g., a tube or duct) may exist at different quality and price levels. Products are categorized by product type, category, and quality, all of which directly impact pricing.",
+  "discussion_points": [
+    {
+      "topic": "Product Catalog Size and Complexity",
+      "description": "The inventory contains approximately 15,000 products. This large volume includes duplicates arising from different quality tiers offered to different client segments."
+    },
+    {
+      "topic": "APU Codification",
+      "description": "Discussion about coding/cataloging APUs (Unit Price Analyses) to better organize and manage the product database."
+    },
+    {
+      "topic": "Quality-Based Product Differentiation",
+      "description": "The same product type (tubes, unions, ducts) can exist at multiple quality levels. Lower-budget clients receive more economical options sourced from below-market alternatives, while premium clients receive higher-quality products."
+    },
+    {
+      "topic": "Pricing Structure",
+      "description": "Product pricing is directly affected by three attributes: product type, category, and quality tier. This multi-dimensional pricing model needs to be captured in any codification system."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Review and process the file that was shared (referenced at the end of the transcript)",
+      "owner": "Oscar",
+      "deadline": null
+    },
+    {
+      "description": "Design a codification system for APUs that accounts for product type, category, and quality tiers",
+      "owner": null,
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Products will be categorized along three dimensions: product type, category, and quality tier",
+    "Duplicate product entries are acceptable and necessary to accommodate different quality levels for different client segments"
+  ],
+  "next_steps": [
+    "Process the shared file containing product/inventory data",
+    "Develop a codification scheme for APUs that supports quality-based differentiation and pricing"
+  ],
+  "diagrams": [
+    {
+      "title": "Product Catalog Structure",
+      "mermaid_code": "flowchart TD\n    A[Product Catalog\n15000 Products] --> B[Product Type]\n    B --> C[Tubes]\n    B --> D[Unions]\n    B --> E[Ducts]\n    C --> F[Category]\n    D --> F\n    E --> F\n    F --> G[Quality Tier]\n    G --> H[Premium Quality]\n    G --> I[Standard Quality]\n    G --> J[Economy Quality]\n    H --> K[Pricing Engine]\n    I --> K\n    J --> K\n    K --> L[Final Price]"
+    },
+    {
+      "title": "Client-Based Quality Selection Flow",
+      "mermaid_code": "flowchart LR\n    A[Client Request] --> B{Client Segment}\n    B -->|Premium Client| C[High Quality Products]\n    B -->|Standard Client| D[Standard Quality Products]\n    B -->|Budget Client| E[Economy Products\nBelow Market Sourcing]\n    C --> F[Premium Pricing]\n    D --> G[Standard Pricing]\n    E --> H[Economy Pricing]\n    F --> I[APU Generation]\n    G --> I\n    H --> I\n    I --> J[Budget Proposal]"
+    }
+  ]
+}
