@@ -1,10 +1,26 @@
 import { apiClient } from '@/api/clients'
-import type { Document, DocumentCreate, DocumentUpdate } from '@/types/document'
+import type { Document, DocumentCreate, DocumentUpdate, PermitPreset } from '@/types/document'
 
 /**
  * Document service for CRUD operations on restaurant documents.
  */
 export const documentService = {
+  /**
+   * Get available permit type presets with their alert schedules.
+   * @returns List of permit presets
+   */
+  async getPermitPresets(): Promise<PermitPreset[]> {
+    console.log('INFO [DocumentService]: Fetching permit presets')
+    try {
+      const response = await apiClient.get<PermitPreset[]>('/documents/permit-presets')
+      console.log('INFO [DocumentService]: Permit presets fetched:', response.data.length)
+      return response.data
+    } catch (error) {
+      console.error('ERROR [DocumentService]: Failed to fetch permit presets:', error)
+      throw error
+    }
+  },
+
   /**
    * Get all documents for a restaurant, with optional type and expiration status filters.
    * @param restaurantId - Restaurant UUID
@@ -55,6 +71,9 @@ export const documentService = {
       }
       if (data.description) {
         formData.append('description', data.description)
+      }
+      if (data.custom_alert_windows && data.custom_alert_windows.length > 0) {
+        formData.append('custom_alert_windows', JSON.stringify(data.custom_alert_windows))
       }
       if (file) {
         formData.append('file', file)

@@ -9,6 +9,7 @@ from uuid import UUID
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from src.config.permit_presets import PERMIT_PRESETS
 from src.interface.document_dto import DocumentCreateDTO, DocumentUpdateDTO
 from src.models.document import Document
 from src.repository.document_repository import document_repository
@@ -44,6 +45,7 @@ class DocumentService:
         user_id: UUID,
         data: DocumentCreateDTO,
         file_url: Optional[str] = None,
+        custom_alert_windows: Optional[list[int]] = None,
     ) -> Document:
         """
         Create a new document in a restaurant.
@@ -53,6 +55,7 @@ class DocumentService:
             user_id: ID of the user creating the document
             data: Document creation data
             file_url: Optional file URL from upload
+            custom_alert_windows: Optional custom alert windows to override preset/default
 
         Returns:
             Created Document object
@@ -77,7 +80,9 @@ class DocumentService:
 
         if document.expiration_date is not None:
             self.create_expiration_alerts(
-                db, document.id, document.expiration_date, document.restaurant_id, document.person_id
+                db, document.id, document.expiration_date, document.restaurant_id,
+                document.person_id, document_type=document.type,
+                custom_alert_windows=custom_alert_windows,
             )
 
         print(f"INFO [DocumentService]: Document type '{document.type}' created with id {document.id}")
@@ -90,10 +95,13 @@ class DocumentService:
         expiration_date: date,
         restaurant_id: UUID,
         person_id: Optional[UUID] = None,
+        document_type: str = "",
+        custom_alert_windows: Optional[list[int]] = None,
     ) -> int:
         """
-        Create vencimiento events at 30-day, 7-day, and 0-day intervals before expiration.
+        Create vencimiento events before expiration using custom, preset, or default alert windows.
 
+        Resolution order: custom_alert_windows > PERMIT_PRESETS[document_type] > DEFAULT_ALERT_WINDOWS.
         Skips any alert dates that are on or before today.
 
         Args:
@@ -102,6 +110,8 @@ class DocumentService:
             expiration_date: Document expiration date
             restaurant_id: Restaurant UUID
             person_id: Optional responsible person UUID
+            document_type: Document type key for preset lookup
+            custom_alert_windows: Optional custom alert windows override
 
         Returns:
             Count of created alert events
@@ -109,15 +119,39 @@ class DocumentService:
         today = date.today()
         count = 0
 
-        for days_before in DEFAULT_ALERT_WINDOWS:
+        # Resolve alert windows: custom > preset > default
+        preset = PERMIT_PRESETS.get(document_type)
+        if custom_alert_windows is not None and len(custom_alert_windows) > 0:
+            alert_windows = custom_alert_windows
+            notification_channel = preset["notification_channel"] if preset else "whatsapp"
+            preset_name = preset["name"] if preset else ""
+            print(f"INFO [DocumentService]: Using custom alert windows {alert_windows} for document {document_id}")
+        elif preset:
+            alert_windows = preset["alert_windows"]
+            notification_channel = preset["notification_channel"]
+            preset_name = preset["name"]
+            print(f"INFO [DocumentService]: Using preset alert windows {alert_windows} for type '{document_type}'")
+        else:
+            alert_windows = DEFAULT_ALERT_WINDOWS
+            notification_channel = "whatsapp"
+            preset_name = ""
+            print(f"INFO [DocumentService]: Using default alert windows {alert_windows} for document {document_id}")
+
+        for days_before in alert_windows:
             alert_date = expiration_date - timedelta(days=days_before)
             if alert_date <= today:
                 continue
 
-            if days_before == 0:
-                description = "Documento vence hoy"
+            if preset_name:
+                if days_before == 0:
+                    description = f"{preset_name} vence hoy"
+                else:
+                    description = f"{preset_name} vence en {days_before} dias"
             else:
-                description = f"Documento vence en {days_before} dias"
+                if days_before == 0:
+                    description = "Documento vence hoy"
+                else:
+                    description = f"Documento vence en {days_before} dias"
 
             event_repository.create(
                 db=db,
@@ -127,7 +161,7 @@ class DocumentService:
                 event_date=datetime.combine(alert_date, time(8, 0)),
                 frequency="none",
                 responsible_id=person_id,
-                notification_channel="whatsapp",
+                notification_channel=notification_channel,
                 related_document_id=document_id,
             )
             count += 1
@@ -286,6 +320,7 @@ class DocumentService:
                 self.create_expiration_alerts(
                     db, updated_document.id, updated_document.expiration_date,
                     updated_document.restaurant_id, updated_document.person_id,
+                    document_type=updated_document.type,
                 )
             print(f"INFO [DocumentService]: Refreshed expiration alerts for document {document_id}")
 

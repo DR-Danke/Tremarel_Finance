@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import {
   TextField,
@@ -11,9 +11,13 @@ import {
   FormHelperText,
   CircularProgress,
   Typography,
+  Chip,
+  FormControlLabel,
+  Checkbox,
+  Alert,
 } from '@mui/material'
 import { CloudUpload } from '@mui/icons-material'
-import type { Document, DocumentCreate, DocumentUpdate } from '@/types/document'
+import type { Document, DocumentCreate, DocumentUpdate, PermitPreset } from '@/types/document'
 import type { Person } from '@/types/person'
 import { DOCUMENT_TYPES } from '@/types/document'
 
@@ -23,6 +27,7 @@ interface DocumentFormData {
   expiration_date: string
   person_id: string
   description: string
+  custom_alert_windows_input: string
 }
 
 interface TRDocumentFormProps {
@@ -32,6 +37,7 @@ interface TRDocumentFormProps {
   onCancel: () => void
   isSubmitting?: boolean
   persons: Person[]
+  permitPresets?: PermitPreset[]
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
@@ -43,12 +49,22 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
   onCancel,
   isSubmitting = false,
   persons,
+  permitPresets = [],
 }) => {
   const isEditMode = !!initialData
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const [isDragOver, setIsDragOver] = useState(false)
+  const [useCustomAlerts, setUseCustomAlerts] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const presetMap = useMemo(() => {
+    const map = new Map<string, PermitPreset>()
+    for (const p of permitPresets) {
+      map.set(p.type_key, p)
+    }
+    return map
+  }, [permitPresets])
 
   const {
     register,
@@ -64,10 +80,13 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
       expiration_date: initialData?.expiration_date || '',
       person_id: initialData?.person_id || '',
       description: initialData?.description || '',
+      custom_alert_windows_input: '',
     },
   })
 
   const issueDate = watch('issue_date')
+  const selectedType = watch('type')
+  const matchedPreset = presetMap.get(selectedType)
 
   useEffect(() => {
     if (initialData) {
@@ -121,6 +140,12 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
     fileInputRef.current?.click()
   }
 
+  const parseCustomAlertWindows = (input: string): number[] | undefined => {
+    if (!useCustomAlerts || !input.trim()) return undefined
+    const values = input.split(',').map((s) => parseInt(s.trim(), 10)).filter((n) => !isNaN(n))
+    return values.length > 0 ? values : undefined
+  }
+
   const handleFormSubmit = async (data: DocumentFormData) => {
     console.log('INFO [TRDocumentForm]: Submitting document form', data)
     try {
@@ -134,6 +159,7 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
         }
         await onSubmit(updateData)
       } else {
+        const customWindows = parseCustomAlertWindows(data.custom_alert_windows_input)
         const createData: DocumentCreate = {
           restaurant_id: restaurantId,
           type: data.type as DocumentCreate['type'],
@@ -141,6 +167,7 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
           expiration_date: data.expiration_date || undefined,
           person_id: data.person_id || undefined,
           description: data.description || undefined,
+          custom_alert_windows: customWindows,
         }
         await onSubmit(createData, selectedFile || undefined)
       }
@@ -148,6 +175,7 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
       if (!isEditMode) {
         reset()
         setSelectedFile(null)
+        setUseCustomAlerts(false)
       }
     } catch (error) {
       console.error('ERROR [TRDocumentForm]: Failed to submit document:', error)
@@ -186,6 +214,65 @@ export const TRDocumentForm: React.FC<TRDocumentFormProps> = ({
           </FormControl>
         )}
       />
+
+      {matchedPreset && !isEditMode && (
+        <Alert severity="info" sx={{ py: 0.5 }}>
+          <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+            {matchedPreset.name}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mb: 0.5 }}>
+            {matchedPreset.alert_windows.map((days) => (
+              <Chip
+                key={days}
+                label={days === 0 ? 'Día de vencimiento' : `${days} días`}
+                size="small"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+          <Typography variant="caption" color="text.secondary">
+            Canal: {matchedPreset.notification_channel}
+          </Typography>
+        </Alert>
+      )}
+
+      {matchedPreset && !isEditMode && (
+        <Box>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={useCustomAlerts}
+                onChange={(e) => setUseCustomAlerts(e.target.checked)}
+                disabled={isFormLoading}
+              />
+            }
+            label="Personalizar alertas"
+          />
+          {useCustomAlerts && (
+            <TextField
+              {...register('custom_alert_windows_input', {
+                validate: (value) => {
+                  if (!useCustomAlerts || !value.trim()) return true
+                  const parts = value.split(',')
+                  for (const part of parts) {
+                    const num = parseInt(part.trim(), 10)
+                    if (isNaN(num) || num < 0) {
+                      return 'Ingrese números enteros no negativos separados por comas'
+                    }
+                  }
+                  return true
+                },
+              })}
+              label="Días de alerta (separados por comas)"
+              placeholder="45, 15, 3"
+              fullWidth
+              error={!!errors.custom_alert_windows_input}
+              helperText={errors.custom_alert_windows_input?.message || 'Ej: 45, 15, 3'}
+              disabled={isFormLoading}
+            />
+          )}
+        </Box>
+      )}
 
       <TextField
         {...register('issue_date')}

@@ -1,5 +1,6 @@
 """Document endpoint routes."""
 
+import json
 from datetime import date
 from typing import Any, Dict, List, Optional
 from uuid import UUID
@@ -8,6 +9,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Upload
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
+from src.config.permit_presets import PERMIT_PRESETS
 from src.core.services.document_service import document_service
 from src.core.services.invoice_processor import invoice_processor
 from src.interface.document_dto import (
@@ -33,6 +35,7 @@ async def create_document(
     expiration_date: Optional[date] = Form(None, description="Expiration date"),
     person_id: Optional[UUID] = Form(None, description="Person UUID"),
     description: Optional[str] = Form(None, description="Document description"),
+    custom_alert_windows: Optional[str] = Form(None, description="Custom alert windows as JSON array of ints"),
     file: Optional[UploadFile] = File(None, description="Document file upload"),
     db: Session = Depends(get_db),
     current_user: Dict[str, Any] = Depends(get_current_user),
@@ -47,6 +50,7 @@ async def create_document(
         expiration_date: Optional expiration date
         person_id: Optional person UUID
         description: Optional description
+        custom_alert_windows: Optional JSON string of alert window days (e.g., "[45, 15]")
         file: Optional file upload
         db: Database session
         current_user: Current authenticated user
@@ -58,6 +62,17 @@ async def create_document(
 
     user_id = UUID(current_user["id"])
 
+    # Parse custom_alert_windows JSON string
+    parsed_alert_windows: Optional[list[int]] = None
+    if custom_alert_windows:
+        try:
+            parsed_alert_windows = json.loads(custom_alert_windows)
+        except (json.JSONDecodeError, TypeError):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="custom_alert_windows must be a valid JSON array of integers",
+            )
+
     # Build DTO from form fields
     data = DocumentCreateDTO(
         restaurant_id=restaurant_id,
@@ -66,6 +81,7 @@ async def create_document(
         expiration_date=expiration_date,
         person_id=person_id,
         description=description,
+        custom_alert_windows=parsed_alert_windows,
     )
 
     # Handle file upload
@@ -74,7 +90,9 @@ async def create_document(
         file_url = document_service.save_upload_file(file)
 
     try:
-        document = document_service.create_document(db, user_id, data, file_url)
+        document = document_service.create_document(
+            db, user_id, data, file_url, custom_alert_windows=data.custom_alert_windows,
+        )
         print(f"INFO [DocumentRoutes]: Document type '{document.type}' created successfully")
         return _to_response(document)
     except PermissionError as e:
@@ -153,6 +171,28 @@ async def list_documents(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=str(e),
         )
+
+
+@router.get("/permit-presets")
+async def get_permit_presets(
+    current_user: Dict[str, Any] = Depends(get_current_user),
+) -> List[Dict[str, Any]]:
+    """
+    Get available permit type presets with their alert schedules.
+
+    Returns:
+        List of permit presets with type_key, name, alert_windows, notification_channel
+    """
+    print(f"INFO [DocumentRoutes]: Permit presets request from user {current_user['email']}")
+    return [
+        {
+            "type_key": key,
+            "name": preset["name"],
+            "alert_windows": preset["alert_windows"],
+            "notification_channel": preset["notification_channel"],
+        }
+        for key, preset in PERMIT_PRESETS.items()
+    ]
 
 
 @router.post("/{document_id}/process-invoice", response_model=InvoiceProcessingResultDTO)

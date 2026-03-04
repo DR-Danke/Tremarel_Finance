@@ -10,6 +10,11 @@ export type DocumentType =
   | 'licencia'
   | 'factura_proveedor'
   | 'certificado'
+  | 'manipulacion_alimentos'
+  | 'bomberos'
+  | 'camara_comercio'
+  | 'extintor'
+  | 'sanidad'
   | 'otro'
 
 export type ExpirationStatus = 'valid' | 'expiring_soon' | 'expired'
@@ -21,6 +26,11 @@ export const DOCUMENT_TYPES: { value: DocumentType; label: string }[] = [
   { value: 'licencia', label: 'Licencia' },
   { value: 'factura_proveedor', label: 'Factura Proveedor' },
   { value: 'certificado', label: 'Certificado' },
+  { value: 'manipulacion_alimentos', label: 'Certificado de Manipulación de Alimentos' },
+  { value: 'bomberos', label: 'Permiso de Bomberos' },
+  { value: 'camara_comercio', label: 'Registro de Cámara de Comercio' },
+  { value: 'extintor', label: 'Servicio de Extintores' },
+  { value: 'sanidad', label: 'Certificado de Inspección Sanitaria' },
   { value: 'otro', label: 'Otro' },
 ]
 
@@ -51,6 +61,14 @@ export interface DocumentCreate {
   expiration_date?: string
   person_id?: string
   description?: string
+  custom_alert_windows?: number[]
+}
+
+export interface PermitPreset {
+  type_key: string
+  name: string
+  alert_windows: number[]
+  notification_channel: string
 }
 
 export interface DocumentUpdate {
