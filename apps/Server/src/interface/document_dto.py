@@ -16,6 +16,7 @@ class DocumentCreateDTO(BaseModel):
     expiration_date: Optional[date] = Field(None, description="Date the document expires")
     person_id: Optional[UUID] = Field(None, description="Person UUID linked to this document")
     description: Optional[str] = Field(None, description="Document description or notes")
+    custom_alert_windows: Optional[list[int]] = Field(None, description="Custom alert windows in days before expiration")
 
     @model_validator(mode="after")
     def validate_dates(self) -> "DocumentCreateDTO":
@@ -23,6 +24,10 @@ class DocumentCreateDTO(BaseModel):
         if self.issue_date is not None and self.expiration_date is not None:
             if self.expiration_date <= self.issue_date:
                 raise ValueError("expiration_date must be after issue_date")
+        if self.custom_alert_windows is not None:
+            for val in self.custom_alert_windows:
+                if val < 0:
+                    raise ValueError("custom_alert_windows values must be non-negative integers")
         return self
 
 

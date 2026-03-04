@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Typography,
@@ -29,8 +29,9 @@ import { usePersons } from '@/hooks/usePersons'
 import { TRDocumentForm } from '@/components/forms/TRDocumentForm'
 import { TRExpirationBadge } from '@/components/ui/TRExpirationBadge'
 import { TRNoRestaurantPrompt } from './TRNoRestaurantPrompt'
-import type { Document, DocumentCreate, DocumentUpdate, DocumentType, ExpirationStatus } from '@/types/document'
+import type { Document, DocumentCreate, DocumentUpdate, DocumentType, ExpirationStatus, PermitPreset } from '@/types/document'
 import { DOCUMENT_TYPES, EXPIRATION_STATUS_OPTIONS } from '@/types/document'
+import { documentService } from '@/services/documentService'
 
 const DOCUMENT_TYPE_LABELS: Record<string, string> = {
   contrato: 'Contrato',
@@ -39,6 +40,11 @@ const DOCUMENT_TYPE_LABELS: Record<string, string> = {
   licencia: 'Licencia',
   factura_proveedor: 'Factura Proveedor',
   certificado: 'Certificado',
+  manipulacion_alimentos: 'Cert. Manipulación de Alimentos',
+  bomberos: 'Permiso de Bomberos',
+  camara_comercio: 'Reg. Cámara de Comercio',
+  extintor: 'Servicio de Extintores',
+  sanidad: 'Cert. Inspección Sanitaria',
   otro: 'Otro',
 }
 
@@ -63,6 +69,13 @@ export const RestaurantOSDocumentsPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [permitPresets, setPermitPresets] = useState<PermitPreset[]>([])
+
+  useEffect(() => {
+    documentService.getPermitPresets()
+      .then(setPermitPresets)
+      .catch((err) => console.error('ERROR [RestaurantOSDocumentsPage]: Failed to fetch permit presets:', err))
+  }, [])
 
   // Loading state
   if (isLoading) {
@@ -316,6 +329,7 @@ export const RestaurantOSDocumentsPage: React.FC = () => {
               onCancel={handleCloseAddDialog}
               isSubmitting={isSubmitting}
               persons={persons}
+              permitPresets={permitPresets}
             />
           </Box>
         </DialogContent>
