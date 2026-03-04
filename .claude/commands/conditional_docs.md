@@ -577,3 +577,12 @@ This prompt helps you determine what documentation you should read based on the 
     - When navigating Legal Desk model relationships or backrefs
     - When adding new Legal Desk models or modifying existing ld_ model columns
     - When troubleshooting Legal Desk model imports, JSONB columns, or unique constraints
+
+- app_docs/feature-cbc09752-legaldesk-pydantic-dtos-enums.md
+  - Conditions:
+    - When working with Legal Desk Pydantic DTOs, enums, or data validation
+    - When implementing Legal Desk API endpoints that accept or return case, specialist, client, or deliverable data
+    - When working with apps/Server/src/interface/legaldesk_dto.py
+    - When implementing Legal Desk services or repositories that need input/output models
+    - When working with case status transitions or workflow validation
+    - When building the assignment engine, AI classification, or analytics dashboard DTOs
