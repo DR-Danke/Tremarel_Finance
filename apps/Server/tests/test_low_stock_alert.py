@@ -2,10 +2,9 @@
 
 from datetime import datetime
 from decimal import Decimal
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
-import pytest
 from sqlalchemy.orm import Session
 
 from src.core.services.inventory_service import InventoryService
