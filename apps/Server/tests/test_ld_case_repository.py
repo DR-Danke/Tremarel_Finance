@@ -10,7 +10,6 @@ from src.interface.legaldesk_dto import (
     CaseFilterDTO,
     CasePriority,
     CaseStatus,
-    CaseType,
     LegalDomain,
 )
 from src.repository.ld_case_repository import LdCaseRepository
