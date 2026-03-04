@@ -561,3 +561,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with cases, specialists, clients, or deliverables in the Legal Desk module
     - When troubleshooting Legal Desk foreign key constraints or table relationships
     - When implementing Wave 2+ of the Legal Desk module
+
+- app_docs/feature-7950ad87-legaldesk-seed-data.md
+  - Conditions:
+    - When working with Legal Desk seed data or test data setup
+    - When running or modifying apps/Server/database/seed_legaldesk_data.sql
+    - When setting up a development database for the Legal Desk module
+    - When testing the specialist assignment engine with sample data
+    - When adding new seed data records to Legal Desk tables
