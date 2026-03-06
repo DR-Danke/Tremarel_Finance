@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Summary - RentAndes Bank Reconciliation Feedback</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #2c3e50; line-height: 1.6; }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px 35px; border-radius: 12px 12px 0 0; }
+    .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .header .meta { font-size: 14px; opacity: 0.9; display: flex; gap: 20px; flex-wrap: wrap; }
+    .header .meta span { display: flex; align-items: center; gap: 6px; }
+    .content { background: white; padding: 35px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .section { margin-bottom: 32px; }
+    .section:last-child { margin-bottom: 0; }
+    .section-title { font-size: 18px; font-weight: 700; color: #1a365d; border-bottom: 3px solid #2b6cb0; padding-bottom: 8px; margin-bottom: 16px; }
+    .summary-box { background: #ebf4ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #1a365d; }
+    .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+    .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; }
+    .participant-card .name { font-weight: 600; color: #2d3748; font-size: 14px; }
+    .participant-card .role { color: #718096; font-size: 13px; margin-top: 2px; }
+    .discussion-item { margin-bottom: 16px; padding: 14px 18px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .discussion-item .topic { font-weight: 600; color: #2d3748; font-size: 15px; margin-bottom: 4px; }
+    .discussion-item .desc { color: #4a5568; font-size: 14px; }
+    .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .action-table th { background: #1a365d; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+    .action-table th:first-child { border-radius: 8px 0 0 0; }
+    .action-table th:last-child { border-radius: 0 8px 0 0; }
+    .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
+    .action-table tr:nth-child(even) { background: #f7fafc; }
+    .action-table tr:hover { background: #ebf4ff; }
+    .decision-list, .nextstep-list { list-style: none; padding: 0; }
+    .decision-list li, .nextstep-list li { padding: 10px 14px 10px 36px; position: relative; margin-bottom: 8px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; }
+    .decision-list li::before { content: "\2713"; position: absolute; left: 12px; top: 10px; color: #2b6cb0; font-weight: 700; font-size: 16px; }
+    .nextstep-list li::before { content: "\25B6"; position: absolute; left: 12px; top: 10px; color: #2b6cb0; font-size: 12px; }
+    .badge { display: inline-block; background: #2b6cb0; color: white; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .badge-gray { background: #a0aec0; }
+    .diagram-section { margin-top: 16px; }
+    .diagram-block { margin-bottom: 24px; }
+    .diagram-block h3 { font-size: 15px; font-weight: 600; color: #2d3748; margin-bottom: 10px; }
+    .mermaid { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; }
+    .footer { text-align: center; padding: 20px; color: #a0aec0; font-size: 12px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>RentAndes Bank Reconciliation Feedback Session</h1>
+      <div class="meta">
+        <span>Date: February 25, 2026</span>
+        <span>Company: RentAndes</span>
+        <span>Duration: ~8 minutes</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Executive Summary -->
+      <div class="section">
+        <div class="section-title">Executive Summary</div>
+        <div class="summary-box">
+          Feedback session on the bank reconciliation automation platform built for RentAndes. The current proof of concept covers Bancolombia and Davivienda, representing approximately 45-50% of total reconciliation volume. The team agreed to expand coverage to 3-4 additional banks to reach 70-80% automation, with the accounting team providing bank statements and exception analysis. Completing Davivienda support was identified as the success milestone to close the current project phase before moving to additional development.
+        </div>
+      </div>
+
+      <!-- Participants -->
+      <div class="section">
+        <div class="section-title">Participants</div>
+        <div class="participants-grid">
+          <div class="participant-card">
+            <div class="name">Daniel</div>
+            <div class="role">Developer / Technical Lead</div>
+          </div>
+          <div class="participant-card">
+            <div class="name">C&eacute;sar</div>
+            <div class="role">Project Coordinator</div>
+          </div>
+          <div class="participant-card">
+            <div class="name">Accounting Rep.</div>
+            <div class="role">Accounting Team Member</div>
+          </div>
+          <div class="participant-card">
+            <div class="name">&Aacute;lvaro <span class="badge badge-gray">Absent</span></div>
+            <div class="role">Stakeholder</div>
+          </div>
+          <div class="participant-card">
+            <div class="name">Florecita <span class="badge badge-gray">Absent</span></div>
+            <div class="role">Accounting Team Member</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discussion Points -->
+      <div class="section">
+        <div class="section-title">Discussion Points</div>
+
+        <div class="discussion-item">
+          <div class="topic">1. Bank Reconciliation Coverage Expansion</div>
+          <div class="desc">Discussed expanding the automated reconciliation platform beyond Bancolombia and Davivienda. Currently these two banks cover ~45-50% of reconciliation volume. The goal is to add 3-4 more significant banks to reach 70-80% coverage, following a Pareto approach to maximize impact.</div>
+        </div>
+
+        <div class="discussion-item">
+          <div class="topic">2. Project Success Criteria and Phase Closure</div>
+          <div class="desc">C&eacute;sar proposed completing the Davivienda implementation as the success milestone for the current project. After closure, feedback will be provided to &Aacute;lvaro, and discussions will begin on future development projects.</div>
+        </div>
+
+        <div class="discussion-item">
+          <div class="topic">3. Matching Rules and Exception Handling</div>
+          <div class="desc">Daniel explained that unmatched transactions should be reviewed by the accounting team to identify patterns. Custom matching rules can be programmed based on exceptions &mdash; e.g., payments split across specific dates, truncated names, or bank-specific formatting issues.</div>
+        </div>
+
+        <div class="discussion-item">
+          <div class="topic">4. Platform Auto-Detection Capabilities</div>
+          <div class="desc">The platform automatically detects the bank type from uploaded statements and recognizes the ERP auxiliary file. The workflow is simple: upload bank statement, upload auxiliary, run reconciliation, download Excel results.</div>
+        </div>
+
+        <div class="discussion-item">
+          <div class="topic">5. Multi-Bank Account Management</div>
+          <div class="desc">RentAndes manages approximately 20+ bank accounts. While many accounts share the same bank (and thus the same parsing rules), different banks require separate detection logic and potentially different reconciliation rules.</div>
+        </div>
+
+        <div class="discussion-item">
+          <div class="topic">6. Future Development Opportunities</div>
+          <div class="desc">Additional reconciliation types (financial statements, other reports) were mentioned as potential future projects, which would require new rule programming and constitute separate development efforts.</div>
+        </div>
+      </div>
+
+      <!-- Action Items -->
+      <div class="section">
+        <div class="section-title">Action Items</div>
+        <table class="action-table">
+          <thead>
+            <tr>
+              <th style="width: 50%;">Action</th>
+              <th style="width: 30%;">Owner</th>
+              <th style="width: 20%;">Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Send bank statements from additional banks to Daniel via the shared Google Drive</td>
+              <td><span class="badge">Accounting Team</span></td>
+              <td>TBD</td>
+            </tr>
+            <tr>
+              <td>Coordinate with Florecita to identify which additional banks have the highest transaction volume to prioritize</td>
+              <td><span class="badge">Accounting Team</span></td>
+              <td>TBD</td>
+            </tr>
+            <tr>
+              <td>Review unmatched reconciliation items and document patterns/reasons for non-matching</td>
+              <td><span class="badge">Accounting Team</span></td>
+              <td>TBD</td>
+            </tr>
+            <tr>
+              <td>Specify any bank-specific reconciliation rules when submitting new bank statement files</td>
+              <td><span class="badge">Accounting Team</span></td>
+              <td>TBD</td>
+            </tr>
+            <tr>
+              <td>Implement Davivienda bank support in the reconciliation platform</td>
+              <td><span class="badge">Daniel</span></td>
+              <td>TBD</td>
+            </tr>
+            <tr>
+              <td>Add detection and reconciliation support for additional banks once statements are received</td>
+              <td><span class="badge">Daniel</span></td>
+              <td>TBD</td>
+            </tr>
+            <tr>
+              <td>Provide feedback to &Aacute;lvaro on the automation proof of concept results after Davivienda is complete</td>
+              <td><span class="badge">C&eacute;sar</span></td>
+              <td>TBD</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Decisions -->
+      <div class="section">
+        <div class="section-title">Decisions Made</div>
+        <ul class="decision-list">
+          <li>Completing Davivienda implementation will serve as the success milestone for the current project phase</li>
+          <li>Expand bank coverage to 3-4 most significant banks to achieve 70-80% reconciliation automation</li>
+          <li>Accounting team will review unmatched items and provide exception patterns to improve matching rules</li>
+          <li>Additional bank statements will be shared via the same Google Drive used previously</li>
+          <li>Future reconciliation types (financial statements, etc.) will be scoped as separate projects</li>
+        </ul>
+      </div>
+
+      <!-- Next Steps -->
+      <div class="section">
+        <div class="section-title">Next Steps</div>
+        <ul class="nextstep-list">
+          <li>Accounting team to identify and prioritize additional banks by transaction volume (coordinate with Florecita)</li>
+          <li>Upload additional bank statements to the shared Google Drive</li>
+          <li>Daniel to implement Davivienda support and add detection for new banks</li>
+          <li>Accounting team to validate matched items and analyze unmatched exceptions</li>
+          <li>Share exception analysis with Daniel to create custom matching rules per bank</li>
+          <li>C&eacute;sar to provide project feedback to &Aacute;lvaro upon Davivienda completion</li>
+          <li>Begin scoping next development projects after current phase closure</li>
+        </ul>
+      </div>
+
+      <!-- Technical Architecture -->
+      <div class="section">
+        <div class="section-title">Technical Architecture</div>
+        <div class="diagram-section">
+
+          <div class="diagram-block">
+            <h3>Bank Reconciliation Platform Architecture</h3>
+            <pre class="mermaid">
+flowchart LR
+  subgraph UserInterface["User Interface"]
+    Upload["Upload Files"]
+    Download["Download Excel Report"]
+  end
+  subgraph DetectionEngine["Detection Engine"]
+    BankDetector["Bank Type Detector"]
+    ERPDetector["ERP Auxiliary Detector"]
+  end
+  subgraph ReconciliationEngine["Reconciliation Engine"]
+    RuleEngine["Matching Rule Engine"]
+    CustomRules["Custom Rules per Bank"]
+    Matcher["Transaction Matcher"]
+  end
+  subgraph SupportedBanks["Supported Banks"]
+    Bancolombia["Bancolombia"]
+    Davivienda["Davivienda"]
+    FutureBanks["Additional Banks"]
+  end
+  Upload --> BankDetector
+  Upload --> ERPDetector
+  BankDetector --> RuleEngine
+  ERPDetector --> RuleEngine
+  RuleEngine --> CustomRules
+  CustomRules --> Matcher
+  Matcher --> Download
+  Bancolombia -.-> BankDetector
+  Davivienda -.-> BankDetector
+  FutureBanks -.-> BankDetector
+            </pre>
+          </div>
+
+          <div class="diagram-block">
+            <h3>Reconciliation Process Flow</h3>
+            <pre class="mermaid">
+flowchart TD
+  A["User Uploads Bank Statement"] --> B["Auto-Detect Bank Type"]
+  A2["User Uploads ERP Auxiliary"] --> C["Auto-Detect ERP Format"]
+  B --> D["Load Bank-Specific Parsing Rules"]
+  C --> E["Parse Auxiliary Data"]
+  D --> F["Execute Reconciliation"]
+  E --> F
+  F --> G{"Transaction Matched?"}
+  G -->|Yes| H["Mark as Reconciled"]
+  G -->|No| I["Flag as Unmatched"]
+  H --> J["Generate Excel Report"]
+  I --> J
+  J --> K["User Downloads Report"]
+  I --> L["Accounting Reviews Exceptions"]
+  L --> M["Identify New Matching Rules"]
+  M --> N["Daniel Programs Custom Rules"]
+  N --> F
+            </pre>
+          </div>
+
+          <div class="diagram-block">
+            <h3>Bank Coverage Strategy</h3>
+            <pre class="mermaid">
+flowchart TD
+  Total["Total Reconciliation Volume: ~20+ Accounts"] --> Phase1
+  Total --> Phase2
+  Total --> Manual
+  subgraph Phase1["Phase 1 - Current: 45-50%"]
+    B1["Bancolombia"]
+    B2["Davivienda"]
+  end
+  subgraph Phase2["Phase 2 - Target: 70-80%"]
+    B3["Bank 3 - TBD"]
+    B4["Bank 4 - TBD"]
+  end
+  subgraph Manual["Manual: 20-30%"]
+    Other["Remaining Smaller Banks"]
+  end
+  Phase1 -->|"High difficulty, high volume"| Automated["Automated Reconciliation"]
+  Phase2 -->|"Lower difficulty, moderate volume"| Automated
+  Manual -->|"Low difficulty, high count"| ManualProcess["Accounting Team Manual Review"]
+            </pre>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Meeting summary generated automatically &bull; RentAndes Bank Reconciliation Feedback &bull; February 25, 2026
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

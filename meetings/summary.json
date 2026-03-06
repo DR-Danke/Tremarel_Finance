@@ -1,0 +1,109 @@
+{
+  "title": "RentAndes Bank Reconciliation Feedback Session",
+  "meeting_date": "2026-02-25",
+  "participants": [
+    {"name": "Daniel", "role": "Developer / Technical Lead"},
+    {"name": "César", "role": "Project Coordinator"},
+    {"name": "Speaker 3 (Accounting)", "role": "Accounting Team Member"},
+    {"name": "Álvaro", "role": "Stakeholder (mentioned, not present)"},
+    {"name": "Florecita", "role": "Accounting Team Member (mentioned, not present)"}
+  ],
+  "company_name": "RentAndes",
+  "contact_name": "César",
+  "contact_email": null,
+  "summary": "Feedback session on the bank reconciliation automation platform built for RentAndes. The current proof of concept covers Bancolombia and Davivienda, representing approximately 45-50% of total reconciliation volume. The team agreed to expand coverage to 3-4 additional banks to reach 70-80% automation, with the accounting team providing bank statements and exception analysis. Completing Davivienda support was identified as the success milestone to close the current project phase before moving to additional development.",
+  "discussion_points": [
+    {
+      "topic": "Bank Reconciliation Coverage Expansion",
+      "description": "Discussed expanding the automated reconciliation platform beyond Bancolombia and Davivienda. Currently these two banks cover ~45-50% of reconciliation volume. The goal is to add 3-4 more significant banks to reach 70-80% coverage, following a Pareto approach to maximize impact."
+    },
+    {
+      "topic": "Project Success Criteria and Phase Closure",
+      "description": "César proposed completing the Davivienda (vivienda) implementation as the success milestone for the current project. After closure, feedback will be provided to Álvaro, and discussions will begin on future development projects."
+    },
+    {
+      "topic": "Matching Rules and Exception Handling",
+      "description": "Daniel explained that unmatched transactions should be reviewed by the accounting team to identify patterns. Custom matching rules can be programmed based on exceptions — e.g., payments split across specific dates, truncated names, or bank-specific formatting issues."
+    },
+    {
+      "topic": "Platform Auto-Detection Capabilities",
+      "description": "The platform automatically detects the bank type from uploaded statements and recognizes the ERP auxiliary file. The workflow is simple: upload bank statement, upload auxiliary, run reconciliation, download Excel results."
+    },
+    {
+      "topic": "Multi-Bank Account Management",
+      "description": "RentAndes manages approximately 20+ bank accounts. While many accounts share the same bank (and thus the same parsing rules), different banks require separate detection logic and potentially different reconciliation rules."
+    },
+    {
+      "topic": "Future Development Opportunities",
+      "description": "Additional reconciliation types (financial statements, other reports) were mentioned as potential future projects, which would require new rule programming and constitute separate development efforts."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send bank statements from additional banks (beyond Bancolombia and Davivienda) to Daniel via the shared Google Drive",
+      "owner": "Speaker 3 (Accounting)",
+      "deadline": null
+    },
+    {
+      "description": "Coordinate with Florecita to identify which additional banks have the highest transaction volume to prioritize",
+      "owner": "Speaker 3 (Accounting)",
+      "deadline": null
+    },
+    {
+      "description": "Review unmatched reconciliation items and document patterns/reasons for non-matching to provide feedback on new rules",
+      "owner": "Speaker 3 (Accounting)",
+      "deadline": null
+    },
+    {
+      "description": "Specify any bank-specific reconciliation rules when submitting new bank statement files",
+      "owner": "Speaker 3 (Accounting)",
+      "deadline": null
+    },
+    {
+      "description": "Implement Davivienda (vivienda) bank support in the reconciliation platform",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Add detection and reconciliation support for additional banks once statements are received",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Provide feedback to Álvaro on the automation proof of concept results after Davivienda is complete",
+      "owner": "César",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Completing Davivienda implementation will serve as the success milestone for the current project phase",
+    "Expand bank coverage to 3-4 most significant banks to achieve 70-80% reconciliation automation",
+    "Accounting team will review unmatched items and provide exception patterns to improve matching rules",
+    "Additional bank statements will be shared via the same Google Drive used previously",
+    "Future reconciliation types (financial statements, etc.) will be scoped as separate projects"
+  ],
+  "next_steps": [
+    "Accounting team to identify and prioritize additional banks by transaction volume (coordinate with Florecita)",
+    "Upload additional bank statements to the shared Google Drive",
+    "Daniel to implement Davivienda support and add detection for new banks",
+    "Accounting team to validate matched items and analyze unmatched exceptions",
+    "Share exception analysis with Daniel to create custom matching rules per bank",
+    "César to provide project feedback to Álvaro upon Davivienda completion",
+    "Begin scoping next development projects after current phase closure"
+  ],
+  "diagrams": [
+    {
+      "title": "Bank Reconciliation Platform Architecture",
+      "mermaid_code": "flowchart LR\n  subgraph UserInterface[\"User Interface\"]\n    Upload[\"Upload Files\"]\n    Download[\"Download Excel Report\"]\n  end\n  subgraph DetectionEngine[\"Detection Engine\"]\n    BankDetector[\"Bank Type Detector\"]\n    ERPDetector[\"ERP Auxiliary Detector\"]\n  end\n  subgraph ReconciliationEngine[\"Reconciliation Engine\"]\n    RuleEngine[\"Matching Rule Engine\"]\n    CustomRules[\"Custom Rules per Bank\"]\n    Matcher[\"Transaction Matcher\"]\n  end\n  subgraph SupportedBanks[\"Supported Banks\"]\n    Bancolombia[\"Bancolombia\"]\n    Davivienda[\"Davivienda\"]\n    FutureBanks[\"Additional Banks\"]\n  end\n  Upload --> BankDetector\n  Upload --> ERPDetector\n  BankDetector --> RuleEngine\n  ERPDetector --> RuleEngine\n  RuleEngine --> CustomRules\n  CustomRules --> Matcher\n  Matcher --> Download\n  Bancolombia -.-> BankDetector\n  Davivienda -.-> BankDetector\n  FutureBanks -.-> BankDetector"
+    },
+    {
+      "title": "Reconciliation Process Flow",
+      "mermaid_code": "flowchart TD\n  A[\"User Uploads Bank Statement\"] --> B[\"Auto-Detect Bank Type\"]\n  A2[\"User Uploads ERP Auxiliary\"] --> C[\"Auto-Detect ERP Format\"]\n  B --> D[\"Load Bank-Specific Parsing Rules\"]\n  C --> E[\"Parse Auxiliary Data\"]\n  D --> F[\"Execute Reconciliation\"]\n  E --> F\n  F --> G{\"Transaction Matched?\"}\n  G -->|Yes| H[\"Mark as Reconciled\"]\n  G -->|No| I[\"Flag as Unmatched\"]\n  H --> J[\"Generate Excel Report\"]\n  I --> J\n  J --> K[\"User Downloads Report\"]\n  I --> L[\"Accounting Reviews Exceptions\"]\n  L --> M[\"Identify New Matching Rules\"]\n  M --> N[\"Daniel Programs Custom Rules\"]\n  N --> F"
+    },
+    {
+      "title": "Bank Coverage Strategy",
+      "mermaid_code": "flowchart TD\n  Total[\"Total Reconciliation Volume: ~20+ Accounts\"] --> Phase1\n  Total --> Phase2\n  Total --> Manual\n  subgraph Phase1[\"Phase 1 - Current: 45-50%\"]\n    B1[\"Bancolombia\"]\n    B2[\"Davivienda\"]\n  end\n  subgraph Phase2[\"Phase 2 - Target: 70-80%\"]\n    B3[\"Bank 3 - TBD\"]\n    B4[\"Bank 4 - TBD\"]\n  end\n  subgraph Manual[\"Manual: 20-30%\"]\n    Other[\"Remaining Smaller Banks\"]\n  end\n  Phase1 -->|\"High difficulty, high volume\"| Automated[\"Automated Reconciliation\"]\n  Phase2 -->|\"Lower difficulty, moderate volume\"| Automated\n  Manual -->|\"Low difficulty, high count\"| ManualProcess[\"Accounting Team Manual Review\"]"
+    }
+  ],
+  "html_output": "See meetings/summary.html"
+}
