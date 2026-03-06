@@ -22,18 +22,28 @@ import {
   Paper,
   IconButton,
   CircularProgress,
+  Chip,
+  TableSortLabel,
+  TablePagination,
 } from '@mui/material'
 import { Add, Edit, Delete, Check } from '@mui/icons-material'
+import PeopleIcon from '@mui/icons-material/People'
 import { useRestaurant } from '@/hooks/useRestaurant'
 import { usePersons } from '@/hooks/usePersons'
+import { useSnackbar } from '@/hooks/useSnackbar'
+import { useTableSort } from '@/hooks/useTableSort'
+import { useTablePagination } from '@/hooks/useTablePagination'
 import { TRPersonForm } from '@/components/forms/TRPersonForm'
+import { TRBreadcrumbs } from '@/components/ui/TRBreadcrumbs'
+import { TRTableSkeleton } from '@/components/ui/TRTableSkeleton'
+import { TREmptyState } from '@/components/ui/TREmptyState'
 import { TRNoRestaurantPrompt } from './TRNoRestaurantPrompt'
 import type { Person, PersonCreate, PersonUpdate } from '@/types/person'
 
 const PERSON_TYPE_LABELS: Record<string, string> = {
   employee: 'Empleado',
   supplier: 'Proveedor',
-  owner: 'Dueño',
+  owner: 'Dueno',
 }
 
 export const RestaurantOSPersonsPage: React.FC = () => {
@@ -47,6 +57,7 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     updatePerson,
     deletePerson,
   } = usePersons(currentRestaurant?.id ?? null)
+  const { showSnackbar } = useSnackbar()
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -63,7 +74,13 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     )
   }, [persons, searchQuery])
 
-  // Loading state
+  const { sorted, orderBy, order, onSort } = useTableSort<Person>(filteredPersons)
+  const { paginated, page, rowsPerPage, totalCount, onPageChange, onRowsPerPageChange } = useTablePagination(sorted)
+
+  // Summary stats
+  const employeeCount = persons.filter((p) => p.type === 'employee').length
+  const supplierCount = persons.filter((p) => p.type === 'supplier').length
+
   if (isLoading) {
     return (
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -73,43 +90,8 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     )
   }
 
-  // No restaurants
   if (restaurants.length === 0) {
     return <TRNoRestaurantPrompt />
-  }
-
-  const handleOpenAddDialog = () => {
-    console.log('INFO [RestaurantOSPersonsPage]: Opening add person dialog')
-    setIsAddDialogOpen(true)
-  }
-
-  const handleCloseAddDialog = () => {
-    console.log('INFO [RestaurantOSPersonsPage]: Closing add person dialog')
-    setIsAddDialogOpen(false)
-  }
-
-  const handleOpenEditDialog = (person: Person) => {
-    console.log('INFO [RestaurantOSPersonsPage]: Opening edit dialog for person:', person.id)
-    setSelectedPerson(person)
-    setIsEditDialogOpen(true)
-  }
-
-  const handleCloseEditDialog = () => {
-    console.log('INFO [RestaurantOSPersonsPage]: Closing edit person dialog')
-    setIsEditDialogOpen(false)
-    setSelectedPerson(null)
-  }
-
-  const handleOpenDeleteDialog = (person: Person) => {
-    console.log('INFO [RestaurantOSPersonsPage]: Opening delete dialog for person:', person.id)
-    setSelectedPerson(person)
-    setIsDeleteDialogOpen(true)
-  }
-
-  const handleCloseDeleteDialog = () => {
-    console.log('INFO [RestaurantOSPersonsPage]: Closing delete dialog')
-    setIsDeleteDialogOpen(false)
-    setSelectedPerson(null)
   }
 
   const handleCreatePerson = async (data: PersonCreate | PersonUpdate) => {
@@ -117,9 +99,11 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await createPerson(data as PersonCreate)
-      handleCloseAddDialog()
+      setIsAddDialogOpen(false)
+      showSnackbar('Persona creada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSPersonsPage]: Failed to create person:', err)
+      showSnackbar('Error al crear persona', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -131,9 +115,12 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await updatePerson(selectedPerson.id, data as PersonUpdate)
-      handleCloseEditDialog()
+      setIsEditDialogOpen(false)
+      setSelectedPerson(null)
+      showSnackbar('Persona actualizada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSPersonsPage]: Failed to update person:', err)
+      showSnackbar('Error al actualizar persona', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -145,9 +132,12 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await deletePerson(selectedPerson.id)
-      handleCloseDeleteDialog()
+      setIsDeleteDialogOpen(false)
+      setSelectedPerson(null)
+      showSnackbar('Persona eliminada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSPersonsPage]: Failed to delete person:', err)
+      showSnackbar('Error al eliminar persona', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -158,35 +148,53 @@ export const RestaurantOSPersonsPage: React.FC = () => {
     setFilters({ type: value ? (value as PersonCreate['type']) : undefined })
   }
 
+  const sortableHeader = (label: string, column: keyof Person) => (
+    <TableSortLabel
+      active={orderBy === column}
+      direction={orderBy === column ? order : 'asc'}
+      onClick={() => onSort(column)}
+    >
+      {label}
+    </TableSortLabel>
+  )
+
   return (
     <Box sx={{ p: 3 }}>
+      <TRBreadcrumbs
+        module="RestaurantOS"
+        moduleHref="/poc/restaurant-os"
+        restaurantName={currentRestaurant?.name}
+        currentPage="Personas"
+      />
+
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            Personas
-          </Typography>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            {currentRestaurant?.name}
-          </Typography>
-        </Box>
+        <Typography variant="h4" gutterBottom>
+          Personas
+        </Typography>
         <Button
           variant="contained"
           startIcon={<Add />}
-          onClick={handleOpenAddDialog}
+          onClick={() => setIsAddDialogOpen(true)}
         >
           Agregar Persona
         </Button>
       </Box>
 
-      {/* Error display */}
+      {/* Summary Bar */}
+      <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+        <Chip label={`${persons.length} total`} variant="outlined" />
+        <Chip label={`${employeeCount} empleados`} color="primary" variant="outlined" />
+        <Chip label={`${supplierCount} proveedores`} color="secondary" variant="outlined" />
+      </Box>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
 
-      {/* Filters row */}
+      {/* Filters */}
       <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
         <TextField
           label="Buscar por nombre"
@@ -206,78 +214,96 @@ export const RestaurantOSPersonsPage: React.FC = () => {
             <MenuItem value="">Todos</MenuItem>
             <MenuItem value="employee">Empleado</MenuItem>
             <MenuItem value="supplier">Proveedor</MenuItem>
-            <MenuItem value="owner">Dueño</MenuItem>
+            <MenuItem value="owner">Dueno</MenuItem>
           </Select>
         </FormControl>
       </Box>
 
-      {/* Data table */}
+      {/* Table */}
       {personsLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <TRTableSkeleton columns={7} />
       ) : filteredPersons.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            No se encontraron personas
-          </Typography>
-        </Paper>
+        <TREmptyState
+          icon={<PeopleIcon sx={{ fontSize: 64 }} />}
+          title="No se encontraron personas"
+          description="Agrega empleados y proveedores para tu restaurante"
+          actionLabel="Agregar Persona"
+          onAction={() => setIsAddDialogOpen(true)}
+        />
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Rol</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Correo Electrónico</TableCell>
-                <TableCell>WhatsApp</TableCell>
-                <TableCell>Push</TableCell>
-                <TableCell>Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredPersons.map((person) => (
-                <TableRow key={person.id}>
-                  <TableCell>{person.name}</TableCell>
-                  <TableCell>{person.role}</TableCell>
-                  <TableCell>{PERSON_TYPE_LABELS[person.type] || person.type}</TableCell>
-                  <TableCell>{person.email || '—'}</TableCell>
-                  <TableCell>{person.whatsapp || '—'}</TableCell>
-                  <TableCell>{person.push_token ? <Check fontSize="small" color="success" /> : '—'}</TableCell>
-                  <TableCell>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleOpenEditDialog(person)}
-                      aria-label="edit"
-                    >
-                      <Edit fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleOpenDeleteDialog(person)}
-                      aria-label="delete"
-                      color="error"
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </TableCell>
+        <>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{sortableHeader('Nombre', 'name')}</TableCell>
+                  <TableCell>{sortableHeader('Rol', 'role')}</TableCell>
+                  <TableCell>{sortableHeader('Tipo', 'type')}</TableCell>
+                  <TableCell>Correo Electronico</TableCell>
+                  <TableCell>WhatsApp</TableCell>
+                  <TableCell>Push</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {paginated.map((person) => (
+                  <TableRow key={person.id}>
+                    <TableCell>{person.name}</TableCell>
+                    <TableCell>{person.role}</TableCell>
+                    <TableCell>{PERSON_TYPE_LABELS[person.type] || person.type}</TableCell>
+                    <TableCell>{person.email || '—'}</TableCell>
+                    <TableCell>{person.whatsapp || '—'}</TableCell>
+                    <TableCell>{person.push_token ? <Check fontSize="small" color="success" /> : '—'}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setSelectedPerson(person)
+                          setIsEditDialogOpen(true)
+                        }}
+                        aria-label="edit"
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          setSelectedPerson(person)
+                          setIsDeleteDialogOpen(true)
+                        }}
+                        aria-label="delete"
+                        color="error"
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={(_, p) => onPageChange(p)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+            rowsPerPageOptions={[10, 25, 50]}
+            labelRowsPerPage="Filas por pagina"
+          />
+        </>
       )}
 
       {/* Add Dialog */}
-      <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Agregar Persona</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
             <TRPersonForm
               onSubmit={handleCreatePerson}
               restaurantId={currentRestaurant?.id || ''}
-              onCancel={handleCloseAddDialog}
+              onCancel={() => setIsAddDialogOpen(false)}
               isSubmitting={isSubmitting}
             />
           </Box>
@@ -285,7 +311,7 @@ export const RestaurantOSPersonsPage: React.FC = () => {
       </Dialog>
 
       {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isEditDialogOpen} onClose={() => { setIsEditDialogOpen(false); setSelectedPerson(null) }} maxWidth="sm" fullWidth>
         <DialogTitle>Editar Persona</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
@@ -294,7 +320,7 @@ export const RestaurantOSPersonsPage: React.FC = () => {
                 onSubmit={handleUpdatePerson}
                 initialData={selectedPerson}
                 restaurantId={currentRestaurant?.id || ''}
-                onCancel={handleCloseEditDialog}
+                onCancel={() => { setIsEditDialogOpen(false); setSelectedPerson(null) }}
                 isSubmitting={isSubmitting}
               />
             )}
@@ -302,16 +328,16 @@ export const RestaurantOSPersonsPage: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+      {/* Delete Dialog */}
+      <Dialog open={isDeleteDialogOpen} onClose={() => { setIsDeleteDialogOpen(false); setSelectedPerson(null) }}>
         <DialogTitle>Eliminar Persona</DialogTitle>
         <DialogContent>
           <Typography>
-            ¿Está seguro que desea eliminar esta persona?
+            ¿Esta seguro que desea eliminar esta persona?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} disabled={isSubmitting}>
+          <Button onClick={() => { setIsDeleteDialogOpen(false); setSelectedPerson(null) }} disabled={isSubmitting}>
             Cancelar
           </Button>
           <Button

@@ -20,24 +20,36 @@ import {
   CircularProgress,
   Chip,
   Drawer,
+  TableSortLabel,
+  TablePagination,
 } from '@mui/material'
 import { Add, Edit, Delete, PlayArrow } from '@mui/icons-material'
+import MenuBookIcon from '@mui/icons-material/MenuBook'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { useRestaurant } from '@/hooks/useRestaurant'
 import { useRecipes } from '@/hooks/useRecipes'
 import { useResources } from '@/hooks/useResources'
+import { useSnackbar } from '@/hooks/useSnackbar'
+import { useTableSort } from '@/hooks/useTableSort'
+import { useTablePagination } from '@/hooks/useTablePagination'
 import { TRRecipeForm } from '@/components/forms/TRRecipeForm'
 import { TRProfitabilityBadge } from '@/components/ui/TRProfitabilityBadge'
+import { TRBreadcrumbs } from '@/components/ui/TRBreadcrumbs'
+import { TRTableSkeleton } from '@/components/ui/TRTableSkeleton'
+import { TREmptyState } from '@/components/ui/TREmptyState'
+import { TRProduceRecipeDialog } from '@/components/forms/TRProduceRecipeDialog'
 import { TRNoRestaurantPrompt } from './TRNoRestaurantPrompt'
 import type { Recipe, RecipeCreate, RecipeUpdate } from '@/types/recipe'
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('es-CO', {
+const formatCurrency = (value: number): string =>
+  new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(value)
-}
+
+const PIE_COLORS = ['#1976d2', '#2e7d32', '#7b1fa2', '#00796b', '#d32f2f', '#f57c00', '#0288d1', '#388e3c']
 
 export const RestaurantOSRecipesPage: React.FC = () => {
   const { currentRestaurant, restaurants, isLoading } = useRestaurant()
@@ -51,6 +63,7 @@ export const RestaurantOSRecipesPage: React.FC = () => {
     produceRecipe,
   } = useRecipes(currentRestaurant?.id ?? null)
   const { resources } = useResources(currentRestaurant?.id ?? null)
+  const { showSnackbar } = useSnackbar()
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -60,7 +73,6 @@ export const RestaurantOSRecipesPage: React.FC = () => {
   const [drawerRecipe, setDrawerRecipe] = useState<Recipe | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [produceQuantity, setProduceQuantity] = useState('1')
 
   const filteredRecipes = useMemo(() => {
     if (!searchQuery) return recipes
@@ -69,7 +81,37 @@ export const RestaurantOSRecipesPage: React.FC = () => {
     )
   }, [recipes, searchQuery])
 
-  // Loading state
+  const { sorted, orderBy, order, onSort } = useTableSort<Recipe>(filteredRecipes)
+  const { paginated, page, rowsPerPage, totalCount, onPageChange, onRowsPerPageChange } = useTablePagination(sorted)
+
+  // Summary stats
+  const profitableCount = recipes.filter((r) => r.is_profitable).length
+  const unprofitableCount = recipes.filter((r) => !r.is_profitable).length
+  const avgMargin = recipes.length > 0
+    ? recipes.reduce((sum, r) => sum + Number(r.margin_percent), 0) / recipes.length
+    : 0
+
+  const resourceNameMap = useMemo(() => {
+    const map: Record<string, { name: string; last_unit_cost: number }> = {}
+    for (const r of resources) {
+      map[r.id] = { name: r.name, last_unit_cost: r.last_unit_cost }
+    }
+    return map
+  }, [resources])
+
+  // Pie chart data for drawer
+  const ingredientCostData = useMemo(() => {
+    if (!drawerRecipe) return []
+    return drawerRecipe.items.map((item) => {
+      const resource = resourceNameMap[item.resource_id]
+      const cost = (resource?.last_unit_cost ?? 0) * Number(item.quantity)
+      return {
+        name: resource?.name || item.resource_name || 'Desconocido',
+        value: cost,
+      }
+    }).filter((d) => d.value > 0)
+  }, [drawerRecipe, resourceNameMap])
+
   if (isLoading) {
     return (
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -79,82 +121,20 @@ export const RestaurantOSRecipesPage: React.FC = () => {
     )
   }
 
-  // No restaurants
   if (restaurants.length === 0) {
     return <TRNoRestaurantPrompt />
   }
-
-  // --- Dialog handlers ---
-
-  const handleOpenAddDialog = () => {
-    console.log('INFO [RestaurantOSRecipesPage]: Opening add recipe dialog')
-    setIsAddDialogOpen(true)
-  }
-
-  const handleCloseAddDialog = () => {
-    console.log('INFO [RestaurantOSRecipesPage]: Closing add recipe dialog')
-    setIsAddDialogOpen(false)
-  }
-
-  const handleOpenEditDialog = (recipe: Recipe) => {
-    console.log('INFO [RestaurantOSRecipesPage]: Opening edit dialog for recipe:', recipe.id)
-    setSelectedRecipe(recipe)
-    setIsEditDialogOpen(true)
-  }
-
-  const handleCloseEditDialog = () => {
-    console.log('INFO [RestaurantOSRecipesPage]: Closing edit recipe dialog')
-    setIsEditDialogOpen(false)
-    setSelectedRecipe(null)
-  }
-
-  const handleOpenDeleteDialog = (recipe: Recipe) => {
-    console.log('INFO [RestaurantOSRecipesPage]: Opening delete dialog for recipe:', recipe.id)
-    setSelectedRecipe(recipe)
-    setIsDeleteDialogOpen(true)
-  }
-
-  const handleCloseDeleteDialog = () => {
-    console.log('INFO [RestaurantOSRecipesPage]: Closing delete dialog')
-    setIsDeleteDialogOpen(false)
-    setSelectedRecipe(null)
-  }
-
-  const handleOpenProduceDialog = (recipe: Recipe) => {
-    console.log('INFO [RestaurantOSRecipesPage]: Opening produce dialog for recipe:', recipe.id)
-    setSelectedRecipe(recipe)
-    setProduceQuantity('1')
-    setIsProduceDialogOpen(true)
-  }
-
-  const handleCloseProduceDialog = () => {
-    console.log('INFO [RestaurantOSRecipesPage]: Closing produce dialog')
-    setIsProduceDialogOpen(false)
-    setSelectedRecipe(null)
-  }
-
-  // --- Detail drawer handlers ---
-
-  const handleOpenDrawer = (recipe: Recipe) => {
-    console.log('INFO [RestaurantOSRecipesPage]: Opening detail drawer for recipe:', recipe.id)
-    setDrawerRecipe(recipe)
-  }
-
-  const handleCloseDrawer = () => {
-    console.log('INFO [RestaurantOSRecipesPage]: Closing detail drawer')
-    setDrawerRecipe(null)
-  }
-
-  // --- CRUD handlers ---
 
   const handleCreateRecipe = async (data: RecipeCreate | RecipeUpdate) => {
     console.log('INFO [RestaurantOSRecipesPage]: Creating recipe')
     setIsSubmitting(true)
     try {
       await createRecipe(data as RecipeCreate)
-      handleCloseAddDialog()
+      setIsAddDialogOpen(false)
+      showSnackbar('Receta creada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSRecipesPage]: Failed to create recipe:', err)
+      showSnackbar('Error al crear receta', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -166,9 +146,12 @@ export const RestaurantOSRecipesPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await updateRecipe(selectedRecipe.id, data as RecipeUpdate)
-      handleCloseEditDialog()
+      setIsEditDialogOpen(false)
+      setSelectedRecipe(null)
+      showSnackbar('Receta actualizada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSRecipesPage]: Failed to update recipe:', err)
+      showSnackbar('Error al actualizar receta', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -180,61 +163,70 @@ export const RestaurantOSRecipesPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await deleteRecipe(selectedRecipe.id)
-      handleCloseDeleteDialog()
+      setIsDeleteDialogOpen(false)
+      setSelectedRecipe(null)
+      showSnackbar('Receta eliminada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSRecipesPage]: Failed to delete recipe:', err)
+      showSnackbar('Error al eliminar receta', 'error')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleProduce = async () => {
+  const handleProduce = async (qty: number) => {
     if (!selectedRecipe) return
-    const qty = parseInt(produceQuantity, 10)
-    if (isNaN(qty) || qty < 1) return
     console.log('INFO [RestaurantOSRecipesPage]: Producing recipe:', selectedRecipe.id, 'quantity:', qty)
     setIsSubmitting(true)
     try {
       await produceRecipe(selectedRecipe.id, qty)
-      handleCloseProduceDialog()
+      setIsProduceDialogOpen(false)
+      setSelectedRecipe(null)
+      showSnackbar('Produccion registrada', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSRecipesPage]: Failed to produce recipe:', err)
+      showSnackbar('Error al producir receta', 'error')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  // --- Build resource name map for drawer ---
-  const resourceNameMap = useMemo(() => {
-    const map: Record<string, { name: string; last_unit_cost: number }> = {}
-    for (const r of resources) {
-      map[r.id] = { name: r.name, last_unit_cost: r.last_unit_cost }
-    }
-    return map
-  }, [resources])
+  const sortableHeader = (label: string, column: keyof Recipe) => (
+    <TableSortLabel
+      active={orderBy === column}
+      direction={orderBy === column ? order : 'asc'}
+      onClick={() => onSort(column)}
+    >
+      {label}
+    </TableSortLabel>
+  )
 
   return (
     <Box sx={{ p: 3 }}>
+      <TRBreadcrumbs
+        module="RestaurantOS"
+        moduleHref="/poc/restaurant-os"
+        restaurantName={currentRestaurant?.name}
+        currentPage="Recetas"
+      />
+
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            Recetas
-          </Typography>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            {currentRestaurant?.name}
-          </Typography>
-        </Box>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={handleOpenAddDialog}
-        >
+        <Typography variant="h4" gutterBottom>
+          Recetas
+        </Typography>
+        <Button variant="contained" startIcon={<Add />} onClick={() => setIsAddDialogOpen(true)}>
           Agregar Receta
         </Button>
       </Box>
 
-      {/* Error display */}
+      {/* Summary Bar */}
+      <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+        <Chip label={`${profitableCount} rentables`} color="success" variant="outlined" />
+        <Chip label={`${unprofitableCount} no rentables`} color={unprofitableCount > 0 ? 'error' : 'default'} variant="outlined" />
+        <Chip label={`Margen promedio: ${avgMargin.toFixed(1)}%`} variant="outlined" />
+      </Box>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -252,104 +244,105 @@ export const RestaurantOSRecipesPage: React.FC = () => {
         />
       </Box>
 
-      {/* Data table */}
+      {/* Table */}
       {recipesLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <TRTableSkeleton columns={7} />
       ) : filteredRecipes.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            No se encontraron recetas
-          </Typography>
-        </Paper>
+        <TREmptyState
+          icon={<MenuBookIcon sx={{ fontSize: 64 }} />}
+          title="No se encontraron recetas"
+          description="Crea recetas con ingredientes para calcular costos y margenes"
+          actionLabel="Agregar Receta"
+          onAction={() => setIsAddDialogOpen(true)}
+        />
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Precio Venta</TableCell>
-                <TableCell>Costo Actual</TableCell>
-                <TableCell>Margen %</TableCell>
-                <TableCell>Rentabilidad</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRecipes.map((recipe) => (
-                <TableRow
-                  key={recipe.id}
-                  hover
-                  sx={{
-                    cursor: 'pointer',
-                    ...(!recipe.is_profitable && {
-                      backgroundColor: 'rgba(211, 47, 47, 0.04)',
-                    }),
-                  }}
-                  onClick={() => handleOpenDrawer(recipe)}
-                >
-                  <TableCell>{recipe.name}</TableCell>
-                  <TableCell>{formatCurrency(recipe.sale_price)}</TableCell>
-                  <TableCell>{formatCurrency(recipe.current_cost)}</TableCell>
-                  <TableCell>{Number(recipe.margin_percent).toFixed(1)}%</TableCell>
-                  <TableCell>
-                    <TRProfitabilityBadge
-                      marginPercent={Number(recipe.margin_percent)}
-                      isProfitable={recipe.is_profitable}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    {recipe.is_active ? (
-                      <Chip label="Activa" color="success" size="small" />
-                    ) : (
-                      <Chip label="Inactiva" size="small" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenEditDialog(recipe)
-                      }}
-                      aria-label="edit"
-                    >
-                      <Edit fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenDeleteDialog(recipe)
-                      }}
-                      aria-label="delete"
-                      color="error"
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenProduceDialog(recipe)
-                      }}
-                      aria-label="produce"
-                      color="primary"
-                    >
-                      <PlayArrow fontSize="small" />
-                    </IconButton>
-                  </TableCell>
+        <>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{sortableHeader('Nombre', 'name')}</TableCell>
+                  <TableCell>{sortableHeader('Precio Venta', 'sale_price')}</TableCell>
+                  <TableCell>{sortableHeader('Costo Actual', 'current_cost')}</TableCell>
+                  <TableCell>{sortableHeader('Margen %', 'margin_percent')}</TableCell>
+                  <TableCell>Rentabilidad</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {paginated.map((recipe) => (
+                  <TableRow
+                    key={recipe.id}
+                    hover
+                    sx={{
+                      cursor: 'pointer',
+                      ...(!recipe.is_profitable && { backgroundColor: 'rgba(211, 47, 47, 0.04)' }),
+                    }}
+                    onClick={() => setDrawerRecipe(recipe)}
+                  >
+                    <TableCell>{recipe.name}</TableCell>
+                    <TableCell>{formatCurrency(recipe.sale_price)}</TableCell>
+                    <TableCell>{formatCurrency(recipe.current_cost)}</TableCell>
+                    <TableCell>{Number(recipe.margin_percent).toFixed(1)}%</TableCell>
+                    <TableCell>
+                      <TRProfitabilityBadge
+                        marginPercent={Number(recipe.margin_percent)}
+                        isProfitable={recipe.is_profitable}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {recipe.is_active ? (
+                        <Chip label="Activa" color="success" size="small" />
+                      ) : (
+                        <Chip label="Inactiva" size="small" />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); setSelectedRecipe(recipe); setIsEditDialogOpen(true) }}
+                        aria-label="edit"
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); setSelectedRecipe(recipe); setIsDeleteDialogOpen(true) }}
+                        aria-label="delete"
+                        color="error"
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); setSelectedRecipe(recipe); setIsProduceDialogOpen(true) }}
+                        aria-label="produce"
+                        color="primary"
+                      >
+                        <PlayArrow fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={(_, p) => onPageChange(p)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+            rowsPerPageOptions={[10, 25, 50]}
+            labelRowsPerPage="Filas por pagina"
+          />
+        </>
       )}
 
       {/* Add Recipe Dialog */}
-      <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Agregar Receta</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
@@ -357,7 +350,7 @@ export const RestaurantOSRecipesPage: React.FC = () => {
               onSubmit={handleCreateRecipe}
               restaurantId={currentRestaurant?.id || ''}
               resources={resources}
-              onCancel={handleCloseAddDialog}
+              onCancel={() => setIsAddDialogOpen(false)}
               isSubmitting={isSubmitting}
             />
           </Box>
@@ -365,7 +358,7 @@ export const RestaurantOSRecipesPage: React.FC = () => {
       </Dialog>
 
       {/* Edit Recipe Dialog */}
-      <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isEditDialogOpen} onClose={() => { setIsEditDialogOpen(false); setSelectedRecipe(null) }} maxWidth="sm" fullWidth>
         <DialogTitle>Editar Receta</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
@@ -375,7 +368,7 @@ export const RestaurantOSRecipesPage: React.FC = () => {
                 initialData={selectedRecipe}
                 restaurantId={currentRestaurant?.id || ''}
                 resources={resources}
-                onCancel={handleCloseEditDialog}
+                onCancel={() => { setIsEditDialogOpen(false); setSelectedRecipe(null) }}
                 isSubmitting={isSubmitting}
               />
             )}
@@ -383,16 +376,16 @@ export const RestaurantOSRecipesPage: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+      {/* Delete Dialog */}
+      <Dialog open={isDeleteDialogOpen} onClose={() => { setIsDeleteDialogOpen(false); setSelectedRecipe(null) }}>
         <DialogTitle>Eliminar Receta</DialogTitle>
         <DialogContent>
           <Typography>
-            ¿Está seguro que desea eliminar esta receta?
+            ¿Esta seguro que desea eliminar esta receta?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} disabled={isSubmitting}>
+          <Button onClick={() => { setIsDeleteDialogOpen(false); setSelectedRecipe(null) }} disabled={isSubmitting}>
             Cancelar
           </Button>
           <Button
@@ -406,42 +399,21 @@ export const RestaurantOSRecipesPage: React.FC = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Produce Dialog */}
-      <Dialog open={isProduceDialogOpen} onClose={handleCloseProduceDialog}>
-        <DialogTitle>Producir</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mb: 2 }}>
-            ¿Cuántas porciones producir?
-          </Typography>
-          <TextField
-            label="Cantidad"
-            type="number"
-            value={produceQuantity}
-            onChange={(e) => setProduceQuantity(e.target.value)}
-            fullWidth
-            inputProps={{ min: 1, step: 1 }}
-            disabled={isSubmitting}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseProduceDialog} disabled={isSubmitting}>
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleProduce}
-            variant="contained"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? <CircularProgress size={24} /> : 'Producir'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Enhanced Produce Dialog */}
+      <TRProduceRecipeDialog
+        open={isProduceDialogOpen}
+        recipe={selectedRecipe}
+        resources={resources}
+        isSubmitting={isSubmitting}
+        onClose={() => { setIsProduceDialogOpen(false); setSelectedRecipe(null) }}
+        onProduce={handleProduce}
+      />
 
       {/* Detail Drawer */}
       <Drawer
         anchor="right"
         open={!!drawerRecipe}
-        onClose={handleCloseDrawer}
+        onClose={() => setDrawerRecipe(null)}
         PaperProps={{ sx: { width: { xs: '100%', sm: 500 } } }}
       >
         {drawerRecipe && (
@@ -478,7 +450,7 @@ export const RestaurantOSRecipesPage: React.FC = () => {
                 </Typography>
               </Paper>
             ) : (
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} sx={{ mb: 3 }}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -509,6 +481,33 @@ export const RestaurantOSRecipesPage: React.FC = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
+            )}
+
+            {/* Ingredient Cost Breakdown Chart */}
+            {ingredientCostData.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Distribucion de Costos
+                </Typography>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={ingredientCostData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      label={(entry) => entry.name}
+                    >
+                      {ingredientCostData.map((_, idx) => (
+                        <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
             )}
           </Box>
         )}

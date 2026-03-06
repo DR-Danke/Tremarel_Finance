@@ -24,14 +24,24 @@ import {
   CircularProgress,
   Chip,
   Drawer,
+  LinearProgress,
+  TableSortLabel,
+  TablePagination,
 } from '@mui/material'
 import { Add, Edit, Delete, Visibility } from '@mui/icons-material'
+import InventoryIcon from '@mui/icons-material/Inventory'
 import { useRestaurant } from '@/hooks/useRestaurant'
 import { useResources } from '@/hooks/useResources'
 import { useInventoryMovements } from '@/hooks/useInventoryMovements'
 import { usePersons } from '@/hooks/usePersons'
+import { useSnackbar } from '@/hooks/useSnackbar'
+import { useTableSort } from '@/hooks/useTableSort'
+import { useTablePagination } from '@/hooks/useTablePagination'
 import { TRResourceForm } from '@/components/forms/TRResourceForm'
 import { TRInventoryMovementForm } from '@/components/forms/TRInventoryMovementForm'
+import { TRBreadcrumbs } from '@/components/ui/TRBreadcrumbs'
+import { TRTableSkeleton } from '@/components/ui/TRTableSkeleton'
+import { TREmptyState } from '@/components/ui/TREmptyState'
 import { TRNoRestaurantPrompt } from './TRNoRestaurantPrompt'
 import type { Resource, ResourceCreate, ResourceUpdate, InventoryMovementCreate } from '@/types/resource'
 import {
@@ -40,20 +50,18 @@ import {
   MOVEMENT_REASON_LABELS,
 } from '@/types/resource'
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('es-CO', {
+const formatCurrency = (value: number): string =>
+  new Intl.NumberFormat('es-CO', {
     style: 'currency',
     currency: 'COP',
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(value)
-}
 
 const formatDate = (dateStr: string | null): string => {
   if (!dateStr) return '—'
   try {
-    const d = new Date(dateStr)
-    return d.toLocaleDateString('es-CO', {
+    return new Date(dateStr).toLocaleDateString('es-CO', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -63,6 +71,17 @@ const formatDate = (dateStr: string | null): string => {
   } catch {
     return '—'
   }
+}
+
+const getStockRatio = (current: number, minimum: number): number => {
+  if (minimum <= 0) return 100
+  return Math.min((current / minimum) * 100, 200)
+}
+
+const getStockColor = (ratio: number): 'error' | 'warning' | 'success' => {
+  if (ratio < 100) return 'error'
+  if (ratio < 150) return 'warning'
+  return 'success'
 }
 
 export const RestaurantOSResourcesPage: React.FC = () => {
@@ -86,6 +105,7 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     clearMovements,
   } = useInventoryMovements()
   const { persons } = usePersons(currentRestaurant?.id ?? null)
+  const { showSnackbar } = useSnackbar()
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -96,6 +116,8 @@ export const RestaurantOSResourcesPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  const [moveDateFrom, setMoveDateFrom] = useState('')
+  const [moveDateTo, setMoveDateTo] = useState('')
 
   const filteredResources = useMemo(() => {
     if (!searchQuery) return resources
@@ -103,6 +125,9 @@ export const RestaurantOSResourcesPage: React.FC = () => {
       r.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
   }, [resources, searchQuery])
+
+  const { sorted, orderBy, order, onSort } = useTableSort<Resource>(filteredResources)
+  const { paginated, page, rowsPerPage, totalCount, onPageChange, onRowsPerPageChange } = useTablePagination(sorted)
 
   const personsMap = useMemo(() => {
     const map: Record<string, string> = {}
@@ -112,7 +137,22 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     return map
   }, [persons])
 
-  // Loading state
+  // Summary stats
+  const lowStockCount = resources.filter((r) => r.is_low_stock).length
+  const totalInventoryValue = resources.reduce((sum, r) => sum + r.current_stock * r.last_unit_cost, 0)
+
+  // Filtered movements for drawer
+  const filteredMovements = useMemo(() => {
+    let filtered = movements
+    if (moveDateFrom) {
+      filtered = filtered.filter((m) => m.date && m.date >= moveDateFrom)
+    }
+    if (moveDateTo) {
+      filtered = filtered.filter((m) => m.date && m.date <= moveDateTo + 'T23:59:59')
+    }
+    return filtered
+  }, [movements, moveDateFrom, moveDateTo])
+
   if (isLoading) {
     return (
       <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -122,81 +162,33 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     )
   }
 
-  // No restaurants
   if (restaurants.length === 0) {
     return <TRNoRestaurantPrompt />
   }
 
-  // --- Dialog handlers ---
-
-  const handleOpenAddDialog = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Opening add resource dialog')
-    setIsAddDialogOpen(true)
-  }
-
-  const handleCloseAddDialog = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Closing add resource dialog')
-    setIsAddDialogOpen(false)
-  }
-
-  const handleOpenEditDialog = (resource: Resource) => {
-    console.log('INFO [RestaurantOSResourcesPage]: Opening edit dialog for resource:', resource.id)
-    setSelectedResource(resource)
-    setIsEditDialogOpen(true)
-  }
-
-  const handleCloseEditDialog = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Closing edit resource dialog')
-    setIsEditDialogOpen(false)
-    setSelectedResource(null)
-  }
-
-  const handleOpenDeleteDialog = (resource: Resource) => {
-    console.log('INFO [RestaurantOSResourcesPage]: Opening delete dialog for resource:', resource.id)
-    setSelectedResource(resource)
-    setIsDeleteDialogOpen(true)
-  }
-
-  const handleCloseDeleteDialog = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Closing delete dialog')
-    setIsDeleteDialogOpen(false)
-    setSelectedResource(null)
-  }
-
-  const handleOpenMovementDialog = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Opening movement dialog')
-    setIsMovementDialogOpen(true)
-  }
-
-  const handleCloseMovementDialog = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Closing movement dialog')
-    setIsMovementDialogOpen(false)
-  }
-
-  // --- Detail drawer handlers ---
-
   const handleOpenDrawer = (resource: Resource) => {
     console.log('INFO [RestaurantOSResourcesPage]: Opening detail drawer for resource:', resource.id)
     setDrawerResource(resource)
+    setMoveDateFrom('')
+    setMoveDateTo('')
     fetchMovementsByResource(resource.id)
   }
 
   const handleCloseDrawer = () => {
-    console.log('INFO [RestaurantOSResourcesPage]: Closing detail drawer')
     setDrawerResource(null)
     clearMovements()
   }
-
-  // --- CRUD handlers ---
 
   const handleCreateResource = async (data: ResourceCreate | ResourceUpdate) => {
     console.log('INFO [RestaurantOSResourcesPage]: Creating resource')
     setIsSubmitting(true)
     try {
       await createResource(data as ResourceCreate)
-      handleCloseAddDialog()
+      setIsAddDialogOpen(false)
+      showSnackbar('Recurso creado', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSResourcesPage]: Failed to create resource:', err)
+      showSnackbar('Error al crear recurso', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -208,9 +200,12 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await updateResource(selectedResource.id, data as ResourceUpdate)
-      handleCloseEditDialog()
+      setIsEditDialogOpen(false)
+      setSelectedResource(null)
+      showSnackbar('Recurso actualizado', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSResourcesPage]: Failed to update resource:', err)
+      showSnackbar('Error al actualizar recurso', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -222,9 +217,12 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await deleteResource(selectedResource.id)
-      handleCloseDeleteDialog()
+      setIsDeleteDialogOpen(false)
+      setSelectedResource(null)
+      showSnackbar('Recurso eliminado', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSResourcesPage]: Failed to delete resource:', err)
+      showSnackbar('Error al eliminar recurso', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -235,15 +233,15 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     setIsSubmitting(true)
     try {
       await createMovement(data)
-      handleCloseMovementDialog()
-      // Refresh resources since stock changed
+      setIsMovementDialogOpen(false)
       await fetchResources()
-      // Refresh drawer movements if open for same resource
       if (drawerResource && data.resource_id === drawerResource.id) {
         await fetchMovementsByResource(drawerResource.id)
       }
+      showSnackbar('Movimiento registrado', 'success')
     } catch (err) {
       console.error('ERROR [RestaurantOSResourcesPage]: Failed to create movement:', err)
+      showSnackbar('Error al registrar movimiento', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -254,43 +252,58 @@ export const RestaurantOSResourcesPage: React.FC = () => {
     setFilters({ type: value ? (value as ResourceCreate['type']) : undefined })
   }
 
+  const sortableHeader = (label: string, column: keyof Resource) => (
+    <TableSortLabel
+      active={orderBy === column}
+      direction={orderBy === column ? order : 'asc'}
+      onClick={() => onSort(column)}
+    >
+      {label}
+    </TableSortLabel>
+  )
+
   return (
     <Box sx={{ p: 3 }}>
+      <TRBreadcrumbs
+        module="RestaurantOS"
+        moduleHref="/poc/restaurant-os"
+        restaurantName={currentRestaurant?.name}
+        currentPage="Recursos / Inventario"
+      />
+
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Box>
-          <Typography variant="h4" gutterBottom>
-            Recursos / Inventario
-          </Typography>
-          <Typography variant="h6" color="text.secondary" gutterBottom>
-            {currentRestaurant?.name}
-          </Typography>
-        </Box>
+        <Typography variant="h4" gutterBottom>
+          Recursos / Inventario
+        </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={handleOpenAddDialog}
-          >
+          <Button variant="contained" startIcon={<Add />} onClick={() => setIsAddDialogOpen(true)}>
             Agregar Recurso
           </Button>
-          <Button
-            variant="outlined"
-            onClick={handleOpenMovementDialog}
-          >
+          <Button variant="outlined" onClick={() => setIsMovementDialogOpen(true)}>
             Registrar Movimiento
           </Button>
         </Box>
       </Box>
 
-      {/* Error display */}
+      {/* Summary Bar */}
+      <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+        <Chip label={`${resources.length} total`} variant="outlined" />
+        <Chip
+          label={`${lowStockCount} stock bajo`}
+          color={lowStockCount > 0 ? 'error' : 'success'}
+          variant="outlined"
+        />
+        <Chip label={`Valor inventario: ${formatCurrency(totalInventoryValue)}`} variant="outlined" />
+      </Box>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
 
-      {/* Filters row */}
+      {/* Filters */}
       <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
         <TextField
           label="Buscar por nombre"
@@ -315,102 +328,105 @@ export const RestaurantOSResourcesPage: React.FC = () => {
         </FormControl>
       </Box>
 
-      {/* Data table */}
+      {/* Table */}
       {resourcesLoading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <TRTableSkeleton columns={8} />
       ) : filteredResources.length === 0 ? (
-        <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Typography color="text.secondary">
-            No se encontraron recursos
-          </Typography>
-        </Paper>
+        <TREmptyState
+          icon={<InventoryIcon sx={{ fontSize: 64 }} />}
+          title="No se encontraron recursos"
+          description="Agrega productos, activos y servicios para tu inventario"
+          actionLabel="Agregar Recurso"
+          onAction={() => setIsAddDialogOpen(true)}
+        />
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Unidad</TableCell>
-                <TableCell>Stock Actual</TableCell>
-                <TableCell>Stock Mínimo</TableCell>
-                <TableCell>Último Costo</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredResources.map((resource) => (
-                <TableRow
-                  key={resource.id}
-                  hover
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => handleOpenDrawer(resource)}
-                >
-                  <TableCell>{resource.name}</TableCell>
-                  <TableCell>{RESOURCE_TYPE_LABELS[resource.type] || resource.type}</TableCell>
-                  <TableCell>{resource.unit}</TableCell>
-                  <TableCell>{resource.current_stock}</TableCell>
-                  <TableCell>{resource.minimum_stock}</TableCell>
-                  <TableCell>{formatCurrency(resource.last_unit_cost)}</TableCell>
-                  <TableCell>
-                    {resource.is_low_stock ? (
-                      <Chip label="Stock Bajo" color="error" size="small" />
-                    ) : (
-                      <Chip label="OK" color="success" size="small" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenDrawer(resource)
-                      }}
-                      aria-label="view"
-                    >
-                      <Visibility fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenEditDialog(resource)
-                      }}
-                      aria-label="edit"
-                    >
-                      <Edit fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenDeleteDialog(resource)
-                      }}
-                      aria-label="delete"
-                      color="error"
-                    >
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </TableCell>
+        <>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>{sortableHeader('Nombre', 'name')}</TableCell>
+                  <TableCell>{sortableHeader('Tipo', 'type')}</TableCell>
+                  <TableCell>Unidad</TableCell>
+                  <TableCell>{sortableHeader('Stock Actual', 'current_stock')}</TableCell>
+                  <TableCell>Stock Minimo</TableCell>
+                  <TableCell>{sortableHeader('Ultimo Costo', 'last_unit_cost')}</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {paginated.map((resource) => (
+                  <TableRow
+                    key={resource.id}
+                    hover
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleOpenDrawer(resource)}
+                  >
+                    <TableCell>{resource.name}</TableCell>
+                    <TableCell>{RESOURCE_TYPE_LABELS[resource.type] || resource.type}</TableCell>
+                    <TableCell>{resource.unit}</TableCell>
+                    <TableCell>{resource.current_stock}</TableCell>
+                    <TableCell>{resource.minimum_stock}</TableCell>
+                    <TableCell>{formatCurrency(resource.last_unit_cost)}</TableCell>
+                    <TableCell>
+                      {resource.is_low_stock ? (
+                        <Chip label="Stock Bajo" color="error" size="small" />
+                      ) : (
+                        <Chip label="OK" color="success" size="small" />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); handleOpenDrawer(resource) }}
+                        aria-label="view"
+                      >
+                        <Visibility fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); setSelectedResource(resource); setIsEditDialogOpen(true) }}
+                        aria-label="edit"
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); setSelectedResource(resource); setIsDeleteDialogOpen(true) }}
+                        aria-label="delete"
+                        color="error"
+                      >
+                        <Delete fontSize="small" />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={page}
+            onPageChange={(_, p) => onPageChange(p)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value, 10))}
+            rowsPerPageOptions={[10, 25, 50]}
+            labelRowsPerPage="Filas por pagina"
+          />
+        </>
       )}
 
       {/* Add Resource Dialog */}
-      <Dialog open={isAddDialogOpen} onClose={handleCloseAddDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isAddDialogOpen} onClose={() => setIsAddDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Agregar Recurso</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
             <TRResourceForm
               onSubmit={handleCreateResource}
               restaurantId={currentRestaurant?.id || ''}
-              onCancel={handleCloseAddDialog}
+              onCancel={() => setIsAddDialogOpen(false)}
               isSubmitting={isSubmitting}
             />
           </Box>
@@ -418,7 +434,7 @@ export const RestaurantOSResourcesPage: React.FC = () => {
       </Dialog>
 
       {/* Edit Resource Dialog */}
-      <Dialog open={isEditDialogOpen} onClose={handleCloseEditDialog} maxWidth="sm" fullWidth>
+      <Dialog open={isEditDialogOpen} onClose={() => { setIsEditDialogOpen(false); setSelectedResource(null) }} maxWidth="sm" fullWidth>
         <DialogTitle>Editar Recurso</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
@@ -427,7 +443,7 @@ export const RestaurantOSResourcesPage: React.FC = () => {
                 onSubmit={handleUpdateResource}
                 initialData={selectedResource}
                 restaurantId={currentRestaurant?.id || ''}
-                onCancel={handleCloseEditDialog}
+                onCancel={() => { setIsEditDialogOpen(false); setSelectedResource(null) }}
                 isSubmitting={isSubmitting}
               />
             )}
@@ -435,8 +451,8 @@ export const RestaurantOSResourcesPage: React.FC = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Register Movement Dialog */}
-      <Dialog open={isMovementDialogOpen} onClose={handleCloseMovementDialog} maxWidth="sm" fullWidth>
+      {/* Movement Dialog */}
+      <Dialog open={isMovementDialogOpen} onClose={() => setIsMovementDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Registrar Movimiento</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
@@ -445,23 +461,23 @@ export const RestaurantOSResourcesPage: React.FC = () => {
               resources={resources}
               persons={persons}
               restaurantId={currentRestaurant?.id || ''}
-              onCancel={handleCloseMovementDialog}
+              onCancel={() => setIsMovementDialogOpen(false)}
               isSubmitting={isSubmitting}
             />
           </Box>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+      {/* Delete Dialog */}
+      <Dialog open={isDeleteDialogOpen} onClose={() => { setIsDeleteDialogOpen(false); setSelectedResource(null) }}>
         <DialogTitle>Eliminar Recurso</DialogTitle>
         <DialogContent>
           <Typography>
-            ¿Está seguro que desea eliminar este recurso?
+            ¿Esta seguro que desea eliminar este recurso?
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} disabled={isSubmitting}>
+          <Button onClick={() => { setIsDeleteDialogOpen(false); setSelectedResource(null) }} disabled={isSubmitting}>
             Cancelar
           </Button>
           <Button
@@ -498,11 +514,36 @@ export const RestaurantOSResourcesPage: React.FC = () => {
                 Stock Actual: {drawerResource.current_stock}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Stock Mínimo: {drawerResource.minimum_stock}
+                Stock Minimo: {drawerResource.minimum_stock}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Último Costo: {formatCurrency(drawerResource.last_unit_cost)}
+                Ultimo Costo: {formatCurrency(drawerResource.last_unit_cost)}
               </Typography>
+
+              {/* Stock Level Visualization */}
+              <Box sx={{ mt: 2, mb: 1 }}>
+                <Typography variant="caption" color="text.secondary">
+                  Nivel de Stock
+                </Typography>
+                {(() => {
+                  const ratio = getStockRatio(drawerResource.current_stock, drawerResource.minimum_stock)
+                  const color = getStockColor(ratio)
+                  return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <LinearProgress
+                        variant="determinate"
+                        value={Math.min(ratio, 100)}
+                        color={color}
+                        sx={{ flex: 1, height: 10, borderRadius: 5 }}
+                      />
+                      <Typography variant="caption" fontWeight={600}>
+                        {Math.round(ratio)}%
+                      </Typography>
+                    </Box>
+                  )
+                })()}
+              </Box>
+
               <Box sx={{ mt: 1 }}>
                 {drawerResource.is_low_stock ? (
                   <Chip label="Stock Bajo" color="error" size="small" />
@@ -516,6 +557,28 @@ export const RestaurantOSResourcesPage: React.FC = () => {
               Historial de Movimientos
             </Typography>
 
+            {/* Movement Date Filters */}
+            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+              <TextField
+                label="Desde"
+                type="date"
+                size="small"
+                value={moveDateFrom}
+                onChange={(e) => setMoveDateFrom(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+              <TextField
+                label="Hasta"
+                type="date"
+                size="small"
+                value={moveDateTo}
+                onChange={(e) => setMoveDateTo(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            </Box>
+
             {movementsError && (
               <Alert severity="error" sx={{ mb: 2 }}>
                 {movementsError}
@@ -526,7 +589,7 @@ export const RestaurantOSResourcesPage: React.FC = () => {
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
                 <CircularProgress />
               </Box>
-            ) : movements.length === 0 ? (
+            ) : filteredMovements.length === 0 ? (
               <Paper sx={{ p: 3, textAlign: 'center' }}>
                 <Typography color="text.secondary">
                   No hay movimientos registrados
@@ -540,13 +603,13 @@ export const RestaurantOSResourcesPage: React.FC = () => {
                       <TableCell>Fecha</TableCell>
                       <TableCell>Tipo</TableCell>
                       <TableCell>Cantidad</TableCell>
-                      <TableCell>Razón</TableCell>
+                      <TableCell>Razon</TableCell>
                       <TableCell>Persona</TableCell>
                       <TableCell>Notas</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {movements.map((movement) => (
+                    {filteredMovements.map((movement) => (
                       <TableRow key={movement.id}>
                         <TableCell>{formatDate(movement.date)}</TableCell>
                         <TableCell>

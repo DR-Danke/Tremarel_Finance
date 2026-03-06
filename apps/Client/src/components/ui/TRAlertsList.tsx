@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Card,
   CardContent,
@@ -6,6 +7,7 @@ import {
   Divider,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Typography,
@@ -33,15 +35,29 @@ const getDaysUntil = (dateStr: string | null): number | null => {
   return Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 }
 
-/**
- * TRAlertsList displays three alert sections: document expirations, low stock items, and pending alerts.
- */
+const getUrgencyBgColor = (days: number | null): string => {
+  if (days === null) return 'transparent'
+  if (days < 3) return 'rgba(211, 47, 47, 0.08)'
+  if (days < 7) return 'rgba(237, 108, 2, 0.08)'
+  if (days <= 14) return 'rgba(255, 193, 7, 0.08)'
+  return 'rgba(46, 125, 50, 0.06)'
+}
+
 export const TRAlertsList: React.FC<TRAlertsListProps> = ({
   expirations,
   lowStockItems,
   pendingAlerts,
 }) => {
+  const navigate = useNavigate()
   console.log('INFO [TRAlertsList]: Rendering alerts panel')
+
+  const sortedExpirations = [...expirations].sort((a, b) => {
+    const dA = getDaysUntil(a.expiration_date)
+    const dB = getDaysUntil(b.expiration_date)
+    if (dA === null) return 1
+    if (dB === null) return -1
+    return dA - dB
+  })
 
   return (
     <Card elevation={2}>
@@ -54,30 +70,38 @@ export const TRAlertsList: React.FC<TRAlertsListProps> = ({
         <Typography variant="subtitle2" sx={{ mt: 1, color: 'warning.main' }}>
           Vencimientos de Documentos
         </Typography>
-        {expirations.length === 0 ? (
+        {sortedExpirations.length === 0 ? (
           <Typography variant="body2" color="text.disabled" sx={{ py: 1 }}>
             No hay documentos por vencer
           </Typography>
         ) : (
           <List dense>
-            {expirations.map((doc) => {
+            {sortedExpirations.map((doc) => {
               const daysUntil = getDaysUntil(doc.expiration_date)
               return (
-                <ListItem key={doc.id} disablePadding sx={{ py: 0.5 }}>
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <DescriptionIcon color="warning" fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={doc.description || doc.type}
-                    secondary={
-                      daysUntil !== null
-                        ? daysUntil === 0
-                          ? 'Vence hoy'
-                          : `Vence en ${daysUntil} día${daysUntil !== 1 ? 's' : ''}`
-                        : undefined
-                    }
-                  />
-                  <TRExpirationBadge status={doc.expiration_status} />
+                <ListItem key={doc.id} disablePadding sx={{ bgcolor: getUrgencyBgColor(daysUntil), borderRadius: 1, mb: 0.5 }}>
+                  <ListItemButton
+                    dense
+                    onClick={() => navigate('/poc/restaurant-os/documents')}
+                    sx={{ py: 0.5, borderRadius: 1 }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                      <DescriptionIcon color="warning" fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={doc.description || doc.type}
+                      secondary={
+                        daysUntil !== null
+                          ? daysUntil <= 0
+                            ? 'Vencido'
+                            : daysUntil === 0
+                              ? 'Vence hoy'
+                              : `Vence en ${daysUntil} dia${daysUntil !== 1 ? 's' : ''}`
+                          : undefined
+                      }
+                    />
+                    <TRExpirationBadge status={doc.expiration_status} />
+                  </ListItemButton>
                 </ListItem>
               )
             })}
@@ -97,15 +121,21 @@ export const TRAlertsList: React.FC<TRAlertsListProps> = ({
         ) : (
           <List dense>
             {lowStockItems.map((resource) => (
-              <ListItem key={resource.id} disablePadding sx={{ py: 0.5 }}>
-                <ListItemIcon sx={{ minWidth: 36 }}>
-                  <InventoryIcon color="error" fontSize="small" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={resource.name}
-                  secondary={`${resource.current_stock} / ${resource.minimum_stock} ${resource.unit}`}
-                />
-                <Chip label="Bajo" color="error" size="small" />
+              <ListItem key={resource.id} disablePadding>
+                <ListItemButton
+                  dense
+                  onClick={() => navigate('/poc/restaurant-os/resources')}
+                  sx={{ py: 0.5, borderRadius: 1 }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <InventoryIcon color="error" fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={resource.name}
+                    secondary={`${resource.current_stock} / ${resource.minimum_stock} ${resource.unit}`}
+                  />
+                  <Chip label="Bajo" color="error" size="small" />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
@@ -124,26 +154,32 @@ export const TRAlertsList: React.FC<TRAlertsListProps> = ({
         ) : (
           <List dense>
             {pendingAlerts.map((alert) => (
-              <ListItem key={alert.id} disablePadding sx={{ py: 0.5 }}>
-                <ListItemIcon sx={{ minWidth: 36 }}>
-                  <WarningAmberIcon color="warning" fontSize="small" />
-                </ListItemIcon>
-                <ListItemText
-                  primary={alert.description || alert.type}
-                  secondary={new Date(alert.date).toLocaleDateString()}
-                />
-                <Chip
-                  label={
-                    alert.type === 'alerta_stock'
-                      ? 'Stock'
-                      : alert.type === 'vencimiento'
-                        ? 'Vencimiento'
-                        : 'Rentabilidad'
-                  }
-                  color="warning"
-                  size="small"
-                  variant="outlined"
-                />
+              <ListItem key={alert.id} disablePadding>
+                <ListItemButton
+                  dense
+                  onClick={() => navigate('/poc/restaurant-os/events')}
+                  sx={{ py: 0.5, borderRadius: 1 }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <WarningAmberIcon color="warning" fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={alert.description || alert.type}
+                    secondary={new Date(alert.date).toLocaleDateString()}
+                  />
+                  <Chip
+                    label={
+                      alert.type === 'alerta_stock'
+                        ? 'Stock'
+                        : alert.type === 'vencimiento'
+                          ? 'Vencimiento'
+                          : 'Rentabilidad'
+                    }
+                    color="warning"
+                    size="small"
+                    variant="outlined"
+                  />
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
