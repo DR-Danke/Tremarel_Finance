@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Mi Casa al Dia Property Information System</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #1a202c; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+        .header { background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); color: white; padding: 40px 32px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .header .subtitle { font-size: 15px; opacity: 0.85; }
+        .header .meta { display: flex; gap: 24px; margin-top: 16px; font-size: 14px; opacity: 0.9; }
+        .header .meta span { display: flex; align-items: center; gap: 6px; }
+        .body-content { background: white; padding: 32px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1e3a5f; border-bottom: 3px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px; }
+        .summary-box { background: #ebf5ff; border-left: 4px solid #2d5a87; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #1a365d; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; }
+        .participant-card .name { font-weight: 600; color: #1e3a5f; font-size: 15px; }
+        .participant-card .role { font-size: 13px; color: #718096; margin-top: 2px; }
+        .discussion-item { margin-bottom: 16px; padding: 16px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .discussion-item .topic { font-weight: 600; color: #1e3a5f; font-size: 15px; margin-bottom: 4px; }
+        .discussion-item .desc { font-size: 14px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-table th { background: #1e3a5f; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+        .action-table th:first-child { border-radius: 8px 0 0 0; }
+        .action-table th:last-child { border-radius: 0 8px 0 0; }
+        .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
+        .action-table tr:nth-child(even) { background: #f7fafc; }
+        .action-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+        .action-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+        .decision-list, .next-steps-list { list-style: none; padding: 0; }
+        .decision-list li, .next-steps-list li { padding: 10px 16px; margin-bottom: 8px; border-radius: 8px; font-size: 14px; position: relative; padding-left: 32px; }
+        .decision-list li { background: #f0fff4; border: 1px solid #c6f6d5; color: #22543d; }
+        .decision-list li::before { content: "\2713"; position: absolute; left: 12px; color: #38a169; font-weight: 700; }
+        .next-steps-list li { background: #fffaf0; border: 1px solid #feebc8; color: #744210; }
+        .next-steps-list li::before { content: "\279C"; position: absolute; left: 10px; color: #dd6b20; }
+        .company-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .info-item { padding: 12px 16px; background: #f7fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .info-item .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #718096; font-weight: 600; }
+        .info-item .value { font-size: 15px; color: #1a202c; font-weight: 500; margin-top: 2px; }
+        .diagram-section { margin-top: 16px; margin-bottom: 24px; }
+        .diagram-title { font-size: 15px; font-weight: 600; color: #2d5a87; margin-bottom: 12px; padding: 8px 12px; background: #ebf5ff; border-radius: 6px; }
+        .mermaid { background: #fafbfc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; overflow-x: auto; }
+        .footer { text-align: center; margin-top: 24px; font-size: 12px; color: #a0aec0; }
+        @media (max-width: 600px) {
+            .container { padding: 12px; }
+            .header { padding: 24px 20px; }
+            .header h1 { font-size: 22px; }
+            .body-content { padding: 20px; }
+            .company-info { grid-template-columns: 1fr; }
+            .participants-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Discovery Meeting - Mi Casa al Dia Property Information System</h1>
+            <div class="subtitle">Initial discovery and requirements gathering for property data consolidation platform</div>
+            <div class="meta">
+                <span>Date: Not specified</span>
+                <span>Type: Discovery / Requirements Gathering</span>
+            </div>
+        </div>
+
+        <div class="body-content">
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <div class="section-title">Executive Summary</div>
+                <div class="summary-box">
+                    Discovery meeting with <strong>Mi Casa al Dia</strong>, a digital real estate company that sells Colombian properties to immigrants in the US. Their core pain point is the extremely manual and time-consuming process of consolidating property information from 25+ construction companies (each with different Excel/PDF formats) to respond to client inquiries. A phased solution was proposed: <strong>(1) data consolidation</strong> into a PostgreSQL database, <strong>(2) an agile update mechanism</strong> with drag-and-drop file ingestion, and <strong>(3) WhatsApp integration</strong> for automated client responses. Next step is signing a confidentiality agreement, sharing sample data, and building a proof of concept by the following week.
+                </div>
+            </div>
+
+            <!-- Company / Prospect Information -->
+            <div class="section">
+                <div class="section-title">Company / Prospect Information</div>
+                <div class="company-info">
+                    <div class="info-item">
+                        <div class="label">Company Name</div>
+                        <div class="value">Mi Casa al Dia</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Industry</div>
+                        <div class="value">Digital Real Estate (Proptech)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Parent Group</div>
+                        <div class="value">Corporate group (1,000+ employees, 30 years in immigration services)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Team Size</div>
+                        <div class="value">3 people (startup phase)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Scale</div>
+                        <div class="value">250+ projects, 25+ constructor partnerships</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Current CRM</div>
+                        <div class="value">HubSpot (mandated by parent company)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <div class="section-title">Participants</div>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Daniel</div>
+                        <div class="role">Technology Consultant</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Mi Casa al Dia Representative</div>
+                        <div class="role">Operations Lead / Architect</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Ruben</div>
+                        <div class="role">Mutual Contact / Referral (not present)</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Daniel Cardona</div>
+                        <div class="role">Mentioned, unclear if joined</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <div class="section-title">Discussion Points</div>
+
+                <div class="discussion-item">
+                    <div class="topic">1. Manual Information Consolidation Problem</div>
+                    <div class="desc">Mi Casa al Dia manages 250+ real estate projects from 25+ construction companies. Each company sends data in different formats (Excel, PDF). Responding to a single client inquiry requires searching across the website, multiple Excel files, PDF brochures, Google Drive, WhatsApp groups, and email. A simple city-based query can take 5+ minutes and involves consulting 4-5 different sources.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">2. Proposed Phased Solution Architecture</div>
+                    <div class="desc">Three-phase approach agreed upon: Phase 1 &mdash; Initial data consolidation into a PostgreSQL database with field mapping rules. Phase 2 &mdash; Agile update mechanism via a web app with drag-and-drop file upload that auto-detects fields from varying Excel/PDF formats. Phase 3 &mdash; WhatsApp integration for automated message generation and client response.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">3. Data Schema and Required Fields</div>
+                    <div class="desc">Key fields identified for the consolidated database: constructor name, project name, active status, last update date, published status, department, municipality, sector/zone, typology (apartment/house/lot), phase (launch/construction/immediate delivery), area range, number of units, unit types, VIS classification, price range, parking, bedrooms, bathrooms, and project images.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">4. Current Client Communication Workflow</div>
+                    <div class="desc">Clients arrive via WhatsApp integrated with HubSpot, but HubSpot's 24-hour Meta messaging window is restrictive. The team transfers clients to corporate WhatsApp Business lines for continued communication. Responses are manually drafted with project details, links to the website, brochure information, and payment plans.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">5. Website and Admin Panel Limitations</div>
+                    <div class="desc">Mi Casa al Dia has a custom-coded website with an admin panel. Updating prices requires manually editing each project and each unit type one by one. Price updates from a single large constructor with 80 projects is extremely time-consuming. Data must be updated in both the admin panel and the internal Excel macro separately.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">6. Company Background and Constraints</div>
+                    <div class="desc">Mi Casa al Dia is part of a large corporate group (1,000+ employees) serving immigrants in the US with legal, tax, and insurance services. The parent company enforces strict technology policies and mandates HubSpot as the CRM. The IT department prioritizes immigration operations, leaving smaller subsidiaries without tech support but bound by the same restrictions.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">7. Scaling Challenges</div>
+                    <div class="desc">Currently operating with only 3 people, they want to scale to handle more clients but lack the infrastructure for rapid, informed responses. The immigration political climate in the US has also impacted their target market, pushing them to explore new markets.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">8. Website-Database Integration Possibility</div>
+                    <div class="desc">Discussed the possibility of connecting the new consolidated database to the existing website so that uploading data once automatically updates the public-facing site. Feasibility depends on the website's technical architecture, which the client will share.</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <div class="section-title">Action Items</div>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Action</th>
+                            <th style="width: 30%;">Owner</th>
+                            <th style="width: 20%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Send or agree on a confidentiality/NDA agreement before sharing proprietary data</td>
+                            <td>Both parties</td>
+                            <td>Before data sharing</td>
+                        </tr>
+                        <tr>
+                            <td>Share sample Excel files from various construction companies (different formats)</td>
+                            <td>Mi Casa al Dia</td>
+                            <td>After NDA is signed</td>
+                        </tr>
+                        <tr>
+                            <td>Share sample PDF brochures from construction companies</td>
+                            <td>Mi Casa al Dia</td>
+                            <td>After NDA is signed</td>
+                        </tr>
+                        <tr>
+                            <td>Share website technical specifications and architecture details</td>
+                            <td>Mi Casa al Dia</td>
+                            <td>After NDA is signed</td>
+                        </tr>
+                        <tr>
+                            <td>Define field mapping rules (how different constructor formats map to unified schema)</td>
+                            <td>Mi Casa al Dia</td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Build proof of concept for data consolidation and update mechanism</td>
+                            <td>Daniel (Tech Consultant)</td>
+                            <td>Mon/Tue next week</td>
+                        </tr>
+                        <tr>
+                            <td>Review NDA options with Cardona and send to client</td>
+                            <td>Daniel (Tech Consultant)</td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Schedule follow-up meeting to review proof of concept</td>
+                            <td>Both parties</td>
+                            <td>Tuesday next week</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <div class="section-title">Decisions Made</div>
+                <ul class="decision-list">
+                    <li>Adopt a phased approach: Phase 1 (Data Consolidation), Phase 2 (Update Mechanism), Phase 3 (WhatsApp Integration)</li>
+                    <li>Start with a proof of concept focused on data consolidation and agile updating before committing to the full solution</li>
+                    <li>Sign a confidentiality agreement before sharing any proprietary constructor data</li>
+                    <li>Use WhatsApp for ongoing communication between meetings</li>
+                    <li>Evaluate the existing website architecture to determine if the new database can be connected to it or if a new frontend is needed</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <div class="section-title">Next Steps</div>
+                <ul class="next-steps-list">
+                    <li>Finalize and sign confidentiality agreement (either from Mi Casa al Dia or from Daniel's team)</li>
+                    <li>Mi Casa al Dia shares sample Excel files, PDFs, and website technical specs</li>
+                    <li>Daniel builds a proof of concept for data consolidation with sample data</li>
+                    <li>Follow-up meeting scheduled for Monday or Tuesday of the following week to review the proof of concept</li>
+                    <li>Based on proof of concept results, define scope and next phases of the project</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <div class="section-title">Technical Architecture</div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Current Manual Information Lookup Workflow</div>
+                    <pre class="mermaid">
+flowchart TD
+    A[Client Inquiry via WhatsApp or HubSpot] --> B{What type of query?}
+    B -->|By City| C[Search Website by City]
+    B -->|By Project| D[Search Website by Project]
+    C --> E[Open Each Project One by One]
+    D --> E
+    E --> F[Check Internal Excel Macro]
+    F --> G[Search Google Drive for Constructor Folder]
+    G --> H{File Type?}
+    H -->|Excel| I[Open Constructor Excel]
+    H -->|PDF| J[Open PDF Brochure]
+    I --> K[Extract Relevant Data Manually]
+    J --> K
+    K --> L[Draft WhatsApp Message]
+    L --> M[Send Response to Client]
+    M --> N{Client Wants More Detail?}
+    N -->|Yes| O[Deep Dive into Specific Project]
+    N -->|No| P[End Conversation]
+    O --> G
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Proposed System Architecture</div>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph DataSources[Data Sources]
+        EX[Excel Files from Constructors]
+        PD[PDF Brochures]
+        WS[Existing Website Data]
+    end
+    subgraph Ingestion[Ingestion Layer]
+        UP[Drag and Drop Upload]
+        FD[Format Detection Engine]
+        FM[Field Mapping and Validation]
+        RV[Admin Review and Approve]
+    end
+    subgraph Storage[Central Database]
+        PG[(PostgreSQL Database)]
+    end
+    subgraph Frontend[User Interfaces]
+        AD[Admin Web App]
+        SR[Search Interface]
+        PW[Public Website]
+    end
+    subgraph Integration[Communication]
+        WA[WhatsApp Business API]
+        MG[Message Generator]
+    end
+    EX --> UP
+    PD --> UP
+    WS --> FD
+    UP --> FD
+    FD --> FM
+    FM --> RV
+    RV --> PG
+    PG --> AD
+    PG --> SR
+    PG --> PW
+    SR --> MG
+    MG --> WA
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Phased Implementation Roadmap</div>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph Phase1[Phase 1 - Data Consolidation]
+        P1A[Collect Sample Excel and PDF Files]
+        P1B[Define Unified Data Schema]
+        P1C[Build Field Mapping Rules]
+        P1D[Import Data into PostgreSQL]
+        P1E[Proof of Concept Demo]
+        P1A --> P1B --> P1C --> P1D --> P1E
+    end
+    subgraph Phase2[Phase 2 - Agile Update Mechanism]
+        P2A[Web App with Drag and Drop Upload]
+        P2B[Auto Format Detection for Excel and PDF]
+        P2C[Admin Review and Approval UI]
+        P2D[Auto Sync with Public Website]
+        P2A --> P2B --> P2C --> P2D
+    end
+    subgraph Phase3[Phase 3 - WhatsApp Integration]
+        P3A[Search Interface by City and Project]
+        P3B[Auto Message Template Generator]
+        P3C[WhatsApp API Integration]
+        P3D[Automated Client Responses]
+        P3A --> P3B --> P3C --> P3D
+    end
+    Phase1 --> Phase2 --> Phase3
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Client Inquiry Response Sequence</div>
+                    <pre class="mermaid">
+sequenceDiagram
+    participant CL as Client
+    participant HS as HubSpot WhatsApp
+    participant AG as Sales Agent
+    participant WB as WhatsApp Business
+    participant DB as Project Database
+    participant CT as Constructor
+    CL->>HS: Initial inquiry about a city or project
+    HS->>AG: Notification of new lead
+    AG->>HS: Initial greeting within 24h window
+    AG->>WB: Transfer client to corporate WhatsApp
+    AG->>DB: Search projects by city or criteria
+    DB-->>AG: Matching projects with basic details
+    AG->>WB: Send formatted options to client
+    WB->>CL: Project options with prices and links
+    CL->>WB: Interest in specific project
+    WB->>AG: Client selected a project
+    AG->>DB: Get detailed project info
+    DB-->>AG: Full details brochure and payment plans
+    AG->>WB: Send detailed info to client
+    WB->>CL: Detailed project info with images
+    CL->>WB: Wants to proceed
+    AG->>CT: Request availability and quotation
+    CT-->>AG: Availability and formal quote
+    AG->>WB: Forward quotation to client
+    WB->>CL: Final quotation and next steps
+                    </pre>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &bull; Confidential
+        </div>
+    </div>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

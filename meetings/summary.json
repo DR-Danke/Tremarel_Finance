@@ -1,0 +1,123 @@
+{
+  "title": "Discovery Meeting - Mi Casa al Dia Property Information System",
+  "meeting_date": null,
+  "participants": [
+    {"name": "Daniel", "role": "Technology Consultant"},
+    {"name": "Mi Casa al Dia Representative", "role": "Operations Lead / Architect at Mi Casa al Dia"},
+    {"name": "Ruben", "role": "Mutual Contact / Referral (not present)"},
+    {"name": "Daniel Cardona", "role": "Mentioned at start, unclear if joined"}
+  ],
+  "company_name": "Mi Casa al Dia",
+  "contact_name": "Mi Casa al Dia Representative",
+  "contact_email": null,
+  "summary": "Discovery meeting with Mi Casa al Dia, a digital real estate company that sells Colombian properties to immigrants in the US. Their core pain point is the extremely manual and time-consuming process of consolidating property information from 25+ construction companies (each with different Excel/PDF formats) to respond to client inquiries. A phased solution was proposed: (1) data consolidation into a PostgreSQL database, (2) an agile update mechanism with drag-and-drop file ingestion, and (3) WhatsApp integration for automated client responses. Next step is signing a confidentiality agreement, sharing sample data, and building a proof of concept by the following week.",
+  "discussion_points": [
+    {
+      "topic": "Manual Information Consolidation Problem",
+      "description": "Mi Casa al Dia manages 250+ real estate projects from 25+ construction companies. Each company sends data in different formats (Excel, PDF). Responding to a single client inquiry requires searching across the website, multiple Excel files, PDF brochures, Google Drive, WhatsApp groups, and email. A simple city-based query can take 5+ minutes and involves consulting 4-5 different sources."
+    },
+    {
+      "topic": "Proposed Phased Solution Architecture",
+      "description": "Three-phase approach agreed upon: Phase 1 - Initial data consolidation into a PostgreSQL database with field mapping rules. Phase 2 - Agile update mechanism via a web app with drag-and-drop file upload that auto-detects fields from varying Excel/PDF formats. Phase 3 - WhatsApp integration for automated message generation and client response."
+    },
+    {
+      "topic": "Data Schema and Required Fields",
+      "description": "Key fields identified for the consolidated database: constructor name, project name, active status, last update date, published status, department, municipality, sector/zone, typology (apartment/house/lot), phase (launch/construction/immediate delivery), area range, number of units, unit types, VIS classification, price range, parking, bedrooms, bathrooms, and project images."
+    },
+    {
+      "topic": "Current Client Communication Workflow",
+      "description": "Clients arrive via WhatsApp integrated with HubSpot, but HubSpot's 24-hour Meta messaging window is restrictive. The team transfers clients to corporate WhatsApp Business lines for continued communication. Responses are manually drafted with project details, links to the website, brochure information, and payment plans."
+    },
+    {
+      "topic": "Website and Admin Panel Limitations",
+      "description": "Mi Casa al Dia has a custom-coded website (not Wix or similar platform) with an admin panel. Updating prices requires manually editing each project and each unit type one by one. Price updates from a single large constructor with 80 projects is extremely time-consuming. Data must be updated in both the admin panel and the internal Excel macro separately."
+    },
+    {
+      "topic": "Company Background and Constraints",
+      "description": "Mi Casa al Dia is part of a large corporate group (1000+ employees) serving immigrants in the US with legal, tax, and insurance services. The parent company enforces strict technology policies and mandates HubSpot as the CRM. The IT department prioritizes immigration operations, leaving smaller subsidiaries like Mi Casa al Dia without tech support but bound by restrictions."
+    },
+    {
+      "topic": "Scaling Challenges",
+      "description": "Mi Casa al Dia currently operates with only 3 people. They want to scale to handle more clients but lack the infrastructure for rapid, informed responses. The immigration political climate in the US has also impacted their target market, pushing them to explore new markets."
+    },
+    {
+      "topic": "Website-Database Integration Possibility",
+      "description": "Discussed the possibility of connecting the new consolidated database to the existing website so that uploading data once automatically updates the public-facing site. This would eliminate the current dual-update process. Feasibility depends on the website's technical architecture, which the client will share."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send or agree on a confidentiality/NDA agreement before sharing proprietary data",
+      "owner": "Both parties (Mi Casa al Dia to send theirs, or Daniel's team to provide one)",
+      "deadline": "Before data sharing - within days"
+    },
+    {
+      "description": "Share sample Excel files from various construction companies (different formats)",
+      "owner": "Mi Casa al Dia Representative",
+      "deadline": "After NDA is signed"
+    },
+    {
+      "description": "Share sample PDF brochures from construction companies",
+      "owner": "Mi Casa al Dia Representative",
+      "deadline": "After NDA is signed"
+    },
+    {
+      "description": "Share the website technical specifications and architecture details",
+      "owner": "Mi Casa al Dia Representative",
+      "deadline": "After NDA is signed"
+    },
+    {
+      "description": "Define the complete field mapping rules (how different constructor formats map to unified schema)",
+      "owner": "Mi Casa al Dia Representative",
+      "deadline": null
+    },
+    {
+      "description": "Build proof of concept for data consolidation and recurring update mechanism",
+      "owner": "Daniel (Technology Consultant)",
+      "deadline": "By Monday or Tuesday of the following week"
+    },
+    {
+      "description": "Review NDA options with Cardona and send to Mi Casa al Dia",
+      "owner": "Daniel (Technology Consultant)",
+      "deadline": null
+    },
+    {
+      "description": "Schedule follow-up meeting to review proof of concept",
+      "owner": "Both parties",
+      "deadline": "Tuesday of the following week"
+    }
+  ],
+  "decisions": [
+    "Adopt a phased approach: Phase 1 (Data Consolidation), Phase 2 (Update Mechanism), Phase 3 (WhatsApp Integration)",
+    "Start with a proof of concept focused on data consolidation and agile updating before committing to the full solution",
+    "Sign a confidentiality agreement before sharing any proprietary constructor data",
+    "Use WhatsApp for ongoing communication between meetings",
+    "Evaluate the existing website architecture to determine if the new database can be connected to it or if a new frontend is needed"
+  ],
+  "next_steps": [
+    "Finalize and sign confidentiality agreement (either from Mi Casa al Dia or from Daniel's team)",
+    "Mi Casa al Dia shares sample Excel files, PDFs, and website technical specs",
+    "Daniel builds a proof of concept for data consolidation with sample data",
+    "Follow-up meeting scheduled for Monday or Tuesday of the following week to review the proof of concept",
+    "Based on proof of concept results, define scope and next phases of the project"
+  ],
+  "diagrams": [
+    {
+      "title": "Current Manual Information Lookup Workflow",
+      "mermaid_code": "flowchart TD\n    A[Client Inquiry via WhatsApp or HubSpot] --> B{What type of query?}\n    B -->|By City| C[Search Website by City]\n    B -->|By Project| D[Search Website by Project]\n    C --> E[Open Each Project One by One]\n    D --> E\n    E --> F[Check Internal Excel Macro]\n    F --> G[Search Google Drive for Constructor Folder]\n    G --> H{File Type?}\n    H -->|Excel| I[Open Constructor Excel]\n    H -->|PDF| J[Open PDF Brochure]\n    I --> K[Extract Relevant Data Manually]\n    J --> K\n    K --> L[Draft WhatsApp Message]\n    L --> M[Send Response to Client]\n    M --> N{Client Wants More Detail?}\n    N -->|Yes| O[Deep Dive into Specific Project]\n    N -->|No| P[End Conversation]\n    O --> G"
+    },
+    {
+      "title": "Proposed System Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph DataSources[Data Sources]\n        EX[Excel Files from Constructors]\n        PD[PDF Brochures]\n        WS[Existing Website Data]\n    end\n    subgraph Ingestion[Ingestion Layer]\n        UP[Drag and Drop Upload]\n        FD[Format Detection Engine]\n        FM[Field Mapping and Validation]\n        RV[Admin Review and Approve]\n    end\n    subgraph Storage[Central Database]\n        PG[(PostgreSQL Database)]\n    end\n    subgraph Frontend[User Interfaces]\n        AD[Admin Web App]\n        SR[Search Interface]\n        PW[Public Website]\n    end\n    subgraph Integration[Communication]\n        WA[WhatsApp Business API]\n        MG[Message Generator]\n    end\n    EX --> UP\n    PD --> UP\n    WS --> FD\n    UP --> FD\n    FD --> FM\n    FM --> RV\n    RV --> PG\n    PG --> AD\n    PG --> SR\n    PG --> PW\n    SR --> MG\n    MG --> WA"
+    },
+    {
+      "title": "Phased Implementation Roadmap",
+      "mermaid_code": "flowchart TD\n    subgraph Phase1[Phase 1 - Data Consolidation]\n        P1A[Collect Sample Excel and PDF Files]\n        P1B[Define Unified Data Schema]\n        P1C[Build Field Mapping Rules]\n        P1D[Import Data into PostgreSQL]\n        P1E[Proof of Concept Demo]\n        P1A --> P1B --> P1C --> P1D --> P1E\n    end\n    subgraph Phase2[Phase 2 - Agile Update Mechanism]\n        P2A[Web App with Drag and Drop Upload]\n        P2B[Auto Format Detection for Excel and PDF]\n        P2C[Admin Review and Approval UI]\n        P2D[Auto Sync with Public Website]\n        P2A --> P2B --> P2C --> P2D\n    end\n    subgraph Phase3[Phase 3 - WhatsApp Integration]\n        P3A[Search Interface by City and Project]\n        P3B[Auto Message Template Generator]\n        P3C[WhatsApp API Integration]\n        P3D[Automated Client Responses]\n        P3A --> P3B --> P3C --> P3D\n    end\n    Phase1 --> Phase2 --> Phase3"
+    },
+    {
+      "title": "Client Inquiry Response Sequence",
+      "mermaid_code": "sequenceDiagram\n    participant CL as Client\n    participant HS as HubSpot WhatsApp\n    participant AG as Sales Agent\n    participant WB as WhatsApp Business\n    participant DB as Project Database\n    participant CT as Constructor\n    CL->>HS: Initial inquiry about a city or project\n    HS->>AG: Notification of new lead\n    AG->>HS: Initial greeting within 24h window\n    AG->>WB: Transfer client to corporate WhatsApp\n    AG->>DB: Search projects by city or criteria\n    DB-->>AG: Matching projects with basic details\n    AG->>WB: Send formatted options to client\n    WB->>CL: Project options with prices and links\n    CL->>WB: Interest in specific project\n    WB->>AG: Client selected a project\n    AG->>DB: Get detailed project info\n    DB-->>AG: Full details and brochure and payment plans\n    AG->>WB: Send detailed info to client\n    WB->>CL: Detailed project info with images\n    CL->>WB: Wants to proceed\n    AG->>CT: Request availability and quotation\n    CT-->>AG: Availability and formal quote\n    AG->>WB: Forward quotation to client\n    WB->>CL: Final quotation and next steps"
+    }
+  ],
+  "html_output": "see meetings/summary.html"
+}
