@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Service Desk Configuration Call</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #2d3748; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: white; padding: 40px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .header .meta { font-size: 14px; opacity: 0.9; }
+        .header .meta span { margin-right: 20px; }
+        .content { background: white; padding: 40px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.07); }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px; }
+        .summary-box { background: #ebf4ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #2a4365; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+        .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; }
+        .participant-card .name { font-weight: 600; color: #2d3748; }
+        .participant-card .role { font-size: 13px; color: #718096; margin-top: 2px; }
+        .topic-card { background: #f7fafc; border-radius: 8px; padding: 16px; margin-bottom: 12px; border: 1px solid #e2e8f0; }
+        .topic-card:last-child { margin-bottom: 0; }
+        .topic-card .topic-title { font-weight: 600; color: #2b6cb0; margin-bottom: 4px; }
+        .topic-card .topic-desc { font-size: 14px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; }
+        .action-table th { background: #edf2f7; text-align: left; padding: 10px 14px; font-size: 13px; font-weight: 600; color: #4a5568; text-transform: uppercase; letter-spacing: 0.5px; }
+        .action-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        .action-table tr:last-child td { border-bottom: none; }
+        .action-table tr:hover { background: #f7fafc; }
+        .badge { display: inline-block; background: #ebf4ff; color: #2b6cb0; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+        .badge-green { background: #f0fff4; color: #276749; }
+        .badge-orange { background: #fffaf0; color: #c05621; }
+        .decision-list, .next-steps-list { list-style: none; padding: 0; }
+        .decision-list li, .next-steps-list li { padding: 10px 0 10px 28px; border-bottom: 1px solid #f0f4f8; font-size: 14px; position: relative; }
+        .decision-list li:last-child, .next-steps-list li:last-child { border-bottom: none; }
+        .decision-list li::before { content: "\2713"; position: absolute; left: 0; color: #2b6cb0; font-weight: 700; font-size: 16px; }
+        .next-steps-list li::before { content: "\27A4"; position: absolute; left: 0; color: #2b6cb0; font-size: 14px; }
+        .diagram-section { margin-top: 16px; }
+        .diagram-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+        .diagram-card h4 { color: #2b6cb0; margin-bottom: 12px; font-size: 15px; }
+        .diagram-card:last-child { margin-bottom: 0; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #a0aec0; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Service Desk Configuration Call</h1>
+            <p style="font-size: 16px; opacity: 0.85; margin-bottom: 12px;">Ticket Categories, VIP Assignment & WhatsApp Chatbot</p>
+            <div class="meta">
+                <span>Date: March 3, 2026</span>
+                <span>Duration: ~5 minutes</span>
+                <span>Source: 20260303 LLAMADA SERVICE DESK.mp3</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2 class="section-title">Executive Summary</h2>
+                <div class="summary-box">
+                    The team reviewed the Service Desk ticket system configuration including first-level assignment rules (numbering, location, workload), the finalized 5 ticket categories (Hardware, Software, SAP, Telecommunications, Others), and VIP user assignment logic. The developer confirmed database model changes are complete and API/frontend adjustments will be finished today. Fixed assets data will be delivered next week. The team agreed to begin WhatsApp chatbot testing for tone and communication quality.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2 class="section-title">Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Rolito (Speaker 1)</div>
+                        <div class="role">Project Lead / Client-side Coordinator</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Speaker 2</div>
+                        <div class="role">Developer (Database, API & Frontend)</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Speaker 3</div>
+                        <div class="role">Stakeholder / Manager</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Nicol&aacute;s</div>
+                        <div class="role">Team Member (WhatsApp chatbot link holder)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2 class="section-title">Discussion Points</h2>
+                <div class="topic-card">
+                    <div class="topic-title">1. Ticket Category Definition</div>
+                    <div class="topic-desc">Categories finalized to exactly 5: <strong>Hardware</strong>, <strong>Software</strong>, <strong>SAP</strong> (core system), <strong>Telecommunications</strong>, and <strong>Others</strong>. SAP tickets are initially routed via email. The service catalog Level 1 follows these same 5 categories with subcategories underneath.</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-title">2. Service Catalog Structure</div>
+                    <div class="topic-desc">Level 1 catalog aligns with the 5 defined categories. Based on user selection and ticket description, tickets are routed to the appropriate category and subcategory. Software subcategories include Identity & Access Management (user creation, deletion, modifications, password resets).</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-title">3. First-Level Ticket Assignment</div>
+                    <div class="topic-desc">Assignment criteria defined based on three factors: numbering/scale, geographic location, and workload (number of tickets). These determine which support agent handles each incoming ticket.</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-title">4. VIP User Assignment</div>
+                    <div class="topic-desc">VIP users are identified and directed to first-level support for priority handling. Only incident-type requests qualify for VIP treatment. CC notifications are sent based on the user's city to designated personnel.</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-title">5. Development Progress Update</div>
+                    <div class="topic-desc">Database model changes are already complete. API middleware and frontend adjustments are in progress across three development stages, expected to be completed today.</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-title">6. Fixed Assets Data</div>
+                    <div class="topic-desc">Internal teams are working on populating fixed asset information into the provided structure/format. Data delivery expected by next week.</div>
+                </div>
+                <div class="topic-card">
+                    <div class="topic-title">7. WhatsApp Chatbot Testing</div>
+                    <div class="topic-desc">Request to begin testing the WhatsApp chatbot interface for ticket submission. Focus on evaluating tone, communication style, and response quality. Nicol&aacute;s has the conversation link.</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2 class="section-title">Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Action</th>
+                            <th style="width: 28%;">Owner</th>
+                            <th style="width: 22%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Complete API and frontend adjustments for the new ticket category and assignment model</td>
+                            <td><span class="badge">Developer (Speaker 2)</span></td>
+                            <td><span class="badge-orange" style="display:inline-block; background:#fffaf0; color:#c05621; font-size:12px; font-weight:600; padding:2px 10px; border-radius:12px;">March 3, 2026</span></td>
+                        </tr>
+                        <tr>
+                            <td>Deliver fixed assets data in the agreed structure/format</td>
+                            <td><span class="badge">Rolito / Internal teams</span></td>
+                            <td><span class="badge-orange" style="display:inline-block; background:#fffaf0; color:#c05621; font-size:12px; font-weight:600; padding:2px 10px; border-radius:12px;">~March 10, 2026</span></td>
+                        </tr>
+                        <tr>
+                            <td>Begin WhatsApp chatbot testing for tone and communication evaluation</td>
+                            <td><span class="badge">Rolito / Nicol&aacute;s</span></td>
+                            <td><span class="badge-orange" style="display:inline-block; background:#fffaf0; color:#c05621; font-size:12px; font-weight:600; padding:2px 10px; border-radius:12px;">March 3-4, 2026</span></td>
+                        </tr>
+                        <tr>
+                            <td>Notify the team once all three development stages are complete</td>
+                            <td><span class="badge">Developer (Speaker 2)</span></td>
+                            <td><span class="badge-green" style="display:inline-block; background:#f0fff4; color:#276749; font-size:12px; font-weight:600; padding:2px 10px; border-radius:12px;">Upon completion</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2 class="section-title">Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>Ticket categories are fixed at exactly 5: Hardware, Software, SAP, Telecommunications, and Others</li>
+                    <li>VIP assignment applies only to incident-type requests</li>
+                    <li>Service catalog Level 1 will follow the 5 defined categories with subcategories</li>
+                    <li>Fixed assets data will follow the structure/format already provided</li>
+                    <li>WhatsApp chatbot testing to begin immediately (today/tomorrow)</li>
+                    <li>CC notifications for VIP incidents are sent based on the user's city</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2 class="section-title">Next Steps</h2>
+                <ul class="next-steps-list">
+                    <li>Developer completes API and frontend changes for ticket categories and assignment logic</li>
+                    <li>Developer notifies team upon completion of all three development stages</li>
+                    <li>Rolito coordinates with Nicol&aacute;s to start WhatsApp chatbot testing today/tomorrow</li>
+                    <li>Internal teams finalize fixed assets data and send it next week</li>
+                    <li>Team evaluates WhatsApp chatbot responses and provides feedback on tone and communication</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture -->
+            <div class="section">
+                <h2 class="section-title">Technical Architecture</h2>
+                <div class="diagram-section">
+                    <div class="diagram-card">
+                        <h4>Ticket Assignment Flow</h4>
+                        <pre class="mermaid">
+flowchart TD
+    A[New Ticket Submitted] --> B{Evaluate Assignment Criteria}
+    B --> C[Check Numbering Scale]
+    B --> D[Check Geographic Location]
+    B --> E[Check Agent Workload]
+    C --> F[Assignment Engine]
+    D --> F
+    E --> F
+    F --> G{Is VIP User?}
+    G -->|Yes| H[Priority First-Level Support]
+    G -->|No| I[Standard First-Level Support]
+    H --> J{Request Type?}
+    J -->|Incident| K[VIP Handling + CC by City]
+    J -->|Other| I
+    I --> L[Route to Category Agent]
+                        </pre>
+                    </div>
+                    <div class="diagram-card">
+                        <h4>Service Catalog Hierarchy</h4>
+                        <pre class="mermaid">
+flowchart TD
+    A[Service Catalog Level 1] --> B[Hardware]
+    A --> C[Software]
+    A --> D[SAP Core]
+    A --> E[Telecommunications]
+    A --> F[Others]
+    C --> C1[Identity and Access Management]
+    C1 --> C1a[User Creation]
+    C1 --> C1b[User Deletion]
+    C1 --> C1c[User Modifications]
+    C1 --> C1d[Password Resets]
+    D --> D1[SAP Support via Email]
+    B --> B1[Hardware Subcategories]
+    E --> E1[Telecom Subcategories]
+    F --> F1[Other Subcategories]
+                        </pre>
+                    </div>
+                    <div class="diagram-card">
+                        <h4>System Architecture - Service Desk Platform</h4>
+                        <pre class="mermaid">
+flowchart LR
+    subgraph Frontend
+        A[React Frontend] --> B[Ticket Form UI]
+        A --> C[Dashboard UI]
+    end
+    subgraph Backend
+        D[FastAPI Backend] --> E[Ticket Assignment Service]
+        D --> F[Category Service]
+        D --> G[VIP Service]
+    end
+    subgraph Database
+        H[(PostgreSQL)]
+    end
+    subgraph External
+        I[WhatsApp Chatbot]
+        J[Email Notifications]
+    end
+    B --> D
+    I -->|Submit Tickets| D
+    E --> H
+    F --> H
+    G --> H
+    E -->|VIP Incident CC| J
+    D -->|SAP Tickets| J
+                        </pre>
+                    </div>
+                    <div class="diagram-card">
+                        <h4>WhatsApp Chatbot Ticket Flow</h4>
+                        <pre class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant W as WhatsApp Chatbot
+    participant API as Service Desk API
+    participant DB as Database
+    participant N as Notification Service
+    U->>W: Describe issue via WhatsApp
+    W->>W: Analyze tone and classify
+    W->>API: Submit ticket with category
+    API->>DB: Store ticket
+    API->>API: Check VIP status
+    alt VIP User
+        API->>N: Send CC notification by city
+    end
+    API->>W: Return ticket confirmation
+    W->>U: Confirm ticket created with ID
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &bull; Source: 20260303 LLAMADA SERVICE DESK.mp3 &bull; Transcribed by Fireflies.ai
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

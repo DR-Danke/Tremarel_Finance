@@ -1,0 +1,99 @@
+{
+  "title": "Service Desk Configuration Call - Ticket Categories, VIP Assignment & WhatsApp Chatbot",
+  "meeting_date": "2026-03-03",
+  "participants": [
+    {"name": "Speaker 1 (Rolito)", "role": "Project Lead / Client-side Coordinator"},
+    {"name": "Speaker 2", "role": "Developer (Database, API & Frontend)"},
+    {"name": "Speaker 3", "role": "Stakeholder / Manager"},
+    {"name": "Nicolás", "role": "Team Member (has WhatsApp chatbot link)"}
+  ],
+  "company_name": null,
+  "contact_name": "Rolito",
+  "contact_email": null,
+  "summary": "The team reviewed the Service Desk ticket system configuration including first-level assignment rules (numbering, location, workload), the finalized 5 ticket categories (Hardware, Software, SAP, Telecommunications, Others), and VIP user assignment logic. The developer confirmed database model changes are complete and API/frontend adjustments will be finished today. Fixed assets data will be delivered next week. The team agreed to begin WhatsApp chatbot testing for tone and communication quality.",
+  "discussion_points": [
+    {
+      "topic": "Ticket Category Definition",
+      "description": "Categories finalized to exactly 5: Hardware, Software, SAP (core system), Telecommunications, and Others. SAP tickets are initially routed via email. The service catalog Level 1 follows these same 5 categories with subcategories underneath."
+    },
+    {
+      "topic": "Service Catalog Structure",
+      "description": "Level 1 catalog aligns with the 5 defined categories. Based on user selection and ticket description, tickets are routed to the appropriate category and subcategory. Software subcategories include Identity & Access Management (user creation, deletion, modifications, password resets)."
+    },
+    {
+      "topic": "First-Level Ticket Assignment",
+      "description": "Assignment criteria defined based on three factors: numbering/scale, geographic location, and workload (number of tickets). These determine which support agent handles each incoming ticket."
+    },
+    {
+      "topic": "VIP User Assignment",
+      "description": "VIP users are identified and directed to first-level support for priority handling. Only incident-type requests qualify for VIP treatment. CC notifications are sent based on the user's city to designated personnel."
+    },
+    {
+      "topic": "Development Progress Update",
+      "description": "Database model changes are already complete. API middleware and frontend adjustments are in progress across three development stages, expected to be completed today."
+    },
+    {
+      "topic": "Fixed Assets Data",
+      "description": "Internal teams are working on populating fixed asset information into the provided structure/format. Data delivery expected by next week."
+    },
+    {
+      "topic": "WhatsApp Chatbot Testing",
+      "description": "Request to begin testing the WhatsApp chatbot interface for ticket submission. Focus on evaluating tone, communication style, and response quality. Nicolás has the conversation link."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Complete API and frontend adjustments for the new ticket category and assignment model",
+      "owner": "Speaker 2 (Developer)",
+      "deadline": "2026-03-03 (today)"
+    },
+    {
+      "description": "Deliver fixed assets data in the agreed structure/format",
+      "owner": "Speaker 1 (Rolito) / Internal teams",
+      "deadline": "Next week (~2026-03-10)"
+    },
+    {
+      "description": "Begin WhatsApp chatbot testing for tone and communication evaluation",
+      "owner": "Speaker 1 (Rolito) / Nicolás",
+      "deadline": "Between today and tomorrow (2026-03-03 to 2026-03-04)"
+    },
+    {
+      "description": "Notify the team once all three development stages are complete",
+      "owner": "Speaker 2 (Developer)",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Ticket categories are fixed at exactly 5: Hardware, Software, SAP, Telecommunications, and Others",
+    "VIP assignment applies only to incident-type requests",
+    "Service catalog Level 1 will follow the 5 defined categories with subcategories",
+    "Fixed assets data will follow the structure/format already provided",
+    "WhatsApp chatbot testing to begin immediately (today/tomorrow)",
+    "CC notifications for VIP incidents are sent based on the user's city"
+  ],
+  "next_steps": [
+    "Developer completes API and frontend changes for ticket categories and assignment logic",
+    "Developer notifies team upon completion of all three development stages",
+    "Rolito coordinates with Nicolás to start WhatsApp chatbot testing today/tomorrow",
+    "Internal teams finalize fixed assets data and send it next week",
+    "Team evaluates WhatsApp chatbot responses and provides feedback on tone and communication"
+  ],
+  "diagrams": [
+    {
+      "title": "Ticket Assignment Flow",
+      "mermaid_code": "flowchart TD\n    A[New Ticket Submitted] --> B{Evaluate Assignment Criteria}\n    B --> C[Check Numbering Scale]\n    B --> D[Check Geographic Location]\n    B --> E[Check Agent Workload]\n    C --> F[Assignment Engine]\n    D --> F\n    E --> F\n    F --> G{Is VIP User?}\n    G -->|Yes| H[Priority First-Level Support]\n    G -->|No| I[Standard First-Level Support]\n    H --> J{Request Type?}\n    J -->|Incident| K[VIP Handling + CC by City]\n    J -->|Other| I\n    I --> L[Route to Category Agent]"
+    },
+    {
+      "title": "Service Catalog Hierarchy",
+      "mermaid_code": "flowchart TD\n    A[Service Catalog Level 1] --> B[Hardware]\n    A --> C[Software]\n    A --> D[SAP Core]\n    A --> E[Telecommunications]\n    A --> F[Others]\n    C --> C1[Identity and Access Management]\n    C1 --> C1a[User Creation]\n    C1 --> C1b[User Deletion]\n    C1 --> C1c[User Modifications]\n    C1 --> C1d[Password Resets]\n    D --> D1[SAP Support via Email]\n    B --> B1[Hardware Subcategories]\n    E --> E1[Telecom Subcategories]\n    F --> F1[Other Subcategories]"
+    },
+    {
+      "title": "System Architecture - Service Desk Platform",
+      "mermaid_code": "flowchart LR\n    subgraph Frontend\n        A[React Frontend] --> B[Ticket Form UI]\n        A --> C[Dashboard UI]\n    end\n    subgraph Backend\n        D[FastAPI Backend] --> E[Ticket Assignment Service]\n        D --> F[Category Service]\n        D --> G[VIP Service]\n    end\n    subgraph Database\n        H[(PostgreSQL)]\n    end\n    subgraph External\n        I[WhatsApp Chatbot]\n        J[Email Notifications]\n    end\n    B --> D\n    I -->|Submit Tickets| D\n    E --> H\n    F --> H\n    G --> H\n    E -->|VIP Incident CC| J\n    D -->|SAP Tickets| J"
+    },
+    {
+      "title": "WhatsApp Chatbot Ticket Flow",
+      "mermaid_code": "sequenceDiagram\n    participant U as User\n    participant W as WhatsApp Chatbot\n    participant API as Service Desk API\n    participant DB as Database\n    participant N as Notification Service\n    U->>W: Describe issue via WhatsApp\n    W->>W: Analyze tone and classify\n    W->>API: Submit ticket with category\n    API->>DB: Store ticket\n    API->>API: Check VIP status\n    alt VIP User\n        API->>N: Send CC notification by city\n    end\n    API->>W: Return ticket confirmation\n    W->>U: Confirm ticket created with ID"
+    }
+  ]
+}
