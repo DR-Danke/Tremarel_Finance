@@ -1,0 +1,124 @@
+{
+  "title": "Logistics Platform Prototype Review & Full-Stack Development Discussion",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Juan", "role": "Business Owner / Freight Forwarding Company"},
+    {"name": "Nani", "role": "Software Developer / Engineer"}
+  ],
+  "company_name": "Freight Forwarding Company (Juan's logistics operation)",
+  "contact_name": "Juan",
+  "contact_email": null,
+  "summary": "Juan demonstrated a frontend prototype he built over two weeks to replace Excel-based logistics operations (quotations, shipments, client/supplier management) for his freight forwarding company. Nani reviewed the prototype and agreed it is on the right track, recommending a proper full-stack build with FastAPI backend, PostgreSQL database, and React frontend following clean architecture. They agreed that Juan will record a detailed video walkthrough and share the GitHub repo so Nani can scope the full-stack development. Juan also introduced a potential second client opportunity — his partner's company LiftGo, which needs similar backend development.",
+  "discussion_points": [
+    {
+      "topic": "Quotation System (Cotizaciones)",
+      "description": "Juan built a quotation flow supporting two paths: prospect-based (no onboarding required upfront, but required when quotation is accepted) and existing-client-based (requires prior onboarding with compliance checks). Quotations include transport method, FCL/LCL cargo types, port selection (global ports with codes), transit days, free days, storage days, frequency, and cargo sector. Accepted quotations convert into shipments."
+    },
+    {
+      "topic": "Profit & Loss Tracking per Quotation",
+      "description": "Juan created a P&L section within each quotation where the commercial/pricing team enters costs per line item alongside the client-facing sale price. This allows visibility into profit margins per item and per quotation, replacing a side-by-side Excel process."
+    },
+    {
+      "topic": "Shipment Management (Embarques)",
+      "description": "Full shipment creation flow with mandatory document uploads at various stages. Documents are stored in Supabase. The system tracks maritime and air imports, replacing a messy Excel tracker that lacked mandatory fields and clean data."
+    },
+    {
+      "topic": "Client & Supplier Onboarding with Compliance",
+      "description": "Clients require full onboarding with document uploads and a compliance/background check process (planned integration with Truora or similar). Suppliers have different flows depending on whether they are national or international, each requiring specific documents. Clients can have associated suppliers/shippers linked to them."
+    },
+    {
+      "topic": "Full-Stack Architecture Recommendation",
+      "description": "Nani explained the need for a proper backend (FastAPI + Python) with clean architecture layers: repository, DTOs, services, API endpoints, then frontend. This enables multi-channel access (WhatsApp, agents, direct API calls), prevents exposing business logic in the frontend, and supports future integrations."
+    },
+    {
+      "topic": "Required Third-Party Integrations",
+      "description": "Juan identified several integrations needed: SeaRate (freight rate API, similar to what they had at Finkargo), Truora or similar background check service for compliance, and potentially CICETAG. Nani confirmed all integrations should live in the backend layer."
+    },
+    {
+      "topic": "FCL vs LCL Cargo Handling",
+      "description": "FCL (Full Container Load) requires container selection. LCL (Less than Container Load) requires volume calculation based on number of pieces, height, length, and width. Different fields and logic depending on cargo type."
+    },
+    {
+      "topic": "Document Storage Architecture",
+      "description": "Currently documents are stored in Supabase (relational + storage). Nani noted documents should also go to a proper repository/file storage system, which Juan acknowledged is not yet mapped out."
+    },
+    {
+      "topic": "Potential Second Client — LiftGo",
+      "description": "Juan's partner (42-year-old businessman from Mexico) recently imported 60 forklifts from China for his company LiftGo (forklift rental business). He is building a similar prototype and needs backend development. He runs 8-9 companies, smallest billing $1M USD/month. Juan offered to introduce Nani."
+    },
+    {
+      "topic": "Potential Logistics Operator Acquisition",
+      "description": "Juan mentioned confidentially exploring the purchase of a small ground logistics operator ($1M USD/year revenue) to handle terrestrial freight for his forwarding business. This could create additional technology implementation needs."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Record a detailed screen-share video (Google Meet) explaining the full application flow, click-by-click, with business considerations at each step",
+      "owner": "Juan",
+      "deadline": null
+    },
+    {
+      "description": "Share the GitHub repository with the current prototype code",
+      "owner": "Juan",
+      "deadline": null
+    },
+    {
+      "description": "Continue testing the prototype with the operations team to reach ~98% completion",
+      "owner": "Juan",
+      "deadline": "Approximately 1 more week from meeting date"
+    },
+    {
+      "description": "Review the repo and video, then extract a feature list and scope the full-stack build",
+      "owner": "Nani",
+      "deadline": null
+    },
+    {
+      "description": "Introduce Nani to his partner (LiftGo) for a potential second engagement",
+      "owner": "Juan",
+      "deadline": "Same day (afternoon, around 5 PM)"
+    },
+    {
+      "description": "Optionally build a proof of concept to show Juan what the proper full-stack version would look like",
+      "owner": "Nani",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "The prototype is on the right track and worth investing in a proper full-stack implementation",
+    "The full-stack build will use FastAPI (Python) for backend, PostgreSQL (Supabase) for database, and React for frontend",
+    "Development will follow clean architecture in waves: database layer, backend layer, then frontend layer",
+    "Business logic must live in the backend, not the frontend, for security and multi-channel flexibility",
+    "All third-party integrations (SeaRate, Truora, etc.) will be implemented in the backend layer",
+    "Juan will provide a recorded video walkthrough and repo access as inputs for Nani to scope the work"
+  ],
+  "next_steps": [
+    "Juan records a detailed video walkthrough of the entire application flow with business rules",
+    "Juan shares the GitHub repository with Nani",
+    "Juan completes ~1 week of additional testing with his operations team",
+    "Nani reviews the repo and video to produce a feature list and development plan",
+    "Juan introduces Nani to his partner (LiftGo) for a potential second project",
+    "Nani may build a proof of concept to validate the approach before full development"
+  ],
+  "diagrams": [
+    {
+      "title": "Proposed Full-Stack Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph Frontend[\"Frontend - React/TypeScript\"]\n        UI[\"UI Components\"]\n        Pages[\"Pages\"]\n        APIClients[\"API Clients\"]\n    end\n\n    subgraph Backend[\"Backend - FastAPI/Python\"]\n        Endpoints[\"API Endpoints\"]\n        Services[\"Business Logic Services\"]\n        DTOs[\"DTOs\"]\n        Repos[\"Repository Layer\"]\n    end\n\n    subgraph Database[\"Database - Supabase\"]\n        PG[(\"PostgreSQL\")]\n        FileStore[(\"Document Storage\")]\n    end\n\n    subgraph Integrations[\"Third-Party Integrations\"]\n        SeaRate[\"SeaRate API\"]\n        Truora[\"Truora Background Check\"]\n        CICETAG[\"CICETAG\"]\n    end\n\n    subgraph Channels[\"Access Channels\"]\n        Web[\"Web App\"]\n        WA[\"WhatsApp\"]\n        Agent[\"AI Agent\"]\n    end\n\n    Web --> UI\n    UI --> Pages --> APIClients --> Endpoints\n    WA --> Endpoints\n    Agent --> Endpoints\n    Endpoints --> Services --> Repos --> PG\n    Services --> DTOs\n    Repos --> FileStore\n    Services --> SeaRate\n    Services --> Truora\n    Services --> CICETAG"
+    },
+    {
+      "title": "Quotation Lifecycle Flow",
+      "mermaid_code": "flowchart TD\n    Start([\"Start New Quotation\"]) --> ClientType{\"Prospect or\\nExisting Client?\"}\n\n    ClientType -->|Prospect| CreateProspect[\"Create Prospect Profile\"]\n    ClientType -->|Existing Client| SelectClient[\"Select from Onboarded Clients\"]\n\n    CreateProspect --> FillQuote[\"Fill Quotation Details\"]\n    SelectClient --> FillQuote\n\n    FillQuote --> CargoType{\"Cargo Type?\"}\n    CargoType -->|FCL| FCLFields[\"Select Container Type,\\nDangerous/Normal, Weight\"]\n    CargoType -->|LCL| LCLFields[\"Enter Pieces, H, W, L\\nCalculate Volume\"]\n\n    FCLFields --> ShippingDetails[\"Ports, Transit Days,\\nFree Days, Frequency\"]\n    LCLFields --> ShippingDetails\n\n    ShippingDetails --> SaleConcepts[\"Add Sale Concepts\\nFlete, Embalaje, TCC, etc.\"]\n    SaleConcepts --> CostEntry[\"Enter Cost per Item\\nfor P&L Tracking\"]\n    CostEntry --> GeneratePDF[\"Generate Client PDF\"]\n    GeneratePDF --> SendClient[\"Send Quotation to Client\"]\n\n    SendClient --> ClientResponse{\"Client Response?\"}\n    ClientResponse -->|Rejected| Archived[\"Archive Quotation\"]\n    ClientResponse -->|Accepted & Prospect| Onboarding[\"Client Onboarding\\n+ Compliance Check\"]\n    ClientResponse -->|Accepted & Client| CreateShipment[\"Convert to Shipment\"]\n    Onboarding --> CreateShipment"
+    },
+    {
+      "title": "Client and Supplier Onboarding Process",
+      "mermaid_code": "flowchart TD\n    subgraph ClientOnboarding[\"Client Onboarding\"]\n        C1[\"Enter Company Details\\nRazon Social, Tax ID\"] --> C2[\"Upload Required Documents\"]\n        C2 --> C3[\"Background Check\\nTruora Integration\"]\n        C3 --> C4{\"Compliance Passed?\"}\n        C4 -->|Yes| C5[\"Client Ready to Operate\"]\n        C4 -->|No| C6[\"Flag for Review\"]\n    end\n\n    subgraph SupplierOnboarding[\"Supplier Onboarding\"]\n        S1{\"National or\\nInternational?\"}\n        S1 -->|National| S2[\"Enter National Data\"]\n        S1 -->|International| S3[\"Enter International Data\"]\n        S2 --> S4[\"Upload National Documents\"]\n        S3 --> S5[\"Upload International Documents\"]\n        S4 --> S6[\"Supplier Active\"]\n        S5 --> S6\n    end\n\n    C5 --> Link[\"Link Suppliers to Client\"]\n    S6 --> Link\n    Link --> Ready([\"Ready for Quotations\\nand Shipments\"])"
+    },
+    {
+      "title": "Shipment Creation Flow",
+      "mermaid_code": "flowchart TD\n    Start([\"Create Shipment\"]) --> Source{\"Source?\"}\n    Source -->|From Accepted Quotation| AutoFill[\"Auto-fill from Quotation\"]\n    Source -->|New Shipment| SelectClient[\"Select Existing Client\"]\n\n    AutoFill --> SelectShipper\n    SelectClient --> SelectShipper[\"Select Shipper/Exporter\\nfrom Client Suppliers\"]\n\n    SelectShipper --> MandatoryDocs[\"Upload Mandatory Documents\\nBL, Invoice, Packing List\"]\n    MandatoryDocs --> ShipmentDetails[\"Fill Shipment Details\\nDates, Vessel, Container\"]\n    ShipmentDetails --> AdditionalDocs[\"Upload Additional Documents\"]\n    AdditionalDocs --> Concepts[\"Define Billing Concepts\"]\n    Concepts --> Invoice[\"Generate Invoice\"]\n    Invoice --> Track([\"Track Shipment\"])"
+    },
+    {
+      "title": "Development Waves Strategy",
+      "mermaid_code": "flowchart LR\n    subgraph Wave1[\"Wave 1: Database\"]\n        DB1[\"Schema Design\"]\n        DB2[\"Tables & Relations\"]\n        DB3[\"Migrations\"]\n    end\n\n    subgraph Wave2[\"Wave 2: Backend\"]\n        BE1[\"Repository Layer\"]\n        BE2[\"DTOs\"]\n        BE3[\"Business Services\"]\n        BE4[\"API Endpoints\"]\n    end\n\n    subgraph Wave3[\"Wave 3: Frontend\"]\n        FE1[\"API Routes/Clients\"]\n        FE2[\"Components & Styling\"]\n        FE3[\"Pages & Forms\"]\n        FE4[\"User Interface\"]\n    end\n\n    subgraph Wave4[\"Wave 4: Integrations\"]\n        INT1[\"SeaRate API\"]\n        INT2[\"Truora Compliance\"]\n        INT3[\"PDF Generation\"]\n    end\n\n    Wave1 --> Wave2 --> Wave3 --> Wave4"
+    }
+  ]
+}

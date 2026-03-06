@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary — Logistics Platform Prototype Review</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #2c3e50; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%); color: #fff; padding: 40px 36px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+        .header .meta { font-size: 14px; opacity: 0.85; margin-top: 8px; }
+        .header .meta span { margin-right: 20px; }
+        .body-card { background: #fff; padding: 36px; border-radius: 0 0 12px 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        h2 { font-size: 18px; color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 32px; margin-bottom: 16px; }
+        h2:first-child { margin-top: 0; }
+        .badge { display: inline-block; background: #ebf4ff; color: #2b6cb0; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 12px; margin-left: 6px; }
+        .summary-box { background: #f7fafc; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #4a5568; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+        .participant-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; }
+        .participant-card .name { font-weight: 600; color: #1a365d; font-size: 15px; }
+        .participant-card .role { font-size: 13px; color: #718096; margin-top: 2px; }
+        .topic { margin-bottom: 16px; }
+        .topic-title { font-weight: 600; color: #2d3748; font-size: 15px; margin-bottom: 4px; }
+        .topic-desc { font-size: 14px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-table th { background: #edf2f7; color: #1a365d; text-align: left; padding: 10px 14px; font-weight: 600; }
+        .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+        .action-table tr:last-child td { border-bottom: none; }
+        .decision-list, .next-steps-list { list-style: none; padding: 0; }
+        .decision-list li, .next-steps-list li { padding: 8px 0 8px 24px; position: relative; font-size: 14px; color: #4a5568; border-bottom: 1px solid #f0f0f0; }
+        .decision-list li:last-child, .next-steps-list li:last-child { border-bottom: none; }
+        .decision-list li::before { content: "\2713"; position: absolute; left: 0; color: #38a169; font-weight: 700; }
+        .next-steps-list li::before { content: "\2192"; position: absolute; left: 0; color: #2b6cb0; font-weight: 700; }
+        .diagram-section { margin-top: 20px; margin-bottom: 24px; }
+        .diagram-section h3 { font-size: 15px; color: #2d3748; margin-bottom: 10px; font-weight: 600; }
+        .mermaid { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; overflow-x: auto; }
+        .footer { text-align: center; margin-top: 32px; font-size: 12px; color: #a0aec0; padding-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Logistics Platform Prototype Review &amp; Full-Stack Development Discussion</h1>
+            <div class="meta">
+                <span>March 4, 2026</span>
+                <span>~22 minutes</span>
+                <span>Transcribed from: 20260304 LLAMADA JUAN FE.mp3</span>
+            </div>
+        </div>
+
+        <div class="body-card">
+
+            <!-- Executive Summary -->
+            <h2>Executive Summary</h2>
+            <div class="summary-box">
+                Juan demonstrated a frontend prototype he built over two weeks to replace Excel-based logistics operations (quotations, shipments, client/supplier management) for his freight forwarding company. Nani reviewed the prototype and agreed it is on the right track, recommending a proper full-stack build with FastAPI backend, PostgreSQL database, and React frontend following clean architecture. They agreed that Juan will record a detailed video walkthrough and share the GitHub repo so Nani can scope the full-stack development. Juan also introduced a potential second client opportunity &mdash; his partner's company LiftGo, which needs similar backend development.
+            </div>
+
+            <!-- Participants -->
+            <h2>Participants</h2>
+            <div class="participants-grid">
+                <div class="participant-card">
+                    <div class="name">Juan</div>
+                    <div class="role">Business Owner / Freight Forwarding Company</div>
+                </div>
+                <div class="participant-card">
+                    <div class="name">Nani</div>
+                    <div class="role">Software Developer / Engineer</div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <h2>Discussion Points <span class="badge">10 topics</span></h2>
+
+            <div class="topic">
+                <div class="topic-title">1. Quotation System (Cotizaciones)</div>
+                <div class="topic-desc">Juan built a quotation flow supporting two paths: prospect-based (no onboarding required upfront, but required when quotation is accepted) and existing-client-based (requires prior onboarding with compliance checks). Quotations include transport method, FCL/LCL cargo types, port selection (global ports with codes), transit days, free days, storage days, frequency, and cargo sector. Accepted quotations convert into shipments.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">2. Profit &amp; Loss Tracking per Quotation</div>
+                <div class="topic-desc">Juan created a P&amp;L section within each quotation where the commercial/pricing team enters costs per line item alongside the client-facing sale price. This allows visibility into profit margins per item and per quotation, replacing a side-by-side Excel process.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">3. Shipment Management (Embarques)</div>
+                <div class="topic-desc">Full shipment creation flow with mandatory document uploads at various stages. Documents are stored in Supabase. The system tracks maritime and air imports, replacing a messy Excel tracker that lacked mandatory fields and clean data.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">4. Client &amp; Supplier Onboarding with Compliance</div>
+                <div class="topic-desc">Clients require full onboarding with document uploads and a compliance/background check process (planned integration with Truora or similar). Suppliers have different flows depending on whether they are national or international, each requiring specific documents. Clients can have associated suppliers/shippers linked to them.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">5. Full-Stack Architecture Recommendation</div>
+                <div class="topic-desc">Nani explained the need for a proper backend (FastAPI + Python) with clean architecture layers: repository, DTOs, services, API endpoints, then frontend. This enables multi-channel access (WhatsApp, agents, direct API calls), prevents exposing business logic in the frontend, and supports future integrations.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">6. Required Third-Party Integrations</div>
+                <div class="topic-desc">Juan identified several integrations needed: SeaRate (freight rate API, similar to what they had at Finkargo), Truora or similar background check service for compliance, and potentially CICETAG. Nani confirmed all integrations should live in the backend layer.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">7. FCL vs LCL Cargo Handling</div>
+                <div class="topic-desc">FCL (Full Container Load) requires container selection. LCL (Less than Container Load) requires volume calculation based on number of pieces, height, length, and width. Different fields and logic depending on cargo type.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">8. Document Storage Architecture</div>
+                <div class="topic-desc">Currently documents are stored in Supabase (relational + storage). Nani noted documents should also go to a proper repository/file storage system, which Juan acknowledged is not yet mapped out.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">9. Potential Second Client &mdash; LiftGo</div>
+                <div class="topic-desc">Juan's partner (42-year-old businessman from Mexico) recently imported 60 forklifts from China for his company LiftGo (forklift rental business). He is building a similar prototype and needs backend development. He runs 8-9 companies, smallest billing $1M USD/month. Juan offered to introduce Nani.</div>
+            </div>
+
+            <div class="topic">
+                <div class="topic-title">10. Potential Logistics Operator Acquisition</div>
+                <div class="topic-desc">Juan mentioned confidentially exploring the purchase of a small ground logistics operator ($1M USD/year revenue) to handle terrestrial freight for his forwarding business. This could create additional technology implementation needs.</div>
+            </div>
+
+            <!-- Action Items -->
+            <h2>Action Items <span class="badge">6 items</span></h2>
+            <table class="action-table">
+                <thead>
+                    <tr>
+                        <th style="width: 55%;">Action</th>
+                        <th style="width: 20%;">Owner</th>
+                        <th style="width: 25%;">Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Record a detailed screen-share video (Google Meet) explaining the full application flow, click-by-click, with business considerations at each step</td>
+                        <td><strong>Juan</strong></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Share the GitHub repository with the current prototype code</td>
+                        <td><strong>Juan</strong></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Continue testing the prototype with the operations team to reach ~98% completion</td>
+                        <td><strong>Juan</strong></td>
+                        <td>~1 week from meeting</td>
+                    </tr>
+                    <tr>
+                        <td>Review the repo and video, then extract a feature list and scope the full-stack build</td>
+                        <td><strong>Nani</strong></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Introduce Nani to his partner (LiftGo) for a potential second engagement</td>
+                        <td><strong>Juan</strong></td>
+                        <td>Same day (~5 PM)</td>
+                    </tr>
+                    <tr>
+                        <td>Optionally build a proof of concept to show Juan what the proper full-stack version would look like</td>
+                        <td><strong>Nani</strong></td>
+                        <td>&mdash;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Decisions Made -->
+            <h2>Decisions Made</h2>
+            <ul class="decision-list">
+                <li>The prototype is on the right track and worth investing in a proper full-stack implementation</li>
+                <li>The full-stack build will use FastAPI (Python) for backend, PostgreSQL (Supabase) for database, and React for frontend</li>
+                <li>Development will follow clean architecture in waves: database layer, backend layer, then frontend layer</li>
+                <li>Business logic must live in the backend, not the frontend, for security and multi-channel flexibility</li>
+                <li>All third-party integrations (SeaRate, Truora, etc.) will be implemented in the backend layer</li>
+                <li>Juan will provide a recorded video walkthrough and repo access as inputs for Nani to scope the work</li>
+            </ul>
+
+            <!-- Next Steps -->
+            <h2>Next Steps</h2>
+            <ul class="next-steps-list">
+                <li>Juan records a detailed video walkthrough of the entire application flow with business rules</li>
+                <li>Juan shares the GitHub repository with Nani</li>
+                <li>Juan completes ~1 week of additional testing with his operations team</li>
+                <li>Nani reviews the repo and video to produce a feature list and development plan</li>
+                <li>Juan introduces Nani to his partner (LiftGo) for a potential second project</li>
+                <li>Nani may build a proof of concept to validate the approach before full development</li>
+            </ul>
+
+            <!-- Technical Architecture Diagrams -->
+            <h2>Technical Architecture</h2>
+
+            <div class="diagram-section">
+                <h3>Proposed Full-Stack Architecture</h3>
+                <pre class="mermaid">
+flowchart LR
+    subgraph Frontend["Frontend - React/TypeScript"]
+        UI["UI Components"]
+        Pages["Pages"]
+        APIClients["API Clients"]
+    end
+
+    subgraph Backend["Backend - FastAPI/Python"]
+        Endpoints["API Endpoints"]
+        Services["Business Logic Services"]
+        DTOs["DTOs"]
+        Repos["Repository Layer"]
+    end
+
+    subgraph Database["Database - Supabase"]
+        PG[("PostgreSQL")]
+        FileStore[("Document Storage")]
+    end
+
+    subgraph Integrations["Third-Party Integrations"]
+        SeaRate["SeaRate API"]
+        Truora["Truora Background Check"]
+        CICETAG["CICETAG"]
+    end
+
+    subgraph Channels["Access Channels"]
+        Web["Web App"]
+        WA["WhatsApp"]
+        Agent["AI Agent"]
+    end
+
+    Web --> UI
+    UI --> Pages --> APIClients --> Endpoints
+    WA --> Endpoints
+    Agent --> Endpoints
+    Endpoints --> Services --> Repos --> PG
+    Services --> DTOs
+    Repos --> FileStore
+    Services --> SeaRate
+    Services --> Truora
+    Services --> CICETAG
+                </pre>
+            </div>
+
+            <div class="diagram-section">
+                <h3>Quotation Lifecycle Flow</h3>
+                <pre class="mermaid">
+flowchart TD
+    Start(["Start New Quotation"]) --> ClientType{"Prospect or\nExisting Client?"}
+
+    ClientType -->|Prospect| CreateProspect["Create Prospect Profile"]
+    ClientType -->|Existing Client| SelectClient["Select from Onboarded Clients"]
+
+    CreateProspect --> FillQuote["Fill Quotation Details"]
+    SelectClient --> FillQuote
+
+    FillQuote --> CargoType{"Cargo Type?"}
+    CargoType -->|FCL| FCLFields["Select Container Type,\nDangerous/Normal, Weight"]
+    CargoType -->|LCL| LCLFields["Enter Pieces, H, W, L\nCalculate Volume"]
+
+    FCLFields --> ShippingDetails["Ports, Transit Days,\nFree Days, Frequency"]
+    LCLFields --> ShippingDetails
+
+    ShippingDetails --> SaleConcepts["Add Sale Concepts\nFlete, Embalaje, TCC, etc."]
+    SaleConcepts --> CostEntry["Enter Cost per Item\nfor P&L Tracking"]
+    CostEntry --> GeneratePDF["Generate Client PDF"]
+    GeneratePDF --> SendClient["Send Quotation to Client"]
+
+    SendClient --> ClientResponse{"Client Response?"}
+    ClientResponse -->|Rejected| Archived["Archive Quotation"]
+    ClientResponse -->|"Accepted & Prospect"| Onboarding["Client Onboarding\n+ Compliance Check"]
+    ClientResponse -->|"Accepted & Client"| CreateShipment["Convert to Shipment"]
+    Onboarding --> CreateShipment
+                </pre>
+            </div>
+
+            <div class="diagram-section">
+                <h3>Client and Supplier Onboarding Process</h3>
+                <pre class="mermaid">
+flowchart TD
+    subgraph ClientOnboarding["Client Onboarding"]
+        C1["Enter Company Details\nRazon Social, Tax ID"] --> C2["Upload Required Documents"]
+        C2 --> C3["Background Check\nTruora Integration"]
+        C3 --> C4{"Compliance Passed?"}
+        C4 -->|Yes| C5["Client Ready to Operate"]
+        C4 -->|No| C6["Flag for Review"]
+    end
+
+    subgraph SupplierOnboarding["Supplier Onboarding"]
+        S1{"National or\nInternational?"}
+        S1 -->|National| S2["Enter National Data"]
+        S1 -->|International| S3["Enter International Data"]
+        S2 --> S4["Upload National Documents"]
+        S3 --> S5["Upload International Documents"]
+        S4 --> S6["Supplier Active"]
+        S5 --> S6
+    end
+
+    C5 --> Link["Link Suppliers to Client"]
+    S6 --> Link
+    Link --> Ready(["Ready for Quotations\nand Shipments"])
+                </pre>
+            </div>
+
+            <div class="diagram-section">
+                <h3>Shipment Creation Flow</h3>
+                <pre class="mermaid">
+flowchart TD
+    Start(["Create Shipment"]) --> Source{"Source?"}
+    Source -->|"From Accepted Quotation"| AutoFill["Auto-fill from Quotation"]
+    Source -->|"New Shipment"| SelectClient["Select Existing Client"]
+
+    AutoFill --> SelectShipper
+    SelectClient --> SelectShipper["Select Shipper/Exporter\nfrom Client Suppliers"]
+
+    SelectShipper --> MandatoryDocs["Upload Mandatory Documents\nBL, Invoice, Packing List"]
+    MandatoryDocs --> ShipmentDetails["Fill Shipment Details\nDates, Vessel, Container"]
+    ShipmentDetails --> AdditionalDocs["Upload Additional Documents"]
+    AdditionalDocs --> Concepts["Define Billing Concepts"]
+    Concepts --> Invoice["Generate Invoice"]
+    Invoice --> Track(["Track Shipment"])
+                </pre>
+            </div>
+
+            <div class="diagram-section">
+                <h3>Development Waves Strategy</h3>
+                <pre class="mermaid">
+flowchart LR
+    subgraph Wave1["Wave 1: Database"]
+        DB1["Schema Design"]
+        DB2["Tables & Relations"]
+        DB3["Migrations"]
+    end
+
+    subgraph Wave2["Wave 2: Backend"]
+        BE1["Repository Layer"]
+        BE2["DTOs"]
+        BE3["Business Services"]
+        BE4["API Endpoints"]
+    end
+
+    subgraph Wave3["Wave 3: Frontend"]
+        FE1["API Routes/Clients"]
+        FE2["Components & Styling"]
+        FE3["Pages & Forms"]
+        FE4["User Interface"]
+    end
+
+    subgraph Wave4["Wave 4: Integrations"]
+        INT1["SeaRate API"]
+        INT2["Truora Compliance"]
+        INT3["PDF Generation"]
+    end
+
+    Wave1 --> Wave2 --> Wave3 --> Wave4
+                </pre>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Meeting Summary &bull; Generated on March 6, 2026 &bull; Source: 20260304 LLAMADA JUAN FE.mp3
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
