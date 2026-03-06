@@ -1,0 +1,118 @@
+{
+  "title": "Sales Call with SIALNE — AI Automation & Bank Reconciliation",
+  "meeting_date": "2026-03-03",
+  "participants": [
+    {"name": "Daniel", "role": "Co-founder / Former VP of Product at Fincargo (Back Office & Processes)"},
+    {"name": "Ignacio Guerra", "role": "Financial Director at SIALNE (Prospect)"},
+    {"name": "Dani", "role": "Co-founder / Growth & Marketing"}
+  ],
+  "company_name": "SIALNE",
+  "contact_name": "Ignacio Guerra",
+  "contact_email": null,
+  "summary": "Initial sales call with Ignacio Guerra, Financial Director at SIALNE (a poultry company in Brazil, part of the Carnero family group). The team presented their three-phase AI automation approach (Augment, Automate, Agentize) and demonstrated a live bank reconciliation tool achieving ~90% automatic matching with 35 rules. Ignacio expressed strong interest in starting with bank reconciliation as a quick-win pilot project. Additional opportunities discussed included legal document management with role-based access controls and SAP security governance.",
+  "discussion_points": [
+    {
+      "topic": "Bank Reconciliation Automation",
+      "description": "Live demo of the bank reconciliation tool was shown. The system uploads bank statements and ERP ledger entries (5,800+ records), applies ~35 matching rules in order of confidence (exact match on ID/amount/date, then fuzzy matches with date/amount tolerance), achieving ~90% automatic reconciliation. Currently outputs to Excel but can be integrated further. The prospect's team currently spends 2-3 days with 1-2 people on this monthly process."
+    },
+    {
+      "topic": "Three-Phase AI Implementation Approach",
+      "description": "The team presented their methodology: (1) Augment — point automations to help existing staff do more; (2) Automate — full process automation with API integrations replacing manual Excel workflows; (3) Agentize — deploy autonomous AI agents so staff shift from operators to supervisors. Emphasized that jumping directly to agents often fails due to organizational readiness and token costs."
+    },
+    {
+      "topic": "SIALNE Organizational Structure & IT Governance",
+      "description": "SIALNE is the anchor company of the Carnero family group (poultry), with a smaller dairy subsidiary. Ignacio oversees Finance, IT (~15 people), Legal, Utilities, and Facilities. IT governance follows an annual planning process: business area directors present tech needs in their business plans, IT allocates internal resources, and overflow projects are outsourced with the requesting area paying from its own budget. IT acts as PMO for third-party projects."
+    },
+    {
+      "topic": "Legal Document Management & Access Control",
+      "description": "Ignacio's legal team wants to build a contract management system accessible via WhatsApp where users can query contract information. The critical challenge is role-based access control — determining which users can see which contracts and which fields (e.g., one user sees contract duration but not pricing). The team presented their existing Legal Hub solution with contract templates, approval workflows, and queryable contract database."
+    },
+    {
+      "topic": "SAP Security & Access Governance",
+      "description": "SIALNE recently upgraded to SAP S/4HANA but lacks formal access governance. Currently, access requests are granted informally based on manager approval. As the company grows (from 4 trusted users to 1,000), they need proper profile definitions per role/process, access review routines, and usage monitoring. Ignacio asked for vendor recommendations in Colombia."
+    },
+    {
+      "topic": "Organizational Diagnostic Offering",
+      "description": "The team presented their diagnostic service that maps the entire organization through WhatsApp conversations and interviews. Deliverables include: departmental digital maturity assessment, economic opportunity analysis, macro-process documentation, knowledge gap identification, system criticality prioritization, technical debt assessment, and ROI-driven implementation recommendations."
+    },
+    {
+      "topic": "Pricing & Commercial Terms",
+      "description": "Bank reconciliation: $4,000 one-time implementation fee + $200/month maintenance (unlimited bank accounts). Services exported from Colombia are VAT-exempt, so quoted prices are final. Implementation timeline: 1-2 weeks from kickoff to functional platform. Proof of concept available with NDA."
+    },
+    {
+      "topic": "WhatsApp Integration for Business Processes",
+      "description": "Discussion about routing IT service requests and invoice processing through WhatsApp instead of the current intranet-based ticketing system. Example: photo an invoice via WhatsApp, system auto-identifies it, routes to SAP for processing — reducing the need for users to be at a computer."
+    },
+    {
+      "topic": "Competitive Landscape",
+      "description": "Ignacio mentioned they had spoken with Celonis that same morning about similar automation and AI agent services. SIALNE is evaluating multiple vendors to find the best fit for each specific need in terms of quality, cost, and speed."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send a brief company presentation and an initial proposal specifically for bank reconciliation automation",
+      "owner": "Tremarel team (Daniel & Dani)",
+      "deadline": null
+    },
+    {
+      "description": "Talk to the accounting team internally to validate whether bank/account reconciliation is a real pain point and understand the specific details of the process",
+      "owner": "Ignacio Guerra",
+      "deadline": null
+    },
+    {
+      "description": "Research and recommend a vendor for SAP security and access governance (profile definitions, access review routines)",
+      "owner": "Tremarel team (Daniel & Dani)",
+      "deadline": null
+    },
+    {
+      "description": "Schedule a follow-up meeting if there is alignment after internal validation and proposal review",
+      "owner": "Ignacio Guerra",
+      "deadline": null
+    },
+    {
+      "description": "Potentially connect Ignacio's accounting team directly with the Tremarel team for detailed technical discussions (in Portuguese)",
+      "owner": "Ignacio Guerra",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Bank reconciliation automation will be the first pilot project (quick win) if validated internally",
+    "Ignacio will validate the reconciliation use case with his accounting team before proceeding",
+    "An NDA can be signed for a proof of concept if needed",
+    "Legal document management and SAP access governance are secondary priorities to explore after the initial pilot",
+    "Communication can proceed in Portuguese with Ignacio's team"
+  ],
+  "next_steps": [
+    "Tremarel team sends company presentation and bank reconciliation proposal to Ignacio",
+    "Ignacio validates reconciliation pain points with his accounting team",
+    "Tremarel team researches SAP security/access governance vendor recommendations",
+    "If there is a match, schedule a follow-up call (potentially including accounting team members)",
+    "If proceeding, sign NDA and provide bank statement + ledger data for proof of concept"
+  ],
+  "diagrams": [
+    {
+      "title": "Bank Reconciliation System Architecture",
+      "mermaid_code": "flowchart TD\n    A[\"Bank Statement Upload\\n(CSV/Excel)\"] --> C[\"Reconciliation Engine\"]\n    B[\"ERP Ledger Export\\n(CSV/Excel)\"] --> C\n    C --> D[\"Rule Engine\\n(~35 matching rules)\"]\n    D --> E{\"Match Found?\"}\n    E -->|\"Exact Match\"| F[\"Auto-Reconciled\\n(~90%)\"]\n    E -->|\"Fuzzy Match\"| G[\"Confidence-Scored\\nMatches\"]\n    E -->|\"No Match\"| H[\"Exceptions Queue\\n(Manual Review)\"]\n    F --> I[\"Results Dashboard\"]\n    G --> I\n    H --> I\n    I --> J[\"Excel Export\"]\n    I --> K[\"Manual Pairing\\nInterface\"]\n    I --> L[\"Summary Report\\n(Rules Applied & Success Rate)\"]"
+    },
+    {
+      "title": "Rule Engine Matching Hierarchy",
+      "mermaid_code": "flowchart TD\n    A[\"Start: Unmatched Records\"] --> B[\"Rule 1: Exact Match\\n(ID + Amount + Date)\"]\n    B --> C{\"Matched?\"}\n    C -->|Yes| D[\"Mark as Reconciled\"]\n    C -->|No| E[\"Rule 2: Exact ID + Amount\\n(Date +/- 1-2 days)\"]\n    E --> F{\"Matched?\"}\n    F -->|Yes| D\n    F -->|No| G[\"Rule 3: Exact ID + Amount\\n(Date +/- 5 days)\"]\n    G --> H{\"Matched?\"}\n    H -->|Yes| D\n    H -->|No| I[\"Rule 4-12: Progressive\\nFuzzy Matching\\n(Amount tolerance, partial ID)\"]\n    I --> J{\"Matched?\"}\n    J -->|Yes| D\n    J -->|No| K[\"Exception:\\nManual Review Required\"]\n    D --> L[\"~90% Auto-Reconciled\"]\n    K --> M[\"~10% Manual Exceptions\"]"
+    },
+    {
+      "title": "Three-Phase AI Implementation Methodology",
+      "mermaid_code": "flowchart LR\n    subgraph Phase1[\"Phase 1: AUGMENT\"]\n        A1[\"Point Automations\"] --> A2[\"Excel-based tools\"]\n        A2 --> A3[\"Staff does more\\nwith same effort\"]\n    end\n    subgraph Phase2[\"Phase 2: AUTOMATE\"]\n        B1[\"API Integrations\"] --> B2[\"End-to-end\\nprocess automation\"]\n        B2 --> B3[\"No manual\\nExcel transfers\"]\n    end\n    subgraph Phase3[\"Phase 3: AGENTIZE\"]\n        C1[\"AI Agents\"] --> C2[\"Autonomous\\nprocess execution\"]\n        C2 --> C3[\"Staff becomes\\nsupervisors\"]\n    end\n    Phase1 -->|\"Feedback &\\nLearning\"| Phase2\n    Phase2 -->|\"Operational\\nData\"| Phase3"
+    },
+    {
+      "title": "SIALNE IT Governance & Project Prioritization",
+      "mermaid_code": "sequenceDiagram\n    participant BD as Business Directors\n    participant IC as IT Committee\n    participant IT as IT Team (15 people)\n    participant EV as External Vendors\n    participant IG as Ignacio (Finance/IT)\n    BD->>IC: Present annual business plans with tech needs\n    IC->>IT: Allocate internal resources & prioritize\n    IT->>IT: Execute planned projects (annual roadmap)\n    Note over BD,IT: When new needs arise mid-year\n    BD->>IG: Request new project\n    IG->>IG: Evaluate: change priorities or outsource?\n    alt Outsource\n        IG->>EV: IT proposes vendor\n        BD->>EV: Business area pays from own budget\n        IT->>EV: IT acts as PMO\n        EV->>BD: Deliver solution to internal client\n    else Reprioritize\n        IT->>IT: Adjust internal roadmap\n    end"
+    },
+    {
+      "title": "Proposed Legal Document Management System",
+      "mermaid_code": "flowchart TD\n    A[\"User Request\\n(WhatsApp / Web)\"] --> B{\"Authentication &\\nRole Check\"}\n    B -->|\"Authorized\"| C[\"Contract Query Engine\"]\n    B -->|\"Unauthorized\"| D[\"Access Denied\"]\n    C --> E[\"Contract Database\"]\n    E --> F{\"Field-Level\\nAccess Control\"}\n    F -->|\"Full Access\"| G[\"Return All\\nContract Details\"]\n    F -->|\"Partial Access\"| H[\"Return Permitted\\nFields Only\\n(e.g., duration but not price)\"]\n    G --> I[\"Response to User\"]\n    H --> I\n    subgraph ContractLifecycle[\"Contract Creation Flow\"]\n        J[\"Select Template\"] --> K[\"Fill Contract Data\"]\n        K --> L[\"Notify Legal Dept\"]\n        L --> M[\"Legal Review & Approval\"]\n        M --> N[\"Store in Database\"]\n    end"
+    },
+    {
+      "title": "WhatsApp-Integrated Service Request Flow",
+      "mermaid_code": "sequenceDiagram\n    participant U as User (Mobile)\n    participant WA as WhatsApp Router\n    participant TS as Ticketing System\n    participant SAP as SAP S/4HANA\n    U->>WA: Send request via WhatsApp\n    WA->>WA: Classify request type\n    alt Invoice Processing\n        U->>WA: Photo of invoice\n        WA->>SAP: OCR + Auto-identify invoice\n        SAP->>SAP: Process & post to accounting\n        SAP->>U: Confirmation notification\n    else IT Support Request\n        WA->>TS: Create standardized ticket\n        TS->>TS: Auto-prioritize\n        TS->>U: Ticket confirmation + tracking\n    else General Query\n        WA->>TS: Route to appropriate department\n        TS->>U: Response\n    end"
+    }
+  ]
+}

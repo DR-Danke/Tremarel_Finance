@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary — Sales Call with SIALNE</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #1a2332;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            color: #ffffff;
+            padding: 40px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .header .meta {
+            font-size: 14px;
+            color: #b0c4de;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .header .meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .body-content {
+            background: #ffffff;
+            padding: 0;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .section {
+            padding: 32px 40px;
+            border-bottom: 1px solid #e8edf2;
+        }
+        .section:last-child { border-bottom: none; }
+        .section h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-prospect { background: #ebf8ff; color: #2b6cb0; }
+        .badge-team { background: #f0fff4; color: #276749; }
+        .badge-mentioned { background: #faf5ff; color: #6b46c1; }
+        .summary-box {
+            background: #f7fafc;
+            border-left: 4px solid #2c5282;
+            padding: 20px 24px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            color: #2d3748;
+        }
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+        }
+        .participant-card {
+            background: #f7fafc;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .participant-card .name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1a2332;
+        }
+        .participant-card .role {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .topic-list { list-style: none; }
+        .topic-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .topic-item:last-child { border-bottom: none; }
+        .topic-item h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 6px;
+        }
+        .topic-item p {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .topic-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #2c5282;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+            flex-shrink: 0;
+            vertical-align: middle;
+        }
+        .action-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+        }
+        .action-table th {
+            background: #f7fafc;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .action-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #f0f4f8;
+            color: #2d3748;
+            vertical-align: top;
+        }
+        .action-table tr:last-child td { border-bottom: none; }
+        .action-table tr:hover td { background: #f7fafc; }
+        .owner-tag {
+            display: inline-block;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            white-space: nowrap;
+        }
+        .decisions-list, .next-steps-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decisions-list li, .next-steps-list li {
+            padding: 10px 0 10px 28px;
+            position: relative;
+            font-size: 14px;
+            color: #2d3748;
+            border-bottom: 1px solid #f0f4f8;
+        }
+        .decisions-list li:last-child, .next-steps-list li:last-child { border-bottom: none; }
+        .decisions-list li::before {
+            content: '\2713';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: #38a169;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .next-steps-list li::before {
+            content: '\2192';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: #2c5282;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .company-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .info-item {
+            background: #f7fafc;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+        .info-item .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #718096;
+            font-weight: 600;
+        }
+        .info-item .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a2332;
+            margin-top: 2px;
+        }
+        .diagram-section {
+            margin-top: 16px;
+            margin-bottom: 24px;
+        }
+        .diagram-section h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            padding: 8px 14px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 3px solid #2c5282;
+        }
+        .mermaid {
+            background: #fafbfc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .pricing-box {
+            background: linear-gradient(135deg, #ebf8ff 0%, #f0fff4 100%);
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 12px;
+        }
+        .pricing-box .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #d4e8f0;
+            font-size: 14px;
+        }
+        .pricing-box .price-row:last-child { border-bottom: none; }
+        .pricing-box .price-label { color: #4a5568; }
+        .pricing-box .price-value { font-weight: 700; color: #1e3a5f; }
+        .footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        @media (max-width: 600px) {
+            .header { padding: 24px 20px; }
+            .section { padding: 24px 20px; }
+            .company-info { grid-template-columns: 1fr; }
+            .participants-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Sales Call with SIALNE</h1>
+            <p style="font-size: 15px; color: #e2e8f0; margin-bottom: 12px;">AI Automation & Bank Reconciliation</p>
+            <div class="meta">
+                <span>March 3, 2026</span>
+                <span>~41 minutes</span>
+                <span>Initial Discovery Call</span>
+            </div>
+        </div>
+
+        <div class="body-content">
+
+            <!-- Company / Prospect Info -->
+            <div class="section">
+                <h2>Prospect Information</h2>
+                <div class="company-info">
+                    <div class="info-item">
+                        <div class="label">Company</div>
+                        <div class="value">SIALNE (Grupo Carnero)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Industry</div>
+                        <div class="value">Poultry / Agribusiness</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Primary Contact</div>
+                        <div class="value">Ignacio Guerra</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Role</div>
+                        <div class="value">Financial Director</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Location</div>
+                        <div class="value">Brazil</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">ERP</div>
+                        <div class="value">SAP S/4HANA</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">IT Team Size</div>
+                        <div class="value">~15 people</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">Referral</div>
+                        <div class="value">Ludmila (via Tom&aacute;s)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2>Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Daniel <span class="badge badge-team">Team</span></div>
+                        <div class="role">Co-founder &mdash; Back Office & Processes<br>Former VP of Product at Fincargo</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Ignacio Guerra <span class="badge badge-prospect">Prospect</span></div>
+                        <div class="role">Financial Director at SIALNE<br>Oversees Finance, IT, Legal, Utilities & Facilities</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Dani <span class="badge badge-team">Team</span></div>
+                        <div class="role">Co-founder &mdash; Growth & Marketing<br>Former Growth lead at Fincargo</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Tom&aacute;s <span class="badge badge-mentioned">Mentioned</span></div>
+                        <div class="role">Partner &mdash; Former CRO/CPO at Fincargo</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2>Executive Summary</h2>
+                <div class="summary-box">
+                    Initial sales call with Ignacio Guerra, Financial Director at SIALNE (a poultry company in Brazil, part of the Carnero family group). The team presented their three-phase AI automation approach (Augment, Automate, Agentize) and demonstrated a live bank reconciliation tool achieving ~90% automatic matching using 35 business rules. Ignacio expressed strong interest in starting with bank reconciliation as a quick-win pilot project. Additional opportunities discussed included legal document management with role-based access controls and SAP security governance. Ignacio will validate the reconciliation use case internally with his accounting team before scheduling a follow-up.
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2>Discussion Points</h2>
+                <ul class="topic-list">
+                    <li class="topic-item">
+                        <h3><span class="topic-number">1</span>Bank Reconciliation Automation</h3>
+                        <p>Live demo of the bank reconciliation tool. The system uploads bank statements and ERP ledger entries (5,800+ records), applies ~35 matching rules in order of confidence (exact match on ID/amount/date, then fuzzy matches with date/amount tolerance), achieving ~90% automatic reconciliation. Currently outputs to Excel but can be integrated further. The prospect's team currently spends 2&ndash;3 days with 1&ndash;2 people on this monthly process.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">2</span>Three-Phase AI Implementation Approach</h3>
+                        <p>Methodology: (1) Augment &mdash; point automations to help existing staff do more; (2) Automate &mdash; full process automation with API integrations replacing manual Excel workflows; (3) Agentize &mdash; deploy autonomous AI agents so staff shift from operators to supervisors. Emphasized that jumping directly to agents often fails due to organizational readiness.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">3</span>SIALNE Organizational Structure & IT Governance</h3>
+                        <p>SIALNE is the anchor company of the Carnero family group (poultry), with a smaller dairy subsidiary. IT governance follows an annual planning process: business directors present tech needs, IT allocates internal resources (~15 people), and overflow is outsourced with the requesting area paying from its own budget. IT acts as PMO for third-party projects.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">4</span>Legal Document Management & Access Control</h3>
+                        <p>Ignacio's legal team wants a contract management system accessible via WhatsApp. Critical challenge: role-based access at field level (e.g., one user sees contract duration but not pricing). The team presented their existing Legal Hub with contract templates, approval workflows, and queryable database.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">5</span>SAP Security & Access Governance</h3>
+                        <p>SIALNE recently upgraded to SAP S/4HANA but lacks formal access governance. Access requests are granted informally. As the company scales, they need proper profile definitions, review routines, and usage monitoring. Ignacio asked for vendor recommendations.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">6</span>Organizational Diagnostic Offering</h3>
+                        <p>Diagnostic service maps the organization through interviews and WhatsApp conversations. Deliverables include: digital maturity assessment, economic opportunity analysis, macro-process documentation, knowledge gap identification, system criticality prioritization, and ROI-driven implementation recommendations.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">7</span>WhatsApp Integration for Business Processes</h3>
+                        <p>Routing IT service requests and invoice processing through WhatsApp instead of intranet-based ticketing. Example: photograph an invoice via WhatsApp, auto-identify in SAP, and process without needing someone at a computer.</p>
+                    </li>
+                    <li class="topic-item">
+                        <h3><span class="topic-number">8</span>Competitive Landscape</h3>
+                        <p>SIALNE also spoke with Celonis about similar services. They are evaluating multiple vendors to find the best fit per specific need in terms of quality, cost, and speed.</p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Pricing -->
+            <div class="section">
+                <h2>Pricing Discussed</h2>
+                <div class="pricing-box">
+                    <div class="price-row">
+                        <span class="price-label">Bank Reconciliation &mdash; Implementation (one-time)</span>
+                        <span class="price-value">$4,000 USD</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Bank Reconciliation &mdash; Monthly Maintenance</span>
+                        <span class="price-value">$200 USD / month</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Bank Account Limit</span>
+                        <span class="price-value">Unlimited</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Tax / VAT</span>
+                        <span class="price-value">Exempt (service export from Colombia)</span>
+                    </div>
+                    <div class="price-row">
+                        <span class="price-label">Implementation Timeline</span>
+                        <span class="price-value">1&ndash;2 weeks</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2>Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 55%;">Action</th>
+                            <th style="width: 30%;">Owner</th>
+                            <th style="width: 15%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Send company presentation and initial proposal for bank reconciliation automation</td>
+                            <td><span class="owner-tag">Tremarel Team</span></td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Validate bank/account reconciliation pain points with accounting team</td>
+                            <td><span class="owner-tag">Ignacio Guerra</span></td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Research and recommend SAP security & access governance vendors</td>
+                            <td><span class="owner-tag">Tremarel Team</span></td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Schedule follow-up meeting after internal validation</td>
+                            <td><span class="owner-tag">Ignacio Guerra</span></td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Potentially connect accounting team directly with Tremarel for technical discussions (Portuguese)</td>
+                            <td><span class="owner-tag">Ignacio Guerra</span></td>
+                            <td>TBD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2>Decisions Made</h2>
+                <ul class="decisions-list">
+                    <li>Bank reconciliation automation selected as the first pilot project (quick win) if validated internally</li>
+                    <li>Ignacio will validate the reconciliation use case with his accounting team before proceeding</li>
+                    <li>An NDA can be signed for a proof of concept if needed</li>
+                    <li>Legal document management and SAP access governance are secondary priorities to explore after the initial pilot</li>
+                    <li>Communication can proceed in Portuguese with Ignacio's team members</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Next Steps</h2>
+                <ul class="next-steps-list">
+                    <li>Tremarel team sends company presentation and bank reconciliation proposal to Ignacio</li>
+                    <li>Ignacio validates reconciliation pain points with his accounting team</li>
+                    <li>Tremarel team researches SAP security/access governance vendor recommendations</li>
+                    <li>If aligned, schedule a follow-up call (potentially including accounting team members)</li>
+                    <li>If proceeding, sign NDA and provide bank statement + ledger data for proof of concept</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <h2>Technical Architecture</h2>
+
+                <div class="diagram-section">
+                    <h3>Bank Reconciliation System Architecture</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A["Bank Statement Upload<br/>(CSV/Excel)"] --> C["Reconciliation Engine"]
+    B["ERP Ledger Export<br/>(CSV/Excel)"] --> C
+    C --> D["Rule Engine<br/>(~35 matching rules)"]
+    D --> E{"Match Found?"}
+    E -->|"Exact Match"| F["Auto-Reconciled<br/>(~90%)"]
+    E -->|"Fuzzy Match"| G["Confidence-Scored<br/>Matches"]
+    E -->|"No Match"| H["Exceptions Queue<br/>(Manual Review)"]
+    F --> I["Results Dashboard"]
+    G --> I
+    H --> I
+    I --> J["Excel Export"]
+    I --> K["Manual Pairing<br/>Interface"]
+    I --> L["Summary Report<br/>(Rules Applied & Success Rate)"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Rule Engine Matching Hierarchy</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A["Start: Unmatched Records"] --> B["Rule 1: Exact Match<br/>(ID + Amount + Date)"]
+    B --> C{"Matched?"}
+    C -->|Yes| D["Mark as Reconciled"]
+    C -->|No| E["Rule 2: Exact ID + Amount<br/>(Date +/- 1-2 days)"]
+    E --> F{"Matched?"}
+    F -->|Yes| D
+    F -->|No| G["Rule 3: Exact ID + Amount<br/>(Date +/- 5 days)"]
+    G --> H{"Matched?"}
+    H -->|Yes| D
+    H -->|No| I["Rule 4-12: Progressive<br/>Fuzzy Matching<br/>(Amount tolerance, partial ID)"]
+    I --> J{"Matched?"}
+    J -->|Yes| D
+    J -->|No| K["Exception:<br/>Manual Review Required"]
+    D --> L["~90% Auto-Reconciled"]
+    K --> M["~10% Manual Exceptions"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Three-Phase AI Implementation Methodology</h3>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Phase1["Phase 1: AUGMENT"]
+        A1["Point Automations"] --> A2["Excel-based tools"]
+        A2 --> A3["Staff does more<br/>with same effort"]
+    end
+    subgraph Phase2["Phase 2: AUTOMATE"]
+        B1["API Integrations"] --> B2["End-to-end<br/>process automation"]
+        B2 --> B3["No manual<br/>Excel transfers"]
+    end
+    subgraph Phase3["Phase 3: AGENTIZE"]
+        C1["AI Agents"] --> C2["Autonomous<br/>process execution"]
+        C2 --> C3["Staff becomes<br/>supervisors"]
+    end
+    Phase1 -->|"Feedback &<br/>Learning"| Phase2
+    Phase2 -->|"Operational<br/>Data"| Phase3
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>SIALNE IT Governance & Project Prioritization</h3>
+                    <pre class="mermaid">
+sequenceDiagram
+    participant BD as Business Directors
+    participant IC as IT Committee
+    participant IT as IT Team (15 people)
+    participant EV as External Vendors
+    participant IG as Ignacio (Finance/IT)
+    BD->>IC: Present annual business plans with tech needs
+    IC->>IT: Allocate internal resources & prioritize
+    IT->>IT: Execute planned projects (annual roadmap)
+    Note over BD,IT: When new needs arise mid-year
+    BD->>IG: Request new project
+    IG->>IG: Evaluate: change priorities or outsource?
+    alt Outsource
+        IG->>EV: IT proposes vendor
+        BD->>EV: Business area pays from own budget
+        IT->>EV: IT acts as PMO
+        EV->>BD: Deliver solution to internal client
+    else Reprioritize
+        IT->>IT: Adjust internal roadmap
+    end
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Proposed Legal Document Management System</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A["User Request<br/>(WhatsApp / Web)"] --> B{"Authentication &<br/>Role Check"}
+    B -->|"Authorized"| C["Contract Query Engine"]
+    B -->|"Unauthorized"| D["Access Denied"]
+    C --> E["Contract Database"]
+    E --> F{"Field-Level<br/>Access Control"}
+    F -->|"Full Access"| G["Return All<br/>Contract Details"]
+    F -->|"Partial Access"| H["Return Permitted<br/>Fields Only<br/>(e.g., duration not price)"]
+    G --> I["Response to User"]
+    H --> I
+    subgraph ContractLifecycle["Contract Creation Flow"]
+        J["Select Template"] --> K["Fill Contract Data"]
+        K --> L["Notify Legal Dept"]
+        L --> M["Legal Review & Approval"]
+        M --> N["Store in Database"]
+    end
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>WhatsApp-Integrated Service Request Flow</h3>
+                    <pre class="mermaid">
+sequenceDiagram
+    participant U as User (Mobile)
+    participant WA as WhatsApp Router
+    participant TS as Ticketing System
+    participant SAP as SAP S/4HANA
+    U->>WA: Send request via WhatsApp
+    WA->>WA: Classify request type
+    alt Invoice Processing
+        U->>WA: Photo of invoice
+        WA->>SAP: OCR + Auto-identify invoice
+        SAP->>SAP: Process & post to accounting
+        SAP->>U: Confirmation notification
+    else IT Support Request
+        WA->>TS: Create standardized ticket
+        TS->>TS: Auto-prioritize
+        TS->>U: Ticket confirmation + tracking
+    else General Query
+        WA->>TS: Route to appropriate department
+        TS->>U: Response
+    end
+                    </pre>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                Generated from meeting transcript &mdash; 20260303 llamada Cialne.mp3 &mdash; Transcribed by Fireflies.ai
+            </div>
+
+        </div>
+    </div>
+
+    <script>mermaid.initialize({startOnLoad:true, theme:'neutral'});</script>
+</body>
+</html>
