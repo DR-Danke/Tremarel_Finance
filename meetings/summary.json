@@ -1,0 +1,106 @@
+{
+  "title": "FAROO Proof of Concept Demo - Legal Service Desk & Notion Integration",
+  "meeting_date": "2026-03-05",
+  "participants": [
+    {"name": "Speaker 1 (FAROO Client)", "role": "Prospect / Client - Legal Operations Lead"},
+    {"name": "Speaker 2 (Daniel)", "role": "Sales / Business Consultant"},
+    {"name": "Speaker 3 (Daniel - Technical)", "role": "Technical Lead / Developer"}
+  ],
+  "company_name": "FAROO",
+  "contact_name": null,
+  "contact_email": null,
+  "summary": "A proof-of-concept demo was presented to the FAROO prospect showcasing a legal service desk platform with AI-powered specialist routing (via OpenAI). The client currently operates using Notion for case management, specialist coordination, billing, and CRM — all manually maintained. Two complementary workstreams were identified: commercial/sales process automation and operational process automation. The agreed next step is to identify specific manual Notion workflows that can be automated through agentic flows while preserving the client's existing organizational structure.",
+  "discussion_points": [
+    {
+      "topic": "Legal Service Desk POC Demo",
+      "description": "A barebones proof-of-concept was demonstrated featuring specialist management (individuals and boutiques), client management, case creation with legal domains/jurisdictions/budgets, and AI-powered specialist assignment using OpenAI. The system includes Kanban-style dashboards for case tracking and workload visibility (e.g., showing specialists at capacity in red)."
+    },
+    {
+      "topic": "Current Notion-Based Operations",
+      "description": "The client showed their existing Notion setup which handles commercial process tracking, operational case management, specialist/lawyer database, document structure, referral commissions, billing/payment tracking, and invoicing. Notion is valued for its flexibility ('lienzo'/canvas) but everything is manual. They pay 57 hours/month and lawyers access as free guests."
+    },
+    {
+      "topic": "Commercial vs. Operational Process Separation",
+      "description": "Two distinct processes were identified: (1) Commercial/Sales — prospect acquisition via LinkedIn, pre-meeting qualification, growth engine, and CRM capabilities that Notion lacks; (2) Operational — case assignment, specialist coordination, case tracking, billing. Both are complementary but require different solutions."
+    },
+    {
+      "topic": "Automation Pain Points",
+      "description": "Key pain points identified: manual data entry in Notion, WhatsApp message tracking (not knowing if messages were answered), manual invoice handling (creating in Alegra, downloading, uploading to Notion), manual case status updates, and lack of prospecting/campaign capabilities."
+    },
+    {
+      "topic": "WhatsApp and Email Integration",
+      "description": "The client expressed strong interest in having WhatsApp and email channels automatically feed information into the system, enabling automated responses for routine queries (e.g., case status updates like 'the appeal has been filed') and flagging items requiring personal attention."
+    },
+    {
+      "topic": "Notion Integration Strategy",
+      "description": "Rather than replacing Notion entirely, the team proposed identifying automation points where the service desk platform can run underneath and feed Notion, or integrate bidirectionally. The client's Notion AI assistant ('el narizon') already generates proposals and connects information, making a hybrid approach attractive."
+    },
+    {
+      "topic": "Investment Portfolio Analogy for Prioritization",
+      "description": "The consulting team proposed prioritizing automation like an investment portfolio: short-term (automate biggest pain points now for immediate ROI), medium-term, and long-term improvements. Start with what causes the most headaches today."
+    },
+    {
+      "topic": "Agentic Flows for Administrative Tasks",
+      "description": "The technical team proposed using agentic workflows to handle administrative/operational tasks like creating cases, assigning specialists, and transferring data — shifting the client's role from 'doing the assignment' to 'reviewing the assignment'."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Identify and document specific manual processes in Notion that transfer information to/from other systems (Alegra invoicing, Google Drive, WhatsApp, email) as candidates for automation",
+      "owner": "FAROO Client (Speaker 1)",
+      "deadline": null
+    },
+    {
+      "description": "Map out the three core processes: sales/commercial process, operational/case management process, and billing/invoicing process",
+      "owner": "Speaker 2 (Daniel - Business)",
+      "deadline": null
+    },
+    {
+      "description": "Build a more involved proof of concept targeting one specific Notion workflow, demonstrating an agentic flow that automates data transfer between Notion and another system",
+      "owner": "Speaker 3 (Daniel - Technical)",
+      "deadline": null
+    },
+    {
+      "description": "Review the summary document previously sent via email and confirm pain points are accurately captured",
+      "owner": "FAROO Client (Speaker 1)",
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "The service desk concept is validated as the right operational model for FAROO's legal case management needs",
+    "The project will be split into two workstreams: commercial/sales process and operational process",
+    "Notion will not be immediately replaced; instead, the approach will focus on automating manual processes and integrating with the existing Notion setup",
+    "Prioritization will follow a short-term/medium-term/long-term investment approach, starting with the highest-pain manual processes",
+    "The next POC iteration should target a specific manual Notion workflow for automation via agentic flows"
+  ],
+  "next_steps": [
+    "Client to walk through a specific manual process (Notion to external system data transfer) so the team can evaluate agentic flow automation potential",
+    "Team to design a more involved POC demonstrating automation of one identified manual Notion workflow",
+    "Map all integration points: Notion, Alegra (invoicing), Google Drive (documents), WhatsApp, and email",
+    "Define automation priorities using the short/medium/long-term investment framework",
+    "Explore WhatsApp and email ingestion as automatic data sources for the service desk platform"
+  ],
+  "diagrams": [
+    {
+      "title": "Current State: FAROO Manual Operations",
+      "mermaid_code": "flowchart TD\n    subgraph Channels[\"Input Channels\"]\n        WA[\"WhatsApp\"]\n        EM[\"Email\"]\n        REF[\"Referrals\"]\n    end\n    subgraph Notion[\"Notion Workspace\"]\n        CRM[\"CRM / Commercial\\nProcess\"]\n        CASES[\"Operational\\nCase Management\"]\n        LAWYERS[\"Lawyer\\nDatabase\"]\n        BILLING[\"Billing &\\nPayment Tracking\"]\n        DOCS[\"Document\\nStructure\"]\n        AI[\"Notion AI Assistant\"]\n    end\n    subgraph External[\"External Systems\"]\n        ALEGRA[\"Alegra\\nInvoicing\"]\n        GDRIVE[\"Google Drive\\nDocuments\"]\n    end\n    WA -->|\"Manual Entry\"| CASES\n    EM -->|\"Manual Entry\"| CASES\n    REF -->|\"Manual Entry\"| CRM\n    CRM -->|\"Manual\"| CASES\n    CASES -->|\"Manual Link\"| LAWYERS\n    CASES -->|\"Manual Link\"| DOCS\n    DOCS -->|\"Manual Link\"| GDRIVE\n    CASES -->|\"Manual\"| BILLING\n    BILLING -->|\"Manual Upload\"| ALEGRA\n    AI -->|\"Proposals\"| CRM\n    style Channels fill:#ff9800,color:#fff\n    style Notion fill:#2196f3,color:#fff\n    style External fill:#4caf50,color:#fff"
+    },
+    {
+      "title": "Proposed Architecture: Legal Service Desk with AI Routing",
+      "mermaid_code": "flowchart LR\n    subgraph Ingestion[\"Data Ingestion Layer\"]\n        WA[\"WhatsApp\"]\n        EM[\"Email\"]\n        WEB[\"Web Portal\"]\n    end\n    subgraph ServiceDesk[\"Service Desk Platform\"]\n        TICKET[\"Ticket\\nCreation\"]\n        AI_ROUTE[\"AI Specialist\\nRouting\\n(OpenAI)\"]\n        KANBAN[\"Kanban\\nDashboard\"]\n        WORKLOAD[\"Workload\\nScoring\"]\n    end\n    subgraph Masters[\"Master Data\"]\n        SPEC[\"Specialists\\n(Individuals & Boutiques)\"]\n        CLIENTS[\"Clients\"]\n        JURIS[\"Jurisdictions\"]\n        DOMAINS[\"Legal Domains\"]\n    end\n    subgraph Integration[\"Integration Layer\"]\n        NOTION[\"Notion\\nSync\"]\n        ALEGRA2[\"Alegra\\nInvoicing\"]\n        GDRIVE2[\"Google Drive\"]\n    end\n    WA --> TICKET\n    EM --> TICKET\n    WEB --> TICKET\n    TICKET --> AI_ROUTE\n    AI_ROUTE -->|\"Match\"| SPEC\n    AI_ROUTE --> KANBAN\n    SPEC --> WORKLOAD\n    CLIENTS --> TICKET\n    JURIS --> AI_ROUTE\n    DOMAINS --> AI_ROUTE\n    KANBAN --> NOTION\n    KANBAN --> ALEGRA2\n    KANBAN --> GDRIVE2\n    style Ingestion fill:#ff9800,color:#fff\n    style ServiceDesk fill:#1565c0,color:#fff\n    style Masters fill:#7b1fa2,color:#fff\n    style Integration fill:#2e7d32,color:#fff"
+    },
+    {
+      "title": "AI Specialist Assignment Flow",
+      "mermaid_code": "sequenceDiagram\n    participant C as Client/Channel\n    participant SD as Service Desk\n    participant AI as OpenAI Engine\n    participant DB as Specialist DB\n    participant S as Assigned Specialist\n    C->>SD: New case request\n    SD->>SD: Create ticket with metadata\n    Note over SD: Legal domain, jurisdiction,<br/>priority, budget, deadline\n    SD->>AI: Send case requirements\n    AI->>DB: Query specialist profiles\n    DB-->>AI: Expertise, workload, rates,<br/>jurisdiction match\n    AI->>AI: Score and rank candidates\n    AI-->>SD: Recommended specialist<br/>(e.g., Carlos Andres Mejia)\n    SD->>SD: Display recommendation\n    SD->>S: Assign case\n    S-->>SD: Accept & generate work plan\n    SD->>SD: Update Kanban dashboard"
+    },
+    {
+      "title": "Commercial vs Operational Process Flow",
+      "mermaid_code": "flowchart TD\n    START[\"Prospect Arrives\\n(LinkedIn, Web, Referral)\"] --> QUAL[\"Pre-Meeting\\nQualification\"]\n    QUAL --> PREP[\"Prepared Meeting\\nwith Context\"]\n    PREP --> DISCUSS[\"Discussion &\\nProposal\"]\n    DISCUSS --> ACCEPT{\"Client\\nAccepts?\"}\n    ACCEPT -->|\"No\"| NURTURE[\"Nurture &\\nFollow Up\"]\n    NURTURE --> QUAL\n    ACCEPT -->|\"Yes\"| DEPLOY[\"Deploy Operations\"]\n    subgraph Commercial[\"COMMERCIAL PROCESS\"]\n        QUAL\n        PREP\n        DISCUSS\n        ACCEPT\n        NURTURE\n    end\n    subgraph Operational[\"OPERATIONAL PROCESS\"]\n        DEPLOY --> CREATE[\"Create Case\\nin Service Desk\"]\n        CREATE --> ASSIGN[\"AI Assigns\\nSpecialist\"]\n        ASSIGN --> TRACK[\"Track Progress\\nvia Kanban\"]\n        TRACK --> BILL[\"Billing &\\nInvoicing\"]\n        BILL --> CLOSE[\"Case\\nClosure\"]\n    end\n    style Commercial fill:#1565c0,color:#fff\n    style Operational fill:#2e7d32,color:#fff"
+    },
+    {
+      "title": "Agentic Automation Integration with Notion",
+      "mermaid_code": "flowchart TD\n    subgraph Triggers[\"Event Triggers\"]\n        T1[\"New WhatsApp Message\"]\n        T2[\"New Email Received\"]\n        T3[\"Invoice Created in Alegra\"]\n        T4[\"Case Status Change\"]\n    end\n    subgraph Agentic[\"Agentic Flow Engine\"]\n        DETECT[\"Detect Event\"]\n        CLASSIFY[\"Classify &\\nRoute\"]\n        EXECUTE[\"Execute\\nAutomation\"]\n        REVIEW[\"Queue for\\nHuman Review\"]\n    end\n    subgraph Actions[\"Automated Actions\"]\n        A1[\"Update Notion\\nCase Record\"]\n        A2[\"Auto-Reply to\\nStatus Inquiry\"]\n        A3[\"Upload Invoice\\nto Notion\"]\n        A4[\"Notify Specialist\"]\n        A5[\"Update Billing\\nTracker\"]\n    end\n    T1 --> DETECT\n    T2 --> DETECT\n    T3 --> DETECT\n    T4 --> DETECT\n    DETECT --> CLASSIFY\n    CLASSIFY -->|\"Routine\"| EXECUTE\n    CLASSIFY -->|\"Requires Judgment\"| REVIEW\n    EXECUTE --> A1\n    EXECUTE --> A2\n    EXECUTE --> A3\n    EXECUTE --> A4\n    EXECUTE --> A5\n    REVIEW -->|\"Approved\"| EXECUTE\n    style Triggers fill:#ff9800,color:#fff\n    style Agentic fill:#1565c0,color:#fff\n    style Actions fill:#2e7d32,color:#fff"
+    }
+  ],
+  "html_output": ""
+}

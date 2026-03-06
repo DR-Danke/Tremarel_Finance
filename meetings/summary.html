@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - FAROO POC Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #1a237e, #1565c0); color: #fff; padding: 40px 35px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+        .header .subtitle { font-size: 14px; opacity: 0.85; }
+        .header .meta { display: flex; gap: 24px; margin-top: 16px; font-size: 13px; opacity: 0.9; }
+        .header .meta span { display: flex; align-items: center; gap: 6px; }
+        .content { background: #fff; padding: 35px; border-radius: 0 0 12px 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 16px; font-weight: 600; color: #1565c0; border-bottom: 2px solid #e3f2fd; padding-bottom: 8px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-box { background: #e8eaf6; border-left: 4px solid #1a237e; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 14px; color: #1a237e; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+        .participant-card { background: #f5f7fa; padding: 12px 16px; border-radius: 8px; border: 1px solid #e0e0e0; }
+        .participant-card .name { font-weight: 600; color: #1a237e; font-size: 14px; }
+        .participant-card .role { font-size: 12px; color: #666; margin-top: 2px; }
+        .discussion-item { margin-bottom: 16px; padding: 14px 18px; background: #fafbfc; border-radius: 8px; border: 1px solid #eee; }
+        .discussion-item .topic { font-weight: 600; color: #1a237e; font-size: 14px; margin-bottom: 4px; }
+        .discussion-item .desc { font-size: 13px; color: #555; }
+        .action-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+        .action-table th { background: #1565c0; color: #fff; padding: 10px 14px; text-align: left; font-weight: 500; }
+        .action-table th:first-child { border-radius: 8px 0 0 0; }
+        .action-table th:last-child { border-radius: 0 8px 0 0; }
+        .action-table td { padding: 10px 14px; border-bottom: 1px solid #eee; vertical-align: top; }
+        .action-table tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+        .action-table tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+        .action-table tr:hover td { background: #f5f7fa; }
+        .decision-list, .next-steps-list { list-style: none; padding: 0; }
+        .decision-list li, .next-steps-list li { padding: 8px 0 8px 24px; position: relative; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
+        .decision-list li:last-child, .next-steps-list li:last-child { border-bottom: none; }
+        .decision-list li::before { content: ''; position: absolute; left: 0; top: 14px; width: 10px; height: 10px; background: #1565c0; border-radius: 50%; }
+        .next-steps-list li::before { content: ''; position: absolute; left: 0; top: 14px; width: 0; height: 0; border-left: 10px solid #2e7d32; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+        .diagram-section { margin-bottom: 24px; }
+        .diagram-title { font-size: 14px; font-weight: 600; color: #1a237e; margin-bottom: 10px; padding: 8px 12px; background: #e8eaf6; border-radius: 6px; }
+        .mermaid { background: #fafbfc; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; overflow-x: auto; }
+        .company-badge { display: inline-block; background: #e8eaf6; color: #1a237e; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 8px; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #999; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>FAROO Proof of Concept Demo</h1>
+            <p class="subtitle">Legal Service Desk & Notion Integration</p>
+            <div class="meta">
+                <span>Date: March 5, 2026</span>
+                <span>Duration: ~18 minutes</span>
+                <span>Type: POC Demo & Discovery</span>
+            </div>
+            <div style="margin-top: 12px;">
+                <span class="company-badge">Prospect: FAROO</span>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2 class="section-title">Executive Summary</h2>
+                <div class="summary-box">
+                    A proof-of-concept demo was presented to the FAROO prospect showcasing a legal service desk platform with AI-powered specialist routing (via OpenAI). The client currently operates using Notion for case management, specialist coordination, billing, and CRM &mdash; all manually maintained. Two complementary workstreams were identified: commercial/sales process automation and operational process automation. The agreed next step is to identify specific manual Notion workflows that can be automated through agentic flows while preserving the client's existing organizational structure.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2 class="section-title">Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Speaker 1 (FAROO Client)</div>
+                        <div class="role">Prospect / Client &mdash; Legal Operations Lead</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Speaker 2 (Daniel)</div>
+                        <div class="role">Sales / Business Consultant</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Speaker 3 (Daniel - Technical)</div>
+                        <div class="role">Technical Lead / Developer</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2 class="section-title">Discussion Points</h2>
+
+                <div class="discussion-item">
+                    <div class="topic">1. Legal Service Desk POC Demo</div>
+                    <div class="desc">A barebones proof-of-concept was demonstrated featuring specialist management (individuals and boutiques), client management, case creation with legal domains/jurisdictions/budgets, and AI-powered specialist assignment using OpenAI. The system includes Kanban-style dashboards for case tracking and workload visibility (e.g., showing specialists at capacity in red).</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">2. Current Notion-Based Operations</div>
+                    <div class="desc">The client showed their existing Notion setup which handles commercial process tracking, operational case management, specialist/lawyer database, document structure, referral commissions, billing/payment tracking, and invoicing. Notion is valued for its flexibility but everything is manual. They pay 57 hours/month and lawyers access as free guests.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">3. Commercial vs. Operational Process Separation</div>
+                    <div class="desc">Two distinct processes were identified: (1) Commercial/Sales &mdash; prospect acquisition via LinkedIn, pre-meeting qualification, growth engine, and CRM capabilities that Notion lacks; (2) Operational &mdash; case assignment, specialist coordination, case tracking, billing. Both are complementary but require different solutions.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">4. Automation Pain Points</div>
+                    <div class="desc">Key pain points identified: manual data entry in Notion, WhatsApp message tracking (not knowing if messages were answered), manual invoice handling (creating in Alegra, downloading, uploading to Notion), manual case status updates, and lack of prospecting/campaign capabilities.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">5. WhatsApp and Email Integration</div>
+                    <div class="desc">The client expressed strong interest in having WhatsApp and email channels automatically feed information into the system, enabling automated responses for routine queries (e.g., case status updates) and flagging items requiring personal attention.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">6. Notion Integration Strategy</div>
+                    <div class="desc">Rather than replacing Notion entirely, the team proposed identifying automation points where the service desk platform can run underneath and feed Notion, or integrate bidirectionally. The client's Notion AI assistant already generates proposals and connects information, making a hybrid approach attractive.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">7. Investment Portfolio Prioritization Approach</div>
+                    <div class="desc">The consulting team proposed prioritizing automation like an investment portfolio: short-term (automate biggest pain points now for immediate ROI), medium-term, and long-term improvements. Start with what causes the most headaches today.</div>
+                </div>
+
+                <div class="discussion-item">
+                    <div class="topic">8. Agentic Flows for Administrative Tasks</div>
+                    <div class="desc">The technical team proposed using agentic workflows to handle administrative/operational tasks like creating cases, assigning specialists, and transferring data &mdash; shifting the client's role from &quot;doing the assignment&quot; to &quot;reviewing the assignment.&quot;</div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2 class="section-title">Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 55%;">Action</th>
+                            <th style="width: 30%;">Owner</th>
+                            <th style="width: 15%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Identify and document specific manual processes in Notion that transfer information to/from other systems (Alegra invoicing, Google Drive, WhatsApp, email) as candidates for automation</td>
+                            <td>FAROO Client</td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Map out the three core processes: sales/commercial process, operational/case management process, and billing/invoicing process</td>
+                            <td>Daniel (Business)</td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Build a more involved proof of concept targeting one specific Notion workflow, demonstrating an agentic flow that automates data transfer between Notion and another system</td>
+                            <td>Daniel (Technical)</td>
+                            <td>TBD</td>
+                        </tr>
+                        <tr>
+                            <td>Review the summary document previously sent via email and confirm pain points are accurately captured</td>
+                            <td>FAROO Client</td>
+                            <td>TBD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2 class="section-title">Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>The service desk concept is validated as the right operational model for FAROO's legal case management needs</li>
+                    <li>The project will be split into two workstreams: commercial/sales process and operational process</li>
+                    <li>Notion will not be immediately replaced; instead, the approach will focus on automating manual processes and integrating with the existing Notion setup</li>
+                    <li>Prioritization will follow a short-term/medium-term/long-term investment approach, starting with the highest-pain manual processes</li>
+                    <li>The next POC iteration should target a specific manual Notion workflow for automation via agentic flows</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2 class="section-title">Next Steps</h2>
+                <ul class="next-steps-list">
+                    <li>Client to walk through a specific manual process (Notion to external system data transfer) so the team can evaluate agentic flow automation potential</li>
+                    <li>Team to design a more involved POC demonstrating automation of one identified manual Notion workflow</li>
+                    <li>Map all integration points: Notion, Alegra (invoicing), Google Drive (documents), WhatsApp, and email</li>
+                    <li>Define automation priorities using the short/medium/long-term investment framework</li>
+                    <li>Explore WhatsApp and email ingestion as automatic data sources for the service desk platform</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <h2 class="section-title">Technical Architecture</h2>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Current State: FAROO Manual Operations</div>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph Channels["Input Channels"]
+        WA["WhatsApp"]
+        EM["Email"]
+        REF["Referrals"]
+    end
+    subgraph Notion["Notion Workspace"]
+        CRM["CRM / Commercial Process"]
+        CASES["Operational Case Management"]
+        LAWYERS["Lawyer Database"]
+        BILLING["Billing and Payment Tracking"]
+        DOCS["Document Structure"]
+        AI["Notion AI Assistant"]
+    end
+    subgraph External["External Systems"]
+        ALEGRA["Alegra Invoicing"]
+        GDRIVE["Google Drive Documents"]
+    end
+    WA -->|"Manual Entry"| CASES
+    EM -->|"Manual Entry"| CASES
+    REF -->|"Manual Entry"| CRM
+    CRM -->|"Manual"| CASES
+    CASES -->|"Manual Link"| LAWYERS
+    CASES -->|"Manual Link"| DOCS
+    DOCS -->|"Manual Link"| GDRIVE
+    CASES -->|"Manual"| BILLING
+    BILLING -->|"Manual Upload"| ALEGRA
+    AI -->|"Proposals"| CRM
+    style Channels fill:#ff9800,color:#fff
+    style Notion fill:#2196f3,color:#fff
+    style External fill:#4caf50,color:#fff
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Proposed Architecture: Legal Service Desk with AI Routing</div>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Ingestion["Data Ingestion Layer"]
+        WA["WhatsApp"]
+        EM["Email"]
+        WEB["Web Portal"]
+    end
+    subgraph ServiceDesk["Service Desk Platform"]
+        TICKET["Ticket Creation"]
+        AI_ROUTE["AI Specialist Routing via OpenAI"]
+        KANBAN["Kanban Dashboard"]
+        WORKLOAD["Workload Scoring"]
+    end
+    subgraph Masters["Master Data"]
+        SPEC["Specialists"]
+        CLIENTS["Clients"]
+        JURIS["Jurisdictions"]
+        DOMAINS["Legal Domains"]
+    end
+    subgraph Integration["Integration Layer"]
+        NOTION["Notion Sync"]
+        ALEGRA2["Alegra Invoicing"]
+        GDRIVE2["Google Drive"]
+    end
+    WA --> TICKET
+    EM --> TICKET
+    WEB --> TICKET
+    TICKET --> AI_ROUTE
+    AI_ROUTE -->|"Match"| SPEC
+    AI_ROUTE --> KANBAN
+    SPEC --> WORKLOAD
+    CLIENTS --> TICKET
+    JURIS --> AI_ROUTE
+    DOMAINS --> AI_ROUTE
+    KANBAN --> NOTION
+    KANBAN --> ALEGRA2
+    KANBAN --> GDRIVE2
+    style Ingestion fill:#ff9800,color:#fff
+    style ServiceDesk fill:#1565c0,color:#fff
+    style Masters fill:#7b1fa2,color:#fff
+    style Integration fill:#2e7d32,color:#fff
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">AI Specialist Assignment Flow</div>
+                    <pre class="mermaid">
+sequenceDiagram
+    participant C as Client/Channel
+    participant SD as Service Desk
+    participant AI as OpenAI Engine
+    participant DB as Specialist DB
+    participant S as Assigned Specialist
+    C->>SD: New case request
+    SD->>SD: Create ticket with metadata
+    Note over SD: Legal domain, jurisdiction,<br/>priority, budget, deadline
+    SD->>AI: Send case requirements
+    AI->>DB: Query specialist profiles
+    DB-->>AI: Expertise, workload, rates, jurisdiction match
+    AI->>AI: Score and rank candidates
+    AI-->>SD: Recommended specialist
+    SD->>SD: Display recommendation
+    SD->>S: Assign case
+    S-->>SD: Accept and generate work plan
+    SD->>SD: Update Kanban dashboard
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Commercial vs Operational Process Flow</div>
+                    <pre class="mermaid">
+flowchart TD
+    START["Prospect Arrives"] --> QUAL["Pre-Meeting Qualification"]
+    QUAL --> PREP["Prepared Meeting with Context"]
+    PREP --> DISCUSS["Discussion and Proposal"]
+    DISCUSS --> ACCEPT{"Client Accepts?"}
+    ACCEPT -->|"No"| NURTURE["Nurture and Follow Up"]
+    NURTURE --> QUAL
+    ACCEPT -->|"Yes"| DEPLOY["Deploy Operations"]
+    subgraph Commercial["COMMERCIAL PROCESS"]
+        QUAL
+        PREP
+        DISCUSS
+        ACCEPT
+        NURTURE
+    end
+    subgraph Operational["OPERATIONAL PROCESS"]
+        DEPLOY --> CREATE["Create Case in Service Desk"]
+        CREATE --> ASSIGN["AI Assigns Specialist"]
+        ASSIGN --> TRACK["Track Progress via Kanban"]
+        TRACK --> BILL["Billing and Invoicing"]
+        BILL --> CLOSE["Case Closure"]
+    end
+    style Commercial fill:#1565c0,color:#fff
+    style Operational fill:#2e7d32,color:#fff
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Agentic Automation Integration with Notion</div>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph Triggers["Event Triggers"]
+        T1["New WhatsApp Message"]
+        T2["New Email Received"]
+        T3["Invoice Created in Alegra"]
+        T4["Case Status Change"]
+    end
+    subgraph Agentic["Agentic Flow Engine"]
+        DETECT["Detect Event"]
+        CLASSIFY["Classify and Route"]
+        EXECUTE["Execute Automation"]
+        REVIEW["Queue for Human Review"]
+    end
+    subgraph Actions["Automated Actions"]
+        A1["Update Notion Case Record"]
+        A2["Auto-Reply to Status Inquiry"]
+        A3["Upload Invoice to Notion"]
+        A4["Notify Specialist"]
+        A5["Update Billing Tracker"]
+    end
+    T1 --> DETECT
+    T2 --> DETECT
+    T3 --> DETECT
+    T4 --> DETECT
+    DETECT --> CLASSIFY
+    CLASSIFY -->|"Routine"| EXECUTE
+    CLASSIFY -->|"Requires Judgment"| REVIEW
+    EXECUTE --> A1
+    EXECUTE --> A2
+    EXECUTE --> A3
+    EXECUTE --> A4
+    EXECUTE --> A5
+    REVIEW -->|"Approved"| EXECUTE
+    style Triggers fill:#ff9800,color:#fff
+    style Agentic fill:#1565c0,color:#fff
+    style Actions fill:#2e7d32,color:#fff
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Meeting Summary &mdash; Generated on March 6, 2026 &mdash; Confidential
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>
