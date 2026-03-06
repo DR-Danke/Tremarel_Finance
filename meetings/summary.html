@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Bank Reconciliation Requirements</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; color: #2d3748;">
+
+    <div style="max-width: 800px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.07);">
+
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2b6cb0 100%); color: #ffffff; padding: 40px 40px 30px 40px;">
+            <h1 style="margin: 0 0 8px 0; font-size: 26px; font-weight: 600; letter-spacing: -0.5px;">Bank Reconciliation Requirements</h1>
+            <div style="font-size: 14px; opacity: 0.85;">
+                <span style="margin-right: 20px;">March 6, 2026</span>
+                <span>Company: Finkargo</span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div style="padding: 36px 40px;">
+
+            <!-- Participants -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Participants</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 12px; background-color: #f7fafc; border: 1px solid #e2e8f0; font-weight: 600;">Speaker 1</td>
+                        <td style="padding: 8px 12px; background-color: #f7fafc; border: 1px solid #e2e8f0; color: #718096;">Role not specified</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Executive Summary -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Executive Summary</h2>
+                <div style="background-color: #ebf4ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 6px 6px 0; line-height: 1.6; font-size: 15px;">
+                    Speaker 1 outlined the requirements for building a bank reconciliation process in Finkargo. The system must import Excel accounting files and bank statements, apply multiple matching rules (exact match, date variance, one-to-many, many-to-one, and fuzzy name matching), and produce matched and unmatched reports to iteratively refine reconciliation rules.
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Discussion Points</h2>
+
+                <div style="margin-bottom: 16px; padding: 16px 20px; background-color: #f7fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e3a5f;">1. Multi-Rule Matching Engine</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4a5568;">The reconciliation must support multiple matching strategies: exact match, date-shifted matching (same transaction on different dates), one-to-many (one bank line to multiple accounting entries), many-to-one (multiple bank lines to one accounting entry), and fuzzy name matching when no NIT/RFC/ID reference is available.</p>
+                </div>
+
+                <div style="margin-bottom: 16px; padding: 16px 20px; background-color: #f7fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e3a5f;">2. File Import Process</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4a5568;">The system needs to receive Excel files from accounting and cross-reference them with bank statements. The workflow is: upload bank statement first, then upload the accounting ledger for the corresponding account.</p>
+                </div>
+
+                <div style="margin-bottom: 16px; padding: 16px 20px; background-color: #f7fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e3a5f;">3. Reconciliation Reporting</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4a5568;">The system must generate two reports after cross-referencing: a matched items report (successful reconciliation) and an unmatched items report. The unmatched report will be used to evaluate whether additional reconciliation rules can be applied.</p>
+                </div>
+
+                <div style="margin-bottom: 16px; padding: 16px 20px; background-color: #f7fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <h3 style="margin: 0 0 8px 0; font-size: 15px; color: #1e3a5f;">4. Fuzzy Name Matching</h3>
+                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #4a5568;">Often there is no structured identifier (NIT/RFC/ID) available. Instead, descriptions contain names that may be exact or approximate matches to the accounting counterparty names, requiring fuzzy string matching capabilities.</p>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Action Items</h2>
+                <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 10px 12px; background-color: #1e3a5f; color: #ffffff; border: 1px solid #1e3a5f;">Action</th>
+                            <th style="text-align: left; padding: 10px 12px; background-color: #1e3a5f; color: #ffffff; border: 1px solid #1e3a5f; width: 120px;">Owner</th>
+                            <th style="text-align: left; padding: 10px 12px; background-color: #1e3a5f; color: #ffffff; border: 1px solid #1e3a5f; width: 120px;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0;">Build bank statement upload and parsing functionality (Excel import)</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr style="background-color: #f7fafc;">
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0;">Build accounting ledger upload for the corresponding bank account</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0;">Implement multi-rule matching engine (exact, date-shifted, one-to-many, many-to-one, fuzzy name)</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr style="background-color: #f7fafc;">
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0;">Build matched items report view</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0;">Build unmatched items report view for rule evaluation</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #a0aec0;">TBD</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Decisions Made</h2>
+                <ul style="margin: 0; padding: 0; list-style: none;">
+                    <li style="padding: 10px 16px; margin-bottom: 8px; background-color: #f0fff4; border-left: 4px solid #38a169; border-radius: 0 6px 6px 0; font-size: 14px; line-height: 1.5;">The reconciliation process will be built within the Finkargo platform</li>
+                    <li style="padding: 10px 16px; margin-bottom: 8px; background-color: #f0fff4; border-left: 4px solid #38a169; border-radius: 0 6px 6px 0; font-size: 14px; line-height: 1.5;">Bank statement will be uploaded first, followed by the accounting ledger for the corresponding account</li>
+                    <li style="padding: 10px 16px; margin-bottom: 8px; background-color: #f0fff4; border-left: 4px solid #38a169; border-radius: 0 6px 6px 0; font-size: 14px; line-height: 1.5;">Multiple matching rules will be used rather than relying on a single exact-match approach</li>
+                    <li style="padding: 10px 16px; margin-bottom: 8px; background-color: #f0fff4; border-left: 4px solid #38a169; border-radius: 0 6px 6px 0; font-size: 14px; line-height: 1.5;">Unmatched report will be used iteratively to discover and apply additional reconciliation rules</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Next Steps</h2>
+                <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 2;">
+                    <li>Implement bank statement Excel upload and parsing</li>
+                    <li>Implement accounting ledger Excel upload and parsing</li>
+                    <li>Build the cross-referencing engine with multiple matching rules</li>
+                    <li>Create matched and unmatched reconciliation reports</li>
+                    <li>Evaluate unmatched results to refine and add new reconciliation rules</li>
+                </ol>
+            </div>
+
+            <!-- Technical Architecture -->
+            <div style="margin-bottom: 32px;">
+                <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #2b6cb0; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px;">Technical Architecture</h2>
+
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 15px; color: #1e3a5f; margin-bottom: 12px;">Bank Reconciliation Process Flow</h3>
+                    <div style="background-color: #f7fafc; padding: 20px; border-radius: 6px; border: 1px solid #e2e8f0; overflow-x: auto;">
+                        <pre class="mermaid">
+flowchart TD
+    A[Upload Bank Statement Excel] --> B[Parse Bank Statement]
+    C[Upload Accounting Ledger Excel] --> D[Parse Accounting Ledger]
+    B --> E[Cross-Reference Engine]
+    D --> E
+    E --> F{Apply Matching Rules}
+    F --> G[Exact Amount and Date Match]
+    F --> H[Date-Shifted Match]
+    F --> I[One-to-Many Match]
+    F --> J[Many-to-One Match]
+    F --> K[Fuzzy Name Match]
+    G --> L[Matched Items Report]
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+    G --> M[Unmatched Items Report]
+    H --> M
+    I --> M
+    J --> M
+    K --> M
+    M --> N[Evaluate Additional Rules]
+    N --> F
+                        </pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 15px; color: #1e3a5f; margin-bottom: 12px;">Matching Rules Engine Detail</h3>
+                    <div style="background-color: #f7fafc; padding: 20px; border-radius: 6px; border: 1px solid #e2e8f0; overflow-x: auto;">
+                        <pre class="mermaid">
+flowchart LR
+    subgraph Input["Input Sources"]
+        BS[Bank Statement Lines]
+        AL[Accounting Ledger Lines]
+    end
+    subgraph Rules["Matching Rules"]
+        R1["Rule 1: Exact Match\n Amount + Date + Reference"]
+        R2["Rule 2: Date Variance\nSame transaction, different dates"]
+        R3["Rule 3: One-to-Many\nOne bank line to N accounting lines"]
+        R4["Rule 4: Many-to-One\nN bank lines to one accounting line"]
+        R5["Rule 5: Fuzzy Name\nApproximate name matching"]
+    end
+    subgraph Output["Results"]
+        MR[Matched Report]
+        UR[Unmatched Report]
+    end
+    BS --> R1
+    AL --> R1
+    R1 --> R2
+    R2 --> R3
+    R3 --> R4
+    R4 --> R5
+    R5 --> MR
+    R5 --> UR
+                        </pre>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <h3 style="font-size: 15px; color: #1e3a5f; margin-bottom: 12px;">System Architecture</h3>
+                    <div style="background-color: #f7fafc; padding: 20px; border-radius: 6px; border: 1px solid #e2e8f0; overflow-x: auto;">
+                        <pre class="mermaid">
+flowchart TD
+    subgraph Frontend["Frontend - React"]
+        UP["Upload Page\nBank Statement + Accounting"]
+        RV["Reconciliation View\nMatched + Unmatched Reports"]
+    end
+    subgraph Backend["Backend - FastAPI"]
+        FP["File Parser Service\nExcel Processing"]
+        RE["Reconciliation Engine\nMulti-Rule Matching"]
+        RS["Report Service\nMatched and Unmatched Generation"]
+    end
+    subgraph Storage["Database"]
+        DB[("PostgreSQL\nBank Statements\nAccounting Entries\nReconciliation Results")]
+    end
+    UP -->|Upload Excel Files| FP
+    FP -->|Parsed Data| DB
+    RV -->|Request Reconciliation| RE
+    RE -->|Read Data| DB
+    RE -->|Generate Reports| RS
+    RS -->|Store Results| DB
+    RS -->|Return Reports| RV
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f7fafc; border-top: 1px solid #e2e8f0; padding: 20px 40px; text-align: center; font-size: 12px; color: #a0aec0;">
+            <p style="margin: 0;">Meeting Summary &mdash; Generated on March 6, 2026 &mdash; Finkargo</p>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

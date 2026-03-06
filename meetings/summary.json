@@ -1,0 +1,83 @@
+{
+  "title": "Bank Reconciliation Requirements",
+  "meeting_date": "2026-03-06",
+  "participants": [
+    {"name": "Speaker 1", "role": null}
+  ],
+  "company_name": "Finkargo",
+  "contact_name": null,
+  "contact_email": null,
+  "summary": "Speaker 1 outlined the requirements for building a bank reconciliation process in Finkargo. The system must import Excel accounting files and bank statements, apply multiple matching rules (exact match, date variance, one-to-many, many-to-one, and fuzzy name matching), and produce matched and unmatched reports to iteratively refine reconciliation rules.",
+  "discussion_points": [
+    {
+      "topic": "Multi-Rule Matching Engine",
+      "description": "The reconciliation must support multiple matching strategies: exact match, date-shifted matching (same transaction on different dates), one-to-many (one bank line to multiple accounting entries), many-to-one (multiple bank lines to one accounting entry), and fuzzy name matching when no NIT/RFC/ID reference is available."
+    },
+    {
+      "topic": "File Import Process",
+      "description": "The system needs to receive Excel files from accounting and cross-reference them with bank statements. The workflow is: upload bank statement first, then upload the accounting ledger for the corresponding account."
+    },
+    {
+      "topic": "Reconciliation Reporting",
+      "description": "The system must generate two reports after cross-referencing: a matched items report (successful reconciliation) and an unmatched items report. The unmatched report will be used to evaluate whether additional reconciliation rules can be applied."
+    },
+    {
+      "topic": "Fuzzy Name Matching",
+      "description": "Often there is no structured identifier (NIT/RFC/ID) available. Instead, descriptions contain names that may be exact or approximate matches to the accounting counterparty names, requiring fuzzy string matching capabilities."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Build bank statement upload and parsing functionality (Excel import)",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Build accounting ledger upload for the corresponding bank account",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Implement multi-rule matching engine (exact, date-shifted, one-to-many, many-to-one, fuzzy name)",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Build matched items report view",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Build unmatched items report view for rule evaluation",
+      "owner": null,
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "The reconciliation process will be built within the Finkargo platform",
+    "Bank statement will be uploaded first, followed by the accounting ledger for the corresponding account",
+    "Multiple matching rules will be used rather than relying on a single exact-match approach",
+    "Unmatched report will be used iteratively to discover and apply additional reconciliation rules"
+  ],
+  "next_steps": [
+    "Implement bank statement Excel upload and parsing",
+    "Implement accounting ledger Excel upload and parsing",
+    "Build the cross-referencing engine with multiple matching rules",
+    "Create matched and unmatched reconciliation reports",
+    "Evaluate unmatched results to refine and add new reconciliation rules"
+  ],
+  "diagrams": [
+    {
+      "title": "Bank Reconciliation Process Flow",
+      "mermaid_code": "flowchart TD\n    A[Upload Bank Statement Excel] --> B[Parse Bank Statement]\n    C[Upload Accounting Ledger Excel] --> D[Parse Accounting Ledger]\n    B --> E[Cross-Reference Engine]\n    D --> E\n    E --> F{Apply Matching Rules}\n    F --> G[Exact Amount and Date Match]\n    F --> H[Date-Shifted Match]\n    F --> I[One-to-Many Match]\n    F --> J[Many-to-One Match]\n    F --> K[Fuzzy Name Match]\n    G --> L[Matched Items Report]\n    H --> L\n    I --> L\n    J --> L\n    K --> L\n    G --> M[Unmatched Items Report]\n    H --> M\n    I --> M\n    J --> M\n    K --> M\n    M --> N[Evaluate Additional Rules]\n    N --> F"
+    },
+    {
+      "title": "Matching Rules Engine Detail",
+      "mermaid_code": "flowchart LR\n    subgraph Input[\"Input Sources\"]\n        BS[Bank Statement Lines]\n        AL[Accounting Ledger Lines]\n    end\n    subgraph Rules[\"Matching Rules\"]\n        R1[\"Rule 1: Exact Match\\n Amount + Date + Reference\"]\n        R2[\"Rule 2: Date Variance\\nSame transaction, different dates\"]\n        R3[\"Rule 3: One-to-Many\\nOne bank line to N accounting lines\"]\n        R4[\"Rule 4: Many-to-One\\nN bank lines to one accounting line\"]\n        R5[\"Rule 5: Fuzzy Name\\nApproximate name matching\"]\n    end\n    subgraph Output[\"Results\"]\n        MR[Matched Report]\n        UR[Unmatched Report]\n    end\n    BS --> R1\n    AL --> R1\n    R1 --> R2\n    R2 --> R3\n    R3 --> R4\n    R4 --> R5\n    R5 --> MR\n    R5 --> UR"
+    },
+    {
+      "title": "System Architecture",
+      "mermaid_code": "flowchart TD\n    subgraph Frontend[\"Frontend - React\"]\n        UP[\"Upload Page\\nBank Statement + Accounting\"]\n        RV[\"Reconciliation View\\nMatched + Unmatched Reports\"]\n    end\n    subgraph Backend[\"Backend - FastAPI\"]\n        FP[\"File Parser Service\\nExcel Processing\"]\n        RE[\"Reconciliation Engine\\nMulti-Rule Matching\"]\n        RS[\"Report Service\\nMatched and Unmatched Generation\"]\n    end\n    subgraph Storage[\"Database\"]\n        DB[(\"PostgreSQL\\nBank Statements\\nAccounting Entries\\nReconciliation Results\")]\n    end\n    UP -->|Upload Excel Files| FP\n    FP -->|Parsed Data| DB\n    RV -->|Request Reconciliation| RE\n    RE -->|Read Data| DB\n    RE -->|Generate Reports| RS\n    RS -->|Store Results| DB\n    RS -->|Return Reports| RV"
+    }
+  ]
+}
