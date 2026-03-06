@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Grupo G AI Services Proposal Review</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #1a2332; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+        .header { background: linear-gradient(135deg, #1e3a5f 0%, #2b5797 100%); color: white; padding: 40px 48px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+        .header .subtitle { font-size: 14px; opacity: 0.85; }
+        .header .meta { display: flex; gap: 32px; margin-top: 20px; font-size: 13px; }
+        .header .meta-item { display: flex; align-items: center; gap: 6px; }
+        .header .meta-label { opacity: 0.7; }
+        .content { background: white; padding: 40px 48px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+        .section { margin-bottom: 36px; }
+        .section:last-child { margin-bottom: 0; }
+        .section-title { font-size: 18px; font-weight: 700; color: #1e3a5f; border-bottom: 3px solid #2b5797; padding-bottom: 8px; margin-bottom: 16px; }
+        .summary-box { background: #eef3fa; border-left: 4px solid #2b5797; padding: 20px 24px; border-radius: 0 8px 8px 0; font-size: 15px; color: #1a2332; }
+        .participants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .participant { background: #f7f9fc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .participant .name { font-weight: 600; color: #1e3a5f; }
+        .participant .role { font-size: 13px; color: #64748b; margin-top: 2px; }
+        .topic-card { background: #f7f9fc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; }
+        .topic-card .topic-title { font-weight: 600; color: #1e3a5f; margin-bottom: 4px; }
+        .topic-card .topic-desc { font-size: 14px; color: #475569; }
+        .action-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+        .action-item:last-child { border-bottom: none; }
+        .action-check { width: 20px; height: 20px; min-width: 20px; border: 2px solid #2b5797; border-radius: 4px; margin-top: 2px; }
+        .action-content { flex: 1; }
+        .action-desc { font-size: 14px; color: #1a2332; }
+        .action-owner { font-size: 12px; color: #2b5797; font-weight: 600; margin-top: 4px; }
+        .decision-list, .nextstep-list { list-style: none; padding: 0; }
+        .decision-list li, .nextstep-list li { padding: 10px 0 10px 28px; position: relative; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .decision-list li:last-child, .nextstep-list li:last-child { border-bottom: none; }
+        .decision-list li::before { content: ''; position: absolute; left: 0; top: 14px; width: 14px; height: 14px; background: #2b5797; border-radius: 50%; }
+        .nextstep-list li::before { content: ''; position: absolute; left: 2px; top: 14px; width: 0; height: 0; border-left: 10px solid #2b5797; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 12px; }
+        .pricing-card { background: #f7f9fc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; text-align: center; }
+        .pricing-card .price { font-size: 28px; font-weight: 700; color: #1e3a5f; }
+        .pricing-card .price-label { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .pricing-card .price-desc { font-size: 13px; color: #475569; margin-top: 8px; }
+        .diagram-section { margin-top: 16px; }
+        .diagram-section h3 { font-size: 15px; font-weight: 600; color: #1e3a5f; margin-bottom: 12px; padding: 8px 12px; background: #f7f9fc; border-radius: 6px; }
+        .mermaid { background: #fafbfd; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; text-align: center; }
+        .footer { text-align: center; padding: 24px; font-size: 12px; color: #94a3b8; }
+        @media (max-width: 640px) {
+            .container { padding: 12px; }
+            .header { padding: 24px; }
+            .header h1 { font-size: 20px; }
+            .header .meta { flex-direction: column; gap: 8px; }
+            .content { padding: 24px; }
+            .participants-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Grupo G &mdash; AI Services &amp; Process Diagnosis Proposal Review</h1>
+            <div class="subtitle">Meeting Summary &amp; Action Items</div>
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="meta-label">Date:</span>
+                    <strong>March 3, 2026</strong>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Duration:</span>
+                    <strong>~59 minutes</strong>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Company:</span>
+                    <strong>Grupo G</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2 class="section-title">Executive Summary</h2>
+                <div class="summary-box">
+                    Grupo G's directors met with the AI consulting team (Daniel &amp; Daniel Restrepo) to evaluate their AI transformation proposal. The group expressed strong interest in <strong>Plan A (full process diagnosis at $6,000)</strong> to map all organizational processes and identify quick-win automation opportunities. Key concerns were raised around <strong>source code ownership, hosting model, NDA requirements, and database architecture strategy</strong>. The team agreed to run the diagnosis and a proof-of-concept (POC) in parallel, with the consulting team to send an updated proposal addressing ownership options and cost structures.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2 class="section-title">Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant">
+                        <div class="name">Daniel</div>
+                        <div class="role">AI/Tech Consultant &mdash; Growth Marketing &amp; Services (Presenter)</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">Daniel Restrepo</div>
+                        <div class="role">AI/Tech Consultant &mdash; Code &amp; Operations (Presenter)</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">Ra&uacute;l</div>
+                        <div class="role">Grupo G &mdash; Director / Primary Contact</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">H&eacute;ctor</div>
+                        <div class="role">Grupo G &mdash; Director</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">Miguel &Aacute;ngel</div>
+                        <div class="role">AI/Tech Area Expert (Grupo G affiliate)</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">Antonio</div>
+                        <div class="role">Grupo G affiliate (observer)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2 class="section-title">Discussion Points</h2>
+
+                <div class="topic-card">
+                    <div class="topic-title">1. Plan A vs Plan B Service Approach</div>
+                    <div class="topic-desc">Plan A is a comprehensive process diagnosis ($6,000) involving WhatsApp interviews with key staff to map all organizational processes, identify friction points, and find quick-win opportunities ("low-hanging fruit"). Plan B targets specific known pain points with custom AI solutions. The group favors Plan A but wants both to run in parallel.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">2. Invoicing Complexity as Primary Pain Point</div>
+                    <div class="topic-desc">Grupo G's invoicing process is highly complex and matrix-like: each client requires different billing for routes, warehousing, maquila (assembly), and transport. Multiple teams review and re-review before invoicing, leading to errors, client rejections, re-billing, and delayed collections. This was identified as the most critical operational bottleneck.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">3. Source Code Ownership &amp; Hosting Model</div>
+                    <div class="topic-desc">H&eacute;ctor raised concerns about who owns the developed tools. The consulting team explained the default model retains source code ownership with them, but offered to quote both options (client-owned vs consultant-owned code). Hosting can be on either party's infrastructure. The group wants both pricing structures in the formal proposal.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">4. Quotation System Demo (Tenderi Case Study)</div>
+                    <div class="topic-desc">A live demo was shown of a custom quotation system built for a Colombian logistics company. It reduced quotation time from 7-10 days to 15 minutes, with route configuration, regulatory integration for legal minimums, statistical market analysis, and QR-code-based client acceptance. Built in 24 days (vs 6-8 months traditional), costing $8,000-$10,000 one-time plus recurring usage fees.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">5. Bank Reconciliation Product</div>
+                    <div class="topic-desc">A pre-built bank reconciliation tool was demonstrated that matched ~90% of transactions in 5 minutes (vs 2-3 days manually). Priced at $4,000 one-time plus ~$150/month recurring. Less customization needed than quotation tools since back-office financial processes are more standardized.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">6. Database Architecture &amp; Data Warehouse Strategy</div>
+                    <div class="topic-desc">H&eacute;ctor requested that the proposal include recommendations for structuring the company's database to identify core revenue-generating processes and reduce administrative overhead. The consulting team described their approach: diagnose data flows between systems (e.g., SAP, Oracle), design a data warehouse architecture where systems feed data automatically without manual Excel manipulation.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">7. Revenue Analytics &amp; Client Health Dashboard</div>
+                    <div class="topic-desc">A revenue intelligence dashboard was shown from a US freight forwarder engagement. It included client health scoring, quote-to-execution effectiveness rates, churn analysis, hidden gems identification, pipeline effectiveness by sales rep, payment risk assessment, and strategic revenue impact modeling (e.g., 5% churn reduction = $375K revenue).</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">8. NDA &amp; Confidentiality Requirements</div>
+                    <div class="topic-desc">H&eacute;ctor emphasized the need for an NDA before sharing operational data, especially since the consulting team may work with other logistics companies. Daniel's team agreed to send the NDA.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">9. Existing PwC Process Map (10 Years Old)</div>
+                    <div class="topic-desc">PricewaterhouseCoopers created a process map approximately 10 years ago (held by Pastor Oropesa). While useful as a baseline reference, all parties agreed it likely doesn't reflect current operations and should serve only as a guide, not a constraint for the new diagnosis.</div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-title">10. IT Capability &amp; Future Vision</div>
+                    <div class="topic-desc">Grupo G's tech team is limited to basic IT support with no product development capability, reinforcing the outsourced development model. The consulting team's vision is that future business teams will be empowered to use and enable technology directly, blurring the line between tech and business teams.</div>
+                </div>
+            </div>
+
+            <!-- Pricing Reference -->
+            <div class="section">
+                <h2 class="section-title">Pricing Reference Points Discussed</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="price">$6,000</div>
+                        <div class="price-label">Plan A: Process Diagnosis</div>
+                        <div class="price-desc">Full organizational process mapping via WhatsApp interviews. ~1 month delivery.</div>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="price">$8K&ndash;$10K</div>
+                        <div class="price-label">Custom Quotation System</div>
+                        <div class="price-desc">One-time build + recurring usage fees. 24-day delivery. (Tenderi reference)</div>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="price">$4,000</div>
+                        <div class="price-label">Bank Reconciliation</div>
+                        <div class="price-desc">One-time setup + ~$150/mo recurring. Pre-built product, minimal customization.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2 class="section-title">Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>Grupo G favors Plan A (full process diagnosis) to map all organizational processes before targeting specific solutions</li>
+                    <li>Diagnosis and proof-of-concept (POC) development will run in parallel rather than sequentially</li>
+                    <li>The proposal must include both pricing structures: client-owned source code vs consultant-owned source code</li>
+                    <li>An NDA must be signed before operational data is shared with the consulting team</li>
+                    <li>Database architecture recommendations will be included in the diagnosis scope</li>
+                    <li>The existing PwC process map will be used only as a reference guide, not as the authoritative baseline</li>
+                </ul>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2 class="section-title">Action Items</h2>
+
+                <div class="action-item">
+                    <div class="action-check"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Send updated proposal with: (1) diagnosis deliverables, timeline, and cost; (2) code ownership options with pricing for each; (3) database architecture recommendations scope; (4) ongoing support/maintenance structure details</div>
+                        <div class="action-owner">Owner: Daniel (Consulting Team)</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-check"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Send NDA to Grupo G for signing before data sharing begins</div>
+                        <div class="action-owner">Owner: Daniel (Consulting Team)</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-check"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Locate and share the PricewaterhouseCoopers process map from ~10 years ago as baseline reference material</div>
+                        <div class="action-owner">Owner: Ra&uacute;l / Pastor Oropesa (Grupo G)</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-check"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Identify a specific process for the initial proof-of-concept (invoicing or quotation recommended)</div>
+                        <div class="action-owner">Owner: Grupo G (Ra&uacute;l &amp; H&eacute;ctor)</div>
+                    </div>
+                </div>
+
+                <div class="action-item">
+                    <div class="action-check"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Send follow-up questions to Grupo G about current systems, team structure, and operations</div>
+                        <div class="action-owner">Owner: Daniel (Consulting Team)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2 class="section-title">Next Steps</h2>
+                <ul class="nextstep-list">
+                    <li>Consulting team sends updated proposal with detailed cost structures, ownership options, and scope</li>
+                    <li>Consulting team sends NDA for Grupo G to review and sign</li>
+                    <li>Grupo G locates the PwC process map (Pastor Oropesa) and shares it as reference material</li>
+                    <li>Grupo G selects a specific process (invoicing or quotation) for the initial proof-of-concept</li>
+                    <li>Once NDA is signed and proposal accepted, WhatsApp-based interviews begin with key personnel (30-45 min each)</li>
+                    <li>Diagnosis report expected within ~1 month; functional POC expected within ~2 weeks of starting development</li>
+                    <li>Follow-up meeting to review diagnosis findings and prioritize automation opportunities</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <h2 class="section-title">Technical Architecture</h2>
+
+                <div class="diagram-section">
+                    <h3>Proposed Engagement Model &mdash; Parallel Workstreams</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A["NDA Signed & Proposal Accepted"] --> B["Workstream 1: Process Diagnosis"]
+    A --> C["Workstream 2: Proof of Concept"]
+    B --> B1["WhatsApp Interviews\n30-45 min per person"]
+    B1 --> B2["Data Analysis\n1.5-2 weeks"]
+    B2 --> B3["Diagnosis Report\nProcess Maps & Recommendations"]
+    B3 --> B4["Database Architecture\nRecommendation"]
+    C --> C1["Discovery Call\nScope Definition"]
+    C1 --> C2["Sprint 1: Build\n2 weeks"]
+    C2 --> C3["User Testing\n& Feedback"]
+    C3 --> C4["Sprint 2: Iterate\n2 weeks"]
+    B4 --> D["Prioritized Roadmap\nQuick Wins Identified"]
+    C4 --> D
+    D --> E["Phase 2: Targeted\nAI Solutions Development"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Quotation System Architecture (Tenderi Case Study)</h3>
+                    <pre class="mermaid">
+flowchart LR
+    A["Excel Upload\nRoute Config"] --> B["Pricing Engine"]
+    B --> C["Regulatory API\nLegal Minimums"]
+    B --> D["Statistical Analysis\nMarket Rates"]
+    C --> E["Cost Calculation\nFloor Price + Margin"]
+    D --> E
+    E --> F["Quotation Generated"]
+    F --> G["Email with QR Code\nSent to Client"]
+    G --> H["Client Portal"]
+    H --> I{"Client Decision"}
+    I -->|Accept| J["Order Confirmed"]
+    I -->|Reject| K["Negotiation / Re-quote"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Grupo G Logistics Operations &mdash; Three Pillars</h3>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph DOC["Documents Flow"]
+        D1["Client Request"] --> D2["Quotation Created"]
+        D2 --> D3["Price Negotiation\nCommercial vs Operations"]
+        D3 --> D4["Client Acceptance"]
+        D4 --> D5["Service Documents\nRemesas, Photos, Proof"]
+        D5 --> D6["Document Checklist\nPer Client Config"]
+    end
+    subgraph MONEY["Money Flow"]
+        M1["Pricing Defined"] --> M2["Payment to Carrier\nor Operator"]
+        M2 --> M3["Service Execution"]
+        M3 --> M4["Invoice Generation\nMultiple Line Items"]
+        M4 --> M5["Client Payment\n30-60-90-120 days"]
+    end
+    subgraph MERCH["Merchandise Flow"]
+        G1["Pickup at Origin"] --> G2["Transport / Warehousing\n/ Maquila"]
+        G2 --> G3["Delivery Confirmation"]
+        G3 --> G4["Proof of Delivery\nDocumental Compliance"]
+    end
+    DOC --> RECONCILE["Month-End Reconciliation\nHow much moved, to whom, how to bill"]
+    MONEY --> RECONCILE
+    MERCH --> RECONCILE
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Invoicing Complexity &mdash; Current State</h3>
+                    <pre class="mermaid">
+flowchart TD
+    A["Client Service Completed"] --> B{"Service Types\nper Client"}
+    B --> C1["Minimum Warehousing Fee"]
+    B --> C2["Actual Warehousing Adjustment"]
+    B --> C3["Maquila Charges\nCustom per Product"]
+    B --> C4["Transport Charges\nPer Route"]
+    B --> C5["Other Services"]
+    C1 --> D["Team Reviews\nMultiple Rounds"]
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    C5 --> D
+    D --> E{"Correct?"}
+    E -->|No| F["Client Rejects Invoice"]
+    F --> G["Re-review & Re-invoice"]
+    G --> D
+    E -->|Yes| H["Invoice Sent"]
+    H --> I["Collection\n30-60-90-120 days"]
+    I --> J["Revenue Recognition"]
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Proposed Data Warehouse Architecture</h3>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph SOURCES["Current Systems"]
+        S1["TMS\nTransport Mgmt"]
+        S2["Excel Spreadsheets\nPricing, Inventory"]
+        S3["Email / WhatsApp\nDocuments"]
+        S4["ERP / Accounting"]
+    end
+    subgraph ETL["Data Pipeline"]
+        E1["Automated\nData Extraction"]
+        E2["Transform\n& Validate"]
+        E3["Load to\nData Warehouse"]
+    end
+    subgraph DW["Data Warehouse"]
+        DW1["Master Client DB"]
+        DW2["Operations Data"]
+        DW3["Financial Data"]
+        DW4["Document Registry"]
+    end
+    subgraph OUTPUT["Decision Layer"]
+        O1["Revenue Analytics\nDashboard"]
+        O2["Client Health\nScoring"]
+        O3["Automated\nInvoicing"]
+        O4["Automated\nReconciliation"]
+    end
+    S1 --> E1
+    S2 --> E1
+    S3 --> E1
+    S4 --> E1
+    E1 --> E2 --> E3
+    E3 --> DW1
+    E3 --> DW2
+    E3 --> DW3
+    E3 --> DW4
+    DW1 --> O1
+    DW2 --> O1
+    DW3 --> O2
+    DW1 --> O3
+    DW2 --> O3
+    DW3 --> O3
+    DW3 --> O4
+                    </pre>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Bank Reconciliation &mdash; Before vs After</h3>
+                    <pre class="mermaid">
+flowchart TD
+    subgraph BEFORE["Before: Manual Process"]
+        B1["Download Bank Statement"] --> B2["Open Accounting Records"]
+        B2 --> B3["Manual Row-by-Row\nMatching in Excel"]
+        B3 --> B4["Flag Discrepancies"]
+        B4 --> B5["Investigate Mismatches"]
+        B5 --> B6["Reconciliation Report"]
+    end
+    subgraph AFTER["After: AI-Powered"]
+        A1["Upload Bank Statement"] --> A2["AI Matching Engine\n90% Auto-Matched"]
+        A2 --> A3["Review Unmatched\n10% Manual"]
+        A3 --> A4["Reconciliation Report"]
+    end
+                    </pre>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &bull; March 3, 2026 &bull; Source: 20260303 LLAMADA G3.mp3
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true, theme:'default'});</script>
+</body>
+</html>
