@@ -1,0 +1,147 @@
+{
+  "title": "Service Desk WhatsApp Integration - Cardona Call",
+  "meeting_date": "2026-03-04",
+  "participants": [
+    {"name": "Speaker 1 (Cardona)", "role": "Technical Lead / WhatsApp Integration Owner"},
+    {"name": "Speaker 2 (Daniel)", "role": "Developer / Platform Owner"}
+  ],
+  "company_name": null,
+  "contact_name": "Cardona",
+  "contact_email": null,
+  "summary": "The team reviewed the current state of the Service Desk WhatsApp integration built on Chatbase. The AI assistant already supports ticket creation and status checking via WhatsApp using Meta Business Manager. Key gaps were identified: technician responses from the web app do not flow back to WhatsApp users, documentation generation from tickets needs refinement, and additional Chatbase custom actions require a paid upgrade. The team agreed to deliver the current MVP and propose an expanded feature set at an additional recurring monthly cost.",
+  "discussion_points": [
+    {
+      "topic": "WhatsApp Service Desk Assistant - Current Capabilities",
+      "description": "The Chatbase-powered assistant currently supports: get ticket details, get user tickets, get ticket status, search knowledge base, add comment to ticket, escalate to human, and create ticket. These actions call backend API endpoints and return information to users via WhatsApp."
+    },
+    {
+      "topic": "One-Way Communication Gap",
+      "description": "Critical gap identified: when a technician responds or updates a ticket through the web application, the update does not flow back to the end user on WhatsApp. The current flow only supports user-to-system communication, not system-to-user notifications. Outbound webhooks via Chatbase are needed to close this loop."
+    },
+    {
+      "topic": "Meta Business Manager & WhatsApp Setup",
+      "description": "WhatsApp integration requires a Meta Business Manager account (free/freemium) and a dedicated phone number purchased from a provider. The number is registered in WhatsApp Manager within Meta Business Suite, with two-step verification and Facebook policy-compliant naming."
+    },
+    {
+      "topic": "User Management & Onboarding",
+      "description": "There is no self-service sign-up flow. Users are assigned by administrators. IT sends an email notifying users about the new Service Desk. End users creating tickets via WhatsApp only see their own tickets and ticket queue in the 'My Panel' view."
+    },
+    {
+      "topic": "Documentation Generation from Tickets",
+      "description": "Debate on whether documentation should be generated per-ticket or per-problem. Generating per-ticket would create excessive documentation. The recommendation is to generate documentation at the service category/problem level, using ticket logs as data inputs organized by service categories."
+    },
+    {
+      "topic": "Missing Custom Actions",
+      "description": "Additional actions needed: get ticket comments (currently only add comment exists), change ticket status. Custom actions in Chatbase require the paid plan. Each action is configured with API endpoint, HTTP method, headers, inputs, and JSON body."
+    },
+    {
+      "topic": "Ticket Detail Improvements",
+      "description": "Several UI fixes needed: display technician name instead of ID, assign service category for WhatsApp-originated tickets, collect user location via system prompt to create tags, and fix classification data not being set for WhatsApp tickets."
+    },
+    {
+      "topic": "Pricing & Commercial Strategy",
+      "description": "Current pricing: $10/month for 12 technicians. Proposed strategy: deliver the MVP with 2 core actions (create ticket, check status), then offer expanded features (all custom actions, more integrations) at $20/month recurring. Additional Chatbase costs need to be factored in."
+    },
+    {
+      "topic": "Chatbase Conversation Data",
+      "description": "Chatbase conversations can be pulled via API, providing analytics on which users write most, what types of problems occur, which assets and locations are involved. This data feeds into resolution insights."
+    },
+    {
+      "topic": "Product Showcase Potential",
+      "description": "The current implementation is polished enough to serve as a product demo/showcase on the website, demonstrating AI-powered workflow management for enterprises."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Pay for Chatbase premium to enable all custom actions",
+      "owner": "Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Refine the WhatsApp assistant system prompt to be more conversational",
+      "owner": "Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Add user location collection to the system prompt and create location tags",
+      "owner": "Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Create 'get ticket comments' custom action in Chatbase",
+      "owner": "Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Implement outbound webhook so technician responses flow back to WhatsApp users",
+      "owner": "Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Fix ticket detail view to display technician name instead of ID",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Auto-assign service category for tickets originating from WhatsApp",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Fix documentation generation to properly save when resolving tickets",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Remove duplicate sections (activity history vs audit history) in ticket detail",
+      "owner": "Daniel",
+      "deadline": null
+    },
+    {
+      "description": "Determine Chatbase subscription cost and finalize client pricing model",
+      "owner": "Cardona",
+      "deadline": "Before next client meeting"
+    },
+    {
+      "description": "Prepare delivery presentation showing MVP and upsell opportunities",
+      "owner": "Both",
+      "deadline": "Next client meeting"
+    }
+  ],
+  "decisions": [
+    "No self-service sign-up flow — users will be assigned by administrators via email notification",
+    "MVP WhatsApp channels: WhatsApp and email are the two supported input channels for ticket creation",
+    "MVP includes two core Chatbase actions: create ticket and check ticket status",
+    "Documentation should be generated at the problem/service category level, not per individual ticket",
+    "Deliver current MVP first, then propose expanded features at an additional recurring monthly cost",
+    "Current pricing stays at $10/month for 12 technicians; expanded features to be offered at $20/month",
+    "The finished product can be used as a website showcase/demo for the company's AI capabilities"
+  ],
+  "next_steps": [
+    "Finalize and deliver the MVP with WhatsApp ticket creation and status checking",
+    "Determine Chatbase premium costs and calculate margin for client billing",
+    "Prepare a proposal for the next client meeting: show delivered MVP, present expanded feature options with recurring costs",
+    "Implement outbound webhook to enable two-way communication (technician responses back to WhatsApp)",
+    "Add missing Chatbase custom actions (get comments, change status) after upgrading plan",
+    "Set up the product as a website showcase demonstrating AI-powered service desk workflows"
+  ],
+  "diagrams": [
+    {
+      "title": "Service Desk WhatsApp Integration - System Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph Users[\"End Users\"]\n        WA[\"WhatsApp\"]\n        EM[\"Email\"]\n        WEB[\"Web App\\nMy Tickets Panel\"]\n    end\n\n    subgraph Meta[\"Meta Business Manager\"]\n        MBM[\"WhatsApp Manager\"]\n        PN[\"Phone Number\"]\n    end\n\n    subgraph Chatbase[\"Chatbase AI\"]\n        SA[\"Service Desk\\nAssistant\"]\n        SP[\"System Prompt\"]\n        CA[\"Custom Actions\"]\n        KB[\"Knowledge Base\"]\n    end\n\n    subgraph Backend[\"Service Desk Backend\"]\n        API[\"REST API\\nEndpoints\"]\n        TS[\"Ticket Service\"]\n        NS[\"Notification\\nService\"]\n    end\n\n    subgraph DB[\"Database\"]\n        TK[\"Tickets\"]\n        US[\"Users\"]\n        SC[\"Service\\nCategories\"]\n        DOC[\"Documentation\"]\n    end\n\n    WA --> MBM\n    MBM --> SA\n    SA --> CA\n    CA --> API\n    SA --> KB\n    API --> TS\n    TS --> TK\n    TS --> US\n    TS --> SC\n    EM --> API\n    WEB --> API\n    TS --> DOC"
+    },
+    {
+      "title": "Ticket Lifecycle - User via WhatsApp",
+      "mermaid_code": "sequenceDiagram\n    participant U as End User\n    participant WA as WhatsApp\n    participant CB as Chatbase Assistant\n    participant API as Backend API\n    participant DB as Database\n    participant T as Technician\n\n    U->>WA: Describes problem\n    WA->>CB: Message received\n    CB->>CB: Search Knowledge Base\n    CB->>U: Suggests article/solution\n    U->>WA: Problem persists\n    CB->>API: Create Ticket\n    API->>DB: Store ticket\n    API-->>CB: Ticket created\n    CB->>U: Ticket confirmation\n    Note over DB,T: Ticket assigned to technician\n    T->>API: Updates ticket status\n    API->>DB: Update ticket\n    Note over WA,U: GAP: No notification\\nback to WhatsApp user\n    U->>WA: Check ticket status\n    CB->>API: Get ticket status\n    API->>DB: Query ticket\n    API-->>CB: Status response\n    CB->>U: Current status update"
+    },
+    {
+      "title": "Chatbase Custom Actions - MVP vs Expanded",
+      "mermaid_code": "flowchart TD\n    subgraph MVP[\"MVP Actions - Current\"]\n        A1[\"Create Ticket\"]\n        A2[\"Get User Tickets\"]\n        A3[\"Get Ticket Status\"]\n        A4[\"Search Knowledge Base\"]\n        A5[\"Add Comment to Ticket\"]\n        A6[\"Escalate to Human\"]\n        A7[\"Get Ticket Details\"]\n    end\n\n    subgraph EXP[\"Expanded Actions - Paid Plan\"]\n        B1[\"Get Ticket Comments\"]\n        B2[\"Change Ticket Status\"]\n        B3[\"Outbound Webhook\\nNotifications\"]\n        B4[\"User Location\\nTagging\"]\n    end\n\n    subgraph API[\"Backend Endpoints\"]\n        E1[\"POST /tickets\"]\n        E2[\"GET /tickets/user\"]\n        E3[\"GET /tickets/status\"]\n        E4[\"GET /knowledge-base\"]\n        E5[\"POST /tickets/comments\"]\n        E6[\"POST /tickets/escalate\"]\n        E7[\"GET /tickets/details\"]\n        E8[\"GET /tickets/comments\"]\n        E9[\"PUT /tickets/status\"]\n        E10[\"POST /webhooks/notify\"]\n    end\n\n    A1 --> E1\n    A2 --> E2\n    A3 --> E3\n    A4 --> E4\n    A5 --> E5\n    A6 --> E6\n    A7 --> E7\n    B1 --> E8\n    B2 --> E9\n    B3 --> E10"
+    },
+    {
+      "title": "WhatsApp Number Setup Process",
+      "mermaid_code": "flowchart TD\n    A[\"Create Meta Business\\nManager Account\"] --> B[\"Access Business Suite\"]\n    B --> C[\"Navigate to Tools\"]\n    C --> D[\"Open WhatsApp Manager\"]\n    D --> E[\"Purchase Phone Number\\nfrom Provider\"]\n    E --> F[\"Add Number to\\nWhatsApp Manager\"]\n    F --> G[\"Select Category\"]\n    G --> H[\"Configure Settings\"]\n    H --> I[\"Two-Step Verification\"]\n    H --> J[\"Profile & Certificate\"]\n    H --> K[\"Comply with\\nFacebook Naming Policy\"]\n    I --> L[\"Connect to\\nChatbase Plugin\"]\n    J --> L\n    K --> L\n    L --> M[\"WhatsApp Bot\\nLive & Ready\"]"
+    }
+  ],
+  "html_output": ""
+}

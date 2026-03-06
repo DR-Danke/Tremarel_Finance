@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Service Desk WhatsApp Integration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #2d3748; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #1a365d, #2b6cb0); color: white; padding: 40px 35px; border-radius: 12px 12px 0 0; }
+        .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+        .header .meta { display: flex; gap: 24px; font-size: 14px; opacity: 0.9; flex-wrap: wrap; }
+        .header .meta span { display: flex; align-items: center; gap: 6px; }
+        .body-content { background: white; padding: 35px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .section { margin-bottom: 32px; }
+        .section:last-child { margin-bottom: 0; }
+        .section h2 { font-size: 18px; font-weight: 700; color: #1a365d; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 16px; }
+        .summary-box { background: #ebf8ff; border-left: 4px solid #2b6cb0; padding: 16px 20px; border-radius: 0 8px 8px 0; font-size: 15px; }
+        .participants { display: flex; flex-wrap: wrap; gap: 12px; }
+        .participant { background: #f7fafc; border: 1px solid #e2e8f0; padding: 10px 16px; border-radius: 8px; min-width: 200px; }
+        .participant .name { font-weight: 600; color: #2d3748; }
+        .participant .role { font-size: 13px; color: #718096; }
+        .discussion-item { margin-bottom: 14px; padding: 12px 16px; background: #f7fafc; border-radius: 8px; border-left: 3px solid #4299e1; }
+        .discussion-item h3 { font-size: 15px; font-weight: 600; color: #2b6cb0; margin-bottom: 4px; }
+        .discussion-item p { font-size: 14px; color: #4a5568; }
+        .action-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-table thead { background: #1a365d; color: white; }
+        .action-table th { padding: 10px 14px; text-align: left; font-weight: 600; }
+        .action-table td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
+        .action-table tr:nth-child(even) { background: #f7fafc; }
+        .action-table tr:hover { background: #ebf8ff; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .badge-blue { background: #bee3f8; color: #2a4365; }
+        .badge-green { background: #c6f6d5; color: #22543d; }
+        .badge-gray { background: #e2e8f0; color: #4a5568; }
+        .decision-list, .nextstep-list { list-style: none; padding: 0; }
+        .decision-list li, .nextstep-list li { padding: 8px 0 8px 28px; position: relative; font-size: 14px; border-bottom: 1px solid #f0f4f8; }
+        .decision-list li::before { content: "\2713"; position: absolute; left: 0; color: #38a169; font-weight: 700; font-size: 16px; }
+        .nextstep-list li::before { content: "\2192"; position: absolute; left: 0; color: #2b6cb0; font-weight: 700; font-size: 16px; }
+        .diagram-section { margin-top: 16px; }
+        .diagram-card { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .diagram-card h3 { font-size: 15px; font-weight: 600; color: #2b6cb0; margin-bottom: 12px; text-align: center; }
+        .diagram-card .mermaid { display: flex; justify-content: center; }
+        .footer { text-align: center; padding: 20px; color: #a0aec0; font-size: 12px; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Service Desk WhatsApp Integration - Cardona Call</h1>
+            <div class="meta">
+                <span><strong>Date:</strong> March 4, 2026</span>
+                <span><strong>Duration:</strong> ~24 minutes</span>
+                <span><strong>Type:</strong> Technical Review & Demo</span>
+            </div>
+        </div>
+
+        <div class="body-content">
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2>Executive Summary</h2>
+                <div class="summary-box">
+                    The team reviewed the current state of the Service Desk WhatsApp integration built on Chatbase. The AI assistant already supports ticket creation and status checking via WhatsApp using Meta Business Manager. Key gaps were identified: technician responses from the web app do not flow back to WhatsApp users, documentation generation from tickets needs refinement, and additional Chatbase custom actions require a paid upgrade. The team agreed to deliver the current MVP and propose an expanded feature set at an additional recurring monthly cost.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2>Participants</h2>
+                <div class="participants">
+                    <div class="participant">
+                        <div class="name">Cardona (Speaker 1)</div>
+                        <div class="role">Technical Lead / WhatsApp Integration Owner</div>
+                    </div>
+                    <div class="participant">
+                        <div class="name">Daniel (Speaker 2)</div>
+                        <div class="role">Developer / Platform Owner</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2>Discussion Points</h2>
+
+                <div class="discussion-item">
+                    <h3>1. WhatsApp Service Desk Assistant - Current Capabilities</h3>
+                    <p>The Chatbase-powered assistant currently supports: get ticket details, get user tickets, get ticket status, search knowledge base, add comment to ticket, escalate to human, and create ticket. These actions call backend API endpoints and return information to users via WhatsApp.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>2. One-Way Communication Gap (Critical)</h3>
+                    <p>Critical gap identified: when a technician responds or updates a ticket through the web application, the update does not flow back to the end user on WhatsApp. The current flow only supports user-to-system communication, not system-to-user notifications. Outbound webhooks via Chatbase are needed to close this loop.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>3. Meta Business Manager & WhatsApp Setup</h3>
+                    <p>WhatsApp integration requires a Meta Business Manager account (free/freemium) and a dedicated phone number purchased from a provider. The number is registered in WhatsApp Manager within Meta Business Suite, with two-step verification and Facebook policy-compliant naming.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>4. User Management & Onboarding</h3>
+                    <p>There is no self-service sign-up flow. Users are assigned by administrators. IT sends an email notifying users about the new Service Desk. End users creating tickets via WhatsApp only see their own tickets and ticket queue in the "My Panel" view.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>5. Documentation Generation from Tickets</h3>
+                    <p>Debate on whether documentation should be generated per-ticket or per-problem. Generating per-ticket would create excessive documentation. The recommendation is to generate documentation at the service category/problem level, using ticket logs as data inputs organized by service categories.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>6. Missing Custom Actions</h3>
+                    <p>Additional actions needed: get ticket comments (currently only add comment exists), change ticket status. Custom actions in Chatbase require the paid plan. Each action is configured with API endpoint, HTTP method, headers, inputs, and JSON body.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>7. Ticket Detail Improvements</h3>
+                    <p>Several UI fixes needed: display technician name instead of ID, assign service category for WhatsApp-originated tickets, collect user location via system prompt to create tags, and fix classification data not being set for WhatsApp tickets.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>8. Pricing & Commercial Strategy</h3>
+                    <p>Current pricing: $10/month for 12 technicians. Proposed strategy: deliver the MVP with 2 core actions (create ticket, check status), then offer expanded features (all custom actions, more integrations) at $20/month recurring. Additional Chatbase costs need to be factored in.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>9. Chatbase Conversation Data & Analytics</h3>
+                    <p>Chatbase conversations can be pulled via API, providing analytics on which users write most, what types of problems occur, which assets and locations are involved. This data feeds into resolution insights.</p>
+                </div>
+
+                <div class="discussion-item">
+                    <h3>10. Product Showcase Potential</h3>
+                    <p>The current implementation is polished enough to serve as a product demo/showcase on the website, demonstrating AI-powered workflow management for enterprises.</p>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2>Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 55%;">Action</th>
+                            <th style="width: 20%;">Owner</th>
+                            <th style="width: 20%;">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Pay for Chatbase premium to enable all custom actions</td>
+                            <td><span class="badge badge-blue">Cardona</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Refine the WhatsApp assistant system prompt to be more conversational</td>
+                            <td><span class="badge badge-blue">Cardona</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Add user location collection to the system prompt and create location tags</td>
+                            <td><span class="badge badge-blue">Cardona</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Create "get ticket comments" custom action in Chatbase</td>
+                            <td><span class="badge badge-blue">Cardona</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Implement outbound webhook so technician responses flow back to WhatsApp users</td>
+                            <td><span class="badge badge-blue">Cardona</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Fix ticket detail view to display technician name instead of ID</td>
+                            <td><span class="badge badge-green">Daniel</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Auto-assign service category for tickets originating from WhatsApp</td>
+                            <td><span class="badge badge-green">Daniel</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Fix documentation generation to properly save when resolving tickets</td>
+                            <td><span class="badge badge-green">Daniel</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Remove duplicate sections (activity history vs audit history) in ticket detail</td>
+                            <td><span class="badge badge-green">Daniel</span></td>
+                            <td><span class="badge badge-gray">TBD</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Determine Chatbase subscription cost and finalize client pricing model</td>
+                            <td><span class="badge badge-blue">Cardona</span></td>
+                            <td>Before next client meeting</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>Prepare delivery presentation showing MVP and upsell opportunities</td>
+                            <td><span class="badge badge-blue">Both</span></td>
+                            <td>Next client meeting</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2>Decisions Made</h2>
+                <ul class="decision-list">
+                    <li>No self-service sign-up flow &mdash; users will be assigned by administrators via email notification</li>
+                    <li>MVP WhatsApp channels: WhatsApp and email are the two supported input channels for ticket creation</li>
+                    <li>MVP includes two core Chatbase actions: create ticket and check ticket status</li>
+                    <li>Documentation should be generated at the problem/service category level, not per individual ticket</li>
+                    <li>Deliver current MVP first, then propose expanded features at an additional recurring monthly cost</li>
+                    <li>Current pricing stays at $10/month for 12 technicians; expanded features to be offered at $20/month</li>
+                    <li>The finished product can be used as a website showcase/demo for the company's AI capabilities</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Next Steps</h2>
+                <ul class="nextstep-list">
+                    <li>Finalize and deliver the MVP with WhatsApp ticket creation and status checking</li>
+                    <li>Determine Chatbase premium costs and calculate margin for client billing</li>
+                    <li>Prepare a proposal for the next client meeting: show delivered MVP, present expanded feature options with recurring costs</li>
+                    <li>Implement outbound webhook to enable two-way communication (technician responses back to WhatsApp)</li>
+                    <li>Add missing Chatbase custom actions (get comments, change status) after upgrading plan</li>
+                    <li>Set up the product as a website showcase demonstrating AI-powered service desk workflows</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture -->
+            <div class="section">
+                <h2>Technical Architecture</h2>
+                <div class="diagram-section">
+
+                    <div class="diagram-card">
+                        <h3>Service Desk WhatsApp Integration - System Architecture</h3>
+                        <pre class="mermaid">
+flowchart LR
+    subgraph Users["End Users"]
+        WA["WhatsApp"]
+        EM["Email"]
+        WEB["Web App - My Tickets Panel"]
+    end
+
+    subgraph Meta["Meta Business Manager"]
+        MBM["WhatsApp Manager"]
+        PN["Phone Number"]
+    end
+
+    subgraph Chatbase["Chatbase AI"]
+        SA["Service Desk Assistant"]
+        SP["System Prompt"]
+        CA["Custom Actions"]
+        KB["Knowledge Base"]
+    end
+
+    subgraph Backend["Service Desk Backend"]
+        API["REST API Endpoints"]
+        TS["Ticket Service"]
+        NS["Notification Service"]
+    end
+
+    subgraph DB["Database"]
+        TK["Tickets"]
+        US["Users"]
+        SC["Service Categories"]
+        DOC["Documentation"]
+    end
+
+    WA --> MBM
+    MBM --> SA
+    SA --> CA
+    CA --> API
+    SA --> KB
+    API --> TS
+    TS --> TK
+    TS --> US
+    TS --> SC
+    EM --> API
+    WEB --> API
+    TS --> DOC
+                        </pre>
+                    </div>
+
+                    <div class="diagram-card">
+                        <h3>Ticket Lifecycle - User via WhatsApp</h3>
+                        <pre class="mermaid">
+sequenceDiagram
+    participant U as End User
+    participant WA as WhatsApp
+    participant CB as Chatbase Assistant
+    participant API as Backend API
+    participant DB as Database
+    participant T as Technician
+
+    U->>WA: Describes problem
+    WA->>CB: Message received
+    CB->>CB: Search Knowledge Base
+    CB->>U: Suggests article/solution
+    U->>WA: Problem persists
+    CB->>API: Create Ticket
+    API->>DB: Store ticket
+    API-->>CB: Ticket created
+    CB->>U: Ticket confirmation
+    Note over DB,T: Ticket assigned to technician
+    T->>API: Updates ticket status
+    API->>DB: Update ticket
+    Note over WA,U: GAP: No notification back to WhatsApp user
+    U->>WA: Check ticket status
+    CB->>API: Get ticket status
+    API->>DB: Query ticket
+    API-->>CB: Status response
+    CB->>U: Current status update
+                        </pre>
+                    </div>
+
+                    <div class="diagram-card">
+                        <h3>Chatbase Custom Actions - MVP vs Expanded</h3>
+                        <pre class="mermaid">
+flowchart TD
+    subgraph MVP["MVP Actions - Current"]
+        A1["Create Ticket"]
+        A2["Get User Tickets"]
+        A3["Get Ticket Status"]
+        A4["Search Knowledge Base"]
+        A5["Add Comment to Ticket"]
+        A6["Escalate to Human"]
+        A7["Get Ticket Details"]
+    end
+
+    subgraph EXP["Expanded Actions - Paid Plan"]
+        B1["Get Ticket Comments"]
+        B2["Change Ticket Status"]
+        B3["Outbound Webhook Notifications"]
+        B4["User Location Tagging"]
+    end
+
+    subgraph API["Backend Endpoints"]
+        E1["POST /tickets"]
+        E2["GET /tickets/user"]
+        E3["GET /tickets/status"]
+        E4["GET /knowledge-base"]
+        E5["POST /tickets/comments"]
+        E6["POST /tickets/escalate"]
+        E7["GET /tickets/details"]
+        E8["GET /tickets/comments"]
+        E9["PUT /tickets/status"]
+        E10["POST /webhooks/notify"]
+    end
+
+    A1 --> E1
+    A2 --> E2
+    A3 --> E3
+    A4 --> E4
+    A5 --> E5
+    A6 --> E6
+    A7 --> E7
+    B1 --> E8
+    B2 --> E9
+    B3 --> E10
+                        </pre>
+                    </div>
+
+                    <div class="diagram-card">
+                        <h3>WhatsApp Number Setup Process</h3>
+                        <pre class="mermaid">
+flowchart TD
+    A["Create Meta Business Manager Account"] --> B["Access Business Suite"]
+    B --> C["Navigate to Tools"]
+    C --> D["Open WhatsApp Manager"]
+    D --> E["Purchase Phone Number from Provider"]
+    E --> F["Add Number to WhatsApp Manager"]
+    F --> G["Select Category"]
+    G --> H["Configure Settings"]
+    H --> I["Two-Step Verification"]
+    H --> J["Profile and Certificate"]
+    H --> K["Comply with Facebook Naming Policy"]
+    I --> L["Connect to Chatbase Plugin"]
+    J --> L
+    K --> L
+    L --> M["WhatsApp Bot Live and Ready"]
+                        </pre>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Meeting summary generated automatically &bull; March 4, 2026 &bull; Confidential
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad: true, theme: 'default'});</script>
+</body>
+</html>
