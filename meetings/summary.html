@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Summary - Daily Standup with Cardona</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2d3748; line-height: 1.6;">
+
+  <!-- Header -->
+  <div style="background: linear-gradient(135deg, #1e3a5f 0%, #2b6cb0 100%); color: #ffffff; padding: 40px 0; text-align: center;">
+    <div style="max-width: 800px; margin: 0 auto; padding: 0 24px;">
+      <h1 style="margin: 0 0 8px 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">Daily Standup with Cardona</h1>
+      <p style="margin: 0; font-size: 16px; opacity: 0.9;">March 5, 2026 &middot; ~10 minutes</p>
+    </div>
+  </div>
+
+  <!-- Content Container -->
+  <div style="max-width: 800px; margin: -20px auto 40px auto; padding: 0 24px;">
+
+    <!-- Participants Card -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Participants</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #f0f0f0; font-weight: 600;">Speaker 1</td>
+          <td style="padding: 8px 12px; border-bottom: 1px solid #f0f0f0; color: #718096;">Business / Commercial Lead</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px 12px; font-weight: 600;">Daniel Cardona (Dani)</td>
+          <td style="padding: 8px 12px; color: #718096;">Technical Lead / Developer</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Executive Summary Card -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px; border-left: 4px solid #2b6cb0;">
+      <h2 style="margin: 0 0 12px 0; font-size: 18px; color: #1e3a5f;">Executive Summary</h2>
+      <p style="margin: 0; color: #4a5568;">
+        Daily standup covering progress on the guest name matching/cross-referencing system, bank reconciliation closing, and Service Desk QA strategy. Key outcomes include a decision to use Chatbase for WhatsApp demo numbers for the Faru Legal POC, a plan to reset user passwords in Supabase (except admin), and alignment on preparing a comprehensive commercial deliverable summarizing development hours and contract value for upcoming negotiations.
+      </p>
+    </div>
+
+    <!-- Discussion Points Card -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Discussion Points</h2>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0 0 4px 0; font-size: 15px; color: #2b6cb0;">1. Guest Name Matching & Cross-Referencing System</h3>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">Discussed issues with name matching in the cross-reference file: asterisks prepended to names and "Se&ntilde;or/Se&ntilde;ora" suffixes are interfering with matches. Name normalization is already implemented. The system correctly filters out Bolivian nationals (report targets foreigners). Explored switching data source from Excel to API/XML for better integration.</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0 0 4px 0; font-size: 15px; color: #2b6cb0;">2. Faru Legal POC &mdash; WhatsApp Integration & Ticket Assignment</h3>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">The Faru Legal proof of concept is built but barebones. Missing WhatsApp integration for ticket creation. Need a demo phone number &mdash; agreed to use Chatbase for free US numbers. Core flow: WhatsApp message creates a ticket, then an assignment routine allocates it to a lawyer by expertise. Ticket lifecycle stages: creation, assignment, work.</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0 0 4px 0; font-size: 15px; color: #2b6cb0;">3. Service Desk QA & Testing Strategy</h3>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">Debated whether to test internally first or hand off to stakeholders immediately. Agreed to do internal testing first, then deliver to the internal stakeholder with specific test flows and request structured feedback. Authentication layout broke, requiring a user password reset.</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0 0 4px 0; font-size: 15px; color: #2b6cb0;">4. Bank Reconciliation & Financial Closing</h3>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">Five banks have been set up; closing expected this week. Frontend not yet delivered. Need to provision another database ($10). Waiting for confirmation that everything is ready before investing in frontend. Previous reconciliation achieved 75% automatic match rate.</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0 0 4px 0; font-size: 15px; color: #2b6cb0;">5. Commercial Pipeline & Deliverable Preparation</h3>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">Speaker 1 will compile all sent proposals and pending commercial items into a complete deliverable showing development hours invested, contract value, and cost reductions &mdash; to be used as a negotiation tool.</p>
+      </div>
+
+      <div style="margin-bottom: 0;">
+        <h3 style="margin: 0 0 4px 0; font-size: 15px; color: #2b6cb0;">6. Upcoming Meetings & Legal Matters</h3>
+        <p style="margin: 0; color: #4a5568; font-size: 14px;">Meeting with Tom&aacute;s: listen to his position on valuation, prepare counterarguments. Meeting with Mar&iacute;a: discuss document scope, ask about Liganoa and Faru Legal contacts. Possible meeting with Faru Legal tomorrow. Meeting with Caiceo also planned.</p>
+      </div>
+    </div>
+
+    <!-- Action Items Card -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Action Items</h2>
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <thead>
+          <tr style="background-color: #f7fafc;">
+            <th style="padding: 10px 12px; text-align: left; border-bottom: 2px solid #e2e8f0; color: #1e3a5f; font-weight: 600;">Action</th>
+            <th style="padding: 10px 12px; text-align: left; border-bottom: 2px solid #e2e8f0; color: #1e3a5f; font-weight: 600; width: 150px;">Owner</th>
+            <th style="padding: 10px 12px; text-align: left; border-bottom: 2px solid #e2e8f0; color: #1e3a5f; font-weight: 600; width: 100px;">Deadline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Finish the guest name matching/cross-referencing system</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Dani</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Mar 5</td>
+          </tr>
+          <tr style="background-color: #fafbfc;">
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Review API endpoint and download XML to evaluate as alternative data source</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Speaker 1</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Reset passwords for all Supabase users except admin</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Speaker 1</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr style="background-color: #fafbfc;">
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Advance Service Desk development and verify stakeholder-reported flows</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Dani</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Obtain a WhatsApp demo phone number via Chatbase</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Speaker 1</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr style="background-color: #fafbfc;">
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Investigate Chatbase webhook integration for ticket reception and user notifications</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Speaker 1</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Prepare complete commercial deliverable (dev hours, costs, contract details, proposals)</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Speaker 1</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr style="background-color: #fafbfc;">
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Meeting with Tom&aacute;s &mdash; listen to position, prepare counterarguments</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Dani</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Mar 5</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Lunch meeting with Mar&iacute;a &mdash; discuss document scope, ask about Liganoa/Faru Legal</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Dani</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Mar 5</td>
+          </tr>
+          <tr style="background-color: #fafbfc;">
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">Meeting with Caiceo</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #2b6cb0; font-weight: 500;">Dani</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0f0f0;">&mdash;</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px;">Schedule meeting with Faru Legal</td>
+            <td style="padding: 10px 12px; color: #2b6cb0; font-weight: 500;">Dani</td>
+            <td style="padding: 10px 12px;">Mar 6</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Decisions Card -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Decisions Made</h2>
+      <ul style="margin: 0; padding: 0 0 0 20px; color: #4a5568; font-size: 14px;">
+        <li style="margin-bottom: 8px;">Do internal testing of Service Desk before releasing to stakeholders</li>
+        <li style="margin-bottom: 8px;">Reset all Supabase user passwords except admin to fix authentication issues</li>
+        <li style="margin-bottom: 8px;">Use Chatbase to obtain free US phone numbers for WhatsApp demos</li>
+        <li style="margin-bottom: 8px;">Data format (XML vs Excel) is not critical right now &mdash; use whatever works with existing libraries on Render</li>
+        <li style="margin-bottom: 8px;">Ticket assignment should be a separate routine that runs after ticket creation, not part of the creation step itself</li>
+        <li style="margin-bottom: 0;">Deliver a partial solution with tips if the full cross-referencing system cannot be completed today</li>
+      </ul>
+    </div>
+
+    <!-- Next Steps Card -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Next Steps</h2>
+      <ol style="margin: 0; padding: 0 0 0 20px; color: #4a5568; font-size: 14px;">
+        <li style="margin-bottom: 8px;">Finish cross-referencing system and evaluate API/XML data source</li>
+        <li style="margin-bottom: 8px;">Reset Supabase user passwords and re-enable stakeholder access to Service Desk</li>
+        <li style="margin-bottom: 8px;">Set up Chatbase WhatsApp number and integrate webhooks for Faru Legal POC demo</li>
+        <li style="margin-bottom: 8px;">Meeting with Tom&aacute;s to discuss valuation and negotiation position</li>
+        <li style="margin-bottom: 8px;">Lunch meeting with Mar&iacute;a to discuss legal document scope</li>
+        <li style="margin-bottom: 8px;">Meeting with Caiceo</li>
+        <li style="margin-bottom: 8px;">Possible meeting with Faru Legal tomorrow</li>
+        <li style="margin-bottom: 0;">Compile commercial pipeline deliverable with all proposals and values for negotiation</li>
+      </ol>
+    </div>
+
+    <!-- Technical Architecture Diagrams -->
+    <div style="background: #ffffff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px;">
+      <h2 style="margin: 0 0 16px 0; font-size: 18px; color: #1e3a5f; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Technical Architecture</h2>
+
+      <!-- Diagram 1 -->
+      <div style="margin-bottom: 32px;">
+        <h3 style="margin: 0 0 12px 0; font-size: 15px; color: #2b6cb0;">Guest Name Cross-Referencing Pipeline</h3>
+        <pre class="mermaid">
+flowchart TD
+    A["Input: Excel / API Data"] --> B["Raw Guest Names"]
+    B --> C{"Name Normalization"}
+    C --> D["Remove Asterisks"]
+    C --> E["Remove Senor/Senora"]
+    C --> F["Trim Whitespace"]
+    D --> G["Normalized Name"]
+    E --> G
+    F --> G
+    G --> H{"Nationality Filter"}
+    H -->|"Bolivian"| I["Exclude from Report"]
+    H -->|"Foreign"| J["Include in Report"]
+    J --> K{"Match Against Reference File"}
+    K -->|"Match Found"| L["Matched Record"]
+    K -->|"No Match / Close Match"| M["Manual Review Queue"]
+    L --> N["Cross-Referenced Output Report"]
+        </pre>
+      </div>
+
+      <!-- Diagram 2 -->
+      <div style="margin-bottom: 32px;">
+        <h3 style="margin: 0 0 12px 0; font-size: 15px; color: #2b6cb0;">Service Desk Ticket Lifecycle via WhatsApp</h3>
+        <pre class="mermaid">
+sequenceDiagram
+    participant U as User
+    participant WA as WhatsApp / Chatbase
+    participant API as Service Desk API
+    participant AR as Assignment Routine
+    participant L as Lawyer
+    participant N as Notification Service
+
+    U->>WA: Send message describing case
+    WA->>API: Webhook - Create Ticket
+    API->>API: Save ticket in DB
+    API->>AR: Trigger assignment routine
+    AR->>AR: Evaluate lawyer expertise
+    AR->>API: Assign ticket to lawyer
+    API->>N: Send notification
+    N->>L: Notify assigned lawyer
+    N->>U: Confirm ticket created
+    L->>API: Begin work on ticket
+        </pre>
+      </div>
+
+      <!-- Diagram 3 -->
+      <div style="margin-bottom: 0;">
+        <h3 style="margin: 0 0 12px 0; font-size: 15px; color: #2b6cb0;">Overall Platform Architecture</h3>
+        <pre class="mermaid">
+flowchart LR
+    subgraph Clients
+        FE["React Frontend - Vercel"]
+        WA["WhatsApp - Chatbase"]
+    end
+
+    subgraph Backend["Backend - Render"]
+        API["FastAPI"]
+        XRef["Cross-Reference Engine"]
+        SD["Service Desk Module"]
+        FL["Faru Legal POC"]
+        BR["Bank Reconciliation"]
+    end
+
+    subgraph Data
+        DB[("PostgreSQL - Supabase")]
+        Excel["Excel Files"]
+        ExtAPI["External API - XML"]
+    end
+
+    FE --> API
+    WA --> API
+    API --> XRef
+    API --> SD
+    API --> FL
+    API --> BR
+    XRef --> DB
+    SD --> DB
+    FL --> DB
+    BR --> DB
+    XRef --> Excel
+    XRef --> ExtAPI
+        </pre>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 20px 0; color: #a0aec0; font-size: 12px;">
+      <p style="margin: 0;">Meeting summary generated on March 6, 2026</p>
+      <p style="margin: 4px 0 0 0;">Tremarel &middot; Daily Standup with Cardona</p>
+    </div>
+
+  </div>
+
+  <!-- Mermaid JS -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad: true, theme: 'neutral'});</script>
+</body>
+</html>

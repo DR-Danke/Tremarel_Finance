@@ -1,0 +1,127 @@
+{
+  "title": "Daily Standup with Cardona",
+  "meeting_date": "2026-03-05",
+  "participants": [
+    {"name": "Speaker 1", "role": "Business / Commercial Lead"},
+    {"name": "Daniel Cardona (Dani)", "role": "Technical Lead / Developer"}
+  ],
+  "company_name": "Tremarel",
+  "contact_name": null,
+  "contact_email": null,
+  "summary": "Daily standup covering progress on the guest name matching/cross-referencing system, bank reconciliation closing, and Service Desk QA strategy. Key outcomes include a decision to use Chatbase for WhatsApp demo numbers for the Faru Legal POC, a plan to reset user passwords in Supabase (except admin), and alignment on preparing a comprehensive commercial deliverable summarizing development hours and contract value for upcoming negotiations.",
+  "discussion_points": [
+    {
+      "topic": "Guest Name Matching & Cross-Referencing System",
+      "description": "Discussed issues with name matching in the cross-reference file: asterisks prepended to names and 'Señor/Señora' suffixes are interfering with matches. Name normalization is already implemented. The system correctly filters out Bolivian nationals (report targets foreigners). Explored switching data source from Excel to API/XML for better integration."
+    },
+    {
+      "topic": "Faru Legal POC - WhatsApp Integration & Ticket Assignment",
+      "description": "The Faru Legal proof of concept is built but barebones. Missing WhatsApp integration for ticket creation. Need a demo phone number — agreed to use Chatbase for free US numbers. Core flow: WhatsApp message creates a ticket, then an assignment routine allocates it to a lawyer by expertise. Ticket lifecycle stages: creation, assignment, work."
+    },
+    {
+      "topic": "Service Desk QA & Testing Strategy",
+      "description": "Debated whether to test internally first or hand off to stakeholders immediately. Agreed to do internal testing first, then deliver to the internal stakeholder with specific test flows and request structured feedback. Authentication layout broke, requiring a user password reset."
+    },
+    {
+      "topic": "Bank Reconciliation & Financial Closing",
+      "description": "Five banks have been set up; closing expected this week. Frontend not yet delivered. Need to provision another database ($10). Waiting for confirmation that everything is ready before investing in frontend. Previous reconciliation achieved 75% automatic match rate."
+    },
+    {
+      "topic": "Commercial Pipeline & Deliverable Preparation",
+      "description": "Speaker 1 will compile all sent proposals and pending commercial items into a complete deliverable showing development hours invested, contract value, and cost reductions — to be used as a negotiation tool."
+    },
+    {
+      "topic": "Upcoming Meetings & Legal Matters",
+      "description": "Meeting with Tomás: listen to his position on valuation, prepare counterarguments. Meeting with María: discuss document scope, ask about Liganoa and Faru Legal contacts. Possible meeting with Faru Legal tomorrow. Meeting with Caiceo also planned."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Finish the guest name matching/cross-referencing system",
+      "owner": "Daniel Cardona (Dani)",
+      "deadline": "2026-03-05"
+    },
+    {
+      "description": "Review API endpoint and download XML to evaluate as alternative data source",
+      "owner": "Speaker 1",
+      "deadline": null
+    },
+    {
+      "description": "Reset passwords for all Supabase users except admin",
+      "owner": "Speaker 1",
+      "deadline": null
+    },
+    {
+      "description": "Advance Service Desk development and verify stakeholder-reported flows",
+      "owner": "Daniel Cardona (Dani)",
+      "deadline": null
+    },
+    {
+      "description": "Obtain a WhatsApp demo phone number via Chatbase",
+      "owner": "Speaker 1",
+      "deadline": null
+    },
+    {
+      "description": "Investigate Chatbase webhook integration for ticket reception and user notifications",
+      "owner": "Speaker 1",
+      "deadline": null
+    },
+    {
+      "description": "Prepare complete commercial deliverable (development hours, costs, contract details, proposals)",
+      "owner": "Speaker 1",
+      "deadline": null
+    },
+    {
+      "description": "Attend meeting with Tomás — listen to his position and prepare counterarguments",
+      "owner": "Daniel Cardona (Dani)",
+      "deadline": "2026-03-05"
+    },
+    {
+      "description": "Attend lunch meeting with María — discuss document scope and ask about Liganoa/Faru Legal contacts",
+      "owner": "Daniel Cardona (Dani)",
+      "deadline": "2026-03-05"
+    },
+    {
+      "description": "Attend meeting with Caiceo",
+      "owner": "Daniel Cardona (Dani)",
+      "deadline": null
+    },
+    {
+      "description": "Schedule meeting with Faru Legal (possibly tomorrow)",
+      "owner": "Daniel Cardona (Dani)",
+      "deadline": "2026-03-06"
+    }
+  ],
+  "decisions": [
+    "Do internal testing of Service Desk before releasing to stakeholders",
+    "Reset all Supabase user passwords except admin to fix authentication issues",
+    "Use Chatbase to obtain free US phone numbers for WhatsApp demos",
+    "Data format (XML vs Excel) is not critical right now — use whatever works with existing libraries on Render",
+    "Ticket assignment should be a separate routine that runs after ticket creation, not part of the creation step itself",
+    "Deliver a partial solution with tips if the full cross-referencing system cannot be completed today"
+  ],
+  "next_steps": [
+    "Finish cross-referencing system and evaluate API/XML data source",
+    "Reset Supabase user passwords and re-enable stakeholder access to Service Desk",
+    "Set up Chatbase WhatsApp number and integrate webhooks for Faru Legal POC demo",
+    "Meeting with Tomás to discuss valuation and negotiation position",
+    "Lunch meeting with María to discuss legal document scope",
+    "Meeting with Caiceo",
+    "Possible meeting with Faru Legal tomorrow",
+    "Compile commercial pipeline deliverable with all proposals and values for negotiation"
+  ],
+  "diagrams": [
+    {
+      "title": "Guest Name Cross-Referencing Pipeline",
+      "mermaid_code": "flowchart TD\n    A[\"Input: Excel / API Data\"] --> B[\"Raw Guest Names\"]\n    B --> C{\"Name Normalization\"}\n    C --> D[\"Remove Asterisks\"]\n    C --> E[\"Remove Senor/Senora\"]\n    C --> F[\"Trim Whitespace\"]\n    D --> G[\"Normalized Name\"]\n    E --> G\n    F --> G\n    G --> H{\"Nationality Filter\"}\n    H -->|\"Bolivian\"| I[\"Exclude from Report\"]\n    H -->|\"Foreign\"| J[\"Include in Report\"]\n    J --> K{\"Match Against Reference File\"}\n    K -->|\"Match Found\"| L[\"Matched Record\"]\n    K -->|\"No Match / Close Match\"| M[\"Manual Review Queue\"]\n    L --> N[\"Cross-Referenced Output Report\"]"
+    },
+    {
+      "title": "Service Desk Ticket Lifecycle via WhatsApp",
+      "mermaid_code": "sequenceDiagram\n    participant U as User\n    participant WA as WhatsApp / Chatbase\n    participant API as Service Desk API\n    participant AR as Assignment Routine\n    participant L as Lawyer\n    participant N as Notification Service\n\n    U->>WA: Send message describing case\n    WA->>API: Webhook - Create Ticket\n    API->>API: Save ticket in DB\n    API->>AR: Trigger assignment routine\n    AR->>AR: Evaluate lawyer expertise\n    AR->>API: Assign ticket to lawyer\n    API->>N: Send notification\n    N->>L: Notify assigned lawyer\n    N->>U: Confirm ticket created\n    L->>API: Begin work on ticket"
+    },
+    {
+      "title": "Overall Platform Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph Clients\n        FE[\"React Frontend\\nVercel\"]\n        WA[\"WhatsApp\\nChatbase\"]\n    end\n\n    subgraph Backend[\"Backend - Render\"]\n        API[\"FastAPI\"]\n        XRef[\"Cross-Reference\\nEngine\"]\n        SD[\"Service Desk\\nModule\"]\n        FL[\"Faru Legal\\nPOC\"]\n        BR[\"Bank\\nReconciliation\"]\n    end\n\n    subgraph Data\n        DB[(\"PostgreSQL\\nSupabase\")]\n        Excel[\"Excel Files\"]\n        ExtAPI[\"External API\\nXML\"]\n    end\n\n    FE --> API\n    WA --> API\n    API --> XRef\n    API --> SD\n    API --> FL\n    API --> BR\n    XRef --> DB\n    SD --> DB\n    FL --> DB\n    BR --> DB\n    XRef --> Excel\n    XRef --> ExtAPI"
+    }
+  ]
+}
