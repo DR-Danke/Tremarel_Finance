@@ -638,3 +638,10 @@ This prompt helps you determine what documentation you should read based on the 
     - When creating or modifying Legal Desk page components in pages/legaldesk/
     - When troubleshooting Legal Desk route registration or sidebar rendering
     - When adding a new Legal Desk page and need to wire it into routing and navigation
+
+- app_docs/patch-38f928aa-route-error-handling.md
+  - Conditions:
+    - When adding error handling to backend route endpoints
+    - When working with transaction_routes.py or reports_routes.py exception handling
+    - When implementing the try/except pattern for PermissionError/ValueError in route files
+    - When troubleshooting raw 500 errors from service layer exceptions
