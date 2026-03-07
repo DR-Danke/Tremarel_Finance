@@ -1,0 +1,80 @@
+{
+  "title": "Arkangel AI <> AIH - Growth Proposal Presentation",
+  "meeting_date": "2026-02-17",
+  "participants": [
+    {"name": "Daniel Cardona", "role": "AIH Representative"},
+    {"name": "Laura Velásquez Herrera", "role": "CEO, Arkangel AI"},
+    {"name": "Jose Zea", "role": "Attendee"}
+  ],
+  "company_name": "Arkangel AI",
+  "contact_name": "Laura Velásquez Herrera",
+  "contact_email": null,
+  "summary": "Formal proposal presentation to Arkangel AI following initial validation. Arkangel currently generates 55K organic visits in 37 days with a database of 100K doctors. The proposed growth target is 2.53x in 6 months to reach $4.5M in revenue. A hybrid commercial model was presented: $3,170/month retainer plus 3% revenue share (waived for the first 3 months), structured in three phases — Foundation ($8K setup), Acceleration ($2.5K/month), and Optimization. The client showed strong interest, and a dry run is scheduled to validate key growth hypotheses before a final decision.",
+  "discussion_points": [
+    {
+      "topic": "Hybrid Commercial Model",
+      "description": "Proposed pricing structure combining a $3,170/month retainer with 3% revenue share. Revenue share is waived for the first 3 months as a trial period. Payment terms set at 45 days upon client collection. Minimum 6-month contract with total retainer of $19,020."
+    },
+    {
+      "topic": "Growth Targets and Metrics",
+      "description": "Arkangel AI has 55,000 organic visits in 37 days and a database of 100,000 doctors. The growth target is 2.53x in 6 months to reach $4.5M in revenue. Currently losing $167K/month in pipeline without a proper system in place."
+    },
+    {
+      "topic": "Three-Phase Implementation Plan",
+      "description": "Phase 1 (Foundation): $8K setup including middle-tier offers, attribution system, and KOL structure. Phase 2 (Acceleration): $2.5K/month with monthly playbook deliveries. Phase 3 (Optimization): Fine-tuning for maximum growth."
+    },
+    {
+      "topic": "Internal Resources and Existing Progress",
+      "description": "Laura has already made significant internal advances including a CRM system, SOUL files, and a Content Engine called 'Claudio'. Phase 1 is partially completed internally, which accelerates the engagement timeline."
+    },
+    {
+      "topic": "Attribution System Implementation",
+      "description": "Need to implement a system to track and attribute revenue to marketing efforts. Without this system, the estimated pipeline loss is $167K/month."
+    },
+    {
+      "topic": "KOL Program Structure",
+      "description": "Plan to structure a Key Opinion Leaders (KOL) program to leverage the medical professional network for organic growth and credibility."
+    }
+  ],
+  "action_items": [
+    {"description": "Review formal proposal document", "owner": "Laura Velásquez Herrera", "deadline": null},
+    {"description": "Send formal proposal document", "owner": "Daniel Cardona", "deadline": null},
+    {"description": "Organize dry run to validate key growth hypotheses", "owner": "Daniel Cardona", "deadline": "2026-02-18"},
+    {"description": "Accompany team in system installation and setup", "owner": "Daniel Cardona", "deadline": null},
+    {"description": "Establish monthly playbook deliveries", "owner": "Daniel Cardona", "deadline": null},
+    {"description": "Implement attribution system", "owner": null, "deadline": null},
+    {"description": "Structure KOL program", "owner": null, "deadline": null}
+  ],
+  "decisions": [
+    "Hybrid pricing model adopted: $3,170/month retainer + 3% revenue share",
+    "Revenue share waived for the first 3 months (trial period)",
+    "Payment terms set at 45 days upon client collection",
+    "Three-phase implementation plan: Foundation ($8K), Acceleration ($2.5K/month), Optimization",
+    "Minimum contract duration of 6 months",
+    "Dry run scheduled for the following day to validate growth hypotheses"
+  ],
+  "next_steps": [
+    "Conduct dry run tomorrow (Feb 18) to validate growth hypotheses",
+    "Daniel to accompany the team in system and playbook installation",
+    "Begin monthly playbook deliveries for marketing",
+    "Await final decision from Laura Velásquez Herrera (CEO) after dry run validation"
+  ],
+  "diagrams": [
+    {
+      "title": "Arkangel AI Growth Engine Architecture",
+      "mermaid_code": "flowchart TD\n    Platform[Arkangel AI Platform] --> CRM[CRM System]\n    Platform --> Claudio[Content Engine - Claudio]\n    Platform --> Soul[SOUL Files]\n    CRM --> DoctorDB[100K Doctor Database]\n    Claudio --> Traffic[Organic Traffic Generation]\n    Traffic --> Visits[55K Visits / 37 Days]\n    CRM --> Attribution[Attribution System]\n    Attribution --> Pipeline[Pipeline Tracking]\n    Pipeline --> Revenue[Revenue Attribution]\n    Platform --> KOL[KOL Program]\n    KOL --> Leaders[Key Opinion Leaders]\n    Leaders --> Traffic"
+    },
+    {
+      "title": "Three-Phase Implementation Plan",
+      "mermaid_code": "flowchart LR\n    P1[Phase 1: Foundation] -->|Complete| P2[Phase 2: Acceleration]\n    P2 -->|Optimize| P3[Phase 3: Optimization]\n    P1 --- P1A[Setup Cost: $8K]\n    P1 --- P1B[Middle Tier Offers]\n    P1 --- P1C[Attribution System]\n    P1 --- P1D[KOL Structure]\n    P2 --- P2A[Cost: $2,500/month]\n    P2 --- P2B[Monthly Playbooks]\n    P2 --- P2C[Growth Execution]\n    P3 --- P3A[Revenue Target: $4.5M]\n    P3 --- P3B[2.53x Growth Achieved]"
+    },
+    {
+      "title": "Commercial Model and Revenue Flow",
+      "mermaid_code": "flowchart TD\n    Model[Hybrid Commercial Model] --> Retainer[Retainer: $3,170/month]\n    Model --> RevShare[Revenue Share: 3%]\n    Retainer --> M1to3[Months 1-3: Retainer Only]\n    RevShare --> M4to6[Months 4-6: Retainer + RevShare]\n    M1to3 --> Total[Total 6-Month Retainer: $19,020]\n    M4to6 --> Growth[RevShare on Revenue Growth]\n    Model --> Terms[Payment Terms: 45 Days]\n    Growth --> Target[Target Revenue: $4.5M]"
+    },
+    {
+      "title": "Pipeline Recovery Opportunity",
+      "mermaid_code": "sequenceDiagram\n    participant Organic as Organic Traffic\n    participant CRM as CRM System\n    participant Attr as Attribution System\n    participant Sales as Sales Pipeline\n    participant Rev as Revenue\n    Organic->>CRM: 55K visits captured\n    CRM->>CRM: 100K doctor database\n    CRM->>Attr: Track lead sources\n    Attr->>Sales: Qualified pipeline\n    Sales->>Rev: Convert to revenue\n    Note over Sales,Rev: Currently losing $167K/month without attribution\n    Note over Rev: Target: $4.5M in 6 months"
+    }
+  ]
+}
