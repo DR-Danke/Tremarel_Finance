@@ -666,3 +666,10 @@ This prompt helps you determine what documentation you should read based on the 
     - When adding new delete endpoints and need to follow the require_roles pattern
     - When troubleshooting 403 Forbidden errors on delete operations
     - When reviewing or modifying role-based access control on route-level dependencies
+
+- app_docs/patch-75b6035d-legaldesk-routes-error-handling.md
+  - Conditions:
+    - When working with error handling in legaldesk_routes.py
+    - When adding new Legal Desk API endpoints and need to follow the error handling pattern
+    - When troubleshooting Legal Desk API error responses (400, 404, 500)
+    - When working with IntegrityError or ValueError handling in FastAPI route handlers
