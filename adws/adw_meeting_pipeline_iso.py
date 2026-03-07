@@ -266,6 +266,16 @@ def save_meeting_outputs(meeting_data: dict, adw_id: str, logger: logging.Logger
     else:
         logger.warning("No HTML output found in meeting data")
 
+    # Save Spanish HTML output if available
+    html_content_es = meeting_data.get("html_output_es", "")
+    if html_content_es:
+        html_es_path = os.path.join(output_dir, f"meeting-{adw_id}-summary-es.html")
+        logger.info(f"Saving Spanish HTML summary to {html_es_path}")
+        with open(html_es_path, "w", encoding="utf-8") as f:
+            f.write(html_content_es)
+    else:
+        logger.warning("No Spanish HTML output found in meeting data (English-only)")
+
     return output_dir
 
 
@@ -889,6 +899,84 @@ def main():
                     logger.warning("Diagram generation returned no valid diagrams")
         except Exception as e:
             logger.warning(f"Diagram generation failed (non-fatal): {e}")
+
+    # Translate HTML to Spanish using a separate Sonnet call
+    html_for_translation = meeting_data.get("html_output", "")
+    if html_for_translation and html_for_translation.strip().startswith("<"):
+        logger.info("Translating HTML summary to Spanish (Latin American)")
+        try:
+            translate_request = AgentTemplateRequest(
+                agent_name="html_translator",
+                slash_command="/translate_meeting_html",
+                args=[html_for_translation],
+                adw_id=adw_id,
+                working_dir=worktree_path,
+            )
+            translate_response = execute_template(translate_request)
+            if translate_response.success:
+                # Strategy 1: Extract Spanish HTML from JSONL Write tool calls
+                spanish_html = None
+                translator_jsonl = os.path.join(
+                    agents_output_dir, "html_translator", "raw_output.jsonl"
+                )
+                if os.path.exists(translator_jsonl):
+                    with open(translator_jsonl, "r", encoding="utf-8") as tjf:
+                        for tline in tjf:
+                            tline = tline.strip()
+                            if not tline:
+                                continue
+                            tentry = json.loads(tline)
+                            if tentry.get("type") != "assistant":
+                                continue
+                            for tblock in tentry.get("message", {}).get("content", []):
+                                if (
+                                    tblock.get("type") == "tool_use"
+                                    and tblock.get("name") == "Write"
+                                ):
+                                    tinp = tblock.get("input", {})
+                                    tfp = tinp.get("file_path", "")
+                                    if tfp.endswith(".html") and tinp.get(
+                                        "content", ""
+                                    ).strip().startswith("<"):
+                                        spanish_html = tinp["content"]
+                                        logger.info(
+                                            f"Spanish HTML extracted from JSONL Write call: {tfp}"
+                                        )
+                                if spanish_html:
+                                    break
+                            if spanish_html:
+                                break
+
+                # Strategy 2: Search for summary_es.html in worktree
+                if not spanish_html:
+                    es_candidates = glob_mod.glob(
+                        os.path.join(worktree_path, "meetings", "**", "summary_es.html"),
+                        recursive=True,
+                    )
+                    for es_path in es_candidates:
+                        try:
+                            with open(es_path, "r", encoding="utf-8") as esf:
+                                loaded_es = esf.read()
+                            if loaded_es.strip().startswith("<"):
+                                spanish_html = loaded_es
+                                logger.info(f"Spanish HTML loaded from file: {es_path}")
+                                break
+                        except OSError:
+                            pass
+
+                if spanish_html:
+                    meeting_data["html_output_es"] = spanish_html
+                    logger.info("Spanish HTML translation completed successfully")
+                else:
+                    logger.warning("Translation ran but no Spanish HTML output was found")
+            else:
+                logger.warning(
+                    f"Spanish translation failed (non-fatal): {translate_response.output[:200]}"
+                )
+        except Exception as e:
+            logger.warning(f"Spanish translation failed (non-fatal): {e}")
+    else:
+        logger.info("No English HTML available to translate, skipping Spanish version")
 
     # Save outputs to agents/{adw_id}/meeting_outputs/
     output_dir = save_meeting_outputs(meeting_data, adw_id, logger)

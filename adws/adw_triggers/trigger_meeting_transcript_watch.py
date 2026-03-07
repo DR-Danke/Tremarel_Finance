@@ -166,10 +166,14 @@ def check_transcript_folder():
     for f in new_files:
         print(f"  - {f.name}", flush=True)
 
-    for filepath in new_files:
+    for i, filepath in enumerate(new_files):
         if shutdown_requested:
             print("INFO: Shutdown requested, stopping file processing")
             break
+        # Stagger launches to avoid git lock contention on .git/config
+        if i > 0:
+            print(f"INFO: Waiting 5s before next pipeline launch to avoid git lock contention...")
+            time.sleep(5)
         trigger_pipeline(filepath)
 
 
