@@ -638,3 +638,9 @@ This prompt helps you determine what documentation you should read based on the 
     - When creating or modifying Legal Desk page components in pages/legaldesk/
     - When troubleshooting Legal Desk route registration or sidebar rendering
     - When adding a new Legal Desk page and need to wire it into routing and navigation
+
+- app_docs/patch-7fc048f5-create-endpoint-error-handling.md
+  - Conditions:
+    - When working with restaurant_routes.py or recurring_template_routes.py create endpoints
+    - When adding error handling patterns to FastAPI route endpoints
+    - When troubleshooting unstructured 500 errors from create endpoints
