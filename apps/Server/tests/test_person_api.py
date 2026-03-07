@@ -531,7 +531,7 @@ async def test_update_person_no_access() -> None:
 @pytest.mark.asyncio
 async def test_delete_person_success() -> None:
     """Test that authorized user can delete person."""
-    mock_user = create_mock_user()
+    mock_user = create_mock_user(role="admin")
     mock_person = create_mock_person()
 
     with patch(

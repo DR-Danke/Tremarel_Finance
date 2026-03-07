@@ -568,7 +568,7 @@ async def test_update_resource_no_access() -> None:
 @pytest.mark.asyncio
 async def test_delete_resource_success() -> None:
     """Test that authorized user can delete resource."""
-    mock_user = create_mock_user()
+    mock_user = create_mock_user(role="admin")
     mock_resource = create_mock_resource()
 
     with patch(

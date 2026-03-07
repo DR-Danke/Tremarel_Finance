@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
+from src.adapter.rest.rbac_dependencies import require_roles
 from src.core.services.recipe_service import recipe_service
 from src.interface.recipe_dto import (
     RecipeCreateDTO,
@@ -188,15 +189,17 @@ async def update_recipe(
 async def delete_recipe(
     recipe_id: UUID,
     db: Session = Depends(get_db),
-    current_user: Dict[str, Any] = Depends(get_current_user),
+    current_user: Dict[str, Any] = Depends(require_roles(["admin", "manager"])),
 ) -> None:
     """
     Delete a recipe.
 
+    Only admin or manager roles can delete.
+
     Args:
         recipe_id: Recipe UUID
         db: Database session
-        current_user: Current authenticated user
+        current_user: Current authenticated user (admin or manager)
     """
     print(f"INFO [RecipeRoutes]: Delete recipe {recipe_id} request from user {current_user['email']}")
 
