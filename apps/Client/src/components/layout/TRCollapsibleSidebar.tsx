@@ -39,6 +39,7 @@ import AnalyticsIcon from '@mui/icons-material/Analytics'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { useEntity } from '@/hooks/useEntity'
+import { useAuth } from '@/hooks/useAuth'
 import { TRRestaurantSelector } from './TRRestaurantSelector'
 
 export const DRAWER_WIDTH_EXPANDED = 240
@@ -109,7 +110,43 @@ const settingsSection: NavSection = {
   ],
 }
 
-const buildNavigationSections = (hasEntities: boolean): NavSection[] => {
+const MODULE_SUBSECTION_MAP: Record<string, string> = {
+  legaldesk: 'Legal Desk',
+  'restaurant-os': 'RestaurantOS',
+}
+
+const buildNavigationSections = (hasEntities: boolean, allowedModules?: string[] | null): NavSection[] => {
+  // When allowed_modules is set, show only those modules
+  if (allowedModules && allowedModules.length > 0) {
+    const sections: NavSection[] = []
+
+    if (allowedModules.includes('finance')) {
+      sections.push(financeSection)
+    }
+
+    // Filter POC subsections to only allowed modules
+    const allowedSubsections = pocSection.subsections?.filter((sub) => {
+      return allowedModules.some((mod) => MODULE_SUBSECTION_MAP[mod] === sub.label)
+    })
+
+    if (allowedSubsections && allowedSubsections.length > 0) {
+      if (allowedSubsections.length === 1) {
+        // Single POC module: show as flat section (no collapsible wrapper)
+        sections.push({
+          label: allowedSubsections[0].label,
+          collapsible: false,
+          items: allowedSubsections[0].items,
+        })
+      } else {
+        sections.push({ ...pocSection, subsections: allowedSubsections })
+      }
+    }
+
+    sections.push(settingsSection)
+    return sections
+  }
+
+  // Default behavior: all modules based on entity status
   if (hasEntities) {
     return [financeSection, pocSection, settingsSection]
   }
@@ -144,9 +181,11 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
   open,
 }) => {
   const location = useLocation()
+  const { user } = useAuth()
   const { currentEntity, entities, switchEntity } = useEntity()
   const hasEntities = entities.length > 0
-  const navigationSections = buildNavigationSections(hasEntities)
+  const allowedModules = user?.allowed_modules ?? null
+  const navigationSections = buildNavigationSections(hasEntities, allowedModules)
   const [sectionState, setSectionState] = useState<Record<string, boolean>>(getInitialSectionState)
 
   const handleEntityChange = (event: SelectChangeEvent) => {
@@ -351,8 +390,8 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
 
       <Divider />
 
-      {/* Entity Switcher — only visible when user has entities */}
-      {entities.length > 0 && (
+      {/* Entity Switcher — only visible when user has entities and no module restriction */}
+      {entities.length > 0 && !allowedModules && (
         <>
           {open && (
             <Box sx={{ p: 2 }}>
@@ -402,7 +441,7 @@ export const TRCollapsibleSidebar: React.FC<TRCollapsibleSidebarProps> = ({
       )}
 
       {/* Navigation Links */}
-      <List>
+      <List sx={{ overflowY: 'auto', flex: 1 }}>
         {navigationSections.map((section, index) => renderSection(section, index))}
       </List>
     </Drawer>

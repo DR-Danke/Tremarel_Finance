@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Boolean, Column, DateTime, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 
 from src.config.database import Base
 
@@ -26,6 +26,7 @@ class User(Base):
     last_name: Optional[str] = Column(String(100), nullable=True)
     role: str = Column(String(50), default="user", nullable=False)
     is_active: bool = Column(Boolean, default=True, nullable=False)
+    allowed_modules: Optional[list] = Column(JSONB, nullable=True, default=None)
     created_at: datetime = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at: Optional[datetime] = Column(DateTime(timezone=True), onupdate=datetime.utcnow)
 

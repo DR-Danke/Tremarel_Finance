@@ -137,9 +137,10 @@ export const legaldeskService = {
   async suggestSpecialists(caseId: number): Promise<LdSpecialistCandidate[]> {
     console.log('INFO [LegaldeskService]: Suggesting specialists for case:', caseId)
     try {
-      const response = await apiClient.get<LdSpecialistCandidate[]>(`${BASE}/cases/${caseId}/specialists/suggest`)
-      console.log('INFO [LegaldeskService]: Got', response.data.length, 'suggestions for case', caseId)
-      return response.data
+      const response = await apiClient.get<{ case_id: number; legal_domain: string; candidates: LdSpecialistCandidate[]; generated_at: string }>(`${BASE}/cases/${caseId}/specialists/suggest`)
+      const candidates = response.data.candidates ?? []
+      console.log('INFO [LegaldeskService]: Got', candidates.length, 'suggestions for case', caseId)
+      return candidates
     } catch (error) {
       console.error('ERROR [LegaldeskService]: Failed to suggest specialists:', error)
       throw error

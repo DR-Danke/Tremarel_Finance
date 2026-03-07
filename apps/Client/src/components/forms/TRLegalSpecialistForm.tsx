@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { Add, Delete } from '@mui/icons-material'
 import type {
-  LdSpecialist,
+  LdSpecialistDetail,
   LdSpecialistCreate,
   LdSpecialistUpdate,
   SpecialistType,
@@ -55,7 +55,7 @@ interface TRLegalSpecialistFormProps {
     expertise?: ExpertiseEntry[],
     jurisdictions?: JurisdictionEntry[]
   ) => Promise<void>
-  initialData?: LdSpecialist
+  initialData?: LdSpecialistDetail
   onCancel: () => void
   isSubmitting?: boolean
 }
@@ -91,8 +91,15 @@ export const TRLegalSpecialistForm: React.FC<TRLegalSpecialistFormProps> = ({
       country: '',
       years_experience: initialData?.years_experience?.toString() || '',
       hourly_rate: initialData?.hourly_rate?.toString() || '',
-      expertise: [],
-      jurisdictions: [],
+      expertise: initialData?.expertise?.map((e) => ({
+        legal_domain: e.legal_domain,
+        proficiency_level: e.proficiency_level,
+      })) || [],
+      jurisdictions: initialData?.jurisdictions?.map((j) => ({
+        country: j.country,
+        region: j.region || '',
+        is_primary: j.is_primary,
+      })) || [],
     },
   })
 
@@ -118,8 +125,15 @@ export const TRLegalSpecialistForm: React.FC<TRLegalSpecialistFormProps> = ({
         country: '',
         years_experience: initialData.years_experience?.toString() || '',
         hourly_rate: initialData.hourly_rate?.toString() || '',
-        expertise: [],
-        jurisdictions: [],
+        expertise: initialData.expertise?.map((e) => ({
+          legal_domain: e.legal_domain,
+          proficiency_level: e.proficiency_level,
+        })) || [],
+        jurisdictions: initialData.jurisdictions?.map((j) => ({
+          country: j.country,
+          region: j.region || '',
+          is_primary: j.is_primary,
+        })) || [],
       })
     }
   }, [initialData, reset])

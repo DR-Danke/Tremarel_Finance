@@ -129,4 +129,5 @@ async def get_me(
         last_name=current_user["last_name"],
         role=current_user["role"],
         is_active=current_user["is_active"],
+        allowed_modules=current_user.get("allowed_modules"),
     )

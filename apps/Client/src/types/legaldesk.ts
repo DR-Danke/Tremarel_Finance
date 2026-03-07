@@ -432,10 +432,17 @@ export interface LdDashboardStats {
 }
 
 export interface LdSpecialistCandidate {
-  specialist: LdSpecialist
-  expertise_match: LdSpecialistExpertise | null
-  availability_score: number
-  overall_score: number
+  specialist_id: number
+  full_name: string
+  email: string
+  match_score: number
+  hourly_rate: number | null
+  currency: string
+  current_workload: number
+  max_concurrent_cases: number
+  expertise_match: string[]
+  jurisdiction_match: string[]
+  match_reasons: string[]
 }
 
 // ============================================================================

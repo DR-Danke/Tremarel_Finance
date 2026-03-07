@@ -35,9 +35,11 @@ class LdCaseService:
         case_data["case_number"] = case_number
         case_data["status"] = "new"
         # Convert enum values to strings for ORM
-        for field in ("legal_domain", "complexity", "priority", "case_type"):
+        for field in ("legal_domain", "complexity", "priority"):
             if case_data.get(field) is not None:
                 case_data[field] = case_data[field].value if hasattr(case_data[field], "value") else case_data[field]
+        # Remove DTO-only fields not present on the ORM model
+        case_data.pop("case_type", None)
         case = ld_case_repository.create(db, case_data)
         print(f"INFO [LdCaseService]: Case created with id {case.id}, number {case_number}")
         return case

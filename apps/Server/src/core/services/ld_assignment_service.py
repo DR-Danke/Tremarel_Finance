@@ -75,7 +75,7 @@ class LdAssignmentService:
             score, reasons = self._calculate_match_score(
                 specialist, case, expertise, client_country
             )
-            normalized_score = Decimal(str(round(score / 100, 4)))
+            normalized_score = Decimal(str(round(min(score, 100) / 100, 4)))
 
             expertise_matches = [
                 e.legal_domain for e in specialist.expertise

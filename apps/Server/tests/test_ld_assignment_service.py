@@ -180,6 +180,28 @@ class TestSuggestSpecialists:
             assert candidate.match_score >= 0
             assert candidate.match_score <= 1
 
+    def test_suggest_specialists_score_clamped_when_exceeding_100(
+        self, mock_case_repo, mock_client_repo, mock_spec_repo, service, mock_db
+    ):
+        """Verify match_score is clamped to 1.0 even when raw score exceeds 100."""
+        max_specialist = _make_specialist(
+            overall_score=Decimal("5.00"),
+            years_experience=25,
+            current_workload=0,
+            max_concurrent_cases=10,
+            expertise=[_make_expertise(proficiency_level="expert", years_in_domain=20)],
+            jurisdictions=[_make_jurisdiction(country="Spain")],
+        )
+        mock_case_repo.get_by_id.return_value = _make_case()
+        mock_client_repo.get_by_id.return_value = _make_client(country="Spain")
+        mock_spec_repo.get_available.return_value = [max_specialist]
+
+        result = service.suggest_specialists(mock_db, case_id=1)
+
+        assert len(result.candidates) == 1
+        assert result.candidates[0].match_score <= Decimal("1.0")
+        assert result.candidates[0].match_score >= Decimal("0")
+
 
 class TestCalculateMatchScore:
     def setup_method(self):

@@ -8,6 +8,7 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
   CircularProgress,
   Alert,
   Dialog,
@@ -17,30 +18,75 @@ import {
   LinearProgress,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
 import { useLegaldeskSpecialists } from '@/hooks/useLegaldeskSpecialists'
+import { legaldeskService } from '@/services/legaldeskService'
 import { TRLegalSpecialistForm } from '@/components/forms/TRLegalSpecialistForm'
 import { TRSpecialistScoreDisplay } from '@/components/ui/TRSpecialistScoreDisplay'
-import type { LdSpecialistCreate, LdSpecialistUpdate } from '@/types/legaldesk'
+import type { LdSpecialistCreate, LdSpecialistUpdate, LdSpecialistDetail, LegalDomain, ProficiencyLevel } from '@/types/legaldesk'
 
 export const LegalDeskSpecialistsPage: React.FC = () => {
-  const { specialists, loading, error, createSpecialist, refreshSpecialists } =
+  const { specialists, loading, error, createSpecialist, updateSpecialist, addExpertise, addJurisdiction, refreshSpecialists } =
     useLegaldeskSpecialists()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [editingSpecialist, setEditingSpecialist] = useState<LdSpecialistDetail | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [snackbar, setSnackbar] = useState<string | null>(null)
 
   console.log('INFO [LegalDeskSpecialistsPage]: Rendering specialists page')
 
-  const handleCreateSpecialist = async (data: LdSpecialistCreate | LdSpecialistUpdate) => {
-    // Form always submits LdSpecialistCreate in create mode
+  const handleOpenCreate = () => {
+    setEditingSpecialist(null)
+    setDialogOpen(true)
+  }
+
+  const handleOpenEdit = async (specialistId: number) => {
+    try {
+      const detail = await legaldeskService.getSpecialist(specialistId)
+      setEditingSpecialist(detail)
+      setDialogOpen(true)
+    } catch {
+      console.error('ERROR [LegalDeskSpecialistsPage]: Failed to fetch specialist detail')
+      setSnackbar('Failed to load specialist details')
+    }
+  }
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false)
+    setEditingSpecialist(null)
+  }
+
+  const handleSubmitSpecialist = async (
+    data: LdSpecialistCreate | LdSpecialistUpdate,
+    expertise?: { legal_domain: string; proficiency_level: string }[],
+    jurisdictions?: { country: string; region: string; is_primary: boolean }[],
+  ) => {
     setSubmitting(true)
     try {
-      await createSpecialist(data as LdSpecialistCreate)
-      setDialogOpen(false)
-      setSnackbar('Specialist created successfully')
-      console.log('INFO [LegalDeskSpecialistsPage]: Specialist created')
+      if (editingSpecialist) {
+        await updateSpecialist(editingSpecialist.id, data as LdSpecialistUpdate)
+        if (expertise) {
+          for (const exp of expertise) {
+            await addExpertise(editingSpecialist.id, { specialist_id: editingSpecialist.id, legal_domain: exp.legal_domain as LegalDomain, proficiency_level: exp.proficiency_level as ProficiencyLevel })
+          }
+        }
+        if (jurisdictions) {
+          for (const jur of jurisdictions) {
+            if (jur.country) {
+              await addJurisdiction(editingSpecialist.id, { specialist_id: editingSpecialist.id, country: jur.country, region: jur.region || undefined, is_primary: jur.is_primary })
+            }
+          }
+        }
+        setSnackbar('Specialist updated successfully')
+        console.log('INFO [LegalDeskSpecialistsPage]: Specialist updated')
+      } else {
+        await createSpecialist(data as LdSpecialistCreate)
+        setSnackbar('Specialist created successfully')
+        console.log('INFO [LegalDeskSpecialistsPage]: Specialist created')
+      }
+      handleCloseDialog()
     } catch {
-      console.error('ERROR [LegalDeskSpecialistsPage]: Failed to create specialist')
+      console.error('ERROR [LegalDeskSpecialistsPage]: Failed to save specialist')
     } finally {
       setSubmitting(false)
     }
@@ -63,7 +109,7 @@ export const LegalDeskSpecialistsPage: React.FC = () => {
           <Typography variant="h4" component="h1">
             Legal Desk Specialists
           </Typography>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>
             Add Specialist
           </Button>
         </Box>
@@ -131,6 +177,15 @@ export const LegalDeskSpecialistsPage: React.FC = () => {
                         />
                       </Box>
                     </CardContent>
+                    <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                      <Button
+                        size="small"
+                        startIcon={<EditIcon />}
+                        onClick={() => handleOpenEdit(specialist.id)}
+                      >
+                        Edit
+                      </Button>
+                    </CardActions>
                   </Card>
                 </Grid>
               )
@@ -138,10 +193,15 @@ export const LegalDeskSpecialistsPage: React.FC = () => {
           </Grid>
         )}
 
-        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>Add Specialist</DialogTitle>
+        <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+          <DialogTitle>{editingSpecialist ? 'Edit Specialist' : 'Add Specialist'}</DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
-            <TRLegalSpecialistForm onSubmit={handleCreateSpecialist} onCancel={() => setDialogOpen(false)} isSubmitting={submitting} />
+            <TRLegalSpecialistForm
+              onSubmit={handleSubmitSpecialist}
+              initialData={editingSpecialist ?? undefined}
+              onCancel={handleCloseDialog}
+              isSubmitting={submitting}
+            />
           </DialogContent>
         </Dialog>
 

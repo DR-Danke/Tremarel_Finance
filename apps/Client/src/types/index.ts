@@ -13,6 +13,7 @@ export interface User {
   last_name?: string
   role: 'admin' | 'manager' | 'user' | 'viewer'
   is_active: boolean
+  allowed_modules?: string[] | null
   createdAt?: string
   updatedAt?: string
 }

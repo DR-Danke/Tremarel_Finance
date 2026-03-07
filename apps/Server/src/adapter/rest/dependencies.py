@@ -107,4 +107,5 @@ async def get_current_user(
         "last_name": user.last_name,
         "role": user.role,
         "is_active": user.is_active,
+        "allowed_modules": user.allowed_modules,
     }

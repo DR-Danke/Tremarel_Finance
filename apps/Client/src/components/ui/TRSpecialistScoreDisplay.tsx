@@ -13,10 +13,10 @@ export const TRSpecialistScoreDisplay: React.FC<TRSpecialistScoreDisplayProps> =
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Rating value={score} precision={0.5} readOnly max={5} />
+      <Rating value={Number(score)} precision={0.5} readOnly max={5} />
       {showNumeric && (
         <Typography variant="body2" color="text.secondary">
-          {score.toFixed(1)}
+          {Number(score).toFixed(1)}
         </Typography>
       )}
     </Box>

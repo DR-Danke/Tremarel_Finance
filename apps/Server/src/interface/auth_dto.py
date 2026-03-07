@@ -1,6 +1,6 @@
 """Pydantic DTOs for authentication requests and responses."""
 
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
@@ -31,6 +31,7 @@ class UserResponseDTO(BaseModel):
     last_name: Optional[str] = Field(None, description="User last name")
     role: str = Field(..., description="User role (admin, manager, user, viewer)")
     is_active: bool = Field(..., description="Whether user account is active")
+    allowed_modules: Optional[List[str]] = Field(None, description="List of allowed module keys, null means all access")
 
     model_config = {"from_attributes": True}
 

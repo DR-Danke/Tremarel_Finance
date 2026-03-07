@@ -28,6 +28,7 @@ CREATE TABLE users (
     last_name VARCHAR(100),
     role VARCHAR(50) DEFAULT 'user',
     is_active BOOLEAN DEFAULT TRUE,
+    allowed_modules JSONB DEFAULT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE,
 

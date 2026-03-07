@@ -36,6 +36,7 @@ def create_mock_user(
     is_active: bool = True,
     first_name: str = "Test",
     last_name: str = "User",
+    allowed_modules: list | None = None,
 ) -> User:
     """Create a mock user with pre-computed password hash."""
     user = MagicMock(spec=User)
@@ -46,6 +47,7 @@ def create_mock_user(
     user.last_name = last_name
     user.role = role
     user.is_active = is_active
+    user.allowed_modules = allowed_modules
     return user
 
 
@@ -80,6 +82,7 @@ async def test_register_success() -> None:
         mock_user.last_name = "User"
         mock_user.role = "user"
         mock_user.is_active = True
+        mock_user.allowed_modules = None
 
         mock_repo.create_user.return_value = mock_user
 
@@ -480,3 +483,96 @@ async def test_rbac_admin_access() -> None:
             data = login_response.json()
             assert data["user"]["role"] == "admin"
             print("INFO [TestAuth]: test_rbac_admin_access - PASSED")
+
+
+# ============================================================================
+# Allowed Modules Tests
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_login_returns_allowed_modules_null() -> None:
+    """Test that login response includes allowed_modules=null for unrestricted users."""
+    mock_user = create_mock_user(allowed_modules=None)
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
+        mock_repo.get_user_by_email.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            response = await client.post(
+                "/api/auth/login",
+                json={"email": "test@example.com", "password": "password123"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["user"]["allowed_modules"] is None
+        print("INFO [TestAuth]: test_login_returns_allowed_modules_null - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_login_returns_allowed_modules_legaldesk() -> None:
+    """Test that login response includes allowed_modules for restricted users."""
+    mock_user = create_mock_user(allowed_modules=["legaldesk"])
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
+        mock_repo.get_user_by_email.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            response = await client.post(
+                "/api/auth/login",
+                json={"email": "test@example.com", "password": "password123"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["user"]["allowed_modules"] == ["legaldesk"]
+        print("INFO [TestAuth]: test_login_returns_allowed_modules_legaldesk - PASSED")
+
+
+@pytest.mark.asyncio
+async def test_me_returns_allowed_modules() -> None:
+    """Test that /me endpoint includes allowed_modules."""
+    mock_user = create_mock_user(allowed_modules=["legaldesk"])
+
+    with patch(
+        "src.core.services.auth_service.user_repository"
+    ) as mock_repo, patch(
+        "src.core.services.auth_service.bcrypt"
+    ) as mock_bcrypt:
+        mock_repo.get_user_by_email.return_value = mock_user
+        mock_repo.get_user_by_id.return_value = mock_user
+        mock_bcrypt.checkpw.return_value = True
+
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            login_response = await client.post(
+                "/api/auth/login",
+                json={"email": "test@example.com", "password": "password123"},
+            )
+            token = login_response.json()["access_token"]
+
+            response = await client.get(
+                "/api/auth/me",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["allowed_modules"] == ["legaldesk"]
+        print("INFO [TestAuth]: test_me_returns_allowed_modules - PASSED")

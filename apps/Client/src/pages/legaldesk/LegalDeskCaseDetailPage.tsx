@@ -258,9 +258,10 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
     }
   }
 
+  const messages = caseDetail.messages ?? []
   const filteredMessages = showInternal
-    ? caseDetail.messages
-    : caseDetail.messages.filter((m) => !m.is_internal)
+    ? messages
+    : messages.filter((m) => !m.is_internal)
   const sortedMessages = [...filteredMessages].sort(
     (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
   )
@@ -390,7 +391,7 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
               </Button>
             </Box>
 
-            {caseDetail.specialists.length === 0 ? (
+            {(caseDetail.specialists ?? []).length === 0 ? (
               <Typography variant="body2" color="text.secondary">No specialists assigned yet.</Typography>
             ) : (
               <TableContainer>
@@ -405,7 +406,7 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {caseDetail.specialists.map((s) => (
+                    {(caseDetail.specialists ?? []).map((s) => (
                       <TableRow key={s.id}>
                         <TableCell>{s.specialist_id}</TableCell>
                         <TableCell>{ASSIGNMENT_ROLE_LABELS[s.role]}</TableCell>
@@ -427,19 +428,19 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
                     <TableHead>
                       <TableRow>
                         <TableCell>Name</TableCell>
-                        <TableCell>Overall Score</TableCell>
-                        <TableCell>Availability</TableCell>
-                        <TableCell>Expertise Match</TableCell>
+                        <TableCell>Match Score</TableCell>
+                        <TableCell>Workload</TableCell>
+                        <TableCell>Expertise</TableCell>
                         <TableCell>Action</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {candidates.map((c) => (
-                        <TableRow key={c.specialist.id}>
-                          <TableCell>{c.specialist.full_name}</TableCell>
-                          <TableCell>{c.overall_score.toFixed(1)}</TableCell>
-                          <TableCell>{c.availability_score.toFixed(1)}</TableCell>
-                          <TableCell>{c.expertise_match?.proficiency_level || 'N/A'}</TableCell>
+                        <TableRow key={c.specialist_id}>
+                          <TableCell>{c.full_name}</TableCell>
+                          <TableCell>{`${(c.match_score * 100).toFixed(0)}%`}</TableCell>
+                          <TableCell>{`${c.current_workload}/${c.max_concurrent_cases}`}</TableCell>
+                          <TableCell>{c.expertise_match.join(', ')}</TableCell>
                           <TableCell>
                             <Button
                               size="small"
@@ -447,7 +448,7 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
                               onClick={() =>
                                 assignSpecialist({
                                   case_id: caseId,
-                                  specialist_id: c.specialist.id,
+                                  specialist_id: c.specialist_id,
                                   role: 'lead' as AssignmentRole,
                                 })
                               }
@@ -470,7 +471,7 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>Deliverables</Typography>
             <TRDeliverableChecklist
-              deliverables={caseDetail.deliverables}
+              deliverables={(caseDetail.deliverables ?? [])}
               onStatusChange={handleDeliverableStatusChange}
             />
 
@@ -650,7 +651,7 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
         {tabIndex === 5 && (
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>Documents</Typography>
-            {caseDetail.documents.length === 0 ? (
+            {(caseDetail.documents ?? []).length === 0 ? (
               <Typography variant="body2" color="text.secondary">No documents yet.</Typography>
             ) : (
               <TableContainer>
@@ -665,7 +666,7 @@ export const LegalDeskCaseDetailPage: React.FC = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {caseDetail.documents.map((doc) => (
+                    {(caseDetail.documents ?? []).map((doc) => (
                       <TableRow key={doc.id}>
                         <TableCell>{doc.file_name}</TableCell>
                         <TableCell>{doc.file_type || '-'}</TableCell>
