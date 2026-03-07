@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
+from src.adapter.rest.rbac_dependencies import require_roles
 from src.core.services.restaurant_service import restaurant_service
 from src.interface.restaurant_dto import (
     RestaurantCreateDTO,
@@ -171,12 +172,12 @@ async def update_restaurant(
 async def delete_restaurant(
     restaurant_id: UUID,
     db: Session = Depends(get_db),
-    current_user: Dict[str, Any] = Depends(get_current_user),
+    current_user: Dict[str, Any] = Depends(require_roles(["admin", "manager"])),
 ) -> None:
     """
     Delete a restaurant.
 
-    Only owner or admin can delete restaurant.
+    Only admin or manager roles can delete.
 
     Args:
         restaurant_id: Restaurant UUID

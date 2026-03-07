@@ -659,3 +659,10 @@ This prompt helps you determine what documentation you should read based on the 
     - When working with restaurant_routes.py or recurring_template_routes.py create endpoints
     - When adding error handling patterns to FastAPI route endpoints
     - When troubleshooting unstructured 500 errors from create endpoints
+
+- app_docs/patch-957bac6a-standardize-delete-rbac-enforcement.md
+  - Conditions:
+    - When working with RBAC enforcement on delete endpoints
+    - When adding new delete endpoints and need to follow the require_roles pattern
+    - When troubleshooting 403 Forbidden errors on delete operations
+    - When reviewing or modifying role-based access control on route-level dependencies

@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
+from src.adapter.rest.rbac_dependencies import require_roles
 from src.core.services.resource_service import resource_service
 from src.interface.resource_dto import (
     ResourceCreateDTO,
@@ -204,15 +205,17 @@ async def update_resource(
 async def delete_resource(
     resource_id: UUID,
     db: Session = Depends(get_db),
-    current_user: Dict[str, Any] = Depends(get_current_user),
+    current_user: Dict[str, Any] = Depends(require_roles(["admin", "manager"])),
 ) -> None:
     """
     Delete a resource.
 
+    Only admin or manager roles can delete.
+
     Args:
         resource_id: Resource UUID
         db: Database session
-        current_user: Current authenticated user
+        current_user: Current authenticated user (admin or manager)
     """
     print(f"INFO [ResourceRoutes]: Delete resource {resource_id} request from user {current_user['email']}")
 
