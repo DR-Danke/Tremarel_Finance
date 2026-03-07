@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Arkangel Marketing v2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            color: white;
+            padding: 40px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 20px 40px;
+            background: #E3F2FD;
+            border-bottom: 1px solid #BBDEFB;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #1565C0;
+        }
+        .meta-item strong {
+            color: #0D47A1;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            margin-bottom: 36px;
+        }
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        .section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1565C0;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E3F2FD;
+        }
+        .summary-box {
+            background: #F8F9FA;
+            border-left: 4px solid #1565C0;
+            padding: 20px 24px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #444;
+        }
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .participant-card {
+            background: #F8F9FA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+        .participant-card .name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        .participant-card .role {
+            font-size: 13px;
+            color: #757575;
+            margin-top: 2px;
+        }
+        .discussion-item {
+            background: #FAFAFA;
+            border: 1px solid #EEEEEE;
+            border-radius: 8px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+        }
+        .discussion-item:last-child {
+            margin-bottom: 0;
+        }
+        .discussion-item h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 6px;
+        }
+        .discussion-item p {
+            font-size: 14px;
+            color: #555;
+        }
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .action-table thead th {
+            background: #1565C0;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        .action-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        .action-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #EEEEEE;
+            vertical-align: top;
+        }
+        .action-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .action-table tbody tr:nth-child(even) {
+            background: #FAFAFA;
+        }
+        .owner-badge {
+            display: inline-block;
+            background: #E3F2FD;
+            color: #1565C0;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .owner-badge.unassigned {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        .decisions-list, .next-steps-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decisions-list li, .next-steps-list li {
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+            position: relative;
+            padding-left: 36px;
+        }
+        .decisions-list li {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        .decisions-list li::before {
+            content: "\2713";
+            position: absolute;
+            left: 14px;
+            font-weight: 700;
+        }
+        .next-steps-list li {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        .next-steps-list li::before {
+            content: "\2192";
+            position: absolute;
+            left: 14px;
+            font-weight: 700;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #F5F5F5 0%, #FAFAFA 100%);
+            border: 1px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+        .metric-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1565C0;
+        }
+        .metric-card .label {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .diagram-section {
+            margin-top: 12px;
+            margin-bottom: 20px;
+        }
+        .diagram-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #455A64;
+            margin-bottom: 12px;
+        }
+        .diagram-wrapper {
+            background: #FAFAFA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .footer {
+            background: #F5F5F5;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #9E9E9E;
+            border-top: 1px solid #EEEEEE;
+        }
+        .deal-status {
+            display: inline-block;
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .status-description {
+            font-size: 14px;
+            color: #555;
+        }
+        @media (max-width: 600px) {
+            .header { padding: 24px; }
+            .content { padding: 24px; }
+            .meta-bar { padding: 16px 24px; flex-direction: column; gap: 12px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .participants-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Arkangel Marketing v2.0</h1>
+            <div class="subtitle">ICP Definition & Growth Strategy - Discovery Session</div>
+        </div>
+
+        <!-- Meta Bar -->
+        <div class="meta-bar">
+            <div class="meta-item"><strong>Date:</strong> February 6, 2026</div>
+            <div class="meta-item"><strong>Duration:</strong> 66 minutes</div>
+            <div class="meta-item"><strong>Client:</strong> Arkangel AI</div>
+            <div class="meta-item"><strong>Fireflies ID:</strong> 01KGSV2C2CS3W4QB7YVG9BA8BB</div>
+        </div>
+
+        <div class="content">
+
+            <!-- Key Metrics -->
+            <div class="section">
+                <h2>Key Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="value">$4M</div>
+                        <div class="label">USA Annual Target</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$1.7M</div>
+                        <div class="label">Current ACV</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$1.3M</div>
+                        <div class="label">3-Month Target</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$5M</div>
+                        <div class="label">Year-End Target</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">12</div>
+                        <div class="label">Team Members</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$60K-$480K</div>
+                        <div class="label">Ticket Range</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">30-40</div>
+                        <div class="label">Weekly SDR Meetings</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">115K</div>
+                        <div class="label">Database Contacts</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="section">
+                <h2>Executive Summary</h2>
+                <div class="summary-box">
+                    Deep discovery session focused on defining Ideal Customer Profiles (ICPs) for LATAM and USA markets. Laura Ortiz leads USA sales with a $4M annual target against a current ACV of $1.7M, supported by a 12-person team handling tickets from $60K to $480K. A critical gap was identified in the marketing team, which currently consists of only one executor (Lucho), requiring an expansion of 3 new hires and the implementation of a conversion ladder framework with lead magnets to hit short-term ($1.3M in 3 months) and long-term ($5M by year-end) revenue goals.
+                </div>
+            </div>
+
+            <!-- Participants -->
+            <div class="section">
+                <h2>Participants</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Daniel Cardona</div>
+                        <div class="role">Consultant / Advisor</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Laura Velasquez</div>
+                        <div class="role">Participant</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Laura Ortiz</div>
+                        <div class="role">USA Sales Leader (referenced)</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Lucho</div>
+                        <div class="role">Marketing Executor (referenced)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deal Status -->
+            <div class="section">
+                <h2>Deal Status</h2>
+                <div class="deal-status">Planning & Structuring Phase</div>
+                <p class="status-description">
+                    Clear commercial objectives and operational gaps have been identified. The team is transitioning from execution mode to strategy mode, with a focus on strengthening the marketing function to support aggressive revenue targets.
+                </p>
+            </div>
+
+            <!-- Discussion Points -->
+            <div class="section">
+                <h2>Discussion Points</h2>
+                <div class="discussion-item">
+                    <h3>1. USA Sales Targets and Pipeline</h3>
+                    <p>Defined the $4M annual sales target for USA with a current ACV of $1.7M. Ticket sizes range from $60K to $480K across a 12-person team. Short-term goal is $1.3M in 3 months, long-term $5M by year-end.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>2. Marketing Team Assessment and Expansion</h3>
+                    <p>Current marketing team is severely understaffed with only Lucho, who is an executor rather than a strategist. Plan to add 3 new team members and shift from execution mode to strategy mode.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>3. Conversion Framework Strategy</h3>
+                    <p>Proposed implementing a conversion ladder framework with lead magnets to systematically move prospects through the funnel. Emphasis on Founder-led Growth and dedicated content production.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>4. ICP Definition for LATAM and USA</h3>
+                    <p>Detailed identification and definition of Ideal Customer Profiles for both Latin American and US markets to improve targeting and conversion rates.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>5. Database and SDR Outreach Capacity</h3>
+                    <p>Current database includes 15,000 contacts plus 100,000 doctors. Each SDR schedules 30-40 appointments weekly, establishing the outreach baseline for pipeline calculations.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>6. Content Strategy and SOPs</h3>
+                    <p>Need to document marketing Standard Operating Procedures, develop buyer personas per market, and establish a regular content production cadence.</p>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="section">
+                <h2>Action Items</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Owner</th>
+                            <th>Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Lead USA sales operations targeting $4M annual revenue</td>
+                            <td><span class="owner-badge">Laura Ortiz</span></td>
+                            <td>Ongoing</td>
+                        </tr>
+                        <tr>
+                            <td>Execute content production pipeline</td>
+                            <td><span class="owner-badge">Lucho</span></td>
+                            <td>Ongoing</td>
+                        </tr>
+                        <tr>
+                            <td>Document marketing SOPs</td>
+                            <td><span class="owner-badge unassigned">Unassigned</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Develop buyer personas for each target market (LATAM and USA)</td>
+                            <td><span class="owner-badge unassigned">Unassigned</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Plan and establish regular content calendar</td>
+                            <td><span class="owner-badge unassigned">Unassigned</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Evaluate current team competencies and identify gaps</td>
+                            <td><span class="owner-badge unassigned">Unassigned</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Review strategic framework</td>
+                            <td><span class="owner-badge">Team</span></td>
+                            <td>Monday</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisions Made -->
+            <div class="section">
+                <h2>Decisions Made</h2>
+                <ul class="decisions-list">
+                    <li>Transition from execution mode to strategy mode for the marketing function</li>
+                    <li>Implement a conversion ladder framework with lead magnets as the core growth engine</li>
+                    <li>Adopt Founder-led Growth as a key marketing channel</li>
+                    <li>Expand the marketing team by 3 new hires to support growth targets</li>
+                    <li>Laura Ortiz will lead USA sales with a $4M target</li>
+                </ul>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="section">
+                <h2>Next Steps</h2>
+                <ul class="next-steps-list">
+                    <li>Review strategic framework on Monday</li>
+                    <li>Implement marketing structure focused on Founder-led Growth and content production</li>
+                    <li>Build conversion ladder to achieve $1.3M revenue in the next 3 months</li>
+                    <li>Begin hiring process for 3 additional marketing team members</li>
+                    <li>Develop and document buyer personas for LATAM and USA markets</li>
+                </ul>
+            </div>
+
+            <!-- Technical Architecture Diagrams -->
+            <div class="section">
+                <h2>Technical Architecture</h2>
+
+                <div class="diagram-section">
+                    <h3>Marketing Conversion Ladder Framework</h3>
+                    <div class="diagram-wrapper">
+                        <pre class="mermaid">
+flowchart TD
+    A["Target Audience\n15K Contacts + 100K Doctors"] --> B["Lead Magnets\nContent & Resources"]
+    B --> C["Lead Capture\nEmail & Landing Pages"]
+    C --> D["Lead Nurturing\nFounder-led Content"]
+    D --> E["SDR Outreach\n30-40 Appointments/Week"]
+    E --> F{"Qualification"}
+    F -->|"Qualified"| G["Sales Meeting"]
+    F -->|"Not Ready"| D
+    G --> H["Proposal\n$60K - $480K Tickets"]
+    H --> I["Closed Deal"]
+    I --> J["Revenue Targets\n$1.3M 3-Month / $5M Annual"]
+
+    style A fill:#1565C0,color:#fff
+    style B fill:#1976D2,color:#fff
+    style C fill:#1E88E5,color:#fff
+    style D fill:#2196F3,color:#fff
+    style E fill:#42A5F5,color:#fff
+    style F fill:#FF9800,color:#fff
+    style G fill:#66BB6A,color:#fff
+    style H fill:#43A047,color:#fff
+    style I fill:#2E7D32,color:#fff
+    style J fill:#1B5E20,color:#fff
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Sales Pipeline and Revenue Flow</h3>
+                    <div class="diagram-wrapper">
+                        <pre class="mermaid">
+flowchart LR
+    subgraph MARKETING["Marketing Engine"]
+        M1["Lucho\nContent Executor"]
+        M2["+3 New Hires"]
+        M3["Founder-led Growth"]
+    end
+
+    subgraph OUTREACH["SDR Outreach"]
+        S1["Database\n15K Contacts"]
+        S2["Doctors DB\n100K Records"]
+        S3["30-40 Meetings/Week"]
+    end
+
+    subgraph SALES["USA Sales - Laura Ortiz"]
+        V1["ACV $1.7M"]
+        V2["12 Person Team"]
+        V3["$60K-$480K Tickets"]
+    end
+
+    subgraph TARGETS["Revenue Targets"]
+        T1["Q1: $1.3M"]
+        T2["Annual: $5M"]
+    end
+
+    MARKETING --> OUTREACH
+    OUTREACH --> SALES
+    SALES --> TARGETS
+
+    style MARKETING fill:#E3F2FD,stroke:#1565C0
+    style OUTREACH fill:#E8F5E9,stroke:#2E7D32
+    style SALES fill:#FFF3E0,stroke:#E65100
+    style TARGETS fill:#F3E5F5,stroke:#6A1B9A
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Marketing Team Expansion Plan</h3>
+                    <div class="diagram-wrapper">
+                        <pre class="mermaid">
+flowchart TD
+    subgraph CURRENT["Current State"]
+        C1["Lucho\nSolo Executor"]
+        C2["No Strategy Lead"]
+        C3["Execution Mode"]
+    end
+
+    subgraph TRANSITION["Transition"]
+        T1["Hire Content Producer"]
+        T2["Hire Growth Strategist"]
+        T3["Hire Marketing Ops"]
+    end
+
+    subgraph TARGET["Target State"]
+        G1["Founder-led Growth"]
+        G2["Content Production Pipeline"]
+        G3["Conversion Ladder Framework"]
+        G4["Documented SOPs"]
+        G5["Buyer Personas per Market"]
+    end
+
+    CURRENT -->|"+ 3 Hires"| TRANSITION
+    TRANSITION -->|"Strategy Mode"| TARGET
+
+    style CURRENT fill:#FFCDD2,stroke:#C62828
+    style TRANSITION fill:#FFF9C4,stroke:#F57F17
+    style TARGET fill:#C8E6C9,stroke:#2E7D32
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Meeting summary generated automatically &bull; Arkangel AI &bull; February 6, 2026
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

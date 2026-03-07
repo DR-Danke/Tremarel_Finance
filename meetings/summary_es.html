@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Reunión - Arkangel Marketing v2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+            color: white;
+            padding: 40px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .header .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 20px 40px;
+            background: #E3F2FD;
+            border-bottom: 1px solid #BBDEFB;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #1565C0;
+        }
+        .meta-item strong {
+            color: #0D47A1;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            margin-bottom: 36px;
+        }
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        .section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1565C0;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E3F2FD;
+        }
+        .summary-box {
+            background: #F8F9FA;
+            border-left: 4px solid #1565C0;
+            padding: 20px 24px;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #444;
+        }
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .participant-card {
+            background: #F8F9FA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 14px 18px;
+        }
+        .participant-card .name {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+        .participant-card .role {
+            font-size: 13px;
+            color: #757575;
+            margin-top: 2px;
+        }
+        .discussion-item {
+            background: #FAFAFA;
+            border: 1px solid #EEEEEE;
+            border-radius: 8px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+        }
+        .discussion-item:last-child {
+            margin-bottom: 0;
+        }
+        .discussion-item h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 6px;
+        }
+        .discussion-item p {
+            font-size: 14px;
+            color: #555;
+        }
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .action-table thead th {
+            background: #1565C0;
+            color: white;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-table thead th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+        .action-table thead th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+        .action-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #EEEEEE;
+            vertical-align: top;
+        }
+        .action-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .action-table tbody tr:nth-child(even) {
+            background: #FAFAFA;
+        }
+        .owner-badge {
+            display: inline-block;
+            background: #E3F2FD;
+            color: #1565C0;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .owner-badge.unassigned {
+            background: #FFF3E0;
+            color: #E65100;
+        }
+        .decisions-list, .next-steps-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decisions-list li, .next-steps-list li {
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+            position: relative;
+            padding-left: 36px;
+        }
+        .decisions-list li {
+            background: #E8F5E9;
+            color: #2E7D32;
+        }
+        .decisions-list li::before {
+            content: "\2713";
+            position: absolute;
+            left: 14px;
+            font-weight: 700;
+        }
+        .next-steps-list li {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        .next-steps-list li::before {
+            content: "\2192";
+            position: absolute;
+            left: 14px;
+            font-weight: 700;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #F5F5F5 0%, #FAFAFA 100%);
+            border: 1px solid #E0E0E0;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+        }
+        .metric-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1565C0;
+        }
+        .metric-card .label {
+            font-size: 12px;
+            color: #757575;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .diagram-section {
+            margin-top: 12px;
+            margin-bottom: 20px;
+        }
+        .diagram-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #455A64;
+            margin-bottom: 12px;
+        }
+        .diagram-wrapper {
+            background: #FAFAFA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .footer {
+            background: #F5F5F5;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #9E9E9E;
+            border-top: 1px solid #EEEEEE;
+        }
+        .deal-status {
+            display: inline-block;
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .status-description {
+            font-size: 14px;
+            color: #555;
+        }
+        @media (max-width: 600px) {
+            .header { padding: 24px; }
+            .content { padding: 24px; }
+            .meta-bar { padding: 16px 24px; flex-direction: column; gap: 12px; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .participants-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado -->
+        <div class="header">
+            <h1>Arkangel Marketing v2.0</h1>
+            <div class="subtitle">Definición de ICP y Estrategia de Crecimiento - Sesión de Descubrimiento</div>
+        </div>
+
+        <!-- Barra de Metadatos -->
+        <div class="meta-bar">
+            <div class="meta-item"><strong>Fecha:</strong> 6 de febrero de 2026</div>
+            <div class="meta-item"><strong>Duración:</strong> 66 minutos</div>
+            <div class="meta-item"><strong>Cliente:</strong> Arkangel AI</div>
+            <div class="meta-item"><strong>ID Fireflies:</strong> 01KGSV2C2CS3W4QB7YVG9BA8BB</div>
+        </div>
+
+        <div class="content">
+
+            <!-- Métricas Clave -->
+            <div class="section">
+                <h2>Métricas Clave</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="value">$4M</div>
+                        <div class="label">Meta Anual EE.UU.</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$1.7M</div>
+                        <div class="label">ACV Actual</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$1.3M</div>
+                        <div class="label">Meta a 3 Meses</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$5M</div>
+                        <div class="label">Meta de Fin de Año</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">12</div>
+                        <div class="label">Miembros del Equipo</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">$60K-$480K</div>
+                        <div class="label">Rango de Ticket</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">30-40</div>
+                        <div class="label">Reuniones SDR Semanales</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="value">115K</div>
+                        <div class="label">Contactos en Base de Datos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Ejecutivo -->
+            <div class="section">
+                <h2>Resumen Ejecutivo</h2>
+                <div class="summary-box">
+                    Sesión de descubrimiento profundo centrada en la definición de Perfiles de Cliente Ideal (ICP) para los mercados de LATAM y EE.UU. Laura Ortiz lidera las ventas en EE.UU. con una meta anual de $4M frente a un ACV actual de $1.7M, respaldada por un equipo de 12 personas que maneja tickets de $60K a $480K. Se identificó una brecha crítica en el equipo de marketing, que actualmente cuenta con un solo ejecutor (Lucho), lo que requiere la incorporación de 3 nuevos integrantes y la implementación de un marco de escalera de conversión con lead magnets para alcanzar las metas de ingresos a corto plazo ($1.3M en 3 meses) y largo plazo ($5M al cierre del año).
+                </div>
+            </div>
+
+            <!-- Participantes -->
+            <div class="section">
+                <h2>Participantes</h2>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <div class="name">Daniel Cardona</div>
+                        <div class="role">Consultor / Asesor</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Laura Velasquez</div>
+                        <div class="role">Participante</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Laura Ortiz</div>
+                        <div class="role">Líder de Ventas EE.UU. (referenciada)</div>
+                    </div>
+                    <div class="participant-card">
+                        <div class="name">Lucho</div>
+                        <div class="role">Ejecutor de Marketing (referenciado)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado del Negocio -->
+            <div class="section">
+                <h2>Estado del Negocio</h2>
+                <div class="deal-status">Fase de Planificación y Estructuración</div>
+                <p class="status-description">
+                    Se han identificado objetivos comerciales claros y brechas operativas. El equipo está transitando del modo de ejecución al modo de estrategia, con enfoque en fortalecer la función de marketing para respaldar las metas de ingresos agresivas.
+                </p>
+            </div>
+
+            <!-- Puntos de Discusión -->
+            <div class="section">
+                <h2>Puntos de Discusión</h2>
+                <div class="discussion-item">
+                    <h3>1. Metas de Ventas y Pipeline en EE.UU.</h3>
+                    <p>Se definió la meta anual de ventas de $4M para EE.UU. con un ACV actual de $1.7M. Los tamaños de ticket van de $60K a $480K en un equipo de 12 personas. La meta a corto plazo es $1.3M en 3 meses, y a largo plazo $5M al cierre del año.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>2. Evaluación y Expansión del Equipo de Marketing</h3>
+                    <p>El equipo de marketing actual está gravemente subestaffed, contando únicamente con Lucho, quien es un ejecutor y no un estratega. Se planea incorporar 3 nuevos integrantes y pasar del modo de ejecución al modo de estrategia.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>3. Estrategia del Marco de Conversión</h3>
+                    <p>Se propuso implementar un marco de escalera de conversión con lead magnets para mover a los prospectos de manera sistemática a través del embudo. Se enfatizó el Crecimiento Liderado por el Fundador y la producción de contenido dedicada.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>4. Definición de ICP para LATAM y EE.UU.</h3>
+                    <p>Identificación y definición detallada de los Perfiles de Cliente Ideal para los mercados de América Latina y EE.UU., con el fin de mejorar la segmentación y las tasas de conversión.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>5. Base de Datos y Capacidad de Prospección SDR</h3>
+                    <p>La base de datos actual incluye 15,000 contactos más 100,000 médicos. Cada SDR agenda de 30 a 40 citas semanales, estableciendo la línea base de prospección para los cálculos del pipeline.</p>
+                </div>
+                <div class="discussion-item">
+                    <h3>6. Estrategia de Contenido y SOPs</h3>
+                    <p>Es necesario documentar los Procedimientos Operativos Estándar (SOPs) de marketing, desarrollar buyer personas por mercado y establecer una cadencia regular de producción de contenido.</p>
+                </div>
+            </div>
+
+            <!-- Elementos de Acción -->
+            <div class="section">
+                <h2>Elementos de Acción</h2>
+                <table class="action-table">
+                    <thead>
+                        <tr>
+                            <th>Acción</th>
+                            <th>Responsable</th>
+                            <th>Fecha Límite</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Liderar las operaciones de ventas en EE.UU. con una meta de $4M anuales</td>
+                            <td><span class="owner-badge">Laura Ortiz</span></td>
+                            <td>En curso</td>
+                        </tr>
+                        <tr>
+                            <td>Ejecutar el pipeline de producción de contenido</td>
+                            <td><span class="owner-badge">Lucho</span></td>
+                            <td>En curso</td>
+                        </tr>
+                        <tr>
+                            <td>Documentar los SOPs de marketing</td>
+                            <td><span class="owner-badge unassigned">Sin asignar</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Desarrollar buyer personas para cada mercado objetivo (LATAM y EE.UU.)</td>
+                            <td><span class="owner-badge unassigned">Sin asignar</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Planificar y establecer un calendario de contenido regular</td>
+                            <td><span class="owner-badge unassigned">Sin asignar</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Evaluar las competencias actuales del equipo e identificar brechas</td>
+                            <td><span class="owner-badge unassigned">Sin asignar</span></td>
+                            <td>&mdash;</td>
+                        </tr>
+                        <tr>
+                            <td>Revisar el marco estratégico</td>
+                            <td><span class="owner-badge">Equipo</span></td>
+                            <td>Lunes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Decisiones Tomadas -->
+            <div class="section">
+                <h2>Decisiones Tomadas</h2>
+                <ul class="decisions-list">
+                    <li>Transición del modo de ejecución al modo de estrategia para la función de marketing</li>
+                    <li>Implementar un marco de escalera de conversión con lead magnets como motor central de crecimiento</li>
+                    <li>Adoptar el Crecimiento Liderado por el Fundador como canal clave de marketing</li>
+                    <li>Expandir el equipo de marketing con 3 nuevas contrataciones para respaldar las metas de crecimiento</li>
+                    <li>Laura Ortiz liderará las ventas en EE.UU. con una meta de $4M</li>
+                </ul>
+            </div>
+
+            <!-- Próximos Pasos -->
+            <div class="section">
+                <h2>Próximos Pasos</h2>
+                <ul class="next-steps-list">
+                    <li>Revisar el marco estratégico el lunes</li>
+                    <li>Implementar la estructura de marketing enfocada en el Crecimiento Liderado por el Fundador y la producción de contenido</li>
+                    <li>Construir la escalera de conversión para alcanzar $1.3M en ingresos en los próximos 3 meses</li>
+                    <li>Iniciar el proceso de contratación de 3 integrantes adicionales para el equipo de marketing</li>
+                    <li>Desarrollar y documentar las buyer personas para los mercados de LATAM y EE.UU.</li>
+                </ul>
+            </div>
+
+            <!-- Diagramas de Arquitectura Técnica -->
+            <div class="section">
+                <h2>Arquitectura Técnica</h2>
+
+                <div class="diagram-section">
+                    <h3>Marco de Escalera de Conversión de Marketing</h3>
+                    <div class="diagram-wrapper">
+                        <pre class="mermaid">
+flowchart TD
+    A["Target Audience\n15K Contacts + 100K Doctors"] --> B["Lead Magnets\nContent & Resources"]
+    B --> C["Lead Capture\nEmail & Landing Pages"]
+    C --> D["Lead Nurturing\nFounder-led Content"]
+    D --> E["SDR Outreach\n30-40 Appointments/Week"]
+    E --> F{"Qualification"}
+    F -->|"Qualified"| G["Sales Meeting"]
+    F -->|"Not Ready"| D
+    G --> H["Proposal\n$60K - $480K Tickets"]
+    H --> I["Closed Deal"]
+    I --> J["Revenue Targets\n$1.3M 3-Month / $5M Annual"]
+
+    style A fill:#1565C0,color:#fff
+    style B fill:#1976D2,color:#fff
+    style C fill:#1E88E5,color:#fff
+    style D fill:#2196F3,color:#fff
+    style E fill:#42A5F5,color:#fff
+    style F fill:#FF9800,color:#fff
+    style G fill:#66BB6A,color:#fff
+    style H fill:#43A047,color:#fff
+    style I fill:#2E7D32,color:#fff
+    style J fill:#1B5E20,color:#fff
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Pipeline de Ventas y Flujo de Ingresos</h3>
+                    <div class="diagram-wrapper">
+                        <pre class="mermaid">
+flowchart LR
+    subgraph MARKETING["Marketing Engine"]
+        M1["Lucho\nContent Executor"]
+        M2["+3 New Hires"]
+        M3["Founder-led Growth"]
+    end
+
+    subgraph OUTREACH["SDR Outreach"]
+        S1["Database\n15K Contacts"]
+        S2["Doctors DB\n100K Records"]
+        S3["30-40 Meetings/Week"]
+    end
+
+    subgraph SALES["USA Sales - Laura Ortiz"]
+        V1["ACV $1.7M"]
+        V2["12 Person Team"]
+        V3["$60K-$480K Tickets"]
+    end
+
+    subgraph TARGETS["Revenue Targets"]
+        T1["Q1: $1.3M"]
+        T2["Annual: $5M"]
+    end
+
+    MARKETING --> OUTREACH
+    OUTREACH --> SALES
+    SALES --> TARGETS
+
+    style MARKETING fill:#E3F2FD,stroke:#1565C0
+    style OUTREACH fill:#E8F5E9,stroke:#2E7D32
+    style SALES fill:#FFF3E0,stroke:#E65100
+    style TARGETS fill:#F3E5F5,stroke:#6A1B9A
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="diagram-section">
+                    <h3>Plan de Expansión del Equipo de Marketing</h3>
+                    <div class="diagram-wrapper">
+                        <pre class="mermaid">
+flowchart TD
+    subgraph CURRENT["Current State"]
+        C1["Lucho\nSolo Executor"]
+        C2["No Strategy Lead"]
+        C3["Execution Mode"]
+    end
+
+    subgraph TRANSITION["Transition"]
+        T1["Hire Content Producer"]
+        T2["Hire Growth Strategist"]
+        T3["Hire Marketing Ops"]
+    end
+
+    subgraph TARGET["Target State"]
+        G1["Founder-led Growth"]
+        G2["Content Production Pipeline"]
+        G3["Conversion Ladder Framework"]
+        G4["Documented SOPs"]
+        G5["Buyer Personas per Market"]
+    end
+
+    CURRENT -->|"+ 3 Hires"| TRANSITION
+    TRANSITION -->|"Strategy Mode"| TARGET
+
+    style CURRENT fill:#FFCDD2,stroke:#C62828
+    style TRANSITION fill:#FFF9C4,stroke:#F57F17
+    style TARGET fill:#C8E6C9,stroke:#2E7D32
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Pie de Página -->
+        <div class="footer">
+            Resumen de reunión generado automáticamente &bull; Arkangel AI &bull; 6 de febrero de 2026
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

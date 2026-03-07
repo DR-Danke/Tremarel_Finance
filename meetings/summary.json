@@ -1,0 +1,106 @@
+{
+  "title": "Arkangel Marketing v2.0 - ICP Definition & Growth Strategy",
+  "meeting_date": "2026-02-06",
+  "participants": [
+    {"name": "Daniel Cardona", "role": "Consultant / Advisor"},
+    {"name": "Laura Velasquez", "role": "Participant"},
+    {"name": "Laura Ortiz", "role": "USA Sales Leader (mentioned)"},
+    {"name": "Lucho", "role": "Marketing Executor (mentioned)"}
+  ],
+  "company_name": "Arkangel AI",
+  "contact_name": "Daniel Cardona",
+  "contact_email": null,
+  "summary": "Deep discovery session focused on defining Ideal Customer Profiles (ICPs) for LATAM and USA markets. Laura Ortiz leads USA sales with a $4M annual target against a current ACV of $1.7M, supported by a 12-person team handling tickets from $60K to $480K. A critical gap was identified in the marketing team, which currently consists of only one executor (Lucho), requiring an expansion of 3 new hires and the implementation of a conversion ladder framework with lead magnets to hit short-term ($1.3M in 3 months) and long-term ($5M by year-end) revenue goals.",
+  "discussion_points": [
+    {
+      "topic": "USA Sales Targets and Pipeline",
+      "description": "Defined the $4M annual sales target for USA with a current ACV of $1.7M. Ticket sizes range from $60K to $480K across a 12-person team. Short-term goal is $1.3M in 3 months, long-term $5M by year-end."
+    },
+    {
+      "topic": "Marketing Team Assessment and Expansion",
+      "description": "Current marketing team is severely understaffed with only Lucho, who is an executor rather than a strategist. Plan to add 3 new team members and shift from execution mode to strategy mode."
+    },
+    {
+      "topic": "Conversion Framework Strategy",
+      "description": "Proposed implementing a conversion ladder framework with lead magnets to systematically move prospects through the funnel. Emphasis on Founder-led Growth and dedicated content production."
+    },
+    {
+      "topic": "ICP Definition for LATAM and USA",
+      "description": "Detailed identification and definition of Ideal Customer Profiles for both Latin American and US markets to improve targeting and conversion rates."
+    },
+    {
+      "topic": "Database and SDR Outreach Capacity",
+      "description": "Current database includes 15,000 contacts plus 100,000 doctors. Each SDR schedules 30-40 appointments weekly, establishing the outreach baseline for pipeline calculations."
+    },
+    {
+      "topic": "Content Strategy and SOPs",
+      "description": "Need to document marketing Standard Operating Procedures, develop buyer personas per market, and establish a regular content production cadence."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Lead USA sales operations targeting $4M annual revenue",
+      "owner": "Laura Ortiz",
+      "deadline": null
+    },
+    {
+      "description": "Execute content production pipeline",
+      "owner": "Lucho",
+      "deadline": null
+    },
+    {
+      "description": "Document marketing SOPs",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Develop buyer personas for each target market (LATAM and USA)",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Plan and establish regular content calendar",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Evaluate current team competencies and identify gaps",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Review strategic framework",
+      "owner": "Team",
+      "deadline": "Monday (next business day)"
+    }
+  ],
+  "decisions": [
+    "Transition from execution mode to strategy mode for the marketing function",
+    "Implement a conversion ladder framework with lead magnets as the core growth engine",
+    "Adopt Founder-led Growth as a key marketing channel",
+    "Expand the marketing team by 3 new hires to support growth targets",
+    "Laura Ortiz will lead USA sales with a $4M target"
+  ],
+  "next_steps": [
+    "Review strategic framework on Monday",
+    "Implement marketing structure focused on Founder-led Growth and content production",
+    "Build conversion ladder to achieve $1.3M revenue in the next 3 months",
+    "Begin hiring process for 3 additional marketing team members",
+    "Develop and document buyer personas for LATAM and USA markets"
+  ],
+  "diagrams": [
+    {
+      "title": "Marketing Conversion Ladder Framework",
+      "mermaid_code": "flowchart TD\n    A[\"Target Audience\\n15K Contacts + 100K Doctors\"] --> B[\"Lead Magnets\\nContent & Resources\"]\n    B --> C[\"Lead Capture\\nEmail & Landing Pages\"]\n    C --> D[\"Lead Nurturing\\nFounder-led Content\"]\n    D --> E[\"SDR Outreach\\n30-40 Appointments/Week\"]\n    E --> F{\"Qualification\"}\n    F -->|\"Qualified\"| G[\"Sales Meeting\"]\n    F -->|\"Not Ready\"| D\n    G --> H[\"Proposal\\n$60K - $480K Tickets\"]\n    H --> I[\"Closed Deal\"]\n    I --> J[\"Revenue Targets\\n$1.3M 3-Month / $5M Annual\"]\n\n    style A fill:#1565C0,color:#fff\n    style B fill:#1976D2,color:#fff\n    style C fill:#1E88E5,color:#fff\n    style D fill:#2196F3,color:#fff\n    style E fill:#42A5F5,color:#fff\n    style F fill:#FF9800,color:#fff\n    style G fill:#66BB6A,color:#fff\n    style H fill:#43A047,color:#fff\n    style I fill:#2E7D32,color:#fff\n    style J fill:#1B5E20,color:#fff"
+    },
+    {
+      "title": "Sales Pipeline and Revenue Flow",
+      "mermaid_code": "flowchart LR\n    subgraph MARKETING[\"Marketing Engine\"]\n        M1[\"Lucho\\nContent Executor\"]\n        M2[\"+3 New Hires\"]\n        M3[\"Founder-led Growth\"]\n    end\n\n    subgraph OUTREACH[\"SDR Outreach\"]\n        S1[\"Database\\n15K Contacts\"]\n        S2[\"Doctors DB\\n100K Records\"]\n        S3[\"30-40 Meetings/Week\"]\n    end\n\n    subgraph SALES[\"USA Sales - Laura Ortiz\"]\n        V1[\"ACV $1.7M\"]\n        V2[\"12 Person Team\"]\n        V3[\"$60K-$480K Tickets\"]\n    end\n\n    subgraph TARGETS[\"Revenue Targets\"]\n        T1[\"Q1: $1.3M\"]\n        T2[\"Annual: $5M\"]\n    end\n\n    MARKETING --> OUTREACH\n    OUTREACH --> SALES\n    SALES --> TARGETS\n\n    style MARKETING fill:#E3F2FD,stroke:#1565C0\n    style OUTREACH fill:#E8F5E9,stroke:#2E7D32\n    style SALES fill:#FFF3E0,stroke:#E65100\n    style TARGETS fill:#F3E5F5,stroke:#6A1B9A"
+    },
+    {
+      "title": "Marketing Team Expansion Plan",
+      "mermaid_code": "flowchart TD\n    subgraph CURRENT[\"Current State\"]\n        C1[\"Lucho\\nSolo Executor\"]\n        C2[\"No Strategy Lead\"]\n        C3[\"Execution Mode\"]\n    end\n\n    subgraph TRANSITION[\"Transition\"]\n        T1[\"Hire Content Producer\"]\n        T2[\"Hire Growth Strategist\"]\n        T3[\"Hire Marketing Ops\"]\n    end\n\n    subgraph TARGET[\"Target State\"]\n        G1[\"Founder-led Growth\"]\n        G2[\"Content Production Pipeline\"]\n        G3[\"Conversion Ladder Framework\"]\n        G4[\"Documented SOPs\"]\n        G5[\"Buyer Personas per Market\"]\n    end\n\n    CURRENT -->|\"+ 3 Hires\"| TRANSITION\n    TRANSITION -->|\"Strategy Mode\"| TARGET\n\n    style CURRENT fill:#FFCDD2,stroke:#C62828\n    style TRANSITION fill:#FFF9C4,stroke:#F57F17\n    style TARGET fill:#C8E6C9,stroke:#2E7D32"
+    }
+  ],
+  "html_output": "See meetings/summary.html"
+}
