@@ -646,3 +646,10 @@ This prompt helps you determine what documentation you should read based on the 
     - When modifying legaldesk_routes.py endpoint handlers for deliverables, messages, or documents
     - When adding business logic (validation, authorization) to Legal Desk deliverable/message/document operations
     - When troubleshooting Legal Desk service layer imports or delegation patterns
+
+- app_docs/patch-38f928aa-route-error-handling.md
+  - Conditions:
+    - When adding error handling to backend route endpoints
+    - When working with transaction_routes.py or reports_routes.py exception handling
+    - When implementing the try/except pattern for PermissionError/ValueError in route files
+    - When troubleshooting raw 500 errors from service layer exceptions
