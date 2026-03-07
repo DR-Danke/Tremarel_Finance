@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RestaurantOS - Daily Use by Persona</title>
+  <style>
+    :root {
+      --primary: #1976d2;
+      --primary-dark: #1565c0;
+      --primary-light: #e3f2fd;
+      --success: #2e7d32;
+      --success-light: #e8f5e9;
+      --warning: #f9a825;
+      --warning-light: #fff8e1;
+      --error: #d32f2f;
+      --error-light: #fbe9e7;
+      --purple: #7b1fa2;
+      --purple-light: #f3e5f5;
+      --teal: #00796b;
+      --teal-light: #e0f2f1;
+      --orange: #e65100;
+      --orange-light: #fff3e0;
+      --gray-50: #fafafa;
+      --gray-100: #f5f5f5;
+      --gray-200: #eeeeee;
+      --gray-300: #e0e0e0;
+      --gray-400: #bdbdbd;
+      --gray-600: #757575;
+      --gray-700: #616161;
+      --gray-800: #424242;
+      --gray-900: #212121;
+      --whatsapp: #25d366;
+      --whatsapp-dark: #128c7e;
+      --whatsapp-bg: #e5ddd5;
+      --whatsapp-bubble: #dcf8c6;
+      --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 6px 10px rgba(0,0,0,0.08);
+
+      --owner-color: #1565c0;
+      --manager-color: #2e7d32;
+      --chef-color: #e65100;
+      --compliance-color: #7b1fa2;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--gray-900);
+      background: var(--gray-100);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* Top Header Bar */
+    .top-bar {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 32px 0 28px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .top-bar h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .top-bar p { margin-top: 6px; font-size: 14px; opacity: 0.85; font-weight: 400; }
+
+    /* Layout */
+    .layout {
+      display: flex;
+      max-width: 1340px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    /* Sidebar TOC */
+    .sidebar {
+      width: 270px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      align-self: flex-start;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding: 24px 0 24px 16px;
+    }
+    .sidebar h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--gray-600);
+      margin-bottom: 12px;
+      padding-left: 12px;
+    }
+    .sidebar a {
+      display: block;
+      padding: 6px 12px;
+      color: var(--gray-700);
+      text-decoration: none;
+      font-size: 13px;
+      border-radius: 6px;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-left-color: var(--primary);
+    }
+    .sidebar a.indent { padding-left: 24px; font-size: 12px; color: var(--gray-600); }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 40px 80px 32px;
+    }
+
+    /* Sections */
+    .section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 32px 36px;
+      margin-bottom: 28px;
+    }
+    .section h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-200);
+    }
+    .section h3 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin: 24px 0 12px;
+    }
+    .section h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin: 16px 0 8px;
+    }
+    .section p, .section li {
+      color: var(--gray-800);
+      margin-bottom: 6px;
+    }
+    .section ul, .section ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* Purpose cards */
+    .purpose-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .purpose-card {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 16px 20px;
+      border-left: 4px solid var(--primary);
+    }
+    .purpose-card.alt { border-left-color: var(--gray-400); }
+    .purpose-card h4 { margin: 0 0 8px; font-size: 14px; color: var(--gray-800); }
+    .purpose-card ul { margin: 0; padding-left: 18px; }
+    .purpose-card li { font-size: 13px; color: var(--gray-700); margin-bottom: 4px; }
+
+    /* Persona Cards */
+    .persona-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .persona-card {
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .persona-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .persona-card .icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 28px;
+    }
+    .persona-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .persona-card .role { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.8; margin-bottom: 8px; }
+    .persona-card .goal { font-size: 12px; color: var(--gray-700); line-height: 1.5; }
+    .persona-card .pages { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 10px; }
+    .persona-card .pages span {
+      font-size: 10px; background: rgba(0,0,0,0.08); border-radius: 10px; padding: 2px 8px;
+    }
+
+    .pc-owner { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
+    .pc-owner .icon { background: #1565c0; color: white; }
+    .pc-owner h4 { color: #0d47a1; }
+    .pc-owner .role { color: #1565c0; }
+
+    .pc-manager { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); }
+    .pc-manager .icon { background: #2e7d32; color: white; }
+    .pc-manager h4 { color: #1b5e20; }
+    .pc-manager .role { color: #2e7d32; }
+
+    .pc-chef { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
+    .pc-chef .icon { background: #e65100; color: white; }
+    .pc-chef h4 { color: #bf360c; }
+    .pc-chef .role { color: #e65100; }
+
+    .pc-compliance { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); }
+    .pc-compliance .icon { background: #7b1fa2; color: white; }
+    .pc-compliance h4 { color: #4a148c; }
+    .pc-compliance .role { color: #7b1fa2; }
+
+    .note-box {
+      background: var(--gray-50);
+      border-left: 4px solid var(--gray-400);
+      padding: 12px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--gray-700);
+      margin-top: 16px;
+    }
+
+    /* Persona Section Headers */
+    .persona-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 4px;
+    }
+    .persona-header .ph-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: white; flex-shrink: 0;
+    }
+    .persona-header .ph-text h2 { border: none; padding: 0; margin: 0; font-size: 22px; }
+    .persona-header .ph-text p { font-size: 13px; color: var(--gray-600); margin: 0; }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      margin: 20px 0 8px 28px;
+      padding-left: 28px;
+      border-left: 3px solid var(--gray-300);
+    }
+    .timeline-block {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .timeline-block:last-child { margin-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: -36px;
+      top: 4px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 3px solid;
+      background: white;
+    }
+    .timeline-block h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 4px;
+    }
+    .timeline-block p, .timeline-block ul {
+      font-size: 13px;
+      color: var(--gray-700);
+      margin-bottom: 4px;
+    }
+    .timeline-block ul { padding-left: 18px; }
+    .timeline-block li { margin-bottom: 3px; }
+
+    .time-phase {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 24px 0 8px -56px;
+      padding: 4px 14px 4px 56px;
+      border-radius: 0 16px 16px 0;
+    }
+
+    .phase-morning { background: #fff8e1; color: #f57f17; }
+    .phase-midday { background: #e3f2fd; color: #1565c0; }
+    .phase-evening { background: #ede7f6; color: #4527a0; }
+    .phase-weekly { background: var(--gray-100); color: var(--gray-700); }
+
+    /* Persona-colored dots and phases */
+    .owner-dot { border-color: var(--owner-color); }
+    .manager-dot { border-color: var(--manager-color); }
+    .chef-dot { border-color: var(--chef-color); }
+    .compliance-dot { border-color: var(--compliance-color); }
+
+    /* Page reference chip */
+    .page-chip {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .chip-dashboard { background: #e3f2fd; color: #1565c0; }
+    .chip-personas { background: #e8f5e9; color: #2e7d32; }
+    .chip-documentos { background: #f3e5f5; color: #7b1fa2; }
+    .chip-eventos { background: #fff8e1; color: #f57f17; }
+    .chip-recursos { background: #e0f2f1; color: #00695c; }
+    .chip-recetas { background: #fbe9e7; color: #bf360c; }
+
+    /* Flow Diagrams */
+    .flow-diagram {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+    .flow-diagram h4 {
+      font-size: 14px;
+      color: var(--gray-800);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .flow-node {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 120px;
+      box-shadow: var(--shadow);
+    }
+    .flow-arrow {
+      font-size: 18px;
+      color: var(--gray-400);
+      flex-shrink: 0;
+    }
+    .flow-arrow-down {
+      text-align: center;
+      font-size: 18px;
+      color: var(--gray-400);
+      margin: 4px 0;
+    }
+    .fn-owner { background: #bbdefb; color: #0d47a1; border: 1px solid #90caf9; }
+    .fn-manager { background: #c8e6c9; color: #1b5e20; border: 1px solid #a5d6a7; }
+    .fn-chef { background: #ffe0b2; color: #bf360c; border: 1px solid #ffcc80; }
+    .fn-compliance { background: #e1bee7; color: #4a148c; border: 1px solid #ce93d8; }
+    .fn-system { background: #eceff1; color: #37474f; border: 1px solid #b0bec5; }
+    .fn-whatsapp { background: #c8e6c9; color: #1b5e20; border: 1px solid #81c784; }
+
+    /* WhatsApp Mockup */
+    .wa-mockup {
+      max-width: 360px;
+      margin: 16px auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .wa-header {
+      background: var(--whatsapp-dark);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .wa-header .wa-avatar {
+      width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .wa-header .wa-name { font-weight: 600; font-size: 14px; }
+    .wa-header .wa-status { font-size: 11px; opacity: 0.7; }
+    .wa-body {
+      background: var(--whatsapp-bg);
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c5b9a8' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      padding: 16px 12px;
+      min-height: 100px;
+    }
+    .wa-bubble {
+      background: var(--whatsapp-bubble);
+      border-radius: 0 8px 8px 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      max-width: 300px;
+      font-size: 13px;
+      line-height: 1.5;
+      position: relative;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    }
+    .wa-bubble::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -8px;
+      border-width: 0 8px 8px 0;
+      border-style: solid;
+      border-color: transparent var(--whatsapp-bubble) transparent transparent;
+    }
+    .wa-bubble.incoming {
+      background: white;
+      border-radius: 8px 0 8px 8px;
+      margin-left: auto;
+    }
+    .wa-bubble.incoming::before {
+      left: auto; right: -8px;
+      border-width: 0 0 8px 8px;
+      border-color: transparent transparent transparent white;
+    }
+    .wa-bubble .wa-bold { font-weight: 700; }
+    .wa-bubble .wa-time {
+      display: block;
+      text-align: right;
+      font-size: 10px;
+      color: #999;
+      margin-top: 4px;
+    }
+    .wa-bubble .wa-urgente { color: var(--error); font-weight: 700; }
+    .wa-bubble .wa-atencion { color: #f57f17; font-weight: 700; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+    th {
+      background: var(--gray-50);
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--gray-200);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-700);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: top;
+    }
+    tr:hover td { background: var(--gray-50); }
+
+    /* Heatmap table */
+    .heatmap td { text-align: center; font-size: 12px; font-weight: 500; }
+    .heat-daily { background: #e8f5e9; color: #2e7d32; }
+    .heat-weekly { background: #fff8e1; color: #f57f17; }
+    .heat-asneeded { background: #e3f2fd; color: #1565c0; }
+    .heat-rarely { background: #f5f5f5; color: #9e9e9e; }
+    .heat-never { background: #fafafa; color: #e0e0e0; }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 10px;
+    }
+    .badge-success { background: #e8f5e9; color: #2e7d32; }
+    .badge-warning { background: #fff8e1; color: #f57f17; }
+    .badge-error { background: #fbe9e7; color: #d32f2f; }
+    .badge-info { background: #e3f2fd; color: #1565c0; }
+    .badge-purple { background: #f3e5f5; color: #7b1fa2; }
+
+    /* Dashboard Stat Cards Mockup */
+    .stat-cards-mock {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .stat-card-mock {
+      border-radius: 8px;
+      padding: 12px 14px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      background: white;
+      border-top: 3px solid;
+    }
+    .stat-card-mock .sc-value { font-size: 22px; font-weight: 700; }
+    .stat-card-mock .sc-label { font-size: 11px; color: var(--gray-600); margin-top: 2px; }
+
+    /* Alert urgency visual */
+    .urgency-demo {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .urgency-box {
+      border-radius: 8px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .urgency-box .ub-emoji { font-size: 24px; margin-bottom: 4px; }
+    .urgency-box .ub-label { font-size: 13px; font-weight: 700; }
+    .urgency-box .ub-desc { font-size: 11px; margin-top: 4px; }
+
+    /* Permit preset visual */
+    .preset-timeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 8px 0;
+      position: relative;
+    }
+    .preset-bar {
+      height: 6px;
+      background: var(--gray-200);
+      flex: 1;
+      position: relative;
+    }
+    .preset-dot {
+      position: absolute;
+      top: -5px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: var(--shadow);
+    }
+    .preset-label {
+      font-size: 10px;
+      position: absolute;
+      top: 16px;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+    .preset-item {
+      margin-bottom: 28px;
+    }
+    .preset-item .pi-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 4px;
+    }
+
+    /* Code block */
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      background: var(--gray-100);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--gray-800);
+    }
+
+    /* Two-way commands */
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .cmd-card {
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+    }
+    .cmd-card .cmd-label {
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 12px;
+      background: var(--gray-100);
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+    .cmd-card .cmd-desc { color: var(--gray-700); font-size: 12px; }
+
+    /* Rhythm section */
+    .rhythm-row {
+      display: flex;
+      align-items: stretch;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .rhythm-card {
+      flex: 1;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .rhythm-card h4 { margin: 0 0 10px; font-size: 14px; }
+    .rhythm-card ul { padding-left: 16px; font-size: 12px; }
+    .rhythm-card li { margin-bottom: 4px; }
+
+    .rc-morning { background: linear-gradient(135deg, #fff8e1, #fff3e0); border-left: 4px solid #f57f17; }
+    .rc-event { background: linear-gradient(135deg, #e3f2fd, #e8eaf6); border-left: 4px solid #1565c0; }
+    .rc-overdue { background: linear-gradient(135deg, #fbe9e7, #ffebee); border-left: 4px solid #d32f2f; }
+
+    /* Notification appendix */
+    .notif-matrix td { text-align: center; }
+    .notif-yes { color: var(--success); font-weight: 700; }
+    .notif-no { color: var(--gray-400); }
+    .notif-sometimes { color: var(--warning); font-weight: 600; font-style: italic; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; position: static; height: auto; padding: 16px; }
+      .main { padding: 16px; }
+      .persona-cards { grid-template-columns: 1fr 1fr; }
+      .stat-cards-mock { grid-template-columns: repeat(3, 1fr); }
+      .purpose-grid { grid-template-columns: 1fr; }
+      .cmd-grid { grid-template-columns: 1fr; }
+      .urgency-demo { grid-template-columns: 1fr; }
+      .rhythm-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <h1>RestaurantOS &mdash; Daily Use by Persona</h1>
+  <p>Workflow narratives by role and time of day &bull; Companion to the User Guide</p>
+</div>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <h3>Contents</h3>
+    <a href="#purpose">Purpose &amp; How to Use</a>
+    <a href="#overview">Personas Overview</a>
+    <a href="#owner">1. Restaurant Owner</a>
+    <a href="#owner" class="indent">Morning / Midday / End of Day</a>
+    <a href="#manager">2. Restaurant Manager</a>
+    <a href="#manager" class="indent">Morning / Midday / End of Day</a>
+    <a href="#chef">3. Kitchen Staff / Chef</a>
+    <a href="#chef" class="indent">Start / During / End of Shift</a>
+    <a href="#compliance">4. Compliance Officer</a>
+    <a href="#compliance" class="indent">Morning / Core Work / Weekly</a>
+    <a href="#cross">Cross-Persona Patterns</a>
+    <a href="#whatsapp">WhatsApp Channel</a>
+    <a href="#whatsapp" class="indent">8.1 Outbound (Implemented)</a>
+    <a href="#whatsapp" class="indent">8.2 Two-Way (Proposed)</a>
+    <a href="#whatsapp" class="indent">8.3 Implementation</a>
+    <a href="#rhythm">Daily Rhythm</a>
+    <a href="#mapping">Page Mapping</a>
+    <a href="#appendix">Notification Appendix</a>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Purpose -->
+    <div class="section" id="purpose">
+      <h2>Purpose &amp; How to Use This Document</h2>
+      <p>This document describes how each persona uses RestaurantOS throughout a typical workday. It is organized by <strong>role</strong> and <strong>time of day</strong>, providing a workflow narrative that complements the feature-reference style of the <a href="./USER_GUIDE_RESTAURANT_OS.html">User Guide</a>.</p>
+
+      <div class="purpose-grid">
+        <div class="purpose-card">
+          <h4>Use this document when you need to understand:</h4>
+          <ul>
+            <li>What each role does first thing in the morning, during service, and at end of day</li>
+            <li>Which pages and features each persona relies on most</li>
+            <li>How personas interact with each other through the system</li>
+            <li>How WhatsApp notifications fit into daily operations</li>
+          </ul>
+        </div>
+        <div class="purpose-card alt">
+          <h4>Use the User Guide when you need:</h4>
+          <ul>
+            <li>Step-by-step instructions for a specific feature</li>
+            <li>Field definitions, filter options, and form details</li>
+            <li>Technical details about alert types, event recurrence, or movement reasons</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personas Overview -->
+    <div class="section" id="overview">
+      <h2>Personas Overview</h2>
+      <div class="persona-cards">
+        <div class="persona-card pc-owner">
+          <div class="icon">&#x1F451;</div>
+          <h4>Restaurant Owner</h4>
+          <div class="role">Dueno</div>
+          <div class="goal">Monitor profitability, ensure compliance, strategic decisions</div>
+          <div class="pages">
+            <span>Dashboard</span><span>Recetas</span><span>Recursos</span>
+          </div>
+        </div>
+        <div class="persona-card pc-manager">
+          <div class="icon">&#x1F4CB;</div>
+          <h4>Restaurant Manager</h4>
+          <div class="role">Employee (Manager)</div>
+          <div class="goal">Coordinate staff, manage inventory, complete daily tasks</div>
+          <div class="pages">
+            <span>Dashboard</span><span>Eventos</span><span>Personas</span><span>Recursos</span>
+          </div>
+        </div>
+        <div class="persona-card pc-chef">
+          <div class="icon">&#x1F468;&#x200D;&#x1F373;</div>
+          <h4>Kitchen Staff / Chef</h4>
+          <div class="role">Employee (Chef)</div>
+          <div class="goal">Execute recipes, report stock issues, complete assigned tasks</div>
+          <div class="pages">
+            <span>Dashboard</span><span>Recetas</span><span>Recursos</span>
+          </div>
+        </div>
+        <div class="persona-card pc-compliance">
+          <div class="icon">&#x1F4C4;</div>
+          <h4>Compliance Officer</h4>
+          <div class="role">Employee (Admin)</div>
+          <div class="goal">Track permits/licenses, ensure renewals, maintain compliance</div>
+          <div class="pages">
+            <span>Dashboard</span><span>Documentos</span><span>Eventos</span>
+          </div>
+        </div>
+      </div>
+      <div class="note-box">
+        <strong>Note:</strong> Suppliers (Proveedores) are data records in the Personas page, not system users. They do not log in or receive notifications directly through RestaurantOS.
+      </div>
+    </div>
+
+    <!-- Persona 1: Owner -->
+    <div class="section" id="owner">
+      <div class="persona-header">
+        <div class="ph-icon" style="background: var(--owner-color);">&#x1F451;</div>
+        <div class="ph-text">
+          <h2>Persona 1: Restaurant Owner (Dueno)</h2>
+          <p>Primary concern: profitability, compliance, and high-level operational health. May not be on-site every day.</p>
+        </div>
+      </div>
+
+      <!-- Dashboard Preview -->
+      <h3>Dashboard at a Glance</h3>
+      <p>The dashboard greets the owner with a time-appropriate message and shows five stat cards:</p>
+      <div class="stat-cards-mock">
+        <div class="stat-card-mock" style="border-top-color: #1976d2;">
+          <div class="sc-value" style="color: #1976d2;">12</div>
+          <div class="sc-label">Empleados</div>
+        </div>
+        <div class="stat-card-mock" style="border-top-color: #2e7d32;">
+          <div class="sc-value" style="color: #2e7d32;">34 <span style="font-size:12px; color: #d32f2f;">&#x26A0; 3</span></div>
+          <div class="sc-label">Recursos (Low Stock)</div>
+        </div>
+        <div class="stat-card-mock" style="border-top-color: #7b1fa2;">
+          <div class="sc-value" style="color: #7b1fa2;">8</div>
+          <div class="sc-label">Docs Activos</div>
+        </div>
+        <div class="stat-card-mock" style="border-top-color: #00796b;">
+          <div class="sc-value" style="color: #00796b;">5</div>
+          <div class="sc-label">Completadas Hoy</div>
+        </div>
+        <div class="stat-card-mock" style="border-top-color: #d32f2f;">
+          <div class="sc-value" style="color: #d32f2f;">2</div>
+          <div class="sc-label">Tareas Vencidas</div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="time-phase phase-morning">&#x1F305; Morning (Before Service)</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>1. Receive WhatsApp daily summary</h4>
+          <p>The system sends a morning message listing any pending or overdue tasks assigned to the owner. Format: personalized greeting with task count and descriptions.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>2. Open Dashboard <span class="page-chip chip-dashboard">Dashboard</span></h4>
+          <p>The dashboard greets the owner with a time-appropriate message ("Buenos dias", "Buenas tardes", or "Buenas noches") and a briefing summary. The owner scans:</p>
+          <ul>
+            <li><strong>Stat cards</strong>: Employee count, resource count (with low stock indicator), active documents, tasks completed today, overdue tasks (red highlight when &gt; 0)</li>
+            <li><strong>Alerts panel</strong>: Document expirations, low stock items, profitability alerts</li>
+            <li><strong>Today's tasks</strong>: Tasks grouped by responsible person</li>
+            <li><strong>Quick actions</strong>: "Nueva Tarea" and "Registrar Movimiento" buttons</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>3. Check profitability alerts <span class="page-chip chip-recetas">Recetas</span></h4>
+          <p>If any recipe's margin dropped below 60%, the dashboard shows a profitability alert. Navigate to Recetas to review cost vs. sale price and decide whether to adjust pricing or source cheaper ingredients.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>4. Review document expirations <span class="page-chip chip-documentos">Documentos</span></h4>
+          <p>If the alerts panel shows expiring documents, delegate renewal to the compliance officer or navigate to Documentos to check details.</p>
+        </div>
+
+        <div class="time-phase phase-midday">&#x2600;&#xFE0F; Midday (During Service)</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>5. Spot-check inventory <span class="page-chip chip-recursos">Recursos</span></h4>
+          <p>If a low stock alert appeared, check Recursos/Inventario for current stock levels and recent movements. Contact a supplier or instruct the manager to place an order.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>6. Monitor task completion <span class="page-chip chip-dashboard">Dashboard</span></h4>
+          <p>Return to the Dashboard to see how many tasks have been completed today vs. what remains pending.</p>
+        </div>
+
+        <div class="time-phase phase-evening">&#x1F319; End of Day</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>7. Review recipe margins <span class="page-chip chip-recetas">Recetas</span></h4>
+          <p>Scan the profitability column. Recipes with margin below 60% show a red "No Rentable" badge. Click any recipe to open the detail drawer showing an ingredient cost distribution pie chart. Adjust sale prices or flag recipes for review.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>8. Check recent inventory movements <span class="page-chip chip-dashboard">Dashboard</span></h4>
+          <p>The "Recent Inventory Movements" table shows the day's entries and exits for a quick audit trail.</p>
+        </div>
+
+        <div class="time-phase phase-weekly">&#x1F4C5; Weekly Activities</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>Review all document statuses</h4>
+          <p>Filter <span class="page-chip chip-documentos">Documentos</span> by "Por Vencer" and "Vencido" to ensure nothing critical is missed.</p>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>Analyze resource costs</h4>
+          <p>Review "Ultimo Costo" column in <span class="page-chip chip-recursos">Recursos</span> to identify cost trends across ingredients.</p>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-dot owner-dot"></div>
+          <h4>Staff review</h4>
+          <p>Check <span class="page-chip chip-personas">Personas</span> for completeness of employee records (WhatsApp numbers, roles) to ensure notifications reach everyone.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona 2: Manager -->
+    <div class="section" id="manager">
+      <div class="persona-header">
+        <div class="ph-icon" style="background: var(--manager-color);">&#x1F4CB;</div>
+        <div class="ph-text">
+          <h2>Persona 2: Restaurant Manager</h2>
+          <p>The operational backbone &mdash; coordinates daily tasks, manages inventory flows, ensures the team executes smoothly. On-site daily.</p>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="time-phase phase-morning">&#x1F305; Morning (Before Service)</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>1. Receive WhatsApp daily summary</h4>
+          <p>Morning message with the manager's own pending and overdue tasks.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>2. Open Dashboard <span class="page-chip chip-dashboard">Dashboard</span></h4>
+          <ul>
+            <li><strong>Today's tasks</strong> (left panel): All tasks for the day, grouped by responsible person. Overdue tasks highlighted in red.</li>
+            <li><strong>Low stock items</strong>: Ingredients needing restocking before service.</li>
+            <li><strong>Recent movements</strong>: Check if yesterday's expected deliveries were registered.</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>3. Assign and create tasks <span class="page-chip chip-eventos">Eventos/Tareas</span></h4>
+          <ul>
+            <li>Create new tasks ("Tarea" type) for the day, assigning them to specific employees</li>
+            <li>Set notification channel to WhatsApp so employees receive their assignments</li>
+            <li>Review and reschedule any overdue tasks from previous days</li>
+            <li>Use the weekly calendar view to visualize the week's workload at a glance</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>4. Register morning deliveries <span class="page-chip chip-recursos">Recursos</span></h4>
+          <ul>
+            <li>Click "Registrar Movimiento" &rarr; select resource, type "Entrada", reason "Compra"</li>
+            <li>Enter quantity and associate the supplier as the responsible person</li>
+            <li>Stock levels update automatically; low stock alerts resolve if stock rises above minimum</li>
+          </ul>
+        </div>
+
+        <div class="time-phase phase-midday">&#x2600;&#xFE0F; Midday (During Service)</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>5. Quick-complete tasks <span class="page-chip chip-eventos">Eventos/Tareas</span></h4>
+          <p>As employees finish tasks, use the checkmark icon to mark them completed. The Dashboard's "Tareas Completadas Hoy" counter updates in real time.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>6. Handle stock issues <span class="page-chip chip-recursos">Recursos</span></h4>
+          <ul>
+            <li>Check the resource to verify current stock</li>
+            <li>Register waste/spoilage as exit movement with reason "Merma"</li>
+            <li>If stock drops below minimum, a low stock alert is automatically generated</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>7. Register inventory exits <span class="page-chip chip-recursos">Recursos</span></h4>
+          <ul>
+            <li>Type "Salida", reason "Uso" for general consumption</li>
+            <li>Type "Salida", reason "Merma" for waste or spoilage</li>
+          </ul>
+        </div>
+
+        <div class="time-phase phase-evening">&#x1F319; End of Day</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>8. Task completion review <span class="page-chip chip-eventos">Eventos/Tareas</span></h4>
+          <p>Filter by today's date and status "Pendiente" to identify incomplete tasks. Follow up or reschedule.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>9. Inventory reconciliation <span class="page-chip chip-recursos">Recursos</span></h4>
+          <p>Compare physical counts against system stock. Register adjustments with reason "Ajuste".</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot manager-dot"></div>
+          <h4>10. Plan tomorrow <span class="page-chip chip-eventos">Eventos/Tareas</span></h4>
+          <p>Create recurring tasks or one-time events for the next day.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona 3: Chef -->
+    <div class="section" id="chef">
+      <div class="persona-header">
+        <div class="ph-icon" style="background: var(--chef-color);">&#x1F468;&#x200D;&#x1F373;</div>
+        <div class="ph-text">
+          <h2>Persona 3: Kitchen Staff / Chef</h2>
+          <p>Interacts primarily through WhatsApp notifications and brief system check-ins. Focus: executing recipes, managing ingredient usage, completing tasks.</p>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="time-phase phase-morning">&#x1F305; Start of Shift</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>1. Receive WhatsApp daily summary</h4>
+          <p>Morning message listing today's tasks: prep work, production targets, cleaning checklists, etc. Overdue tasks from previous days are flagged.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>2. Check Dashboard <span class="page-chip chip-dashboard">Dashboard</span></h4>
+          <ul>
+            <li><strong>Today's tasks</strong>: Personal assignments with times and descriptions</li>
+            <li><strong>Low stock alerts</strong>: Know which ingredients are running low before starting prep</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>3. Review recipe details <span class="page-chip chip-recetas">Recetas</span></h4>
+          <p>Click on today's recipes to see ingredient list with quantities per portion, current cost, and margin.</p>
+        </div>
+
+        <div class="time-phase phase-midday">&#x1F525; During Service</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>4. Produce recipe portions <span class="page-chip chip-recetas">Recetas</span></h4>
+          <ul>
+            <li>Click the play icon on a recipe &rarr; enter number of portions</li>
+            <li>System automatically deducts ingredient quantities from inventory</li>
+            <li>If any ingredient drops below minimum stock, a low stock alert is generated</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>5. Report stock issues <span class="page-chip chip-recursos">Recursos</span></h4>
+          <p>Check current stock in Recursos/Inventario. Notify the manager to register the appropriate movement or place an order.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>6. Complete tasks <span class="page-chip chip-eventos">Eventos/Tareas</span></h4>
+          <p>Use the quick-complete checkmark as prep tasks, cleaning tasks, or checklists are finished.</p>
+        </div>
+
+        <div class="time-phase phase-evening">&#x1F319; End of Shift</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>7. Final task check</h4>
+          <p>Verify all assigned tasks for the shift are marked complete.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot chef-dot"></div>
+          <h4>8. Report waste</h4>
+          <p>Inform the manager of any spoilage or waste so they can register "Merma" exit movements.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Persona 4: Compliance -->
+    <div class="section" id="compliance">
+      <div class="persona-header">
+        <div class="ph-icon" style="background: var(--compliance-color);">&#x1F4C4;</div>
+        <div class="ph-text">
+          <h2>Persona 4: Administrative / Compliance Officer</h2>
+          <p>Ensures the restaurant's legal documents, permits, and licenses are current. Works primarily with documents and expiration alerts.</p>
+        </div>
+      </div>
+
+      <!-- Alert Urgency Visual -->
+      <h3>Alert Urgency Levels</h3>
+      <div class="urgency-demo">
+        <div class="urgency-box" style="background: #e8f5e9; border: 2px solid #66bb6a;">
+          <div class="ub-emoji">&#x2705;</div>
+          <div class="ub-label" style="color: #2e7d32;">Vigente</div>
+          <div class="ub-desc" style="color: #2e7d32;">Valid, not expiring soon</div>
+        </div>
+        <div class="urgency-box" style="background: #fff8e1; border: 2px solid #f9a825;">
+          <div class="ub-emoji">&#x1F7E1;</div>
+          <div class="ub-label" style="color: #f57f17;">Atencion (&gt;7 days)</div>
+          <div class="ub-desc" style="color: #f57f17;">Expiring soon &mdash; plan renewal</div>
+        </div>
+        <div class="urgency-box" style="background: #ffebee; border: 2px solid #ef5350;">
+          <div class="ub-emoji">&#x1F534;</div>
+          <div class="ub-label" style="color: #d32f2f;">URGENTE (&le;7 days)</div>
+          <div class="ub-desc" style="color: #d32f2f;">Immediate action required</div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="time-phase phase-morning">&#x1F305; Morning</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>1. Check expiration alerts <span class="page-chip chip-dashboard">Dashboard</span></h4>
+          <ul>
+            <li><strong style="color:#d32f2f;">Red alerts (URGENTE)</strong>: Documents expiring within 7 days &mdash; require immediate action</li>
+            <li><strong style="color:#f57f17;">Yellow alerts (Atencion)</strong>: Documents expiring in more than 7 days &mdash; plan renewal</li>
+            <li>WhatsApp/email notifications also arrive with urgency formatting</li>
+          </ul>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>2. Review Documentos page <span class="page-chip chip-documentos">Documentos</span></h4>
+          <ul>
+            <li>Filter by status "Por Vencer" to see approaching expirations</li>
+            <li>Filter by status "Vencido" to see already-expired documents</li>
+          </ul>
+        </div>
+
+        <div class="time-phase phase-midday">&#x1F4BC; Core Work</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>3. Initiate renewals</h4>
+          <p>Note document type, associated person, and expiration date. Contact the relevant authority or vendor. Track progress via <span class="page-chip chip-eventos">Eventos/Tareas</span>.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>4. Register new documents <span class="page-chip chip-documentos">Documentos</span></h4>
+          <p>Edit existing document to update the expiration date, or add a new document with file upload. The system automatically creates new expiration alert events.</p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>5. Manage permit presets <span class="page-chip chip-documentos">Documentos</span></h4>
+          <p>When adding permit-type documents, use pre-configured presets with automatic alert schedules:</p>
+        </div>
+      </div>
+
+      <!-- Permit Presets Visual -->
+      <div style="background: var(--gray-50); border-radius: 8px; padding: 20px; margin: 12px 0 12px 56px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Document Type</th>
+              <th>Alert Schedule (days before expiration)</th>
+              <th>Channel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cert. Manipulacion de Alimentos</td>
+              <td><span class="badge badge-warning">30d</span> <span class="badge badge-warning">7d</span> <span class="badge badge-error">0d</span></td>
+              <td>WhatsApp</td>
+            </tr>
+            <tr>
+              <td>Permiso de Bomberos</td>
+              <td><span class="badge badge-error">0d</span></td>
+              <td>WhatsApp</td>
+            </tr>
+            <tr>
+              <td>Reg. Camara de Comercio</td>
+              <td><span class="badge badge-warning">30d</span> <span class="badge badge-warning">14d</span></td>
+              <td>Email</td>
+            </tr>
+            <tr>
+              <td>Servicio de Extintores</td>
+              <td><span class="badge badge-warning">30d</span> <span class="badge badge-warning">7d</span></td>
+              <td>WhatsApp</td>
+            </tr>
+            <tr>
+              <td>Cert. Inspeccion Sanitaria</td>
+              <td><span class="badge badge-warning">30d</span> <span class="badge badge-warning">14d</span> <span class="badge badge-warning">7d</span></td>
+              <td>WhatsApp</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="timeline" style="margin-top: 0;">
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>6. Create compliance tasks <span class="page-chip chip-eventos">Eventos/Tareas</span></h4>
+          <p>Create tasks of type "Vencimiento" or "Tarea" to assign renewal responsibilities to specific people, with appropriate notification channels.</p>
+        </div>
+
+        <div class="time-phase phase-weekly">&#x1F4C5; Weekly / Monthly Activities</div>
+
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>Full document audit</h4>
+          <p>Review all documents across all types (Contrato, Permiso, Licencia, Certificado, etc.) to ensure completeness.</p>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>Verify person-document associations</h4>
+          <p>Cross-reference <span class="page-chip chip-personas">Personas</span> with <span class="page-chip chip-documentos">Documentos</span> to ensure employee-linked documents (e.g., food handling certificates) are up to date.</p>
+        </div>
+        <div class="timeline-block">
+          <div class="timeline-dot compliance-dot"></div>
+          <h4>Report to owner</h4>
+          <p>Summarize compliance status. The Dashboard's "Documentos Activos" stat card provides a quick count.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross-Persona Interaction Patterns -->
+    <div class="section" id="cross">
+      <h2>Cross-Persona Interaction Patterns</h2>
+
+      <h3>Owner &rarr; Manager &rarr; Kitchen Staff (Delegation Chain)</h3>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-node fn-system">System: Profitability alert</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-owner">Owner reviews on Dashboard</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-owner">Owner decides action</div>
+        </div>
+        <div class="flow-arrow-down">&darr;</div>
+        <div class="flow-row">
+          <div class="flow-node fn-manager">Manager creates tasks</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-whatsapp">WhatsApp notification</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-chef">Chef executes recipe</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-system">System recalculates margins</div>
+        </div>
+      </div>
+
+      <h3>Compliance Officer &rarr; Owner (Escalation Chain)</h3>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-node fn-system">System: Expiration alert (&le;7 days)</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-compliance">Compliance receives notification</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-compliance">Reviews in Documentos</div>
+        </div>
+        <div class="flow-arrow-down">&darr; <span style="font-size:11px; color: var(--gray-600);">needs owner approval?</span></div>
+        <div class="flow-row">
+          <div class="flow-node fn-compliance">Creates task for owner</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-whatsapp">WhatsApp notification</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-owner">Owner takes action</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-owner">Marks task complete</div>
+        </div>
+      </div>
+
+      <h3>Manager &rarr; Kitchen Staff (Daily Operations)</h3>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-node fn-manager">Manager reviews Dashboard</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-manager">Creates/assigns tasks</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-whatsapp">WhatsApp daily summary</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-chef">Chef completes tasks</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-manager">Manager monitors on Dashboard</div>
+        </div>
+      </div>
+
+      <h3>System &rarr; All Personas (Automated Alerts)</h3>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-node fn-system">Inventory movement</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-system" style="background: #ffebee; border-color: #ef9a9a; color: #b71c1c;">stock &lt; minimum</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-system">Creates alerta_stock event</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-whatsapp">WhatsApp + Dashboard</div>
+        </div>
+        <div style="height: 12px;"></div>
+        <div class="flow-row">
+          <div class="flow-node fn-system">Recipe cost recalculation</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-system" style="background: #ffebee; border-color: #ef9a9a; color: #b71c1c;">margin &lt; 60%</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-system">Creates alerta_rentabilidad</div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-node fn-whatsapp">WhatsApp to owner</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Section -->
+    <div class="section" id="whatsapp">
+      <h2>WhatsApp as an Operational Channel</h2>
+
+      <h3>8.1 Current Outbound Capabilities (Implemented)</h3>
+      <p>RestaurantOS uses WhatsApp as a primary notification channel, reflecting the real-world communication habits of small restaurant teams in Latin America.</p>
+      <p><strong>Architecture:</strong> <code>NotificationService</code> &rarr; <code>WhatsAppAdapter</code> (currently in stub mode, ready for Twilio or Meta Cloud API integration). Messages are capped at 4,096 characters. Phone numbers must include country code (e.g., <code>+573001234567</code>).</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Message Type</th>
+            <th>Trigger</th>
+            <th>Format</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Daily task summary</strong></td>
+            <td><code>POST /api/notifications/send-daily-summaries</code></td>
+            <td>Personalized greeting, task count, numbered task list with times, overdue flags</td>
+          </tr>
+          <tr>
+            <td><strong>Document expiration alert</strong></td>
+            <td><code>POST /api/notifications/process-expiration-alerts</code></td>
+            <td>Urgency indicator (red &le;7 days, yellow &gt;7 days), document name, days remaining</td>
+          </tr>
+          <tr>
+            <td><strong>Low stock alert</strong></td>
+            <td>Automatic when <code>current_stock &lt; minimum_stock</code></td>
+            <td>Resource name, current vs. minimum stock levels</td>
+          </tr>
+          <tr>
+            <td><strong>Profitability alert</strong></td>
+            <td>Automatic when recipe margin drops below 60%</td>
+            <td>Recipe name, cost, sale price, margin percentage</td>
+          </tr>
+          <tr>
+            <td><strong>Event dispatch</strong></td>
+            <td><code>POST /api/notifications/dispatch</code> or <code>/dispatch-all</code></td>
+            <td>Event-specific notification based on type and channel</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- WhatsApp Mockups -->
+      <h4>Daily Summary Message</h4>
+      <div class="wa-mockup">
+        <div class="wa-header">
+          <div class="wa-avatar">&#x1F37D;&#xFE0F;</div>
+          <div>
+            <div class="wa-name">RestaurantOS</div>
+            <div class="wa-status">online</div>
+          </div>
+        </div>
+        <div class="wa-body">
+          <div class="wa-bubble">
+            Buenos dias, Maria! &#x1F305;<br>
+            &#x1F4CB; <span class="wa-bold">Resumen de tareas para 06 mar 2026</span><br><br>
+            Tienes <span class="wa-bold">4 tarea(s)</span> pendiente(s)<br>
+            &#x26A0;&#xFE0F; <span class="wa-bold">1 tarea(s) vencida(s)</span><br><br>
+            1. Verificar temperatura de neveras - 07:00 &#x26A0;&#xFE0F; <span class="wa-bold">VENCIDA</span><br>
+            2. Recibir pedido proveedor - 08:30<br>
+            3. Preparar mise en place almuerzo - 09:00<br>
+            4. Inventario cierre - 17:00<br><br>
+            Que tengas un excelente dia! &#x1F4AA;
+            <span class="wa-time">7:00 AM &#x2713;&#x2713;</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>Document Expiration Alert</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="wa-mockup">
+          <div class="wa-header">
+            <div class="wa-avatar">&#x1F37D;&#xFE0F;</div>
+            <div>
+              <div class="wa-name">RestaurantOS</div>
+              <div class="wa-status">online</div>
+            </div>
+          </div>
+          <div class="wa-body">
+            <div class="wa-bubble">
+              &#x1F534; <span class="wa-urgente">URGENTE</span> - Documento por vencer<br><br>
+              El documento <span class="wa-bold">Cert. Sanitaria</span> vence el <span class="wa-bold">12 mar 2026</span>.<br>
+              &#x23F0; Quedan <span class="wa-bold">6 dia(s)</span>.<br><br>
+              Por favor, gestiona la renovacion a tiempo.
+              <span class="wa-time">7:05 AM &#x2713;&#x2713;</span>
+            </div>
+          </div>
+        </div>
+        <div class="wa-mockup">
+          <div class="wa-header">
+            <div class="wa-avatar">&#x1F37D;&#xFE0F;</div>
+            <div>
+              <div class="wa-name">RestaurantOS</div>
+              <div class="wa-status">online</div>
+            </div>
+          </div>
+          <div class="wa-body">
+            <div class="wa-bubble">
+              &#x1F7E1; <span class="wa-atencion">Atencion</span> - Documento por vencer<br><br>
+              El documento <span class="wa-bold">Permiso Bomberos</span> vence el <span class="wa-bold">28 mar 2026</span>.<br>
+              &#x23F0; Quedan <span class="wa-bold">22 dia(s)</span>.<br><br>
+              Por favor, gestiona la renovacion a tiempo.
+              <span class="wa-time">7:05 AM &#x2713;&#x2713;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h4 style="margin-top: 20px;">Low Stock &amp; Profitability Alerts</h4>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="wa-mockup">
+          <div class="wa-header">
+            <div class="wa-avatar">&#x1F37D;&#xFE0F;</div>
+            <div>
+              <div class="wa-name">RestaurantOS</div>
+              <div class="wa-status">online</div>
+            </div>
+          </div>
+          <div class="wa-body">
+            <div class="wa-bubble">
+              &#x26A0;&#xFE0F; <span class="wa-bold">Alerta de Stock Bajo</span><br><br>
+              El recurso <span class="wa-bold">Aceite de Oliva</span> esta por debajo del minimo:<br>
+              &#x1F4E6; Stock actual: <span class="wa-bold">2.5 L</span><br>
+              &#x1F4C9; Stock minimo: <span class="wa-bold">5.0 L</span><br><br>
+              Por favor, realiza el pedido correspondiente.
+              <span class="wa-time">11:23 AM &#x2713;&#x2713;</span>
+            </div>
+          </div>
+        </div>
+        <div class="wa-mockup">
+          <div class="wa-header">
+            <div class="wa-avatar">&#x1F37D;&#xFE0F;</div>
+            <div>
+              <div class="wa-name">RestaurantOS</div>
+              <div class="wa-status">online</div>
+            </div>
+          </div>
+          <div class="wa-body">
+            <div class="wa-bubble">
+              &#x1F4CA; <span class="wa-bold">Alerta de Rentabilidad</span><br><br>
+              Alerta de rentabilidad: <span class="wa-bold">Bandeja Paisa</span> -<br>
+              Costo: $18,500,<br>
+              Precio venta: $28,000,<br>
+              Margen: 33.9%<br><br>
+              Por favor, revisa los indicadores financieros.
+              <span class="wa-time">2:15 PM &#x2713;&#x2713;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 32px;">8.2 Two-Way WhatsApp Interaction Use Cases (Future / Proposed)</h3>
+      <p>These scenarios describe how each persona could interact with RestaurantOS by replying to WhatsApp messages, using a simple keyword-based command pattern (not NLP).</p>
+
+      <h4 style="color: var(--owner-color);">&#x1F451; Owner Commands</h4>
+      <div class="cmd-grid">
+        <div class="cmd-card" style="border-left: 3px solid var(--owner-color);">
+          <div class="cmd-label">resumen</div>
+          <div class="cmd-desc">Receive instant dashboard summary: employee count, active documents, low stock items, profitability alerts</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--owner-color);">
+          <div class="cmd-label">{recipe name}</div>
+          <div class="cmd-desc">Get current margin info (cost, sale price, margin %)</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--owner-color);">
+          <div class="cmd-label">subir precio [receta] [precio]</div>
+          <div class="cmd-desc">Update recipe sale price directly from a profitability alert reply</div>
+        </div>
+      </div>
+
+      <h4 style="color: var(--manager-color);">&#x1F4CB; Manager Commands</h4>
+      <div class="cmd-grid">
+        <div class="cmd-card" style="border-left: 3px solid var(--manager-color);">
+          <div class="cmd-label">completar [tarea_id]</div>
+          <div class="cmd-desc">Mark a task as completed</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--manager-color);">
+          <div class="cmd-label">stock [recurso]</div>
+          <div class="cmd-desc">Check current stock level for a resource</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--manager-color);">
+          <div class="cmd-label">entrada [recurso] [cantidad]</div>
+          <div class="cmd-desc">Register an inventory entry (reason: Compra)</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--manager-color);">
+          <div class="cmd-label">&#x1F4F7; Forward invoice photo</div>
+          <div class="cmd-desc">OCR processing to auto-register inventory entry</div>
+        </div>
+      </div>
+
+      <h4 style="color: var(--chef-color);">&#x1F468;&#x200D;&#x1F373; Kitchen Staff Commands</h4>
+      <div class="cmd-grid">
+        <div class="cmd-card" style="border-left: 3px solid var(--chef-color);">
+          <div class="cmd-label">listo</div>
+          <div class="cmd-desc">Mark current/most recent assigned task as completed</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--chef-color);">
+          <div class="cmd-label">falta [ingrediente]</div>
+          <div class="cmd-desc">Report low stock to manager</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--chef-color);">
+          <div class="cmd-label">producir [receta] [porciones]</div>
+          <div class="cmd-desc">Trigger recipe production and inventory deduction</div>
+        </div>
+      </div>
+
+      <h4 style="color: var(--compliance-color);">&#x1F4C4; Compliance Officer Commands</h4>
+      <div class="cmd-grid">
+        <div class="cmd-card" style="border-left: 3px solid var(--compliance-color);">
+          <div class="cmd-label">vencimientos</div>
+          <div class="cmd-desc">Get list of documents expiring within 30 days</div>
+        </div>
+        <div class="cmd-card" style="border-left: 3px solid var(--compliance-color);">
+          <div class="cmd-label">renovado [documento_id]</div>
+          <div class="cmd-desc">Mark a document as renewed (pending file upload via web)</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 32px;">8.3 Implementation Considerations</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td><strong>Webhook endpoint</strong></td>
+            <td><code>POST /api/notifications/whatsapp/webhook</code> to receive inbound messages</td>
+          </tr>
+          <tr>
+            <td><strong>Message parsing</strong></td>
+            <td>Simple keyword-based command router (no NLP or multi-turn conversations)</td>
+          </tr>
+          <tr>
+            <td><strong>Authentication</strong></td>
+            <td>Match incoming WhatsApp number to a Person record's <code>whatsapp</code> field to resolve identity and restaurant context</td>
+          </tr>
+          <tr>
+            <td><strong>Security</strong></td>
+            <td>Only registered persons with matching WhatsApp numbers can interact</td>
+          </tr>
+          <tr>
+            <td><strong>Conversation model</strong></td>
+            <td>Stateless command-response pattern (no session tracking)</td>
+          </tr>
+          <tr>
+            <td><strong>Provider support</strong></td>
+            <td>Both Twilio and Meta Cloud API support incoming webhook callbacks</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- System-Generated Daily Rhythm -->
+    <div class="section" id="rhythm">
+      <h2>System-Generated Daily Rhythm</h2>
+      <p>RestaurantOS creates a natural operational cadence through automated notifications and alerts.</p>
+
+      <div class="rhythm-row">
+        <div class="rhythm-card rc-morning">
+          <h4>&#x1F305; Morning Notifications</h4>
+          <ul>
+            <li><strong>Daily task summaries</strong> to all employees with pending/overdue tasks (WhatsApp, Email)</li>
+            <li><strong>Document expiration alerts</strong> to persons associated with expiring documents</li>
+            <li><strong>Due event dispatch</strong> to all persons with events due today (per event's configured channel)</li>
+          </ul>
+          <p style="font-size: 11px; color: var(--gray-600); margin-top: 8px;">
+            Triggered via: <code>send-daily-summaries</code>, <code>process-expiration-alerts</code>, <code>dispatch-all</code>
+          </p>
+        </div>
+        <div class="rhythm-card rc-event">
+          <h4>&#x26A1; Event-Driven Alerts (Any Time)</h4>
+          <ul>
+            <li><strong>Low stock</strong>: When <code>current_stock &lt; minimum_stock</code> after any inventory movement</li>
+            <li><strong>Profitability</strong>: When recipe margin drops below 60% after cost recalculation</li>
+            <li><strong>Document expiration</strong>: When a document approaches its expiration date</li>
+          </ul>
+          <p style="font-size: 11px; color: var(--gray-600); margin-top: 8px;">
+            Appear on Dashboard alerts panel + WhatsApp notification
+          </p>
+        </div>
+        <div class="rhythm-card rc-overdue">
+          <h4>&#x1F6A8; Overdue Flagging</h4>
+          <ul>
+            <li>Events past scheduled date with status "Pendiente" are flagged as "Vencido"</li>
+            <li>Red background on Eventos/Tareas page</li>
+            <li>"VENCIDA" indicator in daily summaries</li>
+            <li>Dashboard groups overdue tasks for immediate attention</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Reference: Persona-to-Page Mapping -->
+    <div class="section" id="mapping">
+      <h2>Quick Reference: Persona-to-Page Mapping</h2>
+      <p>Usage frequency by persona across all six RestaurantOS pages.</p>
+
+      <table class="heatmap">
+        <thead>
+          <tr>
+            <th>Page</th>
+            <th>&#x1F451; Owner</th>
+            <th>&#x1F4CB; Manager</th>
+            <th>&#x1F468;&#x200D;&#x1F373; Kitchen Staff</th>
+            <th>&#x1F4C4; Compliance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;"><strong>Dashboard</strong></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">morning scan, alerts</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">morning briefing, monitoring</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">quick task check</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">expiration alerts</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>Personas</strong></td>
+            <td class="heat-weekly">Weekly<br><span style="font-size:10px;">staff review</span></td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">add/edit employees</span></td>
+            <td class="heat-rarely">Rarely</td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">verify contacts</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>Documentos</strong></td>
+            <td class="heat-weekly">Weekly<br><span style="font-size:10px;">compliance review</span></td>
+            <td class="heat-rarely">Rarely</td>
+            <td class="heat-never">Never</td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">core workflow</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>Eventos / Tareas</strong></td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">view delegated tasks</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">create, assign, complete</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">view and complete tasks</span></td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">create renewal tasks</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>Recursos / Inventario</strong></td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">spot-check, cost review</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">register movements, reconcile</span></td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">check stock, produce</span></td>
+            <td class="heat-never">Never</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>Recetas</strong></td>
+            <td class="heat-weekly">Weekly<br><span style="font-size:10px;">margin review, pricing</span></td>
+            <td class="heat-asneeded">As needed<br><span style="font-size:10px;">verify costs</span></td>
+            <td class="heat-daily">Daily<br><span style="font-size:10px;">recipe reference, produce</span></td>
+            <td class="heat-never">Never</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 12px; flex-wrap: wrap;">
+        <span class="badge badge-success">Daily</span>
+        <span class="badge badge-warning">Weekly</span>
+        <span class="badge badge-info">As Needed</span>
+        <span class="badge" style="background:#f5f5f5; color:#9e9e9e;">Rarely</span>
+        <span class="badge" style="background:#fafafa; color:#e0e0e0; border: 1px solid #eee;">Never</span>
+      </div>
+    </div>
+
+    <!-- Appendix: Notification Timing -->
+    <div class="section" id="appendix">
+      <h2>Appendix: Notification Timing by Persona</h2>
+
+      <table class="notif-matrix">
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th>Primary Channel</th>
+            <th>Morning Summary</th>
+            <th>Expiration Alerts</th>
+            <th>Stock Alerts</th>
+            <th>Profitability Alerts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;"><strong>&#x1F451; Owner</strong></td>
+            <td>WhatsApp</td>
+            <td class="notif-yes">&#x2713; Own tasks</td>
+            <td class="notif-yes">&#x2713; All documents</td>
+            <td class="notif-yes">&#x2713; All resources</td>
+            <td class="notif-yes">&#x2713; All recipes</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>&#x1F4CB; Manager</strong></td>
+            <td>WhatsApp</td>
+            <td class="notif-yes">&#x2713; Own tasks</td>
+            <td class="notif-sometimes">If assigned</td>
+            <td class="notif-yes">&#x2713; All resources</td>
+            <td class="notif-sometimes">Occasionally</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>&#x1F468;&#x200D;&#x1F373; Chef</strong></td>
+            <td>WhatsApp</td>
+            <td class="notif-yes">&#x2713; Own tasks</td>
+            <td class="notif-no">&mdash;</td>
+            <td class="notif-sometimes">When triggered</td>
+            <td class="notif-no">&mdash;</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;"><strong>&#x1F4C4; Compliance</strong></td>
+            <td>Email + WhatsApp</td>
+            <td class="notif-yes">&#x2713; Own tasks</td>
+            <td class="notif-yes">&#x2713; All documents</td>
+            <td class="notif-no">&mdash;</td>
+            <td class="notif-no">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Alert Urgency Formatting by Channel</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th style="color: #f57f17;">Warning (&gt;7 days)</th>
+            <th style="color: #d32f2f;">Urgent (&le;7 days)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>WhatsApp</strong></td>
+            <td>&#x1F7E1; Yellow circle + <code>*Atencion*</code></td>
+            <td>&#x1F534; Red circle + <code>*URGENTE*</code></td>
+          </tr>
+          <tr>
+            <td><strong>Email</strong></td>
+            <td>Amber header <span style="display:inline-block;width:14px;height:14px;background:#f9a825;border-radius:3px;vertical-align:middle;"></span> <code>#f9a825</code></td>
+            <td>Dark red header <span style="display:inline-block;width:14px;height:14px;background:#d32f2f;border-radius:3px;vertical-align:middle;"></span> <code>#d32f2f</code></td>
+          </tr>
+          <tr>
+            <td><strong>Dashboard</strong></td>
+            <td><span class="badge badge-warning">Por Vencer</span> (within 30 days)</td>
+            <td><span class="badge badge-error">Vencido</span> (expired)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+</body>
+</html>
