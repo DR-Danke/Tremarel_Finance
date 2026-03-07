@@ -19,6 +19,9 @@ from src.core.services.ld_case_service import ld_case_service
 from src.core.services.ld_classification_service import ld_classification_service
 from src.core.services.ld_client_service import ld_client_service
 from src.core.services.ld_pricing_service import ld_pricing_service
+from src.core.services.ld_deliverable_service import ld_deliverable_service
+from src.core.services.ld_document_service import ld_document_service
+from src.core.services.ld_message_service import ld_message_service
 from src.core.services.ld_specialist_service import ld_specialist_service
 from src.interface.legaldesk_dto import (
     AssignmentCreateDTO,
@@ -56,9 +59,6 @@ from src.interface.legaldesk_dto import (
     SpecialistUpdateDTO,
     SuggestionResponseDTO,
 )
-from src.repository.ld_deliverable_repository import ld_deliverable_repository
-from src.repository.ld_document_repository import ld_document_repository
-from src.repository.ld_message_repository import ld_message_repository
 
 router = APIRouter(prefix="/api/legaldesk", tags=["Legal Desk"])
 
@@ -289,7 +289,7 @@ async def list_deliverables(
 ) -> List[DeliverableResponseDTO]:
     """List deliverables for a case."""
     print(f"INFO [LegalDeskRoutes]: List deliverables for case {case_id}")
-    deliverables = ld_deliverable_repository.get_by_case(db, case_id)
+    deliverables = ld_deliverable_service.get_case_deliverables(db, case_id)
     return [DeliverableResponseDTO.model_validate(d) for d in deliverables]
 
 
@@ -302,8 +302,7 @@ async def create_deliverable(
 ) -> DeliverableResponseDTO:
     """Create a deliverable for a case."""
     print(f"INFO [LegalDeskRoutes]: Create deliverable for case {case_id}")
-    data.case_id = case_id
-    deliverable = ld_deliverable_repository.create(db, data.model_dump())
+    deliverable = ld_deliverable_service.create_deliverable(db, case_id, data)
     return DeliverableResponseDTO.model_validate(deliverable)
 
 
@@ -317,7 +316,7 @@ async def update_deliverable(
 ) -> DeliverableResponseDTO:
     """Update a deliverable."""
     print(f"INFO [LegalDeskRoutes]: Update deliverable {deliverable_id} for case {case_id}")
-    updated = ld_deliverable_repository.update(db, deliverable_id, data.model_dump(exclude_unset=True))
+    updated = ld_deliverable_service.update_deliverable(db, deliverable_id, data)
     if not updated:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deliverable not found")
     return DeliverableResponseDTO.model_validate(updated)
@@ -333,7 +332,7 @@ async def update_deliverable_status(
 ) -> DeliverableResponseDTO:
     """Update deliverable status."""
     print(f"INFO [LegalDeskRoutes]: Update deliverable {deliverable_id} status to '{body.status}'")
-    updated = ld_deliverable_repository.update_status(db, deliverable_id, body.status)
+    updated = ld_deliverable_service.update_deliverable_status(db, deliverable_id, body.status)
     if not updated:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deliverable not found")
     return DeliverableResponseDTO.model_validate(updated)
@@ -353,7 +352,7 @@ async def get_messages(
 ) -> List[MessageResponseDTO]:
     """Get messages for a case."""
     print(f"INFO [LegalDeskRoutes]: Get messages for case {case_id}, include_internal={include_internal}")
-    messages = ld_message_repository.get_by_case(db, case_id, include_internal=include_internal)
+    messages = ld_message_service.get_case_messages(db, case_id, include_internal=include_internal)
     return [MessageResponseDTO.model_validate(m) for m in messages]
 
 
@@ -366,9 +365,7 @@ async def create_message(
 ) -> MessageResponseDTO:
     """Create a message on a case."""
     print(f"INFO [LegalDeskRoutes]: Create message for case {case_id}")
-    msg_data = data.model_dump()
-    msg_data["case_id"] = case_id
-    message = ld_message_repository.create(db, msg_data)
+    message = ld_message_service.create_message(db, case_id, data)
     return MessageResponseDTO.model_validate(message)
 
 
@@ -385,7 +382,7 @@ async def list_documents(
 ) -> List[DocumentResponseDTO]:
     """List documents for a case."""
     print(f"INFO [LegalDeskRoutes]: List documents for case {case_id}")
-    documents = ld_document_repository.get_by_case(db, case_id)
+    documents = ld_document_service.get_case_documents(db, case_id)
     return [DocumentResponseDTO.model_validate(d) for d in documents]
 
 
@@ -398,9 +395,7 @@ async def create_document(
 ) -> DocumentResponseDTO:
     """Add document metadata to a case."""
     print(f"INFO [LegalDeskRoutes]: Add document to case {case_id}")
-    doc_data = data.model_dump()
-    doc_data["case_id"] = case_id
-    document = ld_document_repository.create(db, doc_data)
+    document = ld_document_service.create_document(db, case_id, data)
     return DocumentResponseDTO.model_validate(document)
 
 
