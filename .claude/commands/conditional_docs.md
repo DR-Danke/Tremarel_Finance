@@ -638,3 +638,10 @@ This prompt helps you determine what documentation you should read based on the 
     - When creating or modifying Legal Desk page components in pages/legaldesk/
     - When troubleshooting Legal Desk route registration or sidebar rendering
     - When adding a new Legal Desk page and need to wire it into routing and navigation
+
+- app_docs/patch-957bac6a-standardize-delete-rbac-enforcement.md
+  - Conditions:
+    - When working with RBAC enforcement on delete endpoints
+    - When adding new delete endpoints and need to follow the require_roles pattern
+    - When troubleshooting 403 Forbidden errors on delete operations
+    - When reviewing or modifying role-based access control on route-level dependencies
