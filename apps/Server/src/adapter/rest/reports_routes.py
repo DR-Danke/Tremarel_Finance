@@ -4,7 +4,7 @@ from datetime import date
 from typing import Any, Dict
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
@@ -44,9 +44,16 @@ async def get_report_data(
         f"for entity {entity_id} ({start_date} to {end_date})"
     )
 
-    report_data = reports_service.get_report_data(
-        db, entity_id, start_date, end_date
-    )
+    try:
+        report_data = reports_service.get_report_data(
+            db, entity_id, start_date, end_date
+        )
+    except PermissionError as e:
+        print(f"ERROR [ReportsRoutes]: Access denied: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        print(f"ERROR [ReportsRoutes]: Report data request failed: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     print("INFO [ReportsRoutes]: Report data returned successfully")
     return report_data
@@ -80,9 +87,16 @@ async def export_csv(
         f"for entity {entity_id} ({start_date} to {end_date})"
     )
 
-    csv_content = reports_service.export_transactions_csv(
-        db, entity_id, start_date, end_date
-    )
+    try:
+        csv_content = reports_service.export_transactions_csv(
+            db, entity_id, start_date, end_date
+        )
+    except PermissionError as e:
+        print(f"ERROR [ReportsRoutes]: Access denied: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        print(f"ERROR [ReportsRoutes]: CSV export failed: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     # Generate filename with date range
     filename = f"transactions_{start_date.isoformat()}_{end_date.isoformat()}.csv"
