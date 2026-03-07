@@ -638,3 +638,11 @@ This prompt helps you determine what documentation you should read based on the 
     - When creating or modifying Legal Desk page components in pages/legaldesk/
     - When troubleshooting Legal Desk route registration or sidebar rendering
     - When adding a new Legal Desk page and need to wire it into routing and navigation
+
+- app_docs/chore-93e31eb3-legaldesk-service-layer.md
+  - Conditions:
+    - When working with Legal Desk deliverable, message, or document services
+    - When implementing new Legal Desk service classes following the singleton pattern
+    - When modifying legaldesk_routes.py endpoint handlers for deliverables, messages, or documents
+    - When adding business logic (validation, authorization) to Legal Desk deliverable/message/document operations
+    - When troubleshooting Legal Desk service layer imports or delegation patterns
