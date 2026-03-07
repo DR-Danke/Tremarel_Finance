@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Summary - Arkangel AI Marketing Strategy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #2d3748;
+            background-color: #f7fafc;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.06);
+        }
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+            color: #ffffff;
+            padding: 40px;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #bee3f8;
+        }
+        .header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section {
+            padding: 28px 40px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3182ce;
+            display: inline-block;
+        }
+        .summary-text {
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.8;
+            background: #ebf8ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3182ce;
+        }
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .participant-card {
+            background: #f7fafc;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .participant-card .name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 15px;
+        }
+        .participant-card .role {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .discussion-item {
+            margin-bottom: 16px;
+            padding: 16px 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 3px solid #3182ce;
+        }
+        .discussion-item:last-child {
+            margin-bottom: 0;
+        }
+        .discussion-item h4 {
+            color: #2b6cb0;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+        .discussion-item p {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .action-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+        .action-table thead th {
+            background: #2b6cb0;
+            color: #ffffff;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-table tbody td {
+            padding: 12px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+        .action-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .action-table tbody tr:nth-child(even) {
+            background: #f7fafc;
+        }
+        .owner-badge {
+            display: inline-block;
+            background: #ebf8ff;
+            color: #2b6cb0;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .owner-badge.unassigned {
+            background: #fff5f5;
+            color: #c53030;
+        }
+        .decisions-list, .next-steps-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decisions-list li, .next-steps-list li {
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5568;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 3px solid #48bb78;
+            line-height: 1.6;
+        }
+        .next-steps-list li {
+            border-left-color: #ed8936;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .metric-card {
+            background: linear-gradient(135deg, #ebf8ff 0%, #f0fff4 100%);
+            padding: 18px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .metric-card .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2b6cb0;
+        }
+        .metric-card .label {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .deal-status {
+            background: linear-gradient(135deg, #fefcbf 0%, #fefce8 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ecc94b;
+        }
+        .deal-status .status-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #975a16;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .deal-status p {
+            font-size: 14px;
+            color: #744210;
+        }
+        .diagram-section {
+            margin-bottom: 24px;
+        }
+        .diagram-section h4 {
+            font-size: 15px;
+            color: #2b6cb0;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        .diagram-container {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+        .footer {
+            padding: 24px 40px;
+            background: #1a365d;
+            color: #a0aec0;
+            font-size: 12px;
+            text-align: center;
+        }
+        .footer a {
+            color: #90cdf4;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Arkangel AI Marketing Strategy & Brand Repositioning</h1>
+            <div class="header-meta">
+                <span>Date: February 9, 2026</span>
+                <span>Duration: 53 minutes</span>
+                <span>Client: Arkangel AI</span>
+            </div>
+        </div>
+
+        <!-- Participants -->
+        <div class="section">
+            <h2 class="section-title">Participants</h2>
+            <div class="participants-grid">
+                <div class="participant-card">
+                    <div class="name">Daniel Cardona</div>
+                    <div class="role">Marketing Strategist / Consultant</div>
+                </div>
+                <div class="participant-card">
+                    <div class="name">Laura Vel&aacute;squez Herrera</div>
+                    <div class="role">Arkangel AI Stakeholder</div>
+                </div>
+                <div class="participant-card">
+                    <div class="name">Jose Zea</div>
+                    <div class="role">Co-founder, Arkangel AI</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary -->
+        <div class="section">
+            <h2 class="section-title">Executive Summary</h2>
+            <div class="summary-text">
+                Daniel presented a brand audit revealing a critical disconnect between Arkangel AI's PR narrative (saving lives) and its web positioning (revenue/CFO focus). The team agreed to reposition Arkangel as the "Bureaucracy Slayer" using an Iron Man archetype. Jos&eacute; demonstrated the internal Content Engine (QMD), with tangible results expected in 3 months. The commercial model was set as revenue share adjusted for 6-9 month cycles, with a formal proposal pending NDA signature.
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="section">
+            <h2 class="section-title">Key Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="value">&gt;$60K</div>
+                    <div class="label">Enterprise Pilot Minimum</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">$99 - $25K</div>
+                    <div class="label">Tiered Offer Scale</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">6-9 Months</div>
+                    <div class="label">Revenue Share Cycles</div>
+                </div>
+                <div class="metric-card">
+                    <div class="value">3 Months</div>
+                    <div class="label">Content Engine Results</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discussion Points -->
+        <div class="section">
+            <h2 class="section-title">Discussion Points</h2>
+            <div class="discussion-item">
+                <h4>1. Brand Audit & Narrative Disconnect</h4>
+                <p>Daniel's brand audit revealed a critical gap between Arkangel's PR narrative (focused on saving lives) and its web positioning (targeting revenue/CFO personas). This misalignment undermines brand coherence and market trust.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>2. Brand Repositioning Strategy</h4>
+                <p>Proposed repositioning Arkangel AI as the "Bureaucracy Slayer" with an Iron Man archetype &mdash; projecting innovation, audacity, and real impact rather than generic corporate messaging.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>3. Content Engine (QMD)</h4>
+                <p>Jos&eacute; presented the internal Content Engine (QMD), an already-developed content generation and distribution system. Tangible results from this engine are expected within 3 months of implementation.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>4. Commercial Model & Pricing</h4>
+                <p>Revenue share model adjusted to 6-9 month cycles to match enterprise sales timelines. Enterprise pilot minimum set at &gt;$60K, with a tiered offer scale of $99, $1K, and $25K.</p>
+            </div>
+            <div class="discussion-item">
+                <h4>5. Authenticity Over Corporate Theater</h4>
+                <p>The team explicitly rejected superficial corporate activities (events, vanity metrics) in favor of authentic, value-driven marketing that reflects the founders' real identity and mission.</p>
+            </div>
+        </div>
+
+        <!-- Action Items -->
+        <div class="section">
+            <h2 class="section-title">Action Items</h2>
+            <table class="action-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Owner</th>
+                        <th>Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Send proposal with multiple scenarios</td>
+                        <td><span class="owner-badge">Daniel Cardona</span></td>
+                        <td>By Feb 11, 2026</td>
+                    </tr>
+                    <tr>
+                        <td>Coordinate and finalize NDA signature</td>
+                        <td><span class="owner-badge">Laura Vel&aacute;squez</span></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Facilitate access to internal data and pipeline</td>
+                        <td><span class="owner-badge">Jose Zea</span></td>
+                        <td>After NDA signed</td>
+                    </tr>
+                    <tr>
+                        <td>Implement Content Engine (QMD)</td>
+                        <td><span class="owner-badge unassigned">Unassigned</span></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Establish initial tracking and metrics baseline</td>
+                        <td><span class="owner-badge unassigned">Unassigned</span></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Deliver formal proposal (24h after NDA)</td>
+                        <td><span class="owner-badge">Daniel Cardona</span></td>
+                        <td>24h post-NDA</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Decisions -->
+        <div class="section">
+            <h2 class="section-title">Decisions Made</h2>
+            <ul class="decisions-list">
+                <li>Reposition Arkangel AI as "Bureaucracy Slayer" with an Iron Man archetype</li>
+                <li>Reject superficial corporate activities; prioritize authenticity and real value</li>
+                <li>Adopt a revenue share commercial model adjusted for 6-9 month enterprise cycles</li>
+                <li>Require NDA signature before advancing to execution phase and data access</li>
+                <li>Enterprise pilot minimum threshold set at &gt;$60,000</li>
+                <li>Tiered offer scale established: $99 - $1,000 - $25,000</li>
+            </ul>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="section">
+            <h2 class="section-title">Next Steps</h2>
+            <ul class="next-steps-list">
+                <li>Sign NDA to unlock access to Arkangel's internal data and pipeline</li>
+                <li>Daniel sends formal proposal with multiple engagement scenarios within 24 hours of NDA signing</li>
+                <li>Implement Content Engine (QMD) with initial metrics tracking</li>
+                <li>Begin brand repositioning execution once agreement is formalized</li>
+            </ul>
+        </div>
+
+        <!-- Deal Status -->
+        <div class="section">
+            <h2 class="section-title">Deal Status</h2>
+            <div class="deal-status">
+                <div class="status-label">In Progress &mdash; Pending NDA</div>
+                <p>Formal proposal in development. Key stakeholders (Laura and Jos&eacute;) are aligned on the strategy. NDA signature is required to advance to execution phase and unlock data access.</p>
+            </div>
+        </div>
+
+        <!-- Technical Architecture Diagrams -->
+        <div class="section">
+            <h2 class="section-title">Technical Architecture</h2>
+
+            <div class="diagram-section">
+                <h4>Content Engine (QMD) Pipeline</h4>
+                <div class="diagram-container">
+                    <pre class="mermaid">
+flowchart TD
+    A["Content Strategy\nBrand Positioning"] --> B["QMD Content Engine"]
+    B --> C["Content Generation"]
+    B --> D["Distribution Channels"]
+    C --> E["Blog Posts &\nThought Leadership"]
+    C --> F["Social Media\nContent"]
+    C --> G["Case Studies &\nWhitepapers"]
+    D --> H["Organic Social"]
+    D --> I["Email Campaigns"]
+    D --> J["PR & Media"]
+    E --> K["Metrics &\nTracking"]
+    F --> K
+    G --> K
+    K --> L{"3-Month\nResults Review"}
+    L -->|Iterate| A
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Brand Repositioning Flow</h4>
+                <div class="diagram-container">
+                    <pre class="mermaid">
+flowchart LR
+    subgraph Current["Current State"]
+        A1["PR Narrative:\nSaving Lives"] -.->|Disconnect| A2["Web Positioning:\nRevenue / CFO"]
+    end
+    subgraph Repositioned["Target State"]
+        B1["Unified Brand:\nBureaucracy Slayer"]
+        B2["Iron Man\nArchetype"]
+        B1 --- B2
+    end
+    Current -->|"Brand Audit &\nRealignment"| Repositioned
+    Repositioned --> C1["Authentic\nMessaging"]
+    Repositioned --> C2["Value-Driven\nContent"]
+    Repositioned --> C3["Enterprise\nPositioning"]
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Engagement & Deal Pipeline</h4>
+                <div class="diagram-container">
+                    <pre class="mermaid">
+sequenceDiagram
+    participant DC as Daniel Cardona
+    participant LV as Laura Velasquez
+    participant JZ as Jose Zea
+    participant AK as Arkangel AI
+
+    DC->>LV: Brand Audit Presentation
+    LV->>DC: Stakeholder Alignment
+    JZ->>DC: Content Engine (QMD) Demo
+    DC->>LV: Proposal with Scenarios (2 days)
+    LV->>DC: NDA Coordination & Signature
+    DC->>AK: Formal Proposal (24h post-NDA)
+    JZ->>DC: Data & Pipeline Access
+    DC->>AK: Content Engine Implementation
+    Note over DC,AK: 3-Month Results Checkpoint
+    DC->>AK: Revenue Share Activation (6-9 months)
+                    </pre>
+                </div>
+            </div>
+
+            <div class="diagram-section">
+                <h4>Pricing & Commercial Model</h4>
+                <div class="diagram-container">
+                    <pre class="mermaid">
+flowchart TD
+    A["Arkangel AI\nCommercial Model"] --> B["Revenue Share"]
+    B --> C["Cycle: 6-9 Months"]
+    A --> D["Tiered Offer Scale"]
+    D --> E["Entry Tier\n$99"]
+    D --> F["Growth Tier\n$1,000"]
+    D --> G["Enterprise Tier\n$25,000"]
+    A --> H["Enterprise Pilot"]
+    H --> I["Minimum: >$60,000"]
+    C --> J{"Results\nReview"}
+    J -->|"Positive ROI"| K["Scale & Expand"]
+    J -->|"Adjust"| L["Optimize Strategy"]
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Meeting Summary &mdash; Generated on March 7, 2026 &bull; Arkangel AI &times; Tremarel Finance</p>
+            <p style="margin-top: 6px;">
+                <a href="https://app.fireflies.ai/view/01KGSYXGMB7RKGPDDXC2NZH4KZ">View Original Recording on Fireflies</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

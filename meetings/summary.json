@@ -1,0 +1,100 @@
+{
+  "title": "Arkangel AI Marketing Strategy & Brand Repositioning",
+  "meeting_date": "2026-02-09",
+  "participants": [
+    {"name": "Daniel Cardona", "role": "Marketing Strategist / Consultant"},
+    {"name": "Laura Velásquez Herrera", "role": "Arkangel AI Stakeholder"},
+    {"name": "Jose Zea", "role": "Co-founder, Arkangel AI"}
+  ],
+  "company_name": "Arkangel AI",
+  "contact_name": "Laura Velásquez Herrera",
+  "contact_email": null,
+  "summary": "Daniel presented a brand audit revealing a critical disconnect between Arkangel AI's PR narrative (saving lives) and its web positioning (revenue/CFO focus). The team agreed to reposition Arkangel as the 'Bureaucracy Slayer' using an Iron Man archetype. José demonstrated the internal Content Engine (QMD), with tangible results expected in 3 months. The commercial model was set as revenue share adjusted for 6-9 month cycles, with a formal proposal pending NDA signature.",
+  "discussion_points": [
+    {
+      "topic": "Brand Audit & Narrative Disconnect",
+      "description": "Daniel's brand audit revealed a critical gap between Arkangel's PR narrative (focused on saving lives) and its web positioning (targeting revenue/CFO personas). This misalignment undermines brand coherence and market trust."
+    },
+    {
+      "topic": "Brand Repositioning Strategy",
+      "description": "Proposed repositioning Arkangel AI as the 'Bureaucracy Slayer' with an Iron Man archetype — projecting innovation, audacity, and real impact rather than generic corporate messaging."
+    },
+    {
+      "topic": "Content Engine (QMD)",
+      "description": "José presented the internal Content Engine (QMD), an already-developed content generation and distribution system. Tangible results from this engine are expected within 3 months of implementation."
+    },
+    {
+      "topic": "Commercial Model & Pricing",
+      "description": "Revenue share model adjusted to 6-9 month cycles to match enterprise sales timelines. Enterprise pilot minimum set at >$60K, with a tiered offer scale of $99, $1K, and $25K."
+    },
+    {
+      "topic": "Authenticity Over Corporate Theater",
+      "description": "The team explicitly rejected superficial corporate activities (events, vanity metrics) in favor of authentic, value-driven marketing that reflects the founders' real identity and mission."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Send proposal with multiple scenarios",
+      "owner": "Daniel Cardona",
+      "deadline": "Within 2 days of meeting (by Feb 11, 2026)"
+    },
+    {
+      "description": "Coordinate and finalize NDA signature",
+      "owner": "Laura Velásquez Herrera",
+      "deadline": null
+    },
+    {
+      "description": "Facilitate access to internal data and pipeline",
+      "owner": "Jose Zea",
+      "deadline": "After NDA is signed"
+    },
+    {
+      "description": "Implement Content Engine (QMD)",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Establish initial tracking and metrics baseline",
+      "owner": null,
+      "deadline": null
+    },
+    {
+      "description": "Deliver formal proposal within 24 hours after NDA signing",
+      "owner": "Daniel Cardona",
+      "deadline": "24 hours after NDA signature"
+    }
+  ],
+  "decisions": [
+    "Reposition Arkangel AI as 'Bureaucracy Slayer' with an Iron Man archetype",
+    "Reject superficial corporate activities; prioritize authenticity and real value",
+    "Adopt a revenue share commercial model adjusted for 6-9 month enterprise cycles",
+    "Require NDA signature before advancing to execution phase and data access",
+    "Enterprise pilot minimum threshold set at >$60,000",
+    "Tiered offer scale established: $99 - $1,000 - $25,000"
+  ],
+  "next_steps": [
+    "Sign NDA to unlock access to Arkangel's internal data and pipeline",
+    "Daniel sends formal proposal with multiple engagement scenarios within 24 hours of NDA signing",
+    "Implement Content Engine (QMD) with initial metrics tracking",
+    "Begin brand repositioning execution once agreement is formalized"
+  ],
+  "diagrams": [
+    {
+      "title": "Content Engine (QMD) Pipeline",
+      "mermaid_code": "flowchart TD\n    A[\"Content Strategy\nBrand Positioning\"] --> B[\"QMD Content Engine\"]\n    B --> C[\"Content Generation\"]\n    B --> D[\"Distribution Channels\"]\n    C --> E[\"Blog Posts &\nThought Leadership\"]\n    C --> F[\"Social Media\nContent\"]\n    C --> G[\"Case Studies &\nWhitepapers\"]\n    D --> H[\"Organic Social\"]\n    D --> I[\"Email Campaigns\"]\n    D --> J[\"PR & Media\"]\n    E --> K[\"Metrics &\nTracking\"]\n    F --> K\n    G --> K\n    K --> L{\"3-Month\nResults Review\"}\n    L -->|Iterate| A"
+    },
+    {
+      "title": "Brand Repositioning Flow",
+      "mermaid_code": "flowchart LR\n    subgraph Current[\"Current State\"]\n        A1[\"PR Narrative:\nSaving Lives\"] -.->|Disconnect| A2[\"Web Positioning:\nRevenue / CFO\"]\n    end\n    subgraph Repositioned[\"Target State\"]\n        B1[\"Unified Brand:\nBureaucracy Slayer\"]\n        B2[\"Iron Man\nArchetype\"]\n        B1 --- B2\n    end\n    Current -->|\"Brand Audit &\nRealignment\"| Repositioned\n    Repositioned --> C1[\"Authentic\nMessaging\"]\n    Repositioned --> C2[\"Value-Driven\nContent\"]\n    Repositioned --> C3[\"Enterprise\nPositioning\"]"
+    },
+    {
+      "title": "Engagement & Deal Pipeline",
+      "mermaid_code": "sequenceDiagram\n    participant DC as Daniel Cardona\n    participant LV as Laura Velasquez\n    participant JZ as Jose Zea\n    participant AK as Arkangel AI\n\n    DC->>LV: Brand Audit Presentation\n    LV->>DC: Stakeholder Alignment\n    JZ->>DC: Content Engine (QMD) Demo\n    DC->>LV: Proposal with Scenarios (2 days)\n    LV->>DC: NDA Coordination & Signature\n    DC->>AK: Formal Proposal (24h post-NDA)\n    JZ->>DC: Data & Pipeline Access\n    DC->>AK: Content Engine Implementation\n    Note over DC,AK: 3-Month Results Checkpoint\n    DC->>AK: Revenue Share Activation (6-9 months)"
+    },
+    {
+      "title": "Pricing & Commercial Model",
+      "mermaid_code": "flowchart TD\n    A[\"Arkangel AI\nCommercial Model\"] --> B[\"Revenue Share\"]\n    B --> C[\"Cycle: 6-9 Months\"]\n    A --> D[\"Tiered Offer Scale\"]\n    D --> E[\"Entry Tier\n$99\"]\n    D --> F[\"Growth Tier\n$1,000\"]\n    D --> G[\"Enterprise Tier\n$25,000\"]\n    A --> H[\"Enterprise Pilot\"]\n    H --> I[\"Minimum: >$60,000\"]\n    C --> J{\"Results\nReview\"}\n    J -->|\"Positive ROI\"| K[\"Scale & Expand\"]\n    J -->|\"Adjust\"| L[\"Optimize Strategy\"]"
+    }
+  ],
+  "html_output": "See meetings/summary.html"
+}
