@@ -693,7 +693,7 @@ async def test_update_recipe_not_found() -> None:
 @pytest.mark.asyncio
 async def test_delete_recipe_success() -> None:
     """Test that authorized user can delete recipe."""
-    mock_user = create_mock_user()
+    mock_user = create_mock_user(role="admin")
     mock_recipe = create_mock_recipe()
 
     with patch(
@@ -728,7 +728,7 @@ async def test_delete_recipe_success() -> None:
 @pytest.mark.asyncio
 async def test_delete_recipe_not_found() -> None:
     """Test that deleting nonexistent recipe returns 404."""
-    mock_user = create_mock_user()
+    mock_user = create_mock_user(role="admin")
     recipe_id = uuid4()
 
     with patch(

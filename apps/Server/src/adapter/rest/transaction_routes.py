@@ -43,7 +43,14 @@ async def create_transaction(
     print(f"INFO [TransactionRoutes]: Create transaction request from user {current_user['id']}")
 
     user_id = UUID(current_user["id"])
-    transaction = transaction_service.create_transaction(db, user_id, data)
+    try:
+        transaction = transaction_service.create_transaction(db, user_id, data)
+    except PermissionError as e:
+        print(f"ERROR [TransactionRoutes]: Access denied: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        print(f"ERROR [TransactionRoutes]: Transaction creation failed: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     print(f"INFO [TransactionRoutes]: Transaction {transaction.id} created successfully")
     return TransactionResponseDTO.model_validate(transaction)
@@ -89,13 +96,17 @@ async def list_transactions(
         type=type,
     )
 
-    transactions, total = transaction_service.list_transactions(
-        db=db,
-        entity_id=entity_id,
-        filters=filters,
-        skip=skip,
-        limit=limit,
-    )
+    try:
+        transactions, total = transaction_service.list_transactions(
+            db=db,
+            entity_id=entity_id,
+            filters=filters,
+            skip=skip,
+            limit=limit,
+        )
+    except ValueError as e:
+        print(f"ERROR [TransactionRoutes]: Failed to list transactions: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     print(f"INFO [TransactionRoutes]: Returning {len(transactions)} transactions (total: {total})")
     return TransactionListResponseDTO(
@@ -128,13 +139,20 @@ async def get_transaction(
     """
     print(f"INFO [TransactionRoutes]: Get transaction {transaction_id}")
 
-    transaction = transaction_service.get_transaction(db, transaction_id, entity_id)
-    if not transaction:
-        print(f"ERROR [TransactionRoutes]: Transaction {transaction_id} not found")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Transaction not found",
-        )
+    try:
+        transaction = transaction_service.get_transaction(db, transaction_id, entity_id)
+        if not transaction:
+            print(f"ERROR [TransactionRoutes]: Transaction {transaction_id} not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Transaction not found",
+            )
+    except PermissionError as e:
+        print(f"ERROR [TransactionRoutes]: Access denied: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        print(f"ERROR [TransactionRoutes]: Failed to get transaction: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     print(f"INFO [TransactionRoutes]: Returning transaction {transaction_id}")
     return TransactionResponseDTO.model_validate(transaction)
@@ -166,13 +184,20 @@ async def update_transaction(
     """
     print(f"INFO [TransactionRoutes]: Update transaction {transaction_id}")
 
-    transaction = transaction_service.update_transaction(db, transaction_id, entity_id, data)
-    if not transaction:
-        print(f"ERROR [TransactionRoutes]: Transaction {transaction_id} not found or update failed")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Transaction not found",
-        )
+    try:
+        transaction = transaction_service.update_transaction(db, transaction_id, entity_id, data)
+        if not transaction:
+            print(f"ERROR [TransactionRoutes]: Transaction {transaction_id} not found or update failed")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Transaction not found",
+            )
+    except PermissionError as e:
+        print(f"ERROR [TransactionRoutes]: Access denied: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        print(f"ERROR [TransactionRoutes]: Transaction update failed: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     print(f"INFO [TransactionRoutes]: Transaction {transaction_id} updated successfully")
     return TransactionResponseDTO.model_validate(transaction)
@@ -202,12 +227,19 @@ async def delete_transaction(
     """
     print(f"INFO [TransactionRoutes]: Delete transaction {transaction_id} by user {current_user['id']}")
 
-    success = transaction_service.delete_transaction(db, transaction_id, entity_id)
-    if not success:
-        print(f"ERROR [TransactionRoutes]: Transaction {transaction_id} not found or delete failed")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Transaction not found",
-        )
+    try:
+        success = transaction_service.delete_transaction(db, transaction_id, entity_id)
+        if not success:
+            print(f"ERROR [TransactionRoutes]: Transaction {transaction_id} not found or delete failed")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Transaction not found",
+            )
+    except PermissionError as e:
+        print(f"ERROR [TransactionRoutes]: Access denied: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except ValueError as e:
+        print(f"ERROR [TransactionRoutes]: Transaction deletion failed: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
     print(f"INFO [TransactionRoutes]: Transaction {transaction_id} deleted successfully")

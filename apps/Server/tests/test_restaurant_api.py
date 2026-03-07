@@ -435,7 +435,7 @@ async def test_update_restaurant_no_permission() -> None:
 @pytest.mark.asyncio
 async def test_delete_restaurant_success() -> None:
     """Test that admin can delete restaurant."""
-    mock_user = create_mock_user()
+    mock_user = create_mock_user(role="admin")
     restaurant_id = uuid4()
 
     with patch(

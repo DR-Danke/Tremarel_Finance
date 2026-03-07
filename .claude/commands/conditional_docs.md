@@ -638,3 +638,38 @@ This prompt helps you determine what documentation you should read based on the 
     - When creating or modifying Legal Desk page components in pages/legaldesk/
     - When troubleshooting Legal Desk route registration or sidebar rendering
     - When adding a new Legal Desk page and need to wire it into routing and navigation
+
+- app_docs/chore-93e31eb3-legaldesk-service-layer.md
+  - Conditions:
+    - When working with Legal Desk deliverable, message, or document services
+    - When implementing new Legal Desk service classes following the singleton pattern
+    - When modifying legaldesk_routes.py endpoint handlers for deliverables, messages, or documents
+    - When adding business logic (validation, authorization) to Legal Desk deliverable/message/document operations
+    - When troubleshooting Legal Desk service layer imports or delegation patterns
+
+- app_docs/patch-38f928aa-route-error-handling.md
+  - Conditions:
+    - When adding error handling to backend route endpoints
+    - When working with transaction_routes.py or reports_routes.py exception handling
+    - When implementing the try/except pattern for PermissionError/ValueError in route files
+    - When troubleshooting raw 500 errors from service layer exceptions
+
+- app_docs/patch-7fc048f5-create-endpoint-error-handling.md
+  - Conditions:
+    - When working with restaurant_routes.py or recurring_template_routes.py create endpoints
+    - When adding error handling patterns to FastAPI route endpoints
+    - When troubleshooting unstructured 500 errors from create endpoints
+
+- app_docs/patch-957bac6a-standardize-delete-rbac-enforcement.md
+  - Conditions:
+    - When working with RBAC enforcement on delete endpoints
+    - When adding new delete endpoints and need to follow the require_roles pattern
+    - When troubleshooting 403 Forbidden errors on delete operations
+    - When reviewing or modifying role-based access control on route-level dependencies
+
+- app_docs/patch-75b6035d-legaldesk-routes-error-handling.md
+  - Conditions:
+    - When working with error handling in legaldesk_routes.py
+    - When adding new Legal Desk API endpoints and need to follow the error handling pattern
+    - When troubleshooting Legal Desk API error responses (400, 404, 500)
+    - When working with IntegrityError or ValueError handling in FastAPI route handlers

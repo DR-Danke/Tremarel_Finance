@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
@@ -19,6 +20,9 @@ from src.core.services.ld_case_service import ld_case_service
 from src.core.services.ld_classification_service import ld_classification_service
 from src.core.services.ld_client_service import ld_client_service
 from src.core.services.ld_pricing_service import ld_pricing_service
+from src.core.services.ld_deliverable_service import ld_deliverable_service
+from src.core.services.ld_document_service import ld_document_service
+from src.core.services.ld_message_service import ld_message_service
 from src.core.services.ld_specialist_service import ld_specialist_service
 from src.interface.legaldesk_dto import (
     AssignmentCreateDTO,
@@ -56,9 +60,6 @@ from src.interface.legaldesk_dto import (
     SpecialistUpdateDTO,
     SuggestionResponseDTO,
 )
-from src.repository.ld_deliverable_repository import ld_deliverable_repository
-from src.repository.ld_document_repository import ld_document_repository
-from src.repository.ld_message_repository import ld_message_repository
 
 router = APIRouter(prefix="/api/legaldesk", tags=["Legal Desk"])
 
@@ -118,7 +119,13 @@ async def create_case(
 ) -> CaseResponseDTO:
     """Create a new legal case."""
     print(f"INFO [LegalDeskRoutes]: Create case request from user {current_user['id']}")
-    case = ld_case_service.create_case(db, data, current_user)
+    try:
+        case = ld_case_service.create_case(db, data, current_user)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     print(f"INFO [LegalDeskRoutes]: Case {case.id} created")
     return CaseResponseDTO.model_validate(case)
 
@@ -144,7 +151,11 @@ async def list_cases(
         client_id=client_id,
         complexity=complexity,
     )
-    cases = ld_case_service.list_cases(db, filters)
+    try:
+        cases = ld_case_service.list_cases(db, filters)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to list cases: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
     return [CaseResponseDTO.model_validate(c) for c in cases]
 
 
@@ -156,7 +167,10 @@ async def get_case_detail(
 ) -> CaseDetailDTO:
     """Get case detail with related entities."""
     print(f"INFO [LegalDeskRoutes]: Get case {case_id} detail")
-    case = ld_case_service.get_case_with_details(db, case_id)
+    try:
+        case = ld_case_service.get_case_with_details(db, case_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     if not case:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Case not found")
     return CaseDetailDTO.model_validate(case)
@@ -171,7 +185,13 @@ async def update_case(
 ) -> CaseResponseDTO:
     """Update case fields."""
     print(f"INFO [LegalDeskRoutes]: Update case {case_id}")
-    case = ld_case_service.update_case(db, case_id, data)
+    try:
+        case = ld_case_service.update_case(db, case_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     if not case:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Case not found")
     return CaseResponseDTO.model_validate(case)
@@ -289,7 +309,11 @@ async def list_deliverables(
 ) -> List[DeliverableResponseDTO]:
     """List deliverables for a case."""
     print(f"INFO [LegalDeskRoutes]: List deliverables for case {case_id}")
-    deliverables = ld_deliverable_repository.get_by_case(db, case_id)
+    try:
+        deliverables = ld_deliverable_service.get_case_deliverables(db, case_id)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to list deliverables for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
     return [DeliverableResponseDTO.model_validate(d) for d in deliverables]
 
 
@@ -302,8 +326,13 @@ async def create_deliverable(
 ) -> DeliverableResponseDTO:
     """Create a deliverable for a case."""
     print(f"INFO [LegalDeskRoutes]: Create deliverable for case {case_id}")
-    data.case_id = case_id
-    deliverable = ld_deliverable_repository.create(db, data.model_dump())
+    try:
+        deliverable = ld_deliverable_service.create_deliverable(db, case_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Integrity error creating deliverable for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Case {case_id} not found")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return DeliverableResponseDTO.model_validate(deliverable)
 
 
@@ -317,7 +346,11 @@ async def update_deliverable(
 ) -> DeliverableResponseDTO:
     """Update a deliverable."""
     print(f"INFO [LegalDeskRoutes]: Update deliverable {deliverable_id} for case {case_id}")
-    updated = ld_deliverable_repository.update(db, deliverable_id, data.model_dump(exclude_unset=True))
+    try:
+        updated = ld_deliverable_service.update_deliverable(db, deliverable_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
     if not updated:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deliverable not found")
     return DeliverableResponseDTO.model_validate(updated)
@@ -333,7 +366,10 @@ async def update_deliverable_status(
 ) -> DeliverableResponseDTO:
     """Update deliverable status."""
     print(f"INFO [LegalDeskRoutes]: Update deliverable {deliverable_id} status to '{body.status}'")
-    updated = ld_deliverable_repository.update_status(db, deliverable_id, body.status)
+    try:
+        updated = ld_deliverable_service.update_deliverable_status(db, deliverable_id, body.status)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     if not updated:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Deliverable not found")
     return DeliverableResponseDTO.model_validate(updated)
@@ -353,7 +389,11 @@ async def get_messages(
 ) -> List[MessageResponseDTO]:
     """Get messages for a case."""
     print(f"INFO [LegalDeskRoutes]: Get messages for case {case_id}, include_internal={include_internal}")
-    messages = ld_message_repository.get_by_case(db, case_id, include_internal=include_internal)
+    try:
+        messages = ld_message_service.get_case_messages(db, case_id, include_internal=include_internal)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to get messages for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
     return [MessageResponseDTO.model_validate(m) for m in messages]
 
 
@@ -366,9 +406,13 @@ async def create_message(
 ) -> MessageResponseDTO:
     """Create a message on a case."""
     print(f"INFO [LegalDeskRoutes]: Create message for case {case_id}")
-    msg_data = data.model_dump()
-    msg_data["case_id"] = case_id
-    message = ld_message_repository.create(db, msg_data)
+    try:
+        message = ld_message_service.create_message(db, case_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Integrity error creating message for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Case {case_id} not found")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return MessageResponseDTO.model_validate(message)
 
 
@@ -385,7 +429,11 @@ async def list_documents(
 ) -> List[DocumentResponseDTO]:
     """List documents for a case."""
     print(f"INFO [LegalDeskRoutes]: List documents for case {case_id}")
-    documents = ld_document_repository.get_by_case(db, case_id)
+    try:
+        documents = ld_document_service.get_case_documents(db, case_id)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to list documents for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
     return [DocumentResponseDTO.model_validate(d) for d in documents]
 
 
@@ -398,9 +446,13 @@ async def create_document(
 ) -> DocumentResponseDTO:
     """Add document metadata to a case."""
     print(f"INFO [LegalDeskRoutes]: Add document to case {case_id}")
-    doc_data = data.model_dump()
-    doc_data["case_id"] = case_id
-    document = ld_document_repository.create(db, doc_data)
+    try:
+        document = ld_document_service.create_document(db, case_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Integrity error creating document for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Case {case_id} not found")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return DocumentResponseDTO.model_validate(document)
 
 
@@ -417,7 +469,11 @@ async def get_pricing_history(
 ) -> List[PricingHistoryResponseDTO]:
     """Get pricing history for a case."""
     print(f"INFO [LegalDeskRoutes]: Get pricing history for case {case_id}")
-    return ld_pricing_service.get_pricing_history(db, case_id)
+    try:
+        return ld_pricing_service.get_pricing_history(db, case_id)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to get pricing history for case {case_id}: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
 
 
 @router.post("/cases/{case_id}/pricing/propose", response_model=PricingHistoryResponseDTO, status_code=status.HTTP_201_CREATED)
@@ -519,7 +575,11 @@ async def list_specialists(
     active_filters = {k: v for k, v in filter_params.items() if v is not None}
     if active_filters:
         filters = active_filters
-    specialists = ld_specialist_service.list_all(db, filters)
+    try:
+        specialists = ld_specialist_service.list_all(db, filters)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to list specialists: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
     return [SpecialistResponseDTO.model_validate(s) for s in specialists]
 
 
@@ -531,7 +591,13 @@ async def create_specialist(
 ) -> SpecialistResponseDTO:
     """Create a new specialist."""
     print(f"INFO [LegalDeskRoutes]: Create specialist '{data.full_name}'")
-    specialist = ld_specialist_service.create(db, data)
+    try:
+        specialist = ld_specialist_service.create(db, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return SpecialistResponseDTO.model_validate(specialist)
 
 
@@ -543,7 +609,10 @@ async def get_specialist_detail(
 ) -> SpecialistDetailDTO:
     """Get specialist detail with expertise and jurisdictions."""
     print(f"INFO [LegalDeskRoutes]: Get specialist {specialist_id} detail")
-    specialist = ld_specialist_service.get_specialist_detail(db, specialist_id)
+    try:
+        specialist = ld_specialist_service.get_specialist_detail(db, specialist_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     if not specialist:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Specialist not found")
     return SpecialistDetailDTO.model_validate(specialist)
@@ -558,7 +627,13 @@ async def update_specialist(
 ) -> SpecialistResponseDTO:
     """Update specialist fields."""
     print(f"INFO [LegalDeskRoutes]: Update specialist {specialist_id}")
-    specialist = ld_specialist_service.update(db, specialist_id, data)
+    try:
+        specialist = ld_specialist_service.update(db, specialist_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     if not specialist:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Specialist not found")
     return SpecialistResponseDTO.model_validate(specialist)
@@ -573,9 +648,15 @@ async def add_expertise(
 ) -> ExpertiseDTO:
     """Add expertise to a specialist."""
     print(f"INFO [LegalDeskRoutes]: Add expertise '{body.legal_domain}' to specialist {specialist_id}")
-    expertise = ld_specialist_service.add_expertise(
-        db, specialist_id, body.legal_domain, body.proficiency_level,
-    )
+    try:
+        expertise = ld_specialist_service.add_expertise(
+            db, specialist_id, body.legal_domain, body.proficiency_level,
+        )
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return ExpertiseDTO(
         legal_domain=expertise.legal_domain,
         proficiency_level=expertise.proficiency_level,
@@ -592,9 +673,15 @@ async def add_jurisdiction(
 ) -> JurisdictionDTO:
     """Add jurisdiction to a specialist."""
     print(f"INFO [LegalDeskRoutes]: Add jurisdiction '{body.country}' to specialist {specialist_id}")
-    jurisdiction = ld_specialist_service.add_jurisdiction(
-        db, specialist_id, body.country, body.region, body.is_primary,
-    )
+    try:
+        jurisdiction = ld_specialist_service.add_jurisdiction(
+            db, specialist_id, body.country, body.region, body.is_primary,
+        )
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return JurisdictionDTO(
         country=jurisdiction.country,
         region=jurisdiction.region,
@@ -612,7 +699,13 @@ async def submit_score(
     """Submit performance score for a specialist on a case."""
     print(f"INFO [LegalDeskRoutes]: Submit score for specialist {specialist_id}")
     data.specialist_id = specialist_id
-    score = ld_specialist_service.submit_score(db, specialist_id, data.case_id, data)
+    try:
+        score = ld_specialist_service.submit_score(db, specialist_id, data.case_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Specialist or case not found")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return ScoreResponseDTO.model_validate(score)
 
 
@@ -628,7 +721,11 @@ async def list_clients(
 ) -> List[ClientResponseDTO]:
     """List all clients."""
     print("INFO [LegalDeskRoutes]: List clients")
-    clients = ld_client_service.list_all(db)
+    try:
+        clients = ld_client_service.list_all(db)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to list clients: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")
     return [ClientResponseDTO.model_validate(c) for c in clients]
 
 
@@ -640,7 +737,13 @@ async def create_client(
 ) -> ClientResponseDTO:
     """Create a new client."""
     print(f"INFO [LegalDeskRoutes]: Create client '{data.name}'")
-    client = ld_client_service.create(db, data)
+    try:
+        client = ld_client_service.create(db, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return ClientResponseDTO.model_validate(client)
 
 
@@ -652,7 +755,10 @@ async def get_client(
 ) -> ClientResponseDTO:
     """Get client by ID."""
     print(f"INFO [LegalDeskRoutes]: Get client {client_id}")
-    client = ld_client_service.get(db, client_id)
+    try:
+        client = ld_client_service.get(db, client_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     if not client:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
     return ClientResponseDTO.model_validate(client)
@@ -667,7 +773,13 @@ async def update_client(
 ) -> ClientResponseDTO:
     """Update client fields."""
     print(f"INFO [LegalDeskRoutes]: Update client {client_id}")
-    client = ld_client_service.update(db, client_id, data)
+    try:
+        client = ld_client_service.update(db, client_id, data)
+    except IntegrityError as e:
+        print(f"ERROR [LegalDeskRoutes]: Database integrity error: {e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reference or duplicate entry")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     if not client:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Client not found")
     return ClientResponseDTO.model_validate(client)
@@ -685,4 +797,8 @@ async def get_dashboard_stats(
 ) -> DashboardStatsDTO:
     """Get dashboard analytics statistics."""
     print("INFO [LegalDeskRoutes]: Get dashboard stats")
-    return ld_analytics_service.get_dashboard_stats(db)
+    try:
+        return ld_analytics_service.get_dashboard_stats(db)
+    except Exception as e:
+        print(f"ERROR [LegalDeskRoutes]: Failed to get dashboard stats: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve data")

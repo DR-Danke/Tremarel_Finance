@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.adapter.rest.dependencies import get_current_user, get_db
+from src.adapter.rest.rbac_dependencies import require_roles
 from src.core.services.restaurant_service import restaurant_service
 from src.interface.restaurant_dto import (
     RestaurantCreateDTO,
@@ -39,10 +40,22 @@ async def create_restaurant(
     print(f"INFO [RestaurantRoutes]: Create restaurant request from user {current_user['email']}")
 
     user_id = UUID(current_user["id"])
-    restaurant = restaurant_service.create_restaurant(db, user_id, data)
-
-    print(f"INFO [RestaurantRoutes]: Restaurant '{restaurant.name}' created successfully")
-    return RestaurantResponseDTO.model_validate(restaurant)
+    try:
+        restaurant = restaurant_service.create_restaurant(db, user_id, data)
+        print(f"INFO [RestaurantRoutes]: Restaurant '{restaurant.name}' created successfully")
+        return RestaurantResponseDTO.model_validate(restaurant)
+    except PermissionError as e:
+        print(f"ERROR [RestaurantRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        print(f"ERROR [RestaurantRoutes]: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
 
 
 @router.get("", response_model=List[RestaurantResponseDTO])
@@ -159,12 +172,12 @@ async def update_restaurant(
 async def delete_restaurant(
     restaurant_id: UUID,
     db: Session = Depends(get_db),
-    current_user: Dict[str, Any] = Depends(get_current_user),
+    current_user: Dict[str, Any] = Depends(require_roles(["admin", "manager"])),
 ) -> None:
     """
     Delete a restaurant.
 
-    Only owner or admin can delete restaurant.
+    Only admin or manager roles can delete.
 
     Args:
         restaurant_id: Restaurant UUID
