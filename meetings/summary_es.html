@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkangel AI Kickoff - Resumen de Reunión</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 100%);
+            color: #ffffff;
+            padding: 40px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 16px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .header-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header-meta-label {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            margin-bottom: 36px;
+        }
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .summary-text {
+            font-size: 15px;
+            color: #4a5568;
+            line-height: 1.8;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2b6cb0;
+        }
+        .participants-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .participant-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .participant-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 15px;
+        }
+        .participant-role {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        .discussion-item {
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 3px solid #4299e1;
+        }
+        .discussion-item:last-child {
+            margin-bottom: 0;
+        }
+        .discussion-topic {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+        .discussion-desc {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .metric-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2b6cb0;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        .action-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 14px 16px;
+            background: #fffff0;
+            border: 1px solid #fefcbf;
+            border-radius: 8px;
+        }
+        .action-item:last-child {
+            margin-bottom: 0;
+        }
+        .action-checkbox {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            border: 2px solid #d69e2e;
+            border-radius: 4px;
+            margin-top: 2px;
+        }
+        .action-content {
+            flex: 1;
+        }
+        .action-desc {
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+        .action-owner {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+        .action-owner span {
+            font-weight: 600;
+            color: #d69e2e;
+        }
+        .decision-list, .nextsteps-list {
+            list-style: none;
+            padding: 0;
+        }
+        .decision-list li, .nextsteps-list li {
+            padding: 10px 16px;
+            margin-bottom: 8px;
+            background: #f0fff4;
+            border: 1px solid #c6f6d5;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #2d3748;
+            position: relative;
+            padding-left: 32px;
+        }
+        .decision-list li::before {
+            content: "\2713";
+            position: absolute;
+            left: 12px;
+            color: #38a169;
+            font-weight: 700;
+        }
+        .nextsteps-list li {
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+        }
+        .nextsteps-list li::before {
+            content: "\2192";
+            position: absolute;
+            left: 12px;
+            color: #3182ce;
+            font-weight: 700;
+        }
+        .diagram-section {
+            margin-bottom: 24px;
+        }
+        .diagram-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+        .diagram-container {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+        }
+        .footer {
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        .company-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 20px;
+            padding: 4px 16px;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado -->
+        <div class="header">
+            <h1>Arkangel AI Kickoff</h1>
+            <p style="font-size: 16px; opacity: 0.9;">Análisis Operacional y Propuesta de Engagement</p>
+            <div class="company-badge">Arkangel AI</div>
+            <div class="header-meta">
+                <div class="header-meta-item">
+                    <div>
+                        <div class="header-meta-label">Fecha</div>
+                        <div>12 de febrero de 2026</div>
+                    </div>
+                </div>
+                <div class="header-meta-item">
+                    <div>
+                        <div class="header-meta-label">Duración</div>
+                        <div>28 minutos</div>
+                    </div>
+                </div>
+                <div class="header-meta-item">
+                    <div>
+                        <div class="header-meta-label">Contacto</div>
+                        <div>Laura Velásquez Herrera</div>
+                    </div>
+                </div>
+                <div class="header-meta-item">
+                    <div>
+                        <div class="header-meta-label">Fireflies ID</div>
+                        <div>01KH9BCSSS37R99NC8VFH255W9</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Participantes -->
+            <div class="section">
+                <div class="section-title">Participantes</div>
+                <div class="participants-grid">
+                    <div class="participant-card">
+                        <span class="participant-name">Laura Velásquez Herrera</span>
+                        <span class="participant-role">Cliente - Arkangel AI</span>
+                    </div>
+                    <div class="participant-card">
+                        <span class="participant-name">Daniel Cardona</span>
+                        <span class="participant-role">Consultor / Líder de Engagement</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Ejecutivo -->
+            <div class="section">
+                <div class="section-title">Resumen Ejecutivo</div>
+                <div class="summary-text">
+                    Reunión de arranque detallada en la que se revisaron los análisis operacionales y las métricas de Arkangel AI. La empresa recibe 53,400 visitantes mensuales con una tasa de conversión B2B inbound del 0.39%, generando 17 reservas y 3 leads calificados por mes, con un CAC outbound de $519 por cliente. Se propusieron dos opciones de engagement por un total aproximado de $19,000, con proyecciones de ingresos de $1.7-2M en el año 1 y $4M en el año 2. Las principales oportunidades identificadas incluyen mejorar la tasa de conversión inbound, optimizar los eventos de networking y reactivar el newsletter.
+                </div>
+            </div>
+
+            <!-- Métricas Clave -->
+            <div class="section">
+                <div class="section-title">Métricas Clave</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">53,400</div>
+                        <div class="metric-label">Visitantes Mensuales</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">35,100</div>
+                        <div class="metric-label">Usuarios Activos (30 días)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0.39%</div>
+                        <div class="metric-label">Tasa de Conversión Inbound</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">17</div>
+                        <div class="metric-label">Reservas B2B / Mes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">3</div>
+                        <div class="metric-label">Leads Calificados / Mes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$519</div>
+                        <div class="metric-label">CAC Outbound</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$7</div>
+                        <div class="metric-label">Costo por Reunión</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$17</div>
+                        <div class="metric-label">Costo por Reunión Calificada</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$98</div>
+                        <div class="metric-label">Costo por Propuesta</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">162</div>
+                        <div class="metric-label">Flujos de Trabajo en Gumloop</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">5 días</div>
+                        <div class="metric-label">Duración del Onboarding</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">~$19K</div>
+                        <div class="metric-label">Total de la Propuesta</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Puntos de Discusión -->
+            <div class="section">
+                <div class="section-title">Puntos de Discusión</div>
+                <div class="discussion-item">
+                    <div class="discussion-topic">Conversión Inbound B2B y Análisis de Tráfico</div>
+                    <div class="discussion-desc">Se revisó el tráfico del sitio web con 53,400 visitantes mensuales y 35,100 usuarios activos (30 días). La tasa de conversión B2B inbound es del 0.39%, generando 17 reservas y solo 3 leads calificados por mes. Esto fue identificado como la principal oportunidad de crecimiento.</div>
+                </div>
+                <div class="discussion-item">
+                    <div class="discussion-topic">Estructura de Costos Outbound y Análisis de CAC</div>
+                    <div class="discussion-desc">Se analizaron los costos de adquisición de clientes outbound: CAC de $519 por cliente, $7 por reunión agendada, $17 por reunión calificada y $98 por propuesta enviada. Actualmente no se utiliza publicidad paga, lo que representa un canal de crecimiento sin explotar.</div>
+                </div>
+                <div class="discussion-item">
+                    <div class="discussion-topic">Propuesta de Engagement y Proyecciones Financieras</div>
+                    <div class="discussion-desc">Se propusieron dos opciones de engagement por un total aproximado de $19,000, con modelos que incluyen costo fijo y participación en ingresos. Las proyecciones de ingresos apuntan a $1.7-2M en el año 1 y $4M en el año 2.</div>
+                </div>
+                <div class="discussion-item">
+                    <div class="discussion-topic">Infraestructura de Automatización (Gumloop)</div>
+                    <div class="discussion-desc">Arkangel opera 162 flujos de trabajo automatizados en Gumloop, impulsando sus procesos operacionales. La duración del onboarding es de 5 días.</div>
+                </div>
+                <div class="discussion-item">
+                    <div class="discussion-topic">Estrategia de Eventos de Networking</div>
+                    <div class="discussion-desc">Se planean cenas de networking en Miami, Boston y NYC a partir de marzo. Es necesario agregar formularios de seguimiento para mejorar el rastreo y la conversión desde los eventos.</div>
+                </div>
+                <div class="discussion-item">
+                    <div class="discussion-topic">Newsletter y Contenido UGC</div>
+                    <div class="discussion-desc">El newsletter UGC funciona bien cuando está activo, pero ha sido inconsistente. La reactivación con una cadencia constante fue discutida como prioridad.</div>
+                </div>
+            </div>
+
+            <!-- Elementos de Acción -->
+            <div class="section">
+                <div class="section-title">Elementos de Acción</div>
+                <div class="action-item">
+                    <div class="action-checkbox"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Coordinar con Lucho para un análisis profundo de analíticas</div>
+                        <div class="action-owner">Responsable: <span>Laura Velásquez Herrera</span></div>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-checkbox"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Mejorar las cenas de networking con formularios de seguimiento para el rastreo de asistentes</div>
+                        <div class="action-owner">Responsable: <span>Laura Velásquez Herrera</span> &middot; Meta: Marzo 2026</div>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-checkbox"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Reactivar el newsletter con una cadencia de publicación constante</div>
+                        <div class="action-owner">Responsable: <span>Laura Velásquez Herrera</span></div>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-checkbox"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Enviar propuesta de engagement con 2 opciones financieras (costo fijo y participación en ingresos)</div>
+                        <div class="action-owner">Responsable: <span>Daniel Cardona</span></div>
+                    </div>
+                </div>
+                <div class="action-item">
+                    <div class="action-checkbox"></div>
+                    <div class="action-content">
+                        <div class="action-desc">Implementar mejoras en la tasa de conversión inbound y el flujo de leads</div>
+                        <div class="action-owner">Responsable: <span>TBD</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decisiones Tomadas -->
+            <div class="section">
+                <div class="section-title">Decisiones Tomadas</div>
+                <ul class="decision-list">
+                    <li>Se presentarán dos opciones de engagement al cliente (~$19,000 en total), una de costo fijo y una de participación en ingresos</li>
+                    <li>Las cenas de networking se lanzarán en Miami, Boston y NYC a partir de marzo de 2026</li>
+                    <li>La mejora de la tasa de conversión inbound es la principal prioridad de crecimiento</li>
+                    <li>El newsletter será reactivado con un calendario constante</li>
+                    <li>Aún no se introducirá publicidad paga — el enfoque será primero en la optimización orgánica y outbound</li>
+                </ul>
+            </div>
+
+            <!-- Próximos Pasos -->
+            <div class="section">
+                <div class="section-title">Próximos Pasos</div>
+                <ul class="nextsteps-list">
+                    <li>Daniel enviará la propuesta formal con 2 opciones financieras para la aprobación de Laura</li>
+                    <li>Implementar mejoras en la tasa de conversión inbound (objetivo: aumentar desde el 0.39%)</li>
+                    <li>Optimizar las cenas de networking con formularios de seguimiento estructurados</li>
+                    <li>Reactivar el newsletter UGC con una cadencia constante</li>
+                    <li>Laura coordinará el análisis profundo de analíticas con Lucho</li>
+                </ul>
+            </div>
+
+            <!-- Proyecciones Financieras -->
+            <div class="section">
+                <div class="section-title">Proyecciones Financieras</div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">$1.7-2M</div>
+                        <div class="metric-label">Proyección de Ingresos Año 1</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">$4M</div>
+                        <div class="metric-label">Proyección de Ingresos Año 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arquitectura Técnica -->
+            <div class="section">
+                <div class="section-title">Arquitectura Técnica</div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Embudo de Conversión Inbound B2B</div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    A["Website Visitors\n53,400/month"] --> B["Active Users (30-day)\n35,100"]
+    B --> C["B2B Bookings\n17/month"]
+    C --> D["Qualified Leads\n3/month"]
+    D --> E["Closed Deals"]
+    A -->|"Conversion Rate: 0.39%"| C
+    style A fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style B fill:#5BA0E0,stroke:#3A7BC0,color:#fff
+    style C fill:#F5A623,stroke:#D4891A,color:#fff
+    style D fill:#E74C3C,stroke:#C0392B,color:#fff
+    style E fill:#27AE60,stroke:#1E8449,color:#fff
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Embudo de Costos Outbound y Desglose de CAC</div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart TD
+    A["Outbound Outreach"] --> B["Meetings Booked\n$7 per meeting"]
+    B --> C["Qualified Meetings\n$17 per qualified"]
+    C --> D["Proposals Sent\n$98 per proposal"]
+    D --> E["Closed Client\nCAC: $519"]
+    style A fill:#3498DB,stroke:#2980B9,color:#fff
+    style B fill:#2ECC71,stroke:#27AE60,color:#fff
+    style C fill:#F39C12,stroke:#E67E22,color:#fff
+    style D fill:#E74C3C,stroke:#C0392B,color:#fff
+    style E fill:#8E44AD,stroke:#7D3C98,color:#fff
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="diagram-section">
+                    <div class="diagram-title">Arquitectura Operacional de Arkangel AI</div>
+                    <div class="diagram-container">
+                        <pre class="mermaid">
+flowchart LR
+    subgraph Traffic["Traffic Sources"]
+        WEB["Website\n53,400 visitors/mo"]
+        NL["Newsletter / UGC"]
+        NET["Networking Events\nMiami / Boston / NYC"]
+    end
+    subgraph Platform["Arkangel AI Platform"]
+        GUM["Gumloop Engine\n162 Workflows"]
+        ONB["Onboarding\n5-day process"]
+        AN["Analytics Dashboard"]
+    end
+    subgraph Funnel["Sales Funnel"]
+        INB["Inbound Leads"]
+        OUT["Outbound Outreach"]
+        QUAL["Qualified Leads"]
+        PROP["Proposals"]
+    end
+    WEB --> INB
+    NL --> WEB
+    NET --> OUT
+    INB --> GUM
+    OUT --> GUM
+    GUM --> QUAL
+    QUAL --> PROP
+    PROP --> ONB
+    GUM --> AN
+    style GUM fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style WEB fill:#27AE60,stroke:#1E8449,color:#fff
+    style QUAL fill:#F5A623,stroke:#D4891A,color:#fff
+                        </pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie de página -->
+        <div class="footer">
+            Resumen de reunión generado el 7 de marzo de 2026 &middot; Arkangel AI Kickoff &middot; Fireflies ID: 01KH9BCSSS37R99NC8VFH255W9
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

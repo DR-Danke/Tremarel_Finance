@@ -1,0 +1,93 @@
+{
+  "title": "Arkangel AI Kickoff - Operational Analytics & Engagement Proposal",
+  "meeting_date": "2026-02-12",
+  "participants": [
+    {"name": "Laura Velásquez Herrera", "role": "Client - Arkangel AI"},
+    {"name": "Daniel Cardona", "role": "Consultant / Engagement Lead"}
+  ],
+  "company_name": "Arkangel AI",
+  "contact_name": "Laura Velásquez Herrera",
+  "contact_email": null,
+  "summary": "Deep-dive kickoff meeting reviewing Arkangel AI's operational analytics and metrics. The company receives 53,400 monthly visitors with a B2B inbound conversion rate of 0.39%, generating 17 bookings and 3 qualified leads per month, with an outbound CAC of $519 per client. Two engagement options totaling approximately $19,000 were proposed, with revenue projections of $1.7-2M in year 1 and $4M in year 2. Key opportunities identified include improving the inbound conversion rate, optimizing networking events, and reactivating the newsletter.",
+  "discussion_points": [
+    {
+      "topic": "B2B Inbound Conversion & Traffic Analytics",
+      "description": "Reviewed website traffic of 53,400 monthly visitors and 35,100 active users (30-day). The B2B inbound conversion rate sits at 0.39%, generating 17 bookings and only 3 qualified leads per month. This was identified as the primary growth opportunity."
+    },
+    {
+      "topic": "Outbound Cost Structure & CAC Analysis",
+      "description": "Analyzed outbound customer acquisition costs: $519 CAC per client, $7 per meeting booked, $17 per qualified meeting, and $98 per proposal sent. No paid advertising is currently used, representing an untapped growth channel."
+    },
+    {
+      "topic": "Engagement Proposal & Financial Projections",
+      "description": "Two engagement options were proposed totaling approximately $19,000, with models including fixed cost and revenue share. Revenue projections target $1.7-2M in year 1 and $4M in year 2."
+    },
+    {
+      "topic": "Automation Infrastructure (Gumloop)",
+      "description": "Arkangel operates 162 automated workflows on Gumloop, powering their operational processes. Onboarding duration is 5 days."
+    },
+    {
+      "topic": "Networking Events Strategy",
+      "description": "Networking dinners are planned for Miami, Boston, and NYC starting March. Need to add follow-up forms to improve tracking and conversion from events."
+    },
+    {
+      "topic": "Newsletter & UGC Content",
+      "description": "The UGC newsletter performs well when active but has been inconsistent. Reactivation with a consistent cadence was discussed as a priority."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Coordinate with Lucho for in-depth analytics analysis",
+      "owner": "Laura Velásquez Herrera",
+      "deadline": null
+    },
+    {
+      "description": "Improve networking dinners with follow-up forms for attendee tracking",
+      "owner": "Laura Velásquez Herrera",
+      "deadline": "2026-03-01"
+    },
+    {
+      "description": "Reactivate newsletter with consistent publishing cadence",
+      "owner": "Laura Velásquez Herrera",
+      "deadline": null
+    },
+    {
+      "description": "Send engagement proposal with 2 financial options (fixed cost and revenue share)",
+      "owner": "Daniel Cardona",
+      "deadline": null
+    },
+    {
+      "description": "Implement improvements to inbound conversion rate and lead flow",
+      "owner": null,
+      "deadline": null
+    }
+  ],
+  "decisions": [
+    "Two engagement options will be presented to the client (~$19,000 total), one fixed cost and one revenue share model",
+    "Networking dinners will launch in Miami, Boston, and NYC starting March 2026",
+    "Inbound conversion rate improvement is the top priority for growth",
+    "Newsletter will be reactivated with a consistent schedule",
+    "No paid advertising will be introduced yet — focus on organic and outbound optimization first"
+  ],
+  "next_steps": [
+    "Daniel to send formal proposal with 2 financial options for Laura's approval",
+    "Implement inbound conversion rate improvements (target: increase from 0.39%)",
+    "Optimize networking dinners with structured follow-up forms",
+    "Reactivate UGC newsletter with consistent cadence",
+    "Laura to coordinate analytics deep-dive with Lucho"
+  ],
+  "diagrams": [
+    {
+      "title": "B2B Inbound Conversion Funnel",
+      "mermaid_code": "flowchart TD\n    A[\"Website Visitors\\n53,400/month\"] --> B[\"Active Users (30-day)\\n35,100\"]\n    B --> C[\"B2B Bookings\\n17/month\"]\n    C --> D[\"Qualified Leads\\n3/month\"]\n    D --> E[\"Closed Deals\"]\n    A -->|\"Conversion Rate: 0.39%\"| C\n    style A fill:#4A90D9,stroke:#2C5F8A,color:#fff\n    style B fill:#5BA0E0,stroke:#3A7BC0,color:#fff\n    style C fill:#F5A623,stroke:#D4891A,color:#fff\n    style D fill:#E74C3C,stroke:#C0392B,color:#fff\n    style E fill:#27AE60,stroke:#1E8449,color:#fff"
+    },
+    {
+      "title": "Outbound Cost Funnel & CAC Breakdown",
+      "mermaid_code": "flowchart TD\n    A[\"Outbound Outreach\"] --> B[\"Meetings Booked\\n$7 per meeting\"]\n    B --> C[\"Qualified Meetings\\n$17 per qualified\"]\n    C --> D[\"Proposals Sent\\n$98 per proposal\"]\n    D --> E[\"Closed Client\\nCAC: $519\"]\n    style A fill:#3498DB,stroke:#2980B9,color:#fff\n    style B fill:#2ECC71,stroke:#27AE60,color:#fff\n    style C fill:#F39C12,stroke:#E67E22,color:#fff\n    style D fill:#E74C3C,stroke:#C0392B,color:#fff\n    style E fill:#8E44AD,stroke:#7D3C98,color:#fff"
+    },
+    {
+      "title": "Arkangel AI Operations Architecture",
+      "mermaid_code": "flowchart LR\n    subgraph Traffic[\"Traffic Sources\"]\n        WEB[\"Website\\n53,400 visitors/mo\"]\n        NL[\"Newsletter / UGC\"]\n        NET[\"Networking Events\\nMiami / Boston / NYC\"]\n    end\n    subgraph Platform[\"Arkangel AI Platform\"]\n        GUM[\"Gumloop Engine\\n162 Workflows\"]\n        ONB[\"Onboarding\\n5-day process\"]\n        AN[\"Analytics Dashboard\"]\n    end\n    subgraph Funnel[\"Sales Funnel\"]\n        INB[\"Inbound Leads\"]\n        OUT[\"Outbound Outreach\"]\n        QUAL[\"Qualified Leads\"]\n        PROP[\"Proposals\"]\n    end\n    WEB --> INB\n    NL --> WEB\n    NET --> OUT\n    INB --> GUM\n    OUT --> GUM\n    GUM --> QUAL\n    QUAL --> PROP\n    PROP --> ONB\n    GUM --> AN\n    style GUM fill:#4A90D9,stroke:#2C5F8A,color:#fff\n    style WEB fill:#27AE60,stroke:#1E8449,color:#fff\n    style QUAL fill:#F5A623,stroke:#D4891A,color:#fff"
+    }
+  ]
+}
