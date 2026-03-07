@@ -40,10 +40,22 @@ async def create_recurring_template(
     """
     print(f"INFO [RecurringTemplateRoutes]: Create template request from user {current_user['id']}")
 
-    template = recurring_template_service.create_template(db, data)
-
-    print(f"INFO [RecurringTemplateRoutes]: Template {template.id} created successfully")
-    return RecurringTemplateResponseDTO.model_validate(template)
+    try:
+        template = recurring_template_service.create_template(db, data)
+        print(f"INFO [RecurringTemplateRoutes]: Template {template.id} created successfully")
+        return RecurringTemplateResponseDTO.model_validate(template)
+    except PermissionError as e:
+        print(f"ERROR [RecurringTemplateRoutes]: Access denied: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(e),
+        )
+    except ValueError as e:
+        print(f"ERROR [RecurringTemplateRoutes]: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
 
 
 @router.get("/", response_model=RecurringTemplateListResponseDTO)
