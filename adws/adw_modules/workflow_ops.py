@@ -49,6 +49,7 @@ AVAILABLE_ADW_WORKFLOWS = [
     "adw_prd_to_prompts_iso",
     "adw_prompts_to_issues_iso",
     "adw_requirements_pipeline_iso",  # Requirements Pipeline: Transcript → PRD → Prompts → Issues
+    "adw_continuous_improvement_iso",  # Continuous Improvement Scanner
 ]
 
 

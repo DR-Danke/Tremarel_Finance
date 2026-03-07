@@ -51,6 +51,8 @@ SLASH_COMMAND_MODEL_MAP: Final[Dict[SlashCommand, Dict[ModelSet, str]]] = {
     "/prd_to_prompts": {"base": "opus", "heavy": "opus"},
     "/prompts_to_issues": {"base": "opus", "heavy": "opus"},
     "/process_meeting_transcript": {"base": "opus", "heavy": "opus"},
+    "/translate_meeting_html": {"base": "sonnet", "heavy": "sonnet"},
+    "/scan_continuous_improvement": {"base": "opus", "heavy": "opus"},
 }
 
 

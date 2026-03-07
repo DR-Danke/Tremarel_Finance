@@ -45,6 +45,7 @@ ADWWorkflow = Literal[
     "adw_prompts_to_issues_iso",  # Pipeline: Prompts to GitHub Issues
     "adw_requirements_pipeline_iso",  # Requirements Pipeline: Transcript → PRD → Prompts → Issues
     "adw_meeting_pipeline_iso",  # Meeting Pipeline: Process transcript into structured summary + HTML
+    "adw_continuous_improvement_iso",  # Continuous Improvement: Scan codebase zones and create improvement issues
 ]
 
 # All slash commands used in the ADW system
@@ -85,6 +86,9 @@ SlashCommand = Literal[
     "/prompts_to_issues",
     # Meeting processing commands
     "/process_meeting_transcript",
+    "/translate_meeting_html",
+    # Continuous improvement commands
+    "/scan_continuous_improvement",
 ]
 
 
@@ -296,12 +300,55 @@ class DocumentationResult(BaseModel):
 
 class ADWExtractionResult(BaseModel):
     """Result from extracting ADW information from text."""
-    
+
     workflow_command: Optional[str] = None  # e.g., "adw_plan_iso" (without slash)
     adw_id: Optional[str] = None  # 8-character ADW ID
     model_set: Optional[ModelSet] = "base"  # Model set to use, defaults to "base"
-    
+
     @property
     def has_workflow(self) -> bool:
         """Check if a workflow command was extracted."""
         return self.workflow_command is not None
+
+
+# --- Continuous Improvement Scanner types ---
+
+ScanCategory = Literal["technical", "ux-business"]
+
+class ScanZone(BaseModel):
+    """Definition of a codebase zone to scan."""
+    zone_id: str
+    description: str
+    category: ScanCategory
+    glob_patterns: List[str]
+
+class ScanFinding(BaseModel):
+    """A single improvement finding from the scanner."""
+    title: str
+    description: str
+    category: ScanCategory
+    severity: Literal["low", "medium", "high"]
+    affected_files: List[str]
+    recommendation: str
+
+class ScanResult(BaseModel):
+    """Result from scanning a single zone."""
+    zone_id: str
+    findings: List[ScanFinding] = []
+    scan_timestamp: str
+    adw_id: str
+    raw_output: Optional[str] = None
+
+class CoverageEntry(BaseModel):
+    """Tracks when a zone was last scanned."""
+    zone_id: str
+    last_scanned: Optional[str] = None
+    scan_count: int = 0
+    last_adw_id: Optional[str] = None
+    files_at_scan: int = 0
+
+class CoverageState(BaseModel):
+    """Persistent state for coverage rotation and deduplication."""
+    zones: dict[str, CoverageEntry] = Field(default_factory=dict)
+    created_finding_hashes: List[str] = Field(default_factory=list)
+    last_full_rotation: Optional[str] = None
