@@ -67,7 +67,12 @@ def signal_handler(signum, frame):
 
 
 def is_pipeline_running() -> bool:
-    """Check if a CI scanner pipeline is already running via lock file."""
+    """Check if a CI scanner pipeline is already running via lock file.
+
+    Uses /proc/<pid>/status to distinguish zombie (defunct) processes from
+    genuinely running ones — os.kill(pid, 0) succeeds for zombies, which
+    previously caused the trigger to skip scheduled scans.
+    """
     if not LOCK_FILE.exists():
         return False
     try:
@@ -75,14 +80,32 @@ def is_pipeline_running() -> bool:
             data = json.load(f)
         pid = data.get("pid")
         if pid:
-            # Check if process is still running
+            # Check if process is still alive (not zombie/defunct)
             try:
                 os.kill(pid, 0)
-                return True
             except OSError:
                 # Process not running, stale lock
                 LOCK_FILE.unlink(missing_ok=True)
                 return False
+
+            # os.kill(pid, 0) succeeds for zombie processes too — check
+            # /proc status to detect them and reap via waitpid.
+            try:
+                proc_status = Path(f"/proc/{pid}/status").read_text()
+                if "zombie" in proc_status.lower():
+                    # Reap the zombie so it doesn't block future checks
+                    try:
+                        os.waitpid(pid, os.WNOHANG)
+                    except ChildProcessError:
+                        pass
+                    LOCK_FILE.unlink(missing_ok=True)
+                    return False
+            except FileNotFoundError:
+                # /proc entry gone — process exited between kill and read
+                LOCK_FILE.unlink(missing_ok=True)
+                return False
+
+            return True
     except (json.JSONDecodeError, OSError):
         LOCK_FILE.unlink(missing_ok=True)
     return False
