@@ -1,0 +1,84 @@
+{
+  "title": "Arkangel AI - Marketing Strategy Exploration",
+  "meeting_date": "2026-02-04",
+  "participants": [
+    {"name": "Laura Velasquez", "role": "CEO, Arkangel AI"},
+    {"name": "Daniel Cardona", "role": null}
+  ],
+  "company_name": "Arkangel AI",
+  "contact_name": "Laura Velasquez",
+  "contact_email": null,
+  "summary": "Initial exploratory meeting with Arkangel AI CEO Laura Velasquez to discuss structuring a scalable educational marketing program. The company operates in the health sector, transforming unstructured data into health insights, targeting pharmaceuticals in LATAM and hospitals in the USA. Currently generating $14K/month in B2C revenue with 300-500 daily users through their KOL (Key Opinion Leader) program. An in-person follow-up meeting was scheduled for February 7th to advance the automated marketing strategy.",
+  "discussion_points": [
+    {
+      "topic": "Target Markets and ICPs",
+      "description": "Two primary markets identified: LATAM (pharmaceuticals, access leaders) and USA (hospitals, Revenue Cycle Managers, Medical Coders). The product transforms unstructured data into actionable health insights."
+    },
+    {
+      "topic": "Business Model and Revenue Flywheel",
+      "description": "Annual B2B licensing model with a B2C-to-B2B flywheel strategy. Current B2C revenue stands at $14K/month with an approximately 6-month sales cycle for B2B deals."
+    },
+    {
+      "topic": "KOL (Key Opinion Leader) Program",
+      "description": "The existing KOL influencer program generates 300-500 new users per day. This program needs to be expanded and optimized as part of the marketing strategy."
+    },
+    {
+      "topic": "Automated Marketing System",
+      "description": "Need to develop an automated educational marketing system targeting their ICPs across multiple channels (LinkedIn, Reddit, X). Investment split: 60-70% conversion, 30-40% brand."
+    },
+    {
+      "topic": "Channel Positioning Strategy",
+      "description": "Discussion about optimizing positioning across LinkedIn, Reddit, and X to reach target audiences effectively. Time-to-value metrics need to be implemented."
+    }
+  ],
+  "action_items": [
+    {
+      "description": "Develop automated marketing strategy for educational content targeting ICPs in health sector",
+      "owner": "Lucho",
+      "deadline": null
+    },
+    {
+      "description": "Plan and structure influencer (KOL) program expansion",
+      "owner": "Lucho",
+      "deadline": null
+    },
+    {
+      "description": "Optimize channel positioning strategy across LinkedIn, Reddit, and X",
+      "owner": "Lucho",
+      "deadline": null
+    },
+    {
+      "description": "Implement time-to-value metrics for marketing campaigns",
+      "owner": "Lucho",
+      "deadline": null
+    },
+    {
+      "description": "Attend in-person meeting at La 93 to discuss marketing strategy",
+      "owner": "Daniel Cardona",
+      "deadline": "2026-02-07"
+    }
+  ],
+  "decisions": [
+    "Proceed with exploration of a scalable automated marketing program for Arkangel AI",
+    "Schedule in-person follow-up meeting for Friday February 7th at 11:00am at La 93"
+  ],
+  "next_steps": [
+    "In-person meeting on Friday February 7th at 11:00am at La 93 to discuss automated marketing strategy and influencer program",
+    "Develop initial marketing automation proposal targeting pharmaceutical companies in LATAM and hospitals in USA",
+    "Define KOL program structure and expansion plan"
+  ],
+  "diagrams": [
+    {
+      "title": "B2C to B2B Revenue Flywheel",
+      "mermaid_code": "flowchart TD\n    A[\"KOL Program\"] -->|\"Generates 300-500 users/day\"| B[\"B2C Users\"]\n    B -->|\"$14K/month revenue\"| C[\"Product Engagement\"]\n    C -->|\"Demonstrates value\"| D[\"B2B Lead Generation\"]\n    D -->|\"~6 month sales cycle\"| E[\"B2B Annual License\"]\n    E -->|\"Case studies & social proof\"| A"
+    },
+    {
+      "title": "Marketing Channel Strategy",
+      "mermaid_code": "flowchart LR\n    subgraph Content[\"Educational Content Engine\"]\n        AC[\"Automated Marketing System\"]\n    end\n    subgraph Channels[\"Distribution Channels\"]\n        LI[\"LinkedIn\"]\n        RD[\"Reddit\"]\n        XP[\"X / Twitter\"]\n    end\n    subgraph Markets[\"Target Markets\"]\n        subgraph LATAM\n            PH[\"Pharmaceuticals\"]\n            AL[\"Access Leaders\"]\n        end\n        subgraph USA\n            HO[\"Hospitals\"]\n            RCM[\"Revenue Cycle Managers\"]\n            MC[\"Medical Coders\"]\n        end\n    end\n    AC --> LI\n    AC --> RD\n    AC --> XP\n    LI --> PH\n    LI --> AL\n    LI --> RCM\n    RD --> MC\n    RD --> HO\n    XP --> PH\n    XP --> HO"
+    },
+    {
+      "title": "Arkangel AI Platform Data Flow",
+      "mermaid_code": "flowchart TD\n    A[\"Unstructured Health Data\"] --> B[\"Arkangel AI Platform\"]\n    B --> C[\"Health Insights Engine\"]\n    C --> D[\"B2C Users\"]\n    C --> E[\"B2B Enterprise Clients\"]\n    D -->|\"Time-to-value metrics\"| F[\"User Engagement\"]\n    F -->|\"KOL referrals\"| G[\"New User Acquisition\"]\n    E -->|\"Annual License\"| H[\"Enterprise Revenue\"]\n    subgraph Budget[\"Marketing Budget Allocation\"]\n        I[\"60-70% Conversion\"]\n        J[\"30-40% Brand\"]\n    end\n    Budget -->|\"Drives\"| G"
+    }
+  ]
+}
